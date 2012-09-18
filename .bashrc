@@ -44,8 +44,8 @@ if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
 # advanced bash completion
-if [ -f ~/bash-completion/bash_completion ]; then
-    . ~/bash-completion/bash_completion
+if [ -f ~/.bash-completion/bash_completion ]; then
+    . ~/.bash-completion/bash_completion
 fi
 
 export EDITOR=vim
