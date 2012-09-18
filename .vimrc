@@ -1,10 +1,11 @@
 set t_Co=256
-colorscheme molokai
 " All info taken by: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide
 " Load pathogen
 filetype off
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
+
+colorscheme molokai
 
 " Code Folding
 set foldmethod=indent
