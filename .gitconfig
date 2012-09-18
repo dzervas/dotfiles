@@ -1,5 +1,5 @@
 [user]
-   name = Tomas Restrepo
-   email = tomas@winterdom.com
-[core]
-   autocrlf=false
+   name = Dimitris Zervas
+   email = 01ttouch@gmail.com
+[color]
+   ui=auto
