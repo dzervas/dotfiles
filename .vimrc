@@ -1,217 +1,76 @@
-set runtimepath=~/.vim,$VIMRUNTIME,~/.vim/after
-" enable clipboard and other Win32 features
-source $VIMRUNTIME/mswin.vim
-
-" Use pathogen.vim to manage and load plugins
+set t_Co=256
+colorscheme molokai
+" All info taken by: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide
+" Load pathogen
+filetype off
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 
-"
-" appearance options
-"
-set bg=dark
-let g:zenburn_high_Contrast = 1
-let g:liquidcarbon_high_contrast = 1
-let g:molokai_original = 1
-let g:Powerline_symbols = 'compatible'
-let g:Powerline_cache_enabled = 1
-let g:Powerline_cache_file = expand('$TMP/Powerline.cache')
-set t_Co=256
-colorscheme molokai
+" Code Folding
+set foldmethod=indent
+set foldlevel=99
 
-if has("gui_running")
-   " set default size: 90x35
-   set columns=90
-   set lines=35
-   " No menus and no toolbar
-   set guioptions-=m
-   set guioptions-=T
-endif
+" Ctrl+<movement> keys to move around the windows
+map <c-j> <c-w>j
+map <c-k> <c-w>k
+map <c-l> <c-w>l
+map <c-h> <c-w>h
 
-set modeline
-set tabstop=2 " tab size = 2
-set shiftwidth=2 " soft space = 2
-set smarttab
-set expandtab " expand tabs
-set wildchar=9 " tab as completion character
+" TaskList
+map <leader>td <Plug>TaskList
 
-set virtualedit=block
-set clipboard+=unnamed  " Yanks go on clipboard instead.
-set showmatch " Show matching braces.
+" Revision History
+map <leader>g :GundoToggle<CR>
 
-" Line wrapping on by default
-set wrap
-set linebreak
-
-if has("win32") || has("win64")
-   set guifont=Ubuntu\ Mono:h13.5
-   let Tlist_Ctags_Cmd = 'e:\Tools\ctags.exe'
-   set directory=$TMP
-   if !has("gui_running")
-      colorscheme slate
-   end
-elseif has("mac")
-   set directory=/tmp
-   set guifont=Envy\ Code\ R:h14
-else
-   set directory=/tmp
-   set guifont=Envy\ Code\ R\ 14
-endif
-
-set history=50 " keep track of last commands
-set number ruler " show line numbers
-set incsearch " incremental searching on
-set hlsearch " highlight all matches
-set smartcase
-set cursorline
-set selectmode=key
-set showtabline=2 " show always for console version
-set laststatus=2 " Always show the statusline
-set tabline=%!MyTabLine()
-set wildmenu " menu on statusbar for command autocomplete
-" default to UTF-8 encoding
-set encoding=utf8
-set fileencoding=utf8
-" enable visible whitespace
-set listchars=tab:»·,trail:·,precedes:<,extends:>
-set list
-
-" no beep
-autocmd VimEnter * set vb t_vb= 
-
-" tab navigation like firefox
-nmap <C-S-tab> :tabprevious<cr>
-nmap <C-tab> :tabnext<cr>
-map <C-S-tab> :tabprevious<cr>
-map <C-tab> :tabnext<cr>
-imap <C-S-tab> <ESC>:tabprevious<cr>i
-imap <C-tab> <ESC>:tabnext<cr>i
-nmap <C-t> :tabnew<cr>
-imap <C-t> <ESC>:tabnew<cr> 
-" map \tx for the console version as well
-if !has("gui_running")
-   nmap <Leader>tn :tabnext<cr>
-   nmap <Leader>tp :tabprevious<cr>
-   nmap <Leader><F4> :tabclose<cr>
-end
-
-" Map Ctrl-E Ctrl-W to toggle linewrap option like in VS
-noremap <C-E><C-W> :set wrap!<CR>
-" Map Ctrl-M Ctrl-L to expand all folds like in VS
-noremap <C-M><C-L> :%foldopen!<CR>
-" Remap omni-complete to avoid having to type so fast
-inoremap <C-Space> <C-X><C-O>
-
-" Windows like movements for long lines with wrap enabled:
-noremap j gj
-noremap k gk
-
-" disable warnings from NERDCommenter:
-let g:NERDShutUp = 1
-
-" Make sure taglist doesn't change the window size
-let g:Tlist_Inc_Winwidth = 0
-nnoremap <silent> <F8> :TlistToggle<CR>
-
-" language specific customizations:
-let g:python_highlight_numbers = 1
-
-" set custom file types I've configured
-au BufNewFile,BufRead *.ps1  setf ps1
-au BufNewFile,BufRead *.boo  setf boo
-au BufNewFile,BufRead *.config  setf xml
-au BufNewFile,BufRead *.xaml  setf xml
-au BufNewFile,BufRead *.xoml  setf xml
-au BufNewFile,BufRead *.blogTemplate  setf xhtml
-au BufNewFile,BufRead *.brail  setf xhtml
-au BufNewFile,BufRead *.rst  setf xml
-au BufNewFile,BufRead *.rsb  setf xml
-au BufNewFile,BufRead *.io  setf io
-au BufNewFile,BufRead *.notes setf notes
-au BufNewFile,BufRead *.mg setf mg
-
-syntax on " syntax hilight on
-syntax sync fromstart 
+" Syntax highlighting
+syntax on
+filetype on
 filetype plugin indent on
+let g:pyflakes_use_quickfix = 0
 
-runtime xmlpretty.vim
-command! -range=% Xmlpretty :call XmlPretty(<line1>, <line2>)
-map <C-K><C-F> :Xmlpretty<CR>
+" Code validation (?)
+let g:pep8_map='<leader>8'
 
-"
-" Bind NERD_Tree plugin to a <Ctrl+E,Ctrl+E>
-"
-noremap <C-E><C-E> :NERDTree<CR>
-noremap <C-E><C-C> :NERDTreeClose<CR>
+" Tab cmpletion and documentation
+au FileType python set omnifunc=pythoncomplete#Complete
+let g:SuperTabDefaultCompletionType = "context"
+set completeopt=menuone,longest,preview
 
-"
-" Configure TOhtml command
-"
-let html_number_lines = 0
-let html_ignore_folding = 1
-let html_use_css = 1
-"let html_no_pre = 0
-let use_xhtml = 1
+" File browser
+map <leader>n :NERDTreeToggle<CR>
 
-"
-" Configure Ku
-"
-let g:ku_component_separators='/\\'
-"
-" Configure syntax specific options
-"
-let python_highlight_all = 1
+" Refactoring and Go to definition
+map <leader>j :RopeGotoDefinition<CR>
+map <leader>r :RopeRename<CR>
 
-"
-" Enable spellchecking conditionally
-"
-map <Leader>se :setlocal spell spelllang=en_us<CR>
-map <Leader>ss :setlocal spell spelllang=es_es<CR>
-map <Leader>sn :setlocal nospell<CR>
+" Searching
+nmap <leader>a <Esc>:Ack!
 
-"
-" Other stuff
-"
-runtime 'macros/matchit.vim'
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
+" Git integration
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 
-" 
-" Configure tabs for the console version
-"
-function! MyTabLine()
-  let s = ''
-  for i in range(tabpagenr('$'))
-    " select the highlighting
-    if i + 1 == tabpagenr()
-      let s .= '%#TabLineSel#'
-    else
-      let s .= '%#TabLine#'
-    endif
+map <Leader>mg :call MakeGreen()<cr>
 
-    " set the tab page number (for mouse clicks)
-    let s .= '%' . (i + 1) . 'T'
+" django nose, more info: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide#test-integration
+"map <leader>dt :set makeprg=python\ manage.py\ test\|:call MakeGreen()<CR>
 
-    " the label is made by MyTabLabel()
-    let s .= ' %{MyTabLabel(' . (i + 1) . ')} '
-  endfor
+" Execute the py.test tests, more info: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide#test-integration
+"nmap <silent><Leader>tf <Esc>:Pytest file<CR>
+"nmap <silent><Leader>tc <Esc>:Pytest class<CR>
+"nmap <silent><Leader>tm <Esc>:Pytest method<CR>
+" Cycle through py.test test errors, more info: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide#test-integration
+"nmap <silent><Leader>tn <Esc>:Pytest next<CR>
+"nmap <silent><Leader>tp <Esc>:Pytest previous<CR>
+"nmap <silent><Leader>te <Esc>:Pytest error<CR>
 
-  " after the last tab fill with TabLineFill and reset tab page nr
-  let s .= '%#TabLineFill#%T'
-
-  " right-align the label to close the current tab page
-  if tabpagenr('$') > 1
-    let s .= '%=%#TabLine#%999Xclose'
-  endif
-
-  return s
-endfunction
-
-function! MyTabLabel(n)
-  let buflist = tabpagebuflist(a:n)
-  let winnr = tabpagewinnr(a:n)
-  return bufname(buflist[winnr - 1])
-endfunction
-
+" Add the virtualenv's site-packages to vim path
+"py << EOF
+"import os.path
+"import sys
+"import vim
+"if 'VIRTUAL_ENV' in os.environ:
+"    project_base_dir = os.environ['VIRTUAL_ENV']
+"    sys.path.insert(0, project_base_dir)
+"    activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+"    execfile(activate_this, dict(__file__=activate_this))
+"EOF
