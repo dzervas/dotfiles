@@ -49,6 +49,7 @@ if [ -f ~/.bash-completion/bash_completion ]; then
 fi
 
 export EDITOR=vim
+PATH="$PATH:~/.gem/ruby/1.9.1/bin"
 
 #
 # run fortune at startup
