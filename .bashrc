@@ -26,6 +26,9 @@ PS1='\[\e[0;31m\]\u\[\e[m\] \[\e[1;34m\]\w\[\e[m\] \[\e[0;31m\]\$ \[\e[m\]\[\e[0
 # remove all *.pyc files in current directory
 alias rmpyc='find . -name "*.pyc" -exec rm -rf {} \;'
 
+# update all git repos in current dir
+alias gitup='for dir in *; do  if \[ -d "$dir/.git" \]; then cd $dir; echo "$dir:"; git pull; cd ..; fi; done'
+
 #if [ -f ~/.bash_aliases ]; then
 #    . ~/.bash_aliases
 #fi
