@@ -1,0 +1,6 @@
+URxvt*.scrollBar: false
+URxvt*.termName: screen-256color
+URxvt*.depth: 32
+URxvt*.background: [90]#000000
+URxvt*.foreground: #FFFFFF
+!URxvt*.shading: 110
