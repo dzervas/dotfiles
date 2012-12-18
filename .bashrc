@@ -18,20 +18,21 @@ shopt -s checkwinsize
 # color prompt
 PS1='\[\e[0;31m\]\u\[\e[m\] \[\e[1;34m\]\w\[\e[m\] \[\e[0;31m\]\$ \[\e[m\]\[\e[0;m\]'
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+# default editor
+export EDITOR=vim
 
+# add ruby gems to PATH
+export PATH="$PATH:~/.gem/ruby/1.9.1/bin"
+
+# Alias
 # remove all *.pyc files in current directory
 alias rmpyc='find . -name "*.pyc" -exec rm -rf {} \;'
 
 # update all git repos in current dir
 alias gitup='for dir in *; do  if \[ -d "$dir/.git" \]; then cd $dir; echo "$dir:"; git pull; cd ..; fi; done'
 
-#if [ -f ~/.bash_aliases ]; then
-#    . ~/.bash_aliases
-#fi
+# SSH tunnel
+alias ssh_tunn='ssh -fNCD 127.0.0.1:10000 -o CompressionLevel=9 '
 
 # enable color support of ls and also add handy aliases
 if [ "$TERM" != "dumb" ]; then
@@ -51,9 +52,3 @@ if [ -f ~/.bash-completion/bash_completion ]; then
     . ~/.bash-completion/bash_completion
 fi
 
-export EDITOR=vim
-PATH="$PATH:~/.gem/ruby/1.9.1/bin"
-
-#
-# run fortune at startup
-#
