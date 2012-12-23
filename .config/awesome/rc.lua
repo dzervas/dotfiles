@@ -37,7 +37,7 @@ end
 beautiful.init("/usr/share/awesome/themes/default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "urxvt"
+terminal = "xterm"
 editor = os.getenv("EDITOR") or "subl"
 -- editor_cmd = terminal .. " -e " .. editor
 editor_cmd = editor
@@ -67,6 +67,29 @@ layouts =
 }
 -- }}}
 
+-- {{{ keyboard layout
+-- Keyboard map indicator and changer
+kbdcfg = {}
+kbdcfg.cmd = "setxkbmap"
+kbdcfg.layout = { "us", "gr" }
+kbdcfg.current = 1  -- us is our default layout
+kbdcfg.widget = widget({ type = "textbox", align = "right" })
+kbdcfg.widget.text = " " .. kbdcfg.layout[kbdcfg.current] .. " "
+kbdcfg.switch = function ()
+kbdcfg.current = kbdcfg.current % #(kbdcfg.layout) + 1
+local t = " " .. kbdcfg.layout[kbdcfg.current] .. " "
+kbdcfg.widget.text = t
+os.execute( kbdcfg.cmd .. t )
+end
+
+-- Mouse bindings
+kbdcfg.widget:buttons(awful.util.table.join(
+awful.button({ }, 1, function () kbdcfg.switch() end)
+))
+-- Alt + Right Shift switches the current keyboard layout
+awful.key({ "Mod1" }, "Shift_R", function () kbdcfg.switch() end)
+-- }}}
+
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
 tags = {}
@@ -76,8 +99,8 @@ tags = {}
 -- end
 
 
-tags[1] = awful.tag({"Firefox", "Terminal", "Tmp"}, 1, layouts[1])
-tags[2] = awful.tag({"Sublime", "Terminal", "Minecraft", "Skype", "Tmp"}, 2, layouts[1])
+tags[1] = awful.tag({"Firefox", "Terminal", "Tmp"}, 1, layouts[2])
+tags[2] = awful.tag({"Sublime", "Terminal", "Minecraft", "Skype", "Tmp"}, 2, layouts[2])
 -- }}}
 
 -- {{{ Menu
@@ -324,15 +347,14 @@ awful.rules.rules = {
 		focus = true,
 		keys = clientkeys,
 		buttons = clientbuttons } },
-	{ rule = { class = "MPlayer" },
-	  properties = { floating = true } },
-	{ rule = { class = "pinentry" },
-	  properties = { floating = true } },
-	{ rule = { class = "gimp" },
-	  properties = { floating = true } },
+	{ rule = { class = "MPlayer" }, properties = { floating = true } },
+	{ rule = { class = "pinentry" }, properties = { floating = true } },
+	{ rule = { class = "gimp" }, properties = { floating = true } },
 	-- Set Firefox to always map on tags number 2 of screen 1.
-	-- { rule = { class = "Firefox" },
-	--   properties = { tag = tags[1][2] } },
+	{ rule = { class = "Firefox" }, properties = { tag = tags[1]["Firefox"] } },
+	{ rule = { class = "Skype" }, properties = { tag = tags[2]["Skype"] } },
+	{ rule = { class = "xterm" }, properties = { tag = tags[2]["Terminal"] } },
+	{ rule = { class = "Sublime Text 2" }, properties = { tag = tags[2]["Sublime"] } },
 }
 -- }}}
 
