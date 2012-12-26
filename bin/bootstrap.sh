@@ -2,7 +2,7 @@
 case $1 in
 	install)
 		export backup_dir="$HOME/.backup"
-		export files=`ls -A`
+		export files=`ls -A --ignore=".git"`
 		for file in $files; do
 			if [[ -f "$HOME/$file" || -d "$HOME/$file" ]] ; then
 				echo "$file exists, moving to $backup_dir"
@@ -13,6 +13,9 @@ case $1 in
 			fi
 			ln -s "`pwd`/$file" $HOME/
 		done
+		
+		git submodule update --init
+		git submodule foreach git pull origin master
 		;;
 	uninstall)
 		echo "You have to do that manually, or contribute to this script. Lazy dog."
