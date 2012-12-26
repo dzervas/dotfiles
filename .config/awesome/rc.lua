@@ -41,7 +41,7 @@ beautiful.init("/usr/share/awesome/themes/default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "xterm"
-editor = os.getenv("EDITOR") or "subl"
+editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -77,23 +77,21 @@ end
 -- }}}
 
 -- {{{ Tags
--- tags = {
--- 	awful.tag({"Firefox", "Terminal", "Tmp"}, s, layouts[2]),
--- 	awful.tag({"Sublime", "Terminal", "Minecraft", "Skype", "Tmp"}, s, layouts[2]),
--- }
 tags = {}
 for s = 1, screen.count() do
 	-- Each screen has its own tag table.
-	if s == 1 then
-		tags[s] = awful.tag({"Firefox", "Terminal", "Tmp"}, s, layouts[2])
-	elseif s == 2 then
-		tags[2] = awful.tag({"Sublime", "Terminal", "Minecraft", "Skype", "Tmp"}, s, layouts[2])
+	if screen.count() == 1 then
+		tags[s] = awful.tag({"Firefox", "Terminal", "Skype", "Tmp"}, s, layouts[2])
+	elseif screen.count() == 2 then
+		if s == 1 then
+			tags[s] = awful.tag({"Firefox", "Terminal", "Tmp"}, s, layouts[2])
+		else
+			tags[2] = awful.tag({"Sublime", "Terminal", "Minecraft", "Skype", "Tmp"}, s, layouts[2])
+		end
 	else
-		tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[1])
+		tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[2])
 	end
 end
--- tags[1] = awful.tag({"Firefox", "Terminal", "Tmp"}, s, layouts[1])
--- tags[2] = awful.tag({"Sublime", "Terminal", "Minecraft", "Skype", "Tmp"}, s, layouts[2])
 -- }}}
 
 -- {{{ Menu
@@ -104,7 +102,8 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = {{ "awesome", myawesomemenu, beautiful.awesome_icon },
-	{"open terminal", terminal}}})
+	{"open terminal", terminal},
+	{"Log out", '~/bin/shutdown_dialog.sh'},}})
 
 mylauncher = awful.widget.launcher({image = beautiful.awesome_icon, menu = mymainmenu })
 
