@@ -3,3 +3,5 @@
    email = 01ttouch@gmail.com
 [color]
    ui=auto
+[push]
+	default = simple
