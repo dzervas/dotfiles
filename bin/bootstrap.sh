@@ -2,7 +2,7 @@
 case $1 in
 	install)
 		export backup_dir="$HOME/.backup"
-		export files=`ls -A --ignore=".git"`
+		export files=`ls -A --ignore=".git{,modules,ignore}"`
 		for file in $files; do
 			if [[ -f "$HOME/$file" || -d "$HOME/$file" ]] ; then
 				echo "$file exists, moving to $backup_dir"
