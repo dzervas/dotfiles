@@ -6,7 +6,7 @@
 	export HISTCONTROL=ignoredups
 	export PS1='\[\e[0;31m\]\u\[\e[m\] \[\e[1;34m\]\w\[\e[m\] \[\e[0;31m\]\$ \[\e[m\]\[\e[0;m\]'
 	export EDITOR=vim
-	export PATH="$PATH:~/.gem/ruby/1.9.1/bin"
+	export PATH="~/bin:$PATH:~/.gem/ruby/1.9.1/bin"
 	# Check the window size after each command to update LINES and COLUMNS if necessary
 	shopt -s checkwinsize
 

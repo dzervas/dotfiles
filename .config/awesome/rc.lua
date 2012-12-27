@@ -86,7 +86,7 @@ for s = 1, screen.count() do
 		if s == 1 then
 			tags[s] = awful.tag({"Firefox", "Terminal", "Tmp"}, s, layouts[2])
 		else
-			tags[2] = awful.tag({"Sublime", "Terminal", "Minecraft", "Skype", "Tmp"}, s, layouts[2])
+			tags[s] = awful.tag({"Sublime", "Terminal", "Minecraft", "Skype", "Tmp"}, s, layouts[2])
 		end
 	else
 		tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[2])
@@ -96,14 +96,12 @@ end
 
 -- {{{ Menu
 -- Create a laucher widget and a main menu
-myawesomemenu = {
-	{"restart", awesome.restart},
-	{"quit", awesome.quit}
-}
-
-mymainmenu = awful.menu({ items = {{ "awesome", myawesomemenu, beautiful.awesome_icon },
-	{"open terminal", terminal},
-	{"Log out", '~/bin/shutdown_dialog.sh'},}})
+mymainmenu = awful.menu({items = {
+	{"Restart awesome", awesome.restart, beautiful.awesome_icon},
+	{"Firefox", "firefox"},
+	{"Terminal", terminal},
+	{"Log out", 'shutdown_dialog.sh'},
+}})
 
 mylauncher = awful.widget.launcher({image = beautiful.awesome_icon, menu = mymainmenu })
 

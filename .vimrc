@@ -1,6 +1,25 @@
 " info taken by: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide
 " This must be first, because it changes other options as side effect
 set nocompatible
+set mouse=a
+set tabstop=4
+set autoindent
+set copyindent
+set number
+set smartcase
+set smarttab
+set hlsearch		" Highlight search terms
+set incsearch
+set foldmethod=indent	" Code folding
+set foldlevel=99
+set history=1000
+set undolevels=1000
+set wildignore=*.swp,*.b,*.pyc,*.class,*.apk
+set title
+set visualbell
+set nobackup
+set noswapfile
+set pastetoggle=<F2>
 
 " Load pathogen
 filetype off
@@ -11,21 +30,17 @@ call pathogen#helptags()
 set t_Co=256
 colorscheme molokai
 
-" Code Folding
-set foldmethod=indent
-set foldlevel=99
-
 " change the mapleader from \ to ,
 let mapleader=","
 
-" Ctrl+<movement> keys to move around the windows
-map <A-j> <c-w>j
-map <A-k> <c-w>k
-map <A-l> <c-w>l
-map <A-h> <c-w>h
+" Alt+<movement> keys to move around the windows
+map <A-down> <c-w>j
+map <A-up> <c-w>k
+map <A-right> <c-w>l
+map <A-left> <c-w>h
 
 " TaskList
-map <leader>td <Plug>TaskList
+map <A-t> <Plug>TaskList
 
 " Syntax highlighting
 syntax on
@@ -42,22 +57,17 @@ let g:SuperTabDefaultCompletionType = "context"
 set completeopt=menuone,longest,preview
 
 " File browser
-map <leader>n :NERDTreeToggle<CR>
-
-" Refactoring and Go to definition
-map <leader>j :RopeGotoDefinition<CR>
-map <leader>r :RopeRename<CR>
-
-" Searching
-nmap <leader>a <Esc>:Ack!
+let NERDTreeShowHidden=1
+map <A-f> :NERDTreeToggle<CR>
 
 " Git integration
 set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+let g:miniBufExplUseSingleClick = 1
 
-map <Leader>mg :call MakeGreen()<cr>
-
-" django nose, more info: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide#test-integration
-"map <leader>dt :set makeprg=python\ manage.py\ test\|:call MakeGreen()<CR>
+" Buffer Explorer
+let g:miniBufExplUseSingleClick = 1
+let g:miniBufExplShowBufNumbers = 0
+let g:miniBufExplForceSyntaxEnable = 1
 
 " Execute the py.test tests, more info: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide#test-integration
 "nmap <silent><Leader>tf <Esc>:Pytest file<CR>
@@ -67,15 +77,3 @@ map <Leader>mg :call MakeGreen()<cr>
 "nmap <silent><Leader>tn <Esc>:Pytest next<CR>
 "nmap <silent><Leader>tp <Esc>:Pytest previous<CR>
 "nmap <silent><Leader>te <Esc>:Pytest error<CR>
-
-" Add the virtualenv's site-packages to vim path
-"py << EOF
-"import os.path
-"import sys
-"import vim
-"if 'VIRTUAL_ENV' in os.environ:
-"    project_base_dir = os.environ['VIRTUAL_ENV']
-"    sys.path.insert(0, project_base_dir)
-"    activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
-"    execfile(activate_this, dict(__file__=activate_this))
-"EOF
