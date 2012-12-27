@@ -40,8 +40,8 @@
 [submodule ".vim/bundle/togglemouse"]
 	path = .vim/bundle/togglemouse
 	url = https://github.com/nvie/vim-togglemouse.git
-[submodule "TeTrIs.vim"]
-	path = TeTrIs.vim
+[submodule ".vim/bundle/tetris"]
+	path = .vim/bundle/tetris
 	url = https://github.com/vim-scripts/TeTrIs.vim.git
 [submodule ".vim/bundle/autoclose"]
 	path = .vim/bundle/autoclose
