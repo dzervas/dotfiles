@@ -2,7 +2,7 @@
 " This must be first, because it changes other options as side effect
 set nocompatible
 set mouse=a
-set tabstop=6
+set tabstop=8
 set autoindent
 set copyindent
 set number
@@ -16,7 +16,6 @@ set history=1000
 set undolevels=1000
 set wildignore=*.swp,*.b,*.pyc,*.class,*.apk
 set title
-set visualbell
 set nobackup
 set noswapfile
 set pastetoggle=<F2>

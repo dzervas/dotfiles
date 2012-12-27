@@ -1,7 +1,10 @@
 [user]
-   name = Dimitris Zervas
-   email = 01ttouch@gmail.com
+	name = Dimitris Zervas
+	email = 01ttouch@gmail.com
 [color]
-   ui=auto
+	ui = auto
 [push]
 	default = simple
+[alias]
+	acp = "!git-add-commit-push"
+	pull-all = "!git-pull-all"
