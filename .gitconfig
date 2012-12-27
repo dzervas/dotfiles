@@ -6,5 +6,6 @@
 [push]
 	default = simple
 [alias]
-	acp = "!git-add-commit-push"
-	pull-all = "!git-pull-all"
+	aa = !git add -u && git add . && git status
+	ac = !git aa && git commit
+#	pulla = !bash -c "for dir in *; do  if \[ -d '$dir/.git' \]; then cd $dir; git pull; cd ..; fi; done" -
