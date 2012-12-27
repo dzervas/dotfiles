@@ -2,7 +2,7 @@
 " This must be first, because it changes other options as side effect
 set nocompatible
 set mouse=a
-set tabstop=4
+set tabstop=6
 set autoindent
 set copyindent
 set number
@@ -62,15 +62,16 @@ map <A-f> :NERDTreeToggle<CR>
 
 " Git integration
 set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
-let g:miniBufExplUseSingleClick = 1
 
 " Buffer Explorer
-"let g:miniBufExplUseSingleClick = 1
 let g:miniBufExplShowBufNumbers = 0
-let g:miniBufExplForceSyntaxEnable = 1
+"let g:miniBufExplForceSyntaxEnable = 1
 
 " Disable mouse
 map <F3> <F12>
+
+" Do not insert comments automatically
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
 " Execute the py.test tests, more info: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide#test-integration
 "nmap <silent><Leader>tf <Esc>:Pytest file<CR>

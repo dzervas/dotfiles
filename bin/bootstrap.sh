@@ -1,10 +1,13 @@
 #!/bin/bash
+
 case $1 in
 	install)
 		export backup_dir="$HOME/.backup"
-		export files=`ls -A --ignore=".git{,modules,ignore}"`
+		export files=`ls -A --ignore=".git{,modules,ignore}" --ignore=".config"`
+		export conf_files=`ls -A .config/`
+		# TODO: create proper symlinks of ~/.config
 		for file in $files; do
-			if [[ -f "$HOME/$file" || -d "$HOME/$file" ]] ; then
+			if [[ -f "$HOME/$file" ]  || [ -d "$HOME/$file" ] && [ ! -L "$HOME/$file" ]]  ; then
 				echo "$file exists, moving to $backup_dir"
 				if [ ! -d $backup_dir ]; then
 					mkdir -p $backup_dir
@@ -14,6 +17,7 @@ case $1 in
 			ln -s "`pwd`/$file" $HOME/
 		done
 		
+		ln -s .config/???* "$HOME/.config/"
 		git submodule update --init
 		git submodule foreach git pull origin master
 		;;

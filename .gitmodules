@@ -43,3 +43,6 @@
 [submodule "TeTrIs.vim"]
 	path = TeTrIs.vim
 	url = https://github.com/vim-scripts/TeTrIs.vim.git
+[submodule ".vim/bundle/autoclose"]
+	path = .vim/bundle/autoclose
+	url = https://github.com/vim-scripts/AutoClose.git
