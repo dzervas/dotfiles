@@ -1,27 +1,31 @@
-set t_Co=256
-" All info taken by: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide
+" info taken by: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide
+" This must be first, because it changes other options as side effect
+set nocompatible
+
 " Load pathogen
 filetype off
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 
+" Set 256 colors and the theme
+set t_Co=256
 colorscheme molokai
 
 " Code Folding
 set foldmethod=indent
 set foldlevel=99
 
+" change the mapleader from \ to ,
+let mapleader=","
+
 " Ctrl+<movement> keys to move around the windows
-map <c-j> <c-w>j
-map <c-k> <c-w>k
-map <c-l> <c-w>l
-map <c-h> <c-w>h
+map <A-j> <c-w>j
+map <A-k> <c-w>k
+map <A-l> <c-w>l
+map <A-h> <c-w>h
 
 " TaskList
 map <leader>td <Plug>TaskList
-
-" Revision History
-map <leader>g :GundoToggle<CR>
 
 " Syntax highlighting
 syntax on
