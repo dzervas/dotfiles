@@ -86,7 +86,7 @@ for s = 1, screen.count() do
 		if s == 1 then
 			tags[s] = awful.tag({"Firefox", "Terminal", "Tmp"}, s, layouts[2])
 		else
-			tags[s] = awful.tag({"Sublime", "Terminal", "Minecraft", "Skype", "Tmp"}, s, layouts[2])
+			tags[s] = awful.tag({"Vim", "Terminal", "Minecraft", "Skype", "Tmp"}, s, layouts[2])
 		end
 	else
 		tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[2])

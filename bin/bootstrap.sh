@@ -37,7 +37,7 @@ case $1 in
 		pacman -U *xz
 		cd ../..
 		echo "Installing Sublime Text 2, Minecraft and Skype via AUR"
-		yaourt -S sublime-text minecraft skype
+		yaourt -S minecraft skype
 		echo "Enabling Slim on boot"
 		systemctl enable slim.service
 		echo "I'm done. Install the appropriate graphics driver and then reboot."

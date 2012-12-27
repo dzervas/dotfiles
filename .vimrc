@@ -34,10 +34,10 @@ colorscheme molokai
 let mapleader=","
 
 " Alt+<movement> keys to move around the windows
-map <A-down> <c-w>j
-map <A-up> <c-w>k
-map <A-right> <c-w>l
-map <A-left> <c-w>h
+map <A-down> <C-w>j
+map <A-up> <C-w>k
+map <A-right> <C-w>l
+map <A-left> <C-w>h
 
 " TaskList
 map <A-t> <Plug>TaskList
@@ -65,9 +65,12 @@ set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 let g:miniBufExplUseSingleClick = 1
 
 " Buffer Explorer
-let g:miniBufExplUseSingleClick = 1
+"let g:miniBufExplUseSingleClick = 1
 let g:miniBufExplShowBufNumbers = 0
 let g:miniBufExplForceSyntaxEnable = 1
+
+" Disable mouse
+map <F3> <F12>
 
 " Execute the py.test tests, more info: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide#test-integration
 "nmap <silent><Leader>tf <Esc>:Pytest file<CR>
