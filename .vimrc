@@ -62,15 +62,20 @@ map <A-f> :NERDTreeToggle<CR>
 " Git integration
 set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 
-" Buffer Explorer
-let g:miniBufExplShowBufNumbers = 0
-"let g:miniBufExplForceSyntaxEnable = 1
+" Tab Bar
+let g:Tb_cTabSwitchBufs = 1
 
 " Disable mouse
 map <F3> <F12>
 
 " Do not insert comments automatically
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+" Test this shortcut...
+nnoremap ; :
+
+" Don't forget sudo ever again!
+cmap w!! w !sudo tee % >/dev/null
 
 " Execute the py.test tests, more info: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide#test-integration
 "nmap <silent><Leader>tf <Esc>:Pytest file<CR>
