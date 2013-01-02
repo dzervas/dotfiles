@@ -7,7 +7,7 @@ case $1 in
 		export conf_files=`ls -A .config/`
 		# TODO: create proper symlinks of ~/.config
 		for file in $files; do
-			if [[ -f "$HOME/$file" ]  || [ -d "$HOME/$file" ] && [ ! -L "$HOME/$file" ]]  ; then
+			if [ -f "$HOME/$file" ]  || [ -d "$HOME/$file" ] && [ ! -L "$HOME/$file" ]  ; then
 				echo "$file exists, moving to $backup_dir"
 				if [ ! -d $backup_dir ]; then
 					mkdir -p $backup_dir
