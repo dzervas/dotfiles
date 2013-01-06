@@ -63,6 +63,21 @@ local layouts = {
 	awful.layout.suit.max.fullscreen,
 	awful.layout.suit.magnifier
 }
+
+kbdcfg = {}
+kbdcfg.cmd = "setxkbmap"
+kbdcfg.layout = { "us", "gr"}
+kbdcfg.current = 1
+kbdcfg.switch = function ()
+	if kbdcfg.current == #(kbdcfg.layout) then
+		kbdcfg.current = kbdcfg.current - 1
+	else
+		kbdcfg.current = kbdcfg.current + 1
+	end
+
+	local t = " " .. kbdcfg.layout[kbdcfg.current] .. " "
+	os.execute( kbdcfg.cmd .. t )
+end
 -- }}}
 
 -- {{{ Wallpaper
@@ -83,11 +98,20 @@ for s = 1, screen.count() do
 		if s == 1 then
 			tags[s] = awful.tag({"Firefox", "Terminal", "Tmp"}, s, layouts[2])
 		else
-			tags[s] = awful.tag({"Vim", "Terminal", "Minecraft", "Skype", "Tmp"}, s, layouts[2])
+			tags[s] = awful.tag({"Terminal", "Skype", "Minecraft", "Tmp"}, s, layouts[2])
 		end
 	else
-		tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[2])
+		tags[s] = awful.tag({ 11, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[2])
 	end
+end
+
+order = {}
+if screen.count() == 2 then
+	order["term"] = tags[2][1]
+	order["skype"] = tags[2][2]
+else
+	order["term"] = tags[1][2]
+	order["skype"] = tags[1][3]
 end
 -- }}}
 
@@ -267,7 +291,8 @@ globalkeys = awful.util.table.join(
 		awful.util.getdir("cache") .. "/history_eval")
 	end),
 	-- Menubar
-	awful.key({ modkey }, "p", function() menubar.show() end)
+	awful.key({ modkey }, "p", function() menubar.show() end),
+	awful.key({ "Mod1" }, "Shift_L", function () kbdcfg.switch() end)
 )
 
 clientkeys = awful.util.table.join(
@@ -343,10 +368,15 @@ awful.rules.rules = {
 	{rule = {class = "MPlayer"}, properties = {floating = true }},
 	{rule = {class = "pinentry"}, properties = {floating = true }},
 	{rule = {class = "gimp"}, properties = {floating = true}},
-	-- Set Firefox to always map on tags number 2 of screen 1.
 	{rule = {class = "Firefox"}, properties = {tag = tags[1][1]}},
+	{rule = {instance = "Terminal"}, properties = {tag = order["term"]}},
+	{rule = {class = "Skype"}, properties = {tag = order["skype"]}},
 }
 -- }}}
+
+awful.util.spawn("firefox")
+awful.util.spawn("skype")
+awful.util.spawn("xterm -name Terminal")
 
 -- {{{ Signals
 -- Signal function to execute when a new client appears.

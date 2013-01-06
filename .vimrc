@@ -8,7 +8,7 @@ set copyindent
 set number
 set smartcase
 set smarttab
-set hlsearch		" Highlight search terms
+" set hlsearch		" Highlight search terms
 set incsearch
 set foldmethod=indent	" Code folding
 set foldlevel=99
@@ -64,6 +64,8 @@ set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 
 " Tab Bar
 let g:Tb_cTabSwitchBufs = 1
+map <A-Tab> <C-w>k<Tab><CR>
+map <A-S-Tab> <C-w>k<Tab><CR>
 
 " Disable mouse
 map <F3> <F12>
