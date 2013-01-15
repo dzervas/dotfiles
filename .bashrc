@@ -14,9 +14,10 @@
 	# remove all *.pyc files in current directory and subdirectories
 	alias rmpyc='find . -name "*.pyc" -exec rm -rf {} \;'
 	# update all git repos in current dir
-	function git-pull-all() {
+
+	function gitup() {
 		for dir in *; do
-			if \[ -d "$dir/.git" \]; then
+			if [ -d "$dir/.git" ]; then
 				cd $dir
 				echo "$dir:"
 				git pull
@@ -24,13 +25,13 @@
 			fi
 		done
 	}
-	# git add all, commit $msg and push
-	function git-add-commit-push() {
-		git status
-		git add -A
-		git commit
-		git push origin master
+
+	# git add all, commit and push
+	function gitacp() {
+		git ac
+		git push
 	} 
+
 	# enable color support of ls and also add handy aliases
 	if [ "$TERM" != "dumb" ]; then
 		eval "`dircolors -b`"
