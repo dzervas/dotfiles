@@ -3,9 +3,6 @@
 	email = 01ttouch@gmail.com
 [color]
 	ui = auto
-[push]
-	default = simple
 [alias]
 	aa = !git add -u && git add . && git status
 	ac = !git aa && git commit
-#	pulla = !bash -c "for dir in *; do  if \[ -d '$dir/.git' \]; then cd $dir; git pull; cd ..; fi; done" -
