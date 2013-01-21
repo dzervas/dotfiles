@@ -1,4 +1,4 @@
-" info taken by: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide
+"info taken by: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide
 " This must be first, because it changes other options as side effect
 set nocompatible
 set mouse=a			" By default mouse is for vim. F2 to cycle between
@@ -52,17 +52,15 @@ map <A-t> <Plug>TaskList
 syntax on
 filetype on
 filetype plugin indent on
-let g:pyflakes_use_quickfix = 0
 
 " Code validation (?)
 let g:pep8_map='<leader>8'
 
-" Tab completion and documentation
-"au FileType python set omnifunc=pythoncomplete#Complete
-"let g:SuperTabDefaultCompletionType = "context"
-"set completeopt=menuone,longest,preview
 map <A-Tab> :tabN<CR>
 map <A-S-Tab> :tabp<CR>
+map <A-PageUp> :bn<CR>
+map <A-PageDown> :bp<CR>
+map ls :ls<CR>
 
 " File browser
 let NERDTreeShowHidden=1
@@ -70,6 +68,8 @@ map <A-f> :NERDTreeToggle<CR>
 
 " Git integration
 set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+map ac :Git add -A<CR>:Gcommit<CR>
+map <A-p> :Git push<CR>
 
 " Disable mouse
 map <F3> <F12>
