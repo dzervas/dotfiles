@@ -1,27 +1,6 @@
 [submodule ".vim/bundle/fugitive"]
 	path = .vim/bundle/fugitive
 	url = https://github.com/tpope/vim-fugitive.git
-[submodule ".vim/bundle/surround"]
-	path = .vim/bundle/surround
-	url = https://github.com/tpope/vim-surround.git
-[submodule ".vim/bundle/git"]
-	path = .vim/bundle/git
-	url = https://github.com/tpope/vim-git.git
-[submodule ".vim/bundle/supertab"]
-	path = .vim/bundle/supertab
-	url = https://github.com/ervandew/supertab.git
-[submodule ".vim/bundle/command-t"]
-	path = .vim/bundle/command-t
-	url = https://github.com/wincent/Command-T.git
-[submodule ".vim/bundle/pyflakes-pathogen"]
-	path = .vim/bundle/pyflakes-pathogen
-	url = https://github.com/mitechie/pyflakes-pathogen.git
-[submodule ".vim/bundle/pydoc"]
-	path = .vim/bundle/pydoc
-	url = https://github.com/fs111/pydoc.vim.git
-[submodule ".vim/bundle/pep8"]
-	path = .vim/bundle/pep8
-	url = https://github.com/vim-scripts/pep8.git
 [submodule ".vim/bundle/py.test"]
 	path = .vim/bundle/py.test
 	url = https://github.com/alfredodeza/pytest.vim.git
@@ -43,9 +22,6 @@
 [submodule ".vim/bundle/autoclose"]
 	path = .vim/bundle/autoclose
 	url = https://github.com/vim-scripts/AutoClose.git
-[submodule ".vim/bundle/abolish"]
-	path = .vim/bundle/abolish
-	url = https://github.com/tpope/vim-abolish
 [submodule ".vim/bundle/tabbar"]
 	path = .vim/bundle/tabbar
 	url = https://github.com/vim-scripts/TabBar.git

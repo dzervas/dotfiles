@@ -12,6 +12,9 @@
 #fi
 
 #xrdb -merge "${HOME}/.Xresources"
-exec /usr/bin/awesome >> ~/.cache/awesome/stdout 2>> ~/.cache/awesome/stderr &
-DISPLAY=:1.1 awesome &
-xterm
+#exec /usr/bin/awesome >> ~/.cache/awesome/stdout 2>> ~/.cache/awesome/stderr &
+
+exec /media/files/Lab/dminiwm/dminiwm >> ~/.cache/wm.log 2>> ~/.cache/wm_err.log &
+#DISPLAY=:1.1 awesome &
+#xterm
+xsetroot -cursor_name left_ptr &

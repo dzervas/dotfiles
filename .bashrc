@@ -4,9 +4,9 @@
 # Variable definitions
 	# No duplicates in history
 	export HISTCONTROL=ignoredups
-	export PS1='\[\e[0;31m\]\u\[\e[m\] \[\e[1;34m\]\w\[\e[m\] \[\e[0;31m\]\$ \[\e[m\]\[\e[0;m\]'
+	export PS1='\[\e[0;31m\]\u\[\e[m\] \[\e[1;34m\]\W\[\e[m\] \[\e[0;32m\]$(git rev-parse --abbrev-ref HEAD 2> /dev/null)\[\e[m\] \[\e[0;31m\]\$ \[\e[m\]\[\e[0;m\]'
 	export EDITOR=vim
-	export PATH="~/bin:$PATH:~/.gem/ruby/1.9.1/bin"
+	export PATH="~/bin:$PATH:~/.gem/ruby/1.9.1/bin:~/Lab/arm-linux-androideabi-4.6/bin"
 	# Check the window size after each command to update LINES and COLUMNS if necessary
 	shopt -s checkwinsize
 

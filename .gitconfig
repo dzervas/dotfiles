@@ -6,3 +6,5 @@
 [alias]
 	aa = !git add -u && git add . && git status
 	ac = !git aa && git commit
+[push]
+	default = matching

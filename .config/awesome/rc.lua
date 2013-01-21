@@ -48,6 +48,8 @@ editor_cmd = terminal .. " -e " .. editor
 -- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
 
+makesloppy = true
+
 -- Table of layouts to cover with awful.layout.inc, order matters.
 local layouts = {
 	awful.layout.suit.floating,
@@ -292,7 +294,16 @@ globalkeys = awful.util.table.join(
 	end),
 	-- Menubar
 	awful.key({ modkey }, "p", function() menubar.show() end),
-	awful.key({ "Mod1" }, "Shift_L", function () kbdcfg.switch() end)
+	-- Change menu layout
+	awful.key({ "Mod1" }, "Shift_L", function () kbdcfg.switch() end),
+	-- Toggle sloppy
+	awful.key({ modkey, "Shift"   }, "s", function ()
+		if makesloppy then
+			makesloppy = false
+		else
+			makesloppy = true
+		end
+	end)
 )
 
 clientkeys = awful.util.table.join(
@@ -383,8 +394,7 @@ awful.util.spawn("xterm -name Terminal")
 client.connect_signal("manage", function (c, startup)
 		-- Enable sloppy focus
 		c:connect_signal("mouse::enter", function(c)
-				if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier
-						and awful.client.focus.filter(c) then
+				if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier and awful.client.focus.filter(c) and makesloppy then
 						client.focus = c
 				end
 		end)

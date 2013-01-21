@@ -14,7 +14,7 @@ set foldmethod=indent	" Code folding
 set foldlevel=99
 set history=1000
 set undolevels=1000
-set wildignore=*.swp,*.b,*.pyc,*.class,*.apk
+set wildignore=*.swp,*.b,*.pyc,*.class,*.apk,*.jar
 set title
 set nobackup
 set noswapfile
@@ -50,10 +50,10 @@ let g:pyflakes_use_quickfix = 0
 " Code validation (?)
 let g:pep8_map='<leader>8'
 
-" Tab cmpletion and documentation
-au FileType python set omnifunc=pythoncomplete#Complete
-let g:SuperTabDefaultCompletionType = "context"
-set completeopt=menuone,longest,preview
+" Tab completion and documentation
+"au FileType python set omnifunc=pythoncomplete#Complete
+"let g:SuperTabDefaultCompletionType = "context"
+"set completeopt=menuone,longest,preview
 
 " File browser
 let NERDTreeShowHidden=1
