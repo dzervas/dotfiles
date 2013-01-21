@@ -2,3 +2,4 @@
 .vim/info/
 tags
 *.pyc
+.ssh #just in case...
