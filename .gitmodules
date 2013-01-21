@@ -25,3 +25,6 @@
 [submodule ".vim/bundle/tabbar"]
 	path = .vim/bundle/tabbar
 	url = https://github.com/vim-scripts/TabBar.git
+[submodule ".vim/bundle/autocomplpop"]
+	path = .vim/bundle/autocomplpop
+	url = https://github.com/vim-scripts/AutoComplPop.git

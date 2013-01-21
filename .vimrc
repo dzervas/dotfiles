@@ -63,9 +63,9 @@ map <A-f> :NERDTreeToggle<CR>
 set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 
 " Tab Bar
-let g:Tb_cTabSwitchBufs = 1
-map <A-Tab> <C-w>k<Tab><CR>
-map <A-S-Tab> <C-w>k<Tab><CR>
+let g:Tb_cTabSwitchWindows = 1
+"map <A-Tab> <C-w>k<Tab><CR>
+"map <A-S-Tab> <C-w>k<Tab><CR>
 
 " Disable mouse
 map <F3> <F12>
