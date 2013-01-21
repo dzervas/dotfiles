@@ -1,24 +1,31 @@
 " info taken by: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide
 " This must be first, because it changes other options as side effect
 set nocompatible
-set mouse=a
+set mouse=a			" By default mouse is for vim. F2 to cycle between
 set tabstop=8
 set autoindent
 set copyindent
-set number
-set smartcase
-set smarttab
-" set hlsearch		" Highlight search terms
+set number			" Show numbers
+set smartcase			" Ignore case when lowercase used in search
+set smarttab			" Helps with backspacing with space indent
+set hlsearch			" Highlight search terms
 set incsearch
-set foldmethod=indent	" Code folding
-set foldlevel=99
-set history=1000
-set undolevels=1000
+set foldmethod=indent		" Code folding
+set foldlevel=99		" Folding level
+set history=1000		" Number of commands to remember
+set undolevels=1000		" Undo states to remember
 set wildignore=*.swp,*.b,*.pyc,*.class,*.apk,*.jar
 set title
 set nobackup
-set noswapfile
-set pastetoggle=<F2>
+set noswapfile			" Disable the fucking .swp files
+set pastetoggle=<F2>		" Toggle paste mode with F2
+set showtabline=1		" Always show the tab bar
+set cryptmethod=blowfish	" Use (much) stronger blowfish encryption"
+set showmode			" Show current mode 
+set cursorline			" Highlight the current line
+set ttyfast			" Improves redrawing for newer computers
+set sidescroll=2		" Only scroll horizontally little by little
+set laststatus=2		" Makes the status bar always visible"
 
 " Load pathogen
 filetype off
@@ -54,6 +61,8 @@ let g:pep8_map='<leader>8'
 "au FileType python set omnifunc=pythoncomplete#Complete
 "let g:SuperTabDefaultCompletionType = "context"
 "set completeopt=menuone,longest,preview
+map <A-Tab> :tabN<CR>
+map <A-S-Tab> :tabp<CR>
 
 " File browser
 let NERDTreeShowHidden=1
@@ -61,11 +70,6 @@ map <A-f> :NERDTreeToggle<CR>
 
 " Git integration
 set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
-
-" Tab Bar
-let g:Tb_cTabSwitchWindows = 1
-"map <A-Tab> <C-w>k<Tab><CR>
-"map <A-S-Tab> <C-w>k<Tab><CR>
 
 " Disable mouse
 map <F3> <F12>
@@ -87,3 +91,14 @@ cmap w!! w !sudo tee % >/dev/null
 "nmap <silent><Leader>tn <Esc>:Pytest next<CR>
 "nmap <silent><Leader>tp <Esc>:Pytest previous<CR>
 "nmap <silent><Leader>te <Esc>:Pytest error<CR>
+
+nnoremap <silent> <leader>l
+	\ :set nolist!<cr>:set nolist?<cr>
+	\ :if exists('w:long_line_match') <bar>
+		\ silent! call matchdelete(w:long_line_match) <bar>
+		\ unlet w:long_line_match <bar>
+	\ elseif &textwidth > 0 <bar>
+		\ let w:long_line_match = matchadd('ErrorMsg', '\%>'.&tw.'v.\+', -1) <bar>
+	\ else <bar>
+		\ let w:long_line_match = matchadd('ErrorMsg', '\%>80v.\+', -1) <bar>
+	\ endif<cr>
