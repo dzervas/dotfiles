@@ -80,6 +80,9 @@ autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 " Test this shortcut...
 nnoremap ; :
 
+" Unhighlight search
+nnoremap <silent> <C-l> :nohl<CR><C-l>
+
 " Don't forget sudo ever again!
 cmap w!! w !sudo tee % >/dev/null
 
