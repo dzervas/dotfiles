@@ -39,8 +39,8 @@
 	# git status for command prompt
 	function gitstat() {
 		if [[ $(git status 2> /dev/null | tail -n1) == 'no changes added to commit (use "git add" and/or "git commit -a")' ]]; then
-			echo -e "${BRed}!"
-		elif [[ $(git status 2> /dev/null | grep ahead) == "# Your branch is ahead of 'origin/master' by 1 commit." ]]; then
+			echo -e "${BWhite}!"
+		elif [[ `git status 2> /dev/null | grep ahead` ]]; then
 			echo -e "${BYellow}>>"
 		fi
 	}
