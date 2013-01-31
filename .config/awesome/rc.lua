@@ -121,9 +121,8 @@ end
 -- Create a laucher widget and a main menu
 mymainmenu = awful.menu({items = {
 	{"Restart awesome", awesome.restart, beautiful.awesome_icon},
-	{"Firefox", "firefox"},
-	{"Terminal", terminal},
-	{"Log out", 'shutdown_dialog.sh'},
+	{"Kaffeine", "kaffeine"},
+	{"Log out", '~/bin/shutdown_dialog.sh'},
 }})
 
 mylauncher = awful.widget.launcher({image = beautiful.awesome_icon, menu = mymainmenu })

@@ -37,7 +37,13 @@
 	alias rmpyc='find . -name "*.pyc" -exec rm -rf {} \;'
 
 	# git status for command prompt
-	alias gitstat="[[ \$(git status 2> /dev/null | tail -n1) == 'no changes added to commit (use \"git add\" and/or \"git commit -a\")' ]] && echo \"!\""
+	function gitstat() {
+		if [[ $(git status 2> /dev/null | tail -n1) == 'no changes added to commit (use "git add" and/or "git commit -a")' ]]; then
+			echo -e "${BRed}!"
+		elif [[ $(git status 2> /dev/null | grep ahead) == "# Your branch is ahead of 'origin/master' by 1 commit." ]]; then
+			echo -e "${BYellow}>>"
+		fi
+	}
 
 	# git branch for command prompt
 	function gitbranch() {
@@ -77,4 +83,4 @@
 	[ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
 
 
-	export PS1="${Red}\u ${BBlue}\W${Green}\$(gitbranch)${BYellow}\$(gitstat)${Red}\$ ${NC}"
+	export PS1="${Red}\u ${BBlue}\W${Green}\$(gitbranch)\$(gitstat)${Red}\$ ${NC}"
