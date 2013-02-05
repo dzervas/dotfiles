@@ -30,3 +30,4 @@
 [submodule ".vim/bundle/git"]
 	path = .vim/bundle/git
 	url = https://github.com/tpope/vim-git.git
+	ignore = dirty
