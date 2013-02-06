@@ -60,13 +60,10 @@ syntax on
 filetype on
 filetype plugin indent on
 
-" Code validation (?)
-let g:pep8_map='<leader>8'
-
-map <A-Tab> :tabN<CR>
-map <A-S-Tab> :tabp<CR>
-map <A-PageUp> :bn<CR>
-map <A-PageDown> :bp<CR>
+map <A-Tab> :bn<CR>
+map <A-S-Tab> :bp<CR>
+map <A-PageUp> :tabN<CR>
+map <A-PageDown> :tabp<CR>
 map ls :ls<CR>
 
 " File browser
@@ -74,7 +71,7 @@ let NERDTreeShowHidden=1
 map <A-f> :NERDTreeToggle<CR>
 
 " Git integration
-set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+set statusline=%<%h%m%r%{fugitive#statusline()}\ %f%=%-14.(%l%V%)
 map ac :Git add -A<CR>:Gcommit<CR>
 map <A-p> :Git push<CR>
 
