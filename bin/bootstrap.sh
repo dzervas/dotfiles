@@ -28,7 +28,7 @@ case $1 in
 		echo "Updating system..."
 		pacman -Syu
 		echo "Installing X.Org server, WM and some other things..."
-		pacman -S yajl git vim xorg-server{,-utils} xorg-xinit mesa ttf-dejavu xterm slim awesome firefox
+		pacman -S yajl git vim xorg-server{,-utils} xorg-xinit mesa ttf-dejavu xterm slim awesome firefox skype
 		echo "Instaling yaourt..."
 		mkdir -p tmp/{package-query,yaourt}
 		cd tmp/package-query
@@ -40,8 +40,8 @@ case $1 in
 		makepkg --asroot
 		pacman -U *xz
 		cd ../..
-		echo "Installing Sublime Text 2, Minecraft and Skype via AUR"
-		yaourt -S minecraft skype
+		echo "Installing Technic Launcher via AUR"
+		yaourt -S tekkit
 		echo "Enabling Slim on boot"
 		systemctl enable slim.service
 		echo "I'm done. Install the appropriate graphics driver and then reboot."

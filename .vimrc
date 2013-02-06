@@ -26,6 +26,8 @@ set cursorline			" Highlight the current line
 set ttyfast			" Improves redrawing for newer computers
 set sidescroll=2		" Only scroll horizontally little by little
 set laststatus=2		" Makes the status bar always visible"
+"set spell			" Spell cheking
+"set whichwrap=b,s,<,>,[,]	" Traverse line breaks with arrow keys
 
 " Load pathogen
 filetype off
@@ -44,6 +46,11 @@ map <A-down> <C-w>j
 map <A-up> <C-w>k
 map <A-right> <C-w>l
 map <A-left> <C-w>h
+
+" Restore cursor position in files
+if has("autocmd")
+	au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+endif
 
 " TaskList
 map <A-t> <Plug>TaskList
@@ -86,14 +93,10 @@ nnoremap <silent> <C-l> :nohl<CR><C-l>
 " Don't forget sudo ever again!
 cmap w!! w !sudo tee % >/dev/null
 
-" Execute the py.test tests, more info: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide#test-integration
-"nmap <silent><Leader>tf <Esc>:Pytest file<CR>
-"nmap <silent><Leader>tc <Esc>:Pytest class<CR>
-"nmap <silent><Leader>tm <Esc>:Pytest method<CR>
-" Cycle through py.test test errors, more info: http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide#test-integration
-"nmap <silent><Leader>tn <Esc>:Pytest next<CR>
-"nmap <silent><Leader>tp <Esc>:Pytest previous<CR>
-"nmap <silent><Leader>te <Esc>:Pytest error<CR>
+" Execute the py.test tests
+nmap <silent><Leader>tf <Esc>:Pytest file<CR>
+nmap <silent><Leader>tn <Esc>:Pytest next<CR>
+nmap <silent><Leader>tp <Esc>:Pytest previous<CR>
 
 nnoremap <silent> <leader>l
 	\ :set nolist!<cr>:set nolist?<cr>
