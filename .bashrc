@@ -63,6 +63,12 @@
 		done
 	}
 
+	# execute a command for x seconds
+	# use: timealarm <seconds> <command> [args...]
+	timealarm () {
+		perl -e 'alarm shift; exec @ARGV' "$@";
+	}
+
 	# enable color support of ls and also add handy aliases
 	if [ "$TERM" != "dumb" ]; then
 		eval "`dircolors -b`"
