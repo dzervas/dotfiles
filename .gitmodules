@@ -31,3 +31,6 @@
 [submodule ".vim/bundle/buftabs"]
 	path = .vim/bundle/buftabs
 	url = https://github.com/vim-scripts/buftabs.git
+[submodule ".vim/bundle/vim-arduino"]
+	path = .vim/bundle/vim-arduino
+	url = https://github.com/tclem/vim-arduino.git

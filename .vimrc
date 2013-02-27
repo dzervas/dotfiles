@@ -95,6 +95,10 @@ nmap <silent><Leader>tf <Esc>:Pytest file<CR>
 nmap <silent><Leader>tn <Esc>:Pytest next<CR>
 nmap <silent><Leader>tp <Esc>:Pytest previous<CR>
 
+" Arduino highlighting
+au BufRead,BufNewFile *.pde set filetype=arduino
+au BufRead,BufNewFile *.ino set filetype=arduino
+
 nnoremap <silent> <leader>l
 	\ :set nolist!<cr>:set nolist?<cr>
 	\ :if exists('w:long_line_match') <bar>
