@@ -86,7 +86,7 @@
 
 # Other useful definitions
 	# Make less, more friendly for non-text input files
-	[ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
+	#[ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
 
 
 	export PS1="${Red}\u ${BBlue}\W${Green}\$(gitbranch)\$(gitstat)${Red}\$ ${NC}"
