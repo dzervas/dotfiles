@@ -13,7 +13,6 @@
 [submodule ".vim/bundle/nerdtree"]
 	path = .vim/bundle/nerdtree
 	url = https://github.com/vim-scripts/The-NERD-tree.git
-	ignore = dirty
 [submodule ".vim/bundle/togglemouse"]
 	path = .vim/bundle/togglemouse
 	url = https://github.com/nvie/vim-togglemouse.git
@@ -27,7 +26,6 @@
 [submodule ".vim/bundle/git"]
 	path = .vim/bundle/git
 	url = https://github.com/tpope/vim-git.git
-	ignore = dirty
 [submodule ".vim/bundle/buftabs"]
 	path = .vim/bundle/buftabs
 	url = https://github.com/vim-scripts/buftabs.git
@@ -37,4 +35,3 @@
 [submodule ".vim/bundle/netrw"]
 	path = .vim/bundle/netrw
 	url = https://github.com/vim-scripts/netrw.vim.git
-	ignore = dirty
