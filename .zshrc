@@ -15,7 +15,7 @@
 	# setopt AUTO_REMOVE_SLASH
 	# setopt AUTO_RESUME		# tries to resume command of same name
 #	unsetopt BG_NICE		# do NOT nice bg commands
-#	setopt CORRECT			# command CORRECTION
+	setopt CORRECT			# command CORRECTION
 #	setopt EXTENDED_HISTORY		# puts timestamps in the history
 	# setopt HASH_CMDS		# turns on hashing
 #	setopt MENUCOMPLETE
@@ -25,6 +25,11 @@
 #	setopt   autoresume histignoredups pushdsilent 
 #	setopt   autopushd pushdminus extendedglob rcquotes mailwarning
 #	unsetopt bgnice autoparamslash
+	setopt hist_ignore_all_dups	# Ignore duplicate commands from history
+	setopt hist_ignore_space	# Ignore commands starting with space from history
+	setopt autocd			# /etc instead of cd /etc
+	setopt prompt_subst		# Update PS1 every time
+	setopt transientrprompt		# Indicate insert/command mode
 
 # Modules
 #	zmodload -a zsh/stat stat
@@ -33,19 +38,118 @@
 #	zmodload -ap zsh/mapfile mapfile
 #	autoload colors zsh/terminfo
 	autoload -U colors && colors
+#	autoload -U compinit && compinit
+	autoload -U promptinit && promptinit
+
+# Functions
+	# Show Git branch/tag, or name-rev if on detached head
+#	function parse_git_branch() {
+#		(git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD) 2> /dev/null
+#	}
+
+	function current_branch() {
+		ref=$(git symbolic-ref HEAD 2> /dev/null) || \
+		ref=$(git rev-parse --short HEAD 2> /dev/null) || return
+		return ${ref#refs/heads/}
+	}
+
+	function current_repository() {
+		ref=$(git symbolic-ref HEAD 2> /dev/null) || \
+		ref=$(git rev-parse --short HEAD 2> /dev/null) || return
+		return $(git remote -v | cut -d':' -f 2)
+	}
+
+
+	# Show different symbols as appropriate for various Git repository states
+	parse_git_state() {
+
+		# Compose this value via multiple conditional appends.
+		local GIT_STATE=""
+
+		local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
+		if [ "$NUM_AHEAD" -gt 0 ]; then
+			GIT_STATE=$GIT_STATE${GIT_PROMPT_AHEAD//NUM/$NUM_AHEAD}
+		fi
+
+		local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
+		if [ "$NUM_BEHIND" -gt 0 ]; then
+			GIT_STATE=$GIT_STATE${GIT_PROMPT_BEHIND//NUM/$NUM_BEHIND}
+		fi
+
+		local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
+		if [ -n $GIT_DIR ] && test -r $GIT_DIR/MERGE_HEAD; then
+			GIT_STATE=$GIT_STATE$GIT_PROMPT_MERGING
+		fi
+
+		if [[ -n $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
+			GIT_STATE=$GIT_STATE$GIT_PROMPT_UNTRACKED
+		fi
+
+		if ! git diff --quiet 2> /dev/null; then
+			GIT_STATE=$GIT_STATE$GIT_PROMPT_MODIFIED
+		fi
+
+		if ! git diff --cached --quiet 2> /dev/null; then
+			GIT_STATE=$GIT_STATE$GIT_PROMPT_STAGED
+		fi
+
+		if [[ -n $GIT_STATE ]]; then
+			echo "$GIT_PROMPT_PREFIX$GIT_STATE$GIT_PROMPT_SUFFIX"
+		fi
+	}
+
+	# If inside a Git repository, print its branch and state
+	git_prompt_string() {
+		local git_where="$(parse_git_branch)"
+		[ -n "$git_where" ] && echo "$GIT_PROMPT_SYMBOL$(parse_git_state)$GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUFFIX"
+	}
+	
+	# Insert sudo at the beginning of the command
+	insert_sudo () {
+		zle beginning-of-line
+		zle -U "sudo "
+		zle end-of-line
+	}
+
+	fake-accept-line() {
+		if [[ -n "$BUFFER" ]]; then
+			print -S "$BUFFER"
+		fi
+		return 0
+	}
+
+	down-or-fake-accept-line() {
+		if (( HISTNO == HISTCMD )) && [[ "$RBUFFER" != *$'\n'* ]]; then
+			zle fake-accept-line
+		fi
+		zle .down-line-or-history "$@"
+	}
+
+# ZLE definitions
+	zle -N insert-sudo insert_sudo
+	zle -N fake-accept-line
+	zle -N down-line-or-history down-or-fake-accept-line
 
 # Variables
 	# Colors
 	for color in BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE; do
-		eval BOLD_$color='%{$terminfo[bold]$fg[${(L)color}]%}'
+		eval B$color='%{$terminfo[bold]$fg[${(L)color}]%}'
 		eval $color='%{$fg[${(L)color}]%}'
 	done
-	NO_COLOR="%{$terminfo[sgr0]%}"
+	NC="%{$terminfo[sgr0]%}"
 
-#	if [[ "$terminfo[colors]" -ge 8 ]]; then
-#		colors
-#	fi
-#	PATH="/usr/local/bin:/usr/local/sbin/:/bin:/sbin:/usr/bin:/usr/sbin:$PATH"
+	# Git
+	GIT_PROMPT_SYMBOL="$fg[blue]±"
+	GIT_PROMPT_PREFIX="$fg[green][$reset_color"
+	GIT_PROMPT_SUFFIX="$fg[green]]$reset_color"
+	GIT_PROMPT_AHEAD="$fg[red]ANUM$reset_color"
+	GIT_PROMPT_BEHIND="$fg[cyan]BNUM$reset_color"
+	GIT_PROMPT_MERGING="$fg_bold[magenta]⚡︎$reset_color"
+	GIT_PROMPT_UNTRACKED="$fg_bold[red]●$reset_color"
+	GIT_PROMPT_MODIFIED="$fg_bold[yellow]●$reset_color"
+	GIT_PROMPT_STAGED="$fg_bold[green]●$reset_color"
+
+
 	TZ="Europe/Athens"
 	HISTFILE=$HOME/.zhistory
 	HISTSIZE=1000
@@ -53,7 +157,8 @@
 	HOSTNAME="`hostname`"
 	PAGER='less'
 	EDITOR='vim'
-	PS1="$BOLD_BLUE%n $RED%c$NO_COLOR%(!.#.$) "
+	PS1="$BBLUE%n $RED%c$NC%(!.#.$) "
+	RPS1="$(git_prompt_string)"
 #	RPS1="$PR_LIGHT_YELLOW(%D{%m-%d %H:%M})$PR_NO_COLOR"
 	#LANGUAGE=
 
@@ -71,52 +176,35 @@
 #	unsetopt ALL_EXPORT
 
 # Aliases
-#	alias slrn="slrn -n"
-#	alias man='LC_ALL=C LANG=C man'
-#	alias f=finger
-#	alias ll='ls -al'
-#	alias ls='ls --color=auto '
-#	alias offlineimap-tty='offlineimap -u TTY.TTYUI'
-#	alias hnb-partecs='hnb $HOME/partecs/partecs-hnb.xml'
-#	alias rest2html-css='rst2html --embed-stylesheet --stylesheet-path=/usr/share/python-docutils/s5_html/themes/default/print.css'
-#	alias =clear
-#	insert_sudo () {
-#		zle beginning-of-line
-#		zle -U "sudo "
-#	}
-#	#if [[ $HOSTNAME == "kamna" ]] {
-#		# alias emacs='emacs -l ~/.emacs.kamna'
-#	#}	
-#
-#
-#	#chpwd() {
-#		# [[ -t 1 ]] || return
-#		# case $TERM in
-#			# sun-cmd) print -Pn "\e]l%~\e\\"
-#			# ;;
-#			# *xterm*|screen|rxvt|(dt|k|E)term) print -Pn "\e]2;%~\a"
-#			# ;;
-#		# esac
-#	# }
-#
+	alias man='LC_ALL=C LANG=C man'
+	alias ll='ls -al'
+	alias ls='ls --color=auto '
+
+
 ## Key bindings
-#	bindkey "^?" backward-delete-char
-#	bindkey '^[OH' beginning-of-line
-#	bindkey '^[OF' end-of-line
+	bindkey -v		# VI key bindings
+	bindkey "^r"		history-incremental-search-backward
+	bindkey "^y"		insert-sudo
+	bindkey "^[[3~"		delete-char
+	bindkey "\e[1~"		beginning-of-line
+	bindkey "\e[4~"		end-of-line
+	bindkey "\e[7~"		beginning-of-line
+	bindkey "\e[8~"		end-of-line
+	bindkey "\eOH"		beginning-of-line
+	bindkey "\eOF"		end-of-line
+	bindkey "^[[H"		beginning-of-line
+	bindkey "^[[F"		end-of-line
 #	bindkey '^[[5~' up-line-or-history
 #	bindkey '^[[6~' down-line-or-history
-#	bindkey "^r" history-incremental-search-backward
 #	bindkey ' ' magic-space    # also do history expansion on space
 #	bindkey '^I' complete-word # complete on tab, leave expansion to _expand
-#	bindkey "^[s" insert-sudo
 #
-## Style
-#	zstyle ':completion::complete:*' use-cache on
-#	zstyle ':completion::complete:*' cache-path ~/.zsh/cache/$HOST
-#
-#	zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# Style
+	zstyle ':completion:*:descriptions' format '%B%d%b'
+	zstyle ':completion:*' menu select
+	zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 #	zstyle ':completion:*' list-prompt '%SAt %p: Hit TAB for more, or the character to insert%s'
-#	zstyle ':completion:*' menu select=1 _complete _ignored _approximate
+	zstyle ':completion:*' menu select=1 _complete _ignored _approximate
 #	zstyle -e ':completion:*:approximate:*' max-errors 'reply=( $(( ($#PREFIX+$#SUFFIX)/2 )) numeric )'
 #	zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
 #	zstyle ':completion:*::::' completer _expand _complete _ignored _approximate
@@ -128,14 +216,13 @@
 #	zstyle ':completion:*:expand:*' tag-order all-expansions
 #	# formatting and messages
 #	zstyle ':completion:*' verbose yes
-#	zstyle ':completion:*:descriptions' format '%B%d%b'
 #	zstyle ':completion:*:messages' format '%d'
 #	zstyle ':completion:*:warnings' format 'No matches for: %d'
 #	zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
 #	zstyle ':completion:*' group-name ''
 #
 #	# match uppercase from lowercase
-#	zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+	zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 #
 #	# offer indexes before parameters in subscripts
 #	zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
@@ -175,6 +262,4 @@
 #	zstyle ':completion:*:ssh:*' group-order hosts-domain hosts-host users hosts-ipaddr
 #	zstyle '*' single-ignored show
 #	
-#autoload -U compinit
-#compinit
-#zle -N insert-sudo insert_sudo
+autoload -U compinit && compinit

@@ -1,4 +1,9 @@
-XTerm*Background: black
-XTerm*Foreground: white
-XTerm*.font: xft:Monospace:pixelsize=12
-XTerm*.boldFont: xft:Monospace:pixelsize=12
+XTerm*Background:	black
+XTerm*Foreground:	white
+XTerm*.font:		xft:Monospace:pixelsize=12
+XTerm*.boldFont:	xft:Monospace:pixelsize=12
+XTerm*locale:		true
+URxvt.perl-ext-common:	default,matcher,tabbed,vtwheel
+URxvt.url-launcher:	/usr/bin/firefox
+URxvt.matcher.button:	1
+URxvt.scrollBar:	false
