@@ -1,0 +1,106 @@
+#!/system/bin/sh
+# Check if running on android device
+[ "$(uname -m)" != "armv7l" ] && exit
+
+export mnt=/data/workbench/mnt #mount point
+export startx="/usr/bin/startx"
+export startCheck="$mnt/kill"
+export stopCheck="$mnt/kill"
+# Alias to be used in the chroot environment
+alias startXa="touch $startCheck"
+alias stopXa="touch $stopCheck"
+
+# Function to mount all needed devices
+function mount_all() {
+	# If $mnt/dev is already mounted, then exit, nothing to do
+	if mountpoint -q $mnt/dev ; then
+		return
+	fi
+
+	if [ ! -d $mnt ]; then
+		mkdir -p $mnt
+	fi
+	if [ ! -d $mnt/media/sd ]; then
+		mkdir -p $mnt/media/sd
+	fi
+
+	mount -o bind /dev/ $mnt/dev
+	mount -t devpts devpts $mnt/dev/pts
+	mount -o bind /mnt/sdcard/ $mnt/media/sd
+	if [ -d /storage/sdcard1 ]; then
+		if [ ! -d $mnt/media/ext ]; then
+			mkdir -p $mnt/media/ext
+		fi
+		mount -o bind /mnt/extSdCard/ $mnt/media/ext
+	fi
+	mount -t proc proc $mnt/proc
+	mount -t sysfs sysfs $mnt/sys
+	# Fix a strange error
+	ln -s /proc/self/fd /dev/fd
+}
+
+# Function to unmount all the mounted things
+function umount_all() {
+	# If $mnt/dev is not mounted, then exit, nothing to do
+	if ! mountpoint -q $mnt/dev ; then
+		return
+	fi
+	rm /dev/fd
+	umount $mnt/sys
+	umount $mnt/proc
+	umount $mnt/media/sd
+	if [ -d /storage/sdcard1 ]; then
+		umount $mnt/media/ext
+	fi
+	umount $mnt/dev/pts
+	umount $mnt/dev
+}
+
+# Daemon to start android's grphical server
+function startd() {
+	while [ true ]; do
+		if [ -f $startCheck ]; then
+			rm $startCheck
+			setprop ctl.start media & setprop ctl.start zygote
+		fi
+		sleep 5
+	done
+}
+
+# Daemon to stop android's grphical server
+function stopd() {
+	while [ true ]; do
+		if [ -f $stopCheck ]; then
+			rm $stopCheck
+			setprop ctl.stop media & setprop ctl.stop zygote && sleep 3 && setprop ctl.stop bootanim
+		fi
+		sleep 5
+	done
+}
+
+if [ "$1" == "stop" ]; then
+	umount_all
+	killall startd
+	killall stopd
+	rm $stopCheck $startCheck
+elif [ "$1" == "startx" ]; then
+	mount_all
+
+	# Stop the android grphical server, wait 3 secs and kill the bootanimation loop
+	setprop ctl.stop media & setprop ctl.stop zygote && sleep 3 && setprop ctl.stop bootanim
+	startd &
+	stopd &
+	busybox chroot $mnt "/bin/su -c $startx" &
+elif [ "$1" == "stopx" ]; then
+	killall X
+	killall startd
+	killall stopd
+	rm $stopCheck $startCheck
+	setprop ctl.start media & setprop ctl.start zygote
+	umount_all
+else
+	mount_all
+	startd &
+	stopd &
+	busybox chroot $mnt "/bin/su -"
+fi

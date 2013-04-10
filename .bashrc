@@ -1,5 +1,5 @@
 # If not running interactively, don't do anything
-#[ -z "$PS1" ] && return
+[ -z "$PS1" ] && return
 
 # Colors
 	NC='\e[0m'       # Text Reset
@@ -32,7 +32,7 @@
 	# Check the window size after each command to update LINES and COLUMNS if necessary
 	shopt -s checkwinsize
 
-# Alias definitions.
+# Alias and function definitions.
 	# remove all *.pyc files in current directory and subdirectories
 	alias rmpyc='find . -name "*.pyc" -exec rm -rf {} \;'
 
@@ -76,6 +76,12 @@
 		alias grep='grep --color'
 	fi
 
+	if [ "$(uname -m)" == "armv7l"]
+		alias stopx='setprop ctl.stop media && setprop ctl.stop zygote && sleep 3 && setprop ctl.stop bootanim'
+		alias startx='setprop ctl.start zygote && setprop ctl.start media '
+		alias fixterm='stty rows 81 cols 320'
+	fi
+
 # Enable completions
 	if [ -f /etc/bash_completion ]; then
 		. /etc/bash_completion
@@ -85,8 +91,4 @@
 	fi
 
 # Other useful definitions
-	# Make less, more friendly for non-text input files
-	#[ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
-
-
 	export PS1="${Red}\u ${BBlue}\W${Green}\$(gitbranch)\$(gitstat)${Red}\$ ${NC}"
