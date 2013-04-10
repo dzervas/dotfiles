@@ -1,8 +1,18 @@
 XTerm*Background:	black
 XTerm*Foreground:	white
-XTerm*.font:		xft:Monospace:pixelsize=12
-XTerm*.boldFont:	xft:Monospace:pixelsize=12
+XTerm*faceSize:	8
 XTerm*locale:		true
+
+UXTerm*Background:	black
+UXTerm*Foreground:	white
+UXTerm*faceSize:	8
+UXTerm*locale:		true
+UXTerm*VT100.Translations:	#override \n\
+	Shift Ctrl <KeyPress> V:	insert-selection(CLIPBOARD) \n\
+	<Btn2Up>:		insert-selection(SELECT, CUT_BUFFER0) \n\
+	~Shift<BtnUp>:		select-end(PRIMARY, CUT_BUFFER0) \n\
+	Shift<BtnUp>:		select-end(CLIPBOARD, CUT_BUFFER1)
+
 URxvt.perl-ext-common:	default,matcher,tabbed,vtwheel
 URxvt.url-launcher:	/usr/bin/firefox
 URxvt.matcher.button:	1

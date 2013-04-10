@@ -37,7 +37,7 @@ end
 beautiful.init("/usr/share/awesome/themes/default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "xterm"
+terminal = "uxterm"
 editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -386,7 +386,7 @@ awful.rules.rules = {
 
 awful.util.spawn("firefox")
 awful.util.spawn("skype")
-awful.util.spawn("xterm -name Terminal")
+awful.util.spawn("uxterm -name Terminal")
 awful.util.spawn("blueman-applet")
 
 -- {{{ Signals
