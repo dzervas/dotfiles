@@ -122,6 +122,7 @@ end
 mymainmenu = awful.menu({items = {
 	{"Restart awesome", awesome.restart, beautiful.awesome_icon},
 	{"Kaffeine", "kaffeine"},
+	{"File Manager", "thunar"},
 	{"Log out", '~/bin/shutdown_dialog.sh'},
 }})
 
