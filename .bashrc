@@ -28,7 +28,7 @@
 	# No duplicates in history
 	export HISTCONTROL=ignoredups
 	export EDITOR=vim
-	export PATH="~/bin:$PATH:~/.gem/ruby/1.9.1/bin:~/Lab/arm-linux-androideabi-4.6/bin"
+	export PATH="$PATH:~/bin"
 	# Check the window size after each command to update LINES and COLUMNS if necessary
 	shopt -s checkwinsize
 
@@ -76,7 +76,7 @@
 		alias grep='grep --color'
 	fi
 
-	if [ "$(uname -m)" == "armv7l"]
+	if [ "$(uname -m)" == "armv7l"]; then
 		alias stopx='setprop ctl.stop media && setprop ctl.stop zygote && sleep 3 && setprop ctl.stop bootanim'
 		alias startx='setprop ctl.start zygote && setprop ctl.start media '
 		alias fixterm='stty rows 81 cols 320'
