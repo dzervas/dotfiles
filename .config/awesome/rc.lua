@@ -95,12 +95,12 @@ tags = {}
 for s = 1, screen.count() do
 	-- Each screen has its own tag table.
 	if screen.count() == 1 then
-		tags[s] = awful.tag({"Firefox", "Terminal", "Skype", "Tmp"}, s, layouts[2])
+		tags[s] = awful.tag({"Browser", "Terminal", "Skype", "Tmp"}, s, layouts[2])
 	elseif screen.count() == 2 then
 		if s == 1 then
-			tags[s] = awful.tag({"Firefox", "Terminal", "Tmp"}, s, layouts[2])
+			tags[s] = awful.tag({"Browser", "Terminal", "Tmp"}, s, layouts[2])
 		else
-			tags[s] = awful.tag({"Terminal", "Skype", "Minecraft", "Tmp"}, s, layouts[2])
+			tags[s] = awful.tag({"Terminal", "Skype", "Games", "Tmp"}, s, layouts[2])
 		end
 	else
 		tags[s] = awful.tag({ 11, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[2])
