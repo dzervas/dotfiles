@@ -121,7 +121,7 @@ end
 -- Create a laucher widget and a main menu
 mymainmenu = awful.menu({items = {
 	{"Restart awesome", awesome.restart, beautiful.awesome_icon},
-	{"Kaffeine", "kaffeine"},
+	{"VLC", "vlc"},
 	{"File Manager", "thunar"},
 	{"Log out", '~/bin/shutdown_dialog.sh'},
 }})
@@ -379,13 +379,13 @@ awful.rules.rules = {
 	{rule = {class = "MPlayer"}, properties = {floating = true }},
 	{rule = {class = "pinentry"}, properties = {floating = true }},
 	{rule = {class = "gimp"}, properties = {floating = true}},
-	{rule = {class = "Firefox"}, properties = {tag = tags[1][1]}},
+	{rule = {class = "Google Chrome"}, properties = {tag = tags[1][1]}},
 	{rule = {instance = "Terminal"}, properties = {tag = order["term"]}},
 	{rule = {class = "Skype"}, properties = {tag = order["skype"]}},
 }
 -- }}}
 
-awful.util.spawn("firefox")
+awful.util.spawn("google-chrome")
 awful.util.spawn("skype")
 awful.util.spawn("uxterm -name Terminal")
 awful.util.spawn("blueman-applet")
