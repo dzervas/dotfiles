@@ -1,10 +1,3 @@
-XTerm*Background:	black
-XTerm*Foreground:	white
-XTerm*faceSize:	8
-XTerm*locale:		true
-
-UXTerm*Background:	black
-UXTerm*Foreground:	white
 UXTerm*faceSize:	8
 UXTerm*locale:		true
 UXTerm*VT100.Translations:	#override \n\
@@ -13,7 +6,32 @@ UXTerm*VT100.Translations:	#override \n\
 	~Shift<BtnUp>:		select-end(PRIMARY, CUT_BUFFER0) \n\
 	Shift<BtnUp>:		select-end(CLIPBOARD, CUT_BUFFER1)
 
-URxvt.perl-ext-common:	default,matcher,tabbed,vtwheel
-URxvt.url-launcher:	/usr/bin/firefox
-URxvt.matcher.button:	1
-URxvt.scrollBar:	false
+! Molokai theme
+*UXTerm*background: #101010
+*UXTerm*foreground: #d0d0d0
+*UXTerm*cursorColor: #d0d0d0
+!black
+*UXTerm*color0: #1B1D1E
+!red v
+*UXTerm*color1: #F92672
+!green v
+*UXTerm*color2: #A6E22E
+!yellow v
+*UXTerm*color3: #E6DB74
+!blue
+*UXTerm*color4: #30309b
+!magenta v
+*UXTerm*color5: #AE81FF
+!cyan v
+*UXTerm*color6: #66D9EF
+!white
+*UXTerm*color7: #F8F8F2
+*UXTerm*color8: #303030
+*UXTerm*color9: #ff0090
+*UXTerm*color10: #80ff00
+*UXTerm*color11: #ffba68
+*UXTerm*color12: #5f5fee
+*UXTerm*color13: #bb88dd
+*UXTerm*color14: #4eb4fa
+*UXTerm*color15: #d0d0d0
+!orange FD971F

@@ -113,7 +113,7 @@
 	HOSTNAME="`hostname`"
 	PAGER='less'
 	EDITOR='vim'
-	PS1="$BBLUE%n $RED%c$NC%(!.#.$) "
+	PS1="$GREEN%n $BCYAN%c$NC%(!.#.$) "
 	RPS1='$(git_prompt_string)'
 
 # Aliases
