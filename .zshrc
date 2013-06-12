@@ -88,6 +88,7 @@
 	zle -N down-line-or-history down-or-fake-accept-line
 
 # Variables
+	export EDITOR="vim"
 	# Colors
 	for color in BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE; do
 		eval B$color='%{$terminfo[bold]$fg[${(L)color}]%}'
@@ -112,7 +113,6 @@
 	SAVEHIST=1000
 	HOSTNAME="`hostname`"
 	PAGER='less'
-	EDITOR='vim'
 	PS1="$GREEN%n $BCYAN%c$NC%(!.#.$) "
 	RPS1='$(git_prompt_string)'
 
