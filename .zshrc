@@ -82,6 +82,17 @@
 		zle .down-line-or-history "$@"
 	}
 
+	cc-arm-prepare() {
+		if [ -z "$1" ]; then
+			echo "Please provide a cross compiler as an argument"
+			return
+		fi
+
+		export ARCH=arm
+		export SUBARCH=arm
+		export CROSS_COMPILER=$1
+	}
+
 # ZLE definitions
 	zle -N insert-sudo insert_sudo
 	zle -N fake-accept-line
