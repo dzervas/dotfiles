@@ -69,6 +69,19 @@
 		perl -e 'alarm shift; exec @ARGV' "$@";
 	}
 
+	# Prepare the environment for ARM cross compilation
+	cc-arm-prepare() {
+		if [ -z "$1" ]; then
+			echo "Please provide a cross compiler as an argument"
+			return
+		fi
+
+		export ARCH=arm
+		export SUBARCH=arm
+		export CROSS_COMPILER=$1
+	}
+
+
 	# enable color support of ls and also add handy aliases
 	if [ "$TERM" != "dumb" ]; then
 		eval "`dircolors -b`"

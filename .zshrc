@@ -5,6 +5,9 @@
 # 
 ######################################################################
 
+# Load .bashrc
+source ~/.bashrc
+
 # Settings
 	setopt APPEND_HISTORY
 	setopt CORRECT			# command CORRECTION
@@ -80,17 +83,6 @@
 			zle fake-accept-line
 		fi
 		zle .down-line-or-history "$@"
-	}
-
-	cc-arm-prepare() {
-		if [ -z "$1" ]; then
-			echo "Please provide a cross compiler as an argument"
-			return
-		fi
-
-		export ARCH=arm
-		export SUBARCH=arm
-		export CROSS_COMPILER=$1
 	}
 
 # ZLE definitions
