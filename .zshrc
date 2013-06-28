@@ -6,7 +6,10 @@
 ######################################################################
 
 # Load .bashrc
+# Shopt not found workaround
+alias shopt="true"
 source ~/.bashrc
+unalias shopt
 
 # Settings
 	setopt APPEND_HISTORY
