@@ -7,7 +7,7 @@
 
 # Load .bashrc
 # Shopt not found workaround
-alias shopt="true"
+alias shopt="false"
 source ~/.bashrc
 unalias shopt
 

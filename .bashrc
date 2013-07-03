@@ -40,7 +40,7 @@
 	function gitstat() {
 		if [[ $(git status 2> /dev/null | tail -n1) == 'no changes added to commit (use "git add" and/or "git commit -a")' ]]; then
 			echo -e "${BWhite}!"
-		elif [[ `git status 2> /dev/null | grep ahead` ]]; then
+		elif [[ $(git status 2> /dev/null | grep ahead) != '' ]]; then
 			echo -e "${BYellow}>>"
 		fi
 	}
@@ -48,7 +48,7 @@
 	# git branch for command prompt
 	function gitbranch() {
 		branch=`git rev-parse --abbrev-ref HEAD 2>/dev/null`
-		[[ $branch ]] && echo " $branch"
+		[ ! -z $branch ] && echo " $branch"
 	}
 
 	# update all git repos in current dir
@@ -70,32 +70,32 @@
 	}
 
 	# Prepare the environment for ARM cross compilation
-	cc-arm-prepare() {
-		if [ -z "$1" ]; then
-			echo "Please provide a cross compiler as an argument"
-			return
-		fi
-
+	cc-arm-kernel() {
+		export PATH=$PATH:/opt/arm-linux-androideabi-4.6/bin
 		export ARCH=arm
 		export SUBARCH=arm
-		export CROSS_COMPILER=$1
+		export CROSS_COMPILER=arm-linux-androideabi-
 	}
 
 
 	# enable color support of ls and also add handy aliases
-	if [ "$TERM" != "dumb" ]; then
+	if [[ "$TERM" != "dumb" ]]; then
 		eval "`dircolors -b`"
 		alias ls='ls --color=auto'
 		alias grep='grep --color'
 	fi
 
-	if [ "$(uname -m)" == "armv7l"]; then
+	if [[ "`uname -m`" == "armv7l" ]]; then
 		alias stopx='setprop ctl.stop media && setprop ctl.stop zygote && sleep 3 && setprop ctl.stop bootanim'
 		alias startx='setprop ctl.start zygote && setprop ctl.start media '
 		alias fixterm='stty rows 81 cols 320'
 	fi
 
 # Enable completions
+	if [[ `shopt` == `false` ]]; then
+		return
+	fi
+
 	if [ -f /etc/bash_completion ]; then
 		. /etc/bash_completion
 	fi
