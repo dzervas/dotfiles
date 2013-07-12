@@ -35,7 +35,7 @@ nnoremap ; :
 nnoremap <silent> <C-l> :nohl<CR><C-l>
 " Don't forget sudo ever again!
 cmap w!! w !sudo tee % >/dev/null
-map ls :ls<CR>
+map ls<CR> :ls<CR>
 
 if has("autocmd")
 	" Restore cursor position in files
