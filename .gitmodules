@@ -18,3 +18,6 @@
 	path = .vim/bundle/autocomplpop
 	url = https://github.com/vim-scripts/AutoComplPop.git
 	ignore = dirty
+[submodule ".vim/bundle/dwm"]
+	path = .vim/bundle/dwm
+	url = https://github.com/spolu/dwm.vim.git

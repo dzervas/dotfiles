@@ -41,11 +41,6 @@ colorscheme molokai
 " change the mapleader from \ to ,
 let mapleader=","
 
-" Alt+<movement> keys to move around the windows
-map <A-down> <C-w>j
-map <A-up> <C-w>k
-map <A-right> <C-w>l
-map <A-left> <C-w>h
 
 " Restore cursor position in files
 if has("autocmd")
@@ -70,16 +65,23 @@ map ls :ls<CR>
 let NERDTreeShowHidden=1
 map <A-f> :NERDTreeToggle<CR>
 
-" Git integration
-set statusline=%<%h%m%r%{fugitive#statusline()}\ %f%=%-14.(%l%V%)
-map ac :Git add -A<CR>:Gcommit<CR>
-map <A-p> :Git push<CR>
-
 " Disable mouse
 map <F3> <F12>
 
 " Do not insert comments automatically
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+" DWM settings
+let g:dwm_map_keys = 0
+nnoremap <A-J> <C-W>w
+nnoremap <A-K> <C-W>W
+nmap <A-Return> <Plug>DWMNew
+nmap <A-C> <Plug>DWMClose
+nmap <A-Space> <Plug>DWMFocus
+nmap <A-L> <Plug>DWMGrowMaster
+nmap <A-H> <Plug>DWMShrinkMaster
+nmap <A-.> <Plug>DWMRotateClockwise
+nmap <A-,> <Plug>DWMRotateCounterclockwise
 
 " Test this shortcut...
 nnoremap ; :
@@ -89,15 +91,6 @@ nnoremap <silent> <C-l> :nohl<CR><C-l>
 
 " Don't forget sudo ever again!
 cmap w!! w !sudo tee % >/dev/null
-
-" Execute the py.test tests
-nmap <silent><Leader>tf <Esc>:Pytest file<CR>
-nmap <silent><Leader>tn <Esc>:Pytest next<CR>
-nmap <silent><Leader>tp <Esc>:Pytest previous<CR>
-
-" Arduino highlighting
-au BufRead,BufNewFile *.pde set filetype=arduino
-au BufRead,BufNewFile *.ino set filetype=arduino
 
 nnoremap <silent> <leader>l
 	\ :set nolist!<cr>:set nolist?<cr>

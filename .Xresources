@@ -35,3 +35,5 @@ UXTerm*VT100.Translations:	#override \n\
 *UXTerm*color14: #4eb4fa
 *UXTerm*color15: #d0d0d0
 !orange FD971F
+*UXTerm*fullscreen: never
+*UXTerm.omitTranslation: fullscreen
