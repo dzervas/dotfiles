@@ -29,68 +29,62 @@ set laststatus=2		" Makes the status bar always visible"
 "set spell			" Spell cheking
 "set whichwrap=b,s,<,>,[,]	" Traverse line breaks with arrow keys
 
-" Load pathogen
+let mapleader=","
+nnoremap ; :
+" Unhighlight search
+nnoremap <silent> <C-l> :nohl<CR><C-l>
+" Don't forget sudo ever again!
+cmap w!! w !sudo tee % >/dev/null
+map ls :ls<CR>
+
+if has("autocmd")
+	" Restore cursor position in files
+	au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+	" Do not insert comments automatically
+	autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+endif
+
+" Load pathogen (bundle plugins)
 filetype off
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
-
-" Set 256 colors and the theme
-set t_Co=256
-colorscheme molokai
-
-" change the mapleader from \ to ,
-let mapleader=","
-
-
-" Restore cursor position in files
-if has("autocmd")
-	au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-endif
-
-" TaskList
-map <A-t> <Plug>TaskList
 
 " Syntax highlighting
 syntax on
 filetype on
 filetype plugin indent on
 
-map <A-Tab> :bn<CR>
-map <A-S-Tab> :bp<CR>
-map <A-PageUp> :tabN<CR>
-map <A-PageDown> :tabp<CR>
-map ls :ls<CR>
+" Set 256 colors and the theme
+set t_Co=256
+colorscheme molokai
 
 " File browser
 let NERDTreeShowHidden=1
 map <A-f> :NERDTreeToggle<CR>
 
 " Disable mouse
-map <F3> <F12>
+noremap <F3> :call <SID>ToggleMouse()<CR>
+inoremap <F3> <Esc>:call <SID>ToggleMouse()<CR>a
 
-" Do not insert comments automatically
-autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+" TaskList
+map <A-t> <Plug>TaskList
 
 " DWM settings
 let g:dwm_map_keys = 0
-nnoremap <A-J> <C-W>w
-nnoremap <A-K> <C-W>W
 nmap <A-Return> <Plug>DWMNew
-nmap <A-C> <Plug>DWMClose
+nmap <A-c> <Plug>DWMClose
 nmap <A-Space> <Plug>DWMFocus
-nmap <A-L> <Plug>DWMGrowMaster
-nmap <A-H> <Plug>DWMShrinkMaster
+nmap <A-l> <Plug>DWMGrowMaster
+nmap <A-h> <Plug>DWMShrinkMaster
 nmap <A-.> <Plug>DWMRotateClockwise
 nmap <A-,> <Plug>DWMRotateCounterclockwise
 
-" Test this shortcut...
-nnoremap ; :
-
-" Unhighlight search
-nnoremap <silent> <C-l> :nohl<CR><C-l>
-
-" Don't forget sudo ever again!
-cmap w!! w !sudo tee % >/dev/null
+nnoremap <A-j> <C-W>w
+nnoremap <A-k> <C-W>W
+map <A-Right> :tabnext<CR>
+map <A-Left> :tabprevious<CR>
+map <A-w> :tabnew<CR>
+map <A-Tab> :bn<CR>
 
 nnoremap <silent> <leader>l
 	\ :set nolist!<cr>:set nolist?<cr>
