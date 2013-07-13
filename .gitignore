@@ -1,5 +1,11 @@
+# Vim temporary files
 *.swp
 .vim/info/
+.vim/.netrwhist
 tags
+
+# Python objects
 *.pyc
-.ssh #just in case...
+
+# My SSH keys
+.ssh
