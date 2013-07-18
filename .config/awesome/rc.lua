@@ -388,7 +388,6 @@ awful.rules.rules = {
 awful.util.spawn("google-chrome")
 awful.util.spawn("skype")
 awful.util.spawn("uxterm -name Terminal")
-awful.util.spawn("blueman-applet")
 
 -- {{{ Signals
 -- Signal function to execute when a new client appears.
