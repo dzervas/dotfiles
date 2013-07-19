@@ -13,4 +13,5 @@ fi
 #/usr/bin/xscreensaver -no-splash &
 xautolock -time 15 -locker "i3lock -i /media/files/Pictures/win/win-7.png -p win" -nowlocker "i3lock -i /media/files/Pictures/win/win-7.png -p win" -detectsleep -corners +000 -cornerdelay 5 &
 xrdb -merge "${HOME}/.Xresources"
-exec /usr/bin/awesome -c ~/.config/awesome/rc.lua >> ~/.cache/awesome/stdout 2>> ~/.cache/awesome/stderr
+#exec /usr/bin/awesome -c ~/.config/awesome/rc.lua >> ~/.cache/awesome/stdout 2>> ~/.cache/awesome/stderr
+exec /usr/local/bin/dwm >> ~/.cache/dwm/stdout 2>> ~/.cache/dwm/stderr
