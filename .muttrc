@@ -1,0 +1,22 @@
+# Account settings
+set folder	= "imaps://dzervas.gr"
+set imap_user	= "dzervas@dzervas.gr"
+set spoolfile	= "+INBOX"
+mailboxes	= +INBOX
+set from	= "01ttouch@gmail.com"
+set realname	= "Dimitris Zervas"
+
+# Change the following line to a different editor you prefer.
+set editor	= "vim"
+
+# Basic config, you can leave this as is
+set imap_check_subscribed
+set mail_check	= 30
+set imap_keepalive = 300
+set postponed	= "+Drafts"
+set header_cache=~/.mutt/cache/headers
+set message_cachedir=~/.mutt/cache/bodies
+set sort	= 'threads'
+set sort_aux	= 'reverse-last-date-received'
+set auto_tag	= yes
+unset imap_passive
