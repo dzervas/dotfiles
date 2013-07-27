@@ -1,4 +1,4 @@
-UXTerm*faceSize:	8
+UXTerm*faceSize:	9
 UXTerm*locale:		true
 UXTerm*VT100.Translations:	#override \n\
 	Shift Ctrl <KeyPress> V:	insert-selection(CLIPBOARD) \n\
