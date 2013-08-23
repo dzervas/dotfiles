@@ -16,7 +16,7 @@ xrdb -merge "${HOME}/.Xresources"
 #exec /usr/bin/awesome -c ~/.config/awesome/rc.lua >> ~/.cache/awesome/stdout 2>> ~/.cache/awesome/stderr
 
 # Autostart
-google-chrome &
+firefox &
 skype &
 uxterm &
 dwmstatus &
