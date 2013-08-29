@@ -15,6 +15,9 @@ xautolock -time 15 -locker "i3lock -i /media/files/Pictures/win/win-7.png -p win
 xrdb -merge "${HOME}/.Xresources"
 #exec /usr/bin/awesome -c ~/.config/awesome/rc.lua >> ~/.cache/awesome/stdout 2>> ~/.cache/awesome/stderr
 
+# Hack to fix misbehaving Java applications
+wmname LG3D
+
 # Autostart
 firefox &
 skype &
