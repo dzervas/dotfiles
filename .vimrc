@@ -31,6 +31,8 @@ set hidden			" Hide buffs instead of closing them
 set showmatch			" Show matching parentheses
 set noerrorbells		" Don't beep
 set listchars=tab:→\ ,trail:•,extends:#,nbsp:.
+set omnifunc=syntaxcomplete#Complete
+set completeopt=longest,menuone	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
 let mapleader=","
 
 " Syntax highlighting
@@ -42,6 +44,9 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 " Do not insert comments automatically
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
+" C++ completion
+"au BufNewFile,BufRead,BufEnter *.cpp,*.hpp set omnifunc=omni#cpp#complete#Main
+
 " Basic mappings
 " Key accuracy hacks
 nnoremap ; :
@@ -52,10 +57,9 @@ nnoremap <silent> <C-l> :nohl<CR><C-l>
 
 " Don't forget sudo ever again!
 cmap w!! w !sudo tee % >/dev/null
-map ls<CR> :ls<CR>
+map ls :ls<CR>
 
 " Fix identation
-noremap <F2> :%s/  /\t/g
 noremap <F4> :%s/    /\t/g
 noremap <F8> :%s/        /\t/g
 
@@ -73,8 +77,9 @@ set t_Co=256
 colorscheme molokai
 
 " File browser
-let NERDTreeShowHidden=1
-map <A-f> :NERDTreeToggle<CR>
+" let NERDTreeShowHidden=1
+" map <A-f> :NERDTreeToggle<CR>
+map <A-f> :Vexplore<CR>
 
 " Disable mouse
 noremap <F3> :call funcs#ToggleMouse()<CR>
@@ -98,4 +103,5 @@ nnoremap <A-k> <C-W>W
 map <A-Right> :tabnext<CR>
 map <A-Left> :tabprevious<CR>
 map <A-w> :tabnew<CR>
+map <A-q> :tabclose<CR>
 map <A-Tab> :bn<CR>
