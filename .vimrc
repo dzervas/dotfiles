@@ -36,6 +36,7 @@ set omnifunc=syntaxcomplete#Complete
 set completeopt=longest,menuone	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
 set scrolloff=3			" 3 Lines around cursor when scrolling
 set shortmess=atI		" Error messages are shorter
+set foldmethod=syntax		" Fold blocks according to syntax
 
 let mapleader=","
 
@@ -89,6 +90,9 @@ map <A-f> :Vexplore<CR>
 " Disable mouse
 noremap <F3> :call funcs#ToggleMouse()<CR>
 inoremap <F3> <Esc>:call funcs#ToggleMouse()<CR>a
+
+" Enable neocomplete
+let g:neocomplete#enable_at_startup = 1
 
 " TaskList
 map <A-t> <Plug>TaskList
