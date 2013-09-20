@@ -21,3 +21,6 @@
 	path = .vim/bundle/neocomplete
 	url = https://github.com/Shougo/neocomplete.vim.git
 	dirty = ignore
+[submodule ".vim/bundle/neosnippet"]
+	path = .vim/bundle/neosnippet
+	url = https://github.com/Shougo/neosnippet.vim.git
