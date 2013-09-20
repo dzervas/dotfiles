@@ -5,7 +5,8 @@ set mousefocus			" Hover to change window focus
 set tabstop=8
 set autoindent
 set copyindent
-set number			" Show numbers
+set number			" Show line numbers
+set ruler			" Show where are you in the file
 set ignorecase
 set smartcase			" Ignore case when lowercase used in search
 set smarttab			" Helps with backspacing with space indent
@@ -33,6 +34,9 @@ set noerrorbells		" Don't beep
 set listchars=tab:→\ ,trail:•,extends:#,nbsp:.
 set omnifunc=syntaxcomplete#Complete
 set completeopt=longest,menuone	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
+set scrolloff=3			" 3 Lines around cursor when scrolling
+set shortmess=atI		" Error messages are shorter
+
 let mapleader=","
 
 " Syntax highlighting
@@ -57,6 +61,7 @@ nnoremap <silent> <C-l> :nohl<CR><C-l>
 
 " Don't forget sudo ever again!
 cmap w!! w !sudo tee % >/dev/null
+
 map ls :ls<CR>
 
 " Fix identation

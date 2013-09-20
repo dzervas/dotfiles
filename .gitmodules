@@ -17,3 +17,6 @@
 [submodule ".vim/bundle/showmarks"]
 	path = .vim/bundle/showmarks
 	url = https://github.com/jacquesbh/vim-showmarks.git
+[submodule ".vim/bundle/neocomplete"]
+	path = .vim/bundle/neocomplete
+	url = https://github.com/Shougo/neocomplete.vim.git
