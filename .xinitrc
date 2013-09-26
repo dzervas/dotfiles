@@ -19,6 +19,8 @@ xrdb -merge "${HOME}/.Xresources"
 wmname LG3D
 
 # Autostart
+mpd
+thunar --daemon &
 firefox &
 skype &
 uxterm &
