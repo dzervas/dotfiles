@@ -32,6 +32,7 @@ set hidden			" Hide buffs instead of closing them
 set showmatch			" Show matching parentheses
 set noerrorbells		" Don't beep
 set listchars=tab:→\ ,trail:•,extends:#,nbsp:.
+set list
 set omnifunc=syntaxcomplete#Complete
 set completeopt=longest,menuone	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
 set scrolloff=3			" 3 Lines around cursor when scrolling
@@ -51,6 +52,13 @@ autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
 " C++ completion
 "au BufNewFile,BufRead,BufEnter *.cpp,*.hpp set omnifunc=omni#cpp#complete#Main
+
+" Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 " Basic mappings
 " Key accuracy hacks
@@ -91,8 +99,19 @@ map <A-f> :Vexplore<CR>
 noremap <F3> :call funcs#ToggleMouse()<CR>
 inoremap <F3> <Esc>:call funcs#ToggleMouse()<CR>a
 
-" Enable neocomplete
+" Neocomplete
 let g:neocomplete#enable_at_startup = 1
+let g:neocomplete#enable_smart_case = 1
+
+" Enable heavy omni completion.
+if !exists('g:neocomplete#sources#omni#input_patterns')
+	let g:neocomplete#sources#omni#input_patterns = {}
+endif
+
+" Neosnippet
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
 
 " TaskList
 map <A-t> <Plug>TaskList
