@@ -20,7 +20,7 @@
 [submodule ".vim/bundle/neocomplete"]
 	path = .vim/bundle/neocomplete
 	url = https://github.com/Shougo/neocomplete.vim.git
-	dirty = ignore
+	ignore = dirty
 [submodule ".vim/bundle/neosnippet"]
 	path = .vim/bundle/neosnippet
 	url = https://github.com/Shougo/neosnippet.vim.git

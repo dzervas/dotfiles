@@ -38,6 +38,7 @@ set completeopt=longest,menuone	" Popup menu doesn't select the first completion
 set scrolloff=3			" 3 Lines around cursor when scrolling
 set shortmess=atI		" Error messages are shorter
 set foldmethod=syntax		" Fold blocks according to syntax
+set encoding=utf-8		" Ability to use Alt in gvim
 
 let mapleader=","
 
@@ -63,7 +64,7 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 " Basic mappings
 " Key accuracy hacks
 nnoremap ; :
-noremap! <F1> <ESC> 
+noremap! <F1> <ESC>
 
 " Unhighlight search
 nnoremap <silent> <C-l> :nohl<CR><C-l>
@@ -121,15 +122,16 @@ let g:dwm_map_keys = 0
 nmap <A-Return> <Plug>DWMNew
 nmap <A-c> <Plug>DWMClose
 nmap <A-Space> <Plug>DWMFocus
-nmap <A-l> <Plug>DWMGrowMaster
-nmap <A-h> <Plug>DWMShrinkMaster
+"nmap <A-l> <Plug>DWMGrowMaster
+"nmap <A-h> <Plug>DWMShrinkMaster
 nmap <A-.> <Plug>DWMRotateClockwise
 nmap <A-,> <Plug>DWMRotateCounterclockwise
 
-nnoremap <A-j> <C-W>w
-nnoremap <A-k> <C-W>W
+nnoremap <A-l> <C-W>w
+nnoremap <A-h> <C-W>W
 map <A-Right> :tabnext<CR>
 map <A-Left> :tabprevious<CR>
 map <A-w> :tabnew<CR>
 map <A-q> :tabclose<CR>
-map <A-Tab> :bn<CR>
+map <A-k> :bn<CR>
+map <A-j> :bp<CR>
