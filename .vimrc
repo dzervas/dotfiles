@@ -12,8 +12,8 @@ set smartcase			" Ignore case when lowercase used in search
 set smarttab			" Helps with backspacing with space indent
 set hlsearch			" Highlight search terms
 set incsearch
-set foldmethod=indent		" Code folding
-set foldlevel=99		" Folding level
+set foldenable
+set foldmethod=syntax		" Code folding
 set history=1000		" Number of commands to remember
 set undolevels=1000		" Undo states to remember
 set wildignore=*.swp,*.b,*.pyc,*.class,*.apk,*.jar,*.o
@@ -37,7 +37,6 @@ set omnifunc=syntaxcomplete#Complete
 set completeopt=longest,menuone	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
 set scrolloff=3			" 3 Lines around cursor when scrolling
 set shortmess=atI		" Error messages are shorter
-set foldmethod=syntax		" Fold blocks according to syntax
 set encoding=utf-8		" Ability to use Alt in gvim
 
 let mapleader=","
@@ -103,16 +102,17 @@ inoremap <F3> <Esc>:call funcs#ToggleMouse()<CR>a
 " Neocomplete
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+if has('conceal')
+	set conceallevel=2 concealcursor=i
+endif
 
 " Enable heavy omni completion.
 if !exists('g:neocomplete#sources#omni#input_patterns')
 	let g:neocomplete#sources#omni#input_patterns = {}
 endif
-
-" Neosnippet
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
 
 " TaskList
 map <A-t> <Plug>TaskList
