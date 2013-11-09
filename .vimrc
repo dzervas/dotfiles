@@ -50,9 +50,6 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 " Do not insert comments automatically
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
-" C++ completion
-"au BufNewFile,BufRead,BufEnter *.cpp,*.hpp set omnifunc=omni#cpp#complete#Main
-
 " Enable omni completion.
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
@@ -71,15 +68,26 @@ nnoremap <silent> <C-l> :nohl<CR><C-l>
 " Don't forget sudo ever again!
 cmap w!! w !sudo tee % >/dev/null
 
-map ls :ls<CR>
-
 " Fix identation
 noremap <F4> :%s/    /\t/g
 noremap <F8> :%s/        /\t/g
 
 " Map toggleList
-noremap <A-i> :set list!<CR>
-inoremap <A-i> <ESC>:set list!<CR>a
+map <Leader>ch :set list!<CR>
+
+" Tab and buffer manipulation
+nnoremap <Leader>j <C-W>w
+nnoremap <Leader>k <C-W>W
+map <Leader>tn :tabnext<CR>
+map <Leader>tp :tabprevious<CR>
+map <Leader>to :tabnew<CR>
+map <Leader>tc :tabclose<CR>
+map <Leader>ls :ls<CR>
+map <Leader>bn :bn<CR>
+map <Leader>bp :bp<CR>
+
+" File browser
+map <Leader>fe :Vexplore<CR>
 
 " Plugins
 " Load pathogen (bundle plugins)
@@ -89,11 +97,6 @@ call pathogen#helptags()
 " Set 256 colors and the theme
 set t_Co=256
 colorscheme molokai
-
-" File browser
-" let NERDTreeShowHidden=1
-" map <A-f> :NERDTreeToggle<CR>
-map <A-f> :Vexplore<CR>
 
 " Disable mouse
 noremap <F3> :call funcs#ToggleMouse()<CR>
@@ -115,23 +118,13 @@ if !exists('g:neocomplete#sources#omni#input_patterns')
 endif
 
 " TaskList
-map <A-t> <Plug>TaskList
+let g:tlTokenList = ['BUG', 'FIXME', 'TODO', 'DIRTY', 'NOTSURE']
 
 " DWM settings
-let g:dwm_map_keys = 0
-nmap <A-Return> <Plug>DWMNew
-nmap <A-c> <Plug>DWMClose
-nmap <A-Space> <Plug>DWMFocus
-"nmap <A-l> <Plug>DWMGrowMaster
-"nmap <A-h> <Plug>DWMShrinkMaster
-nmap <A-.> <Plug>DWMRotateClockwise
-nmap <A-,> <Plug>DWMRotateCounterclockwise
-
-nnoremap <A-l> <C-W>w
-nnoremap <A-h> <C-W>W
-map <A-Right> :tabnext<CR>
-map <A-Left> :tabprevious<CR>
-map <A-w> :tabnew<CR>
-map <A-q> :tabclose<CR>
-map <A-k> :bn<CR>
-map <A-j> :bp<CR>
+nmap <Leader><Return> <Plug>DWMNew
+nmap <Leader>c <Plug>DWMClose
+nmap <Leader><Space> <Plug>DWMFocus
+nmap <Leader>l <Plug>DWMGrowMaster
+nmap <Leader>h <Plug>DWMShrinkMaster
+nmap <Leader>. <Plug>DWMRotateClockwise
+nmap <Leader>, <Plug>DWMRotateCounterclockwise
