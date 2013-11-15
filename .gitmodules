@@ -4,19 +4,12 @@
 [submodule ".vim/bundle/tasklist"]
 	path = .vim/bundle/tasklist
 	url = https://github.com/vim-scripts/TaskList.vim.git
-[submodule ".vim/bundle/nerdtree"]
-	path = .vim/bundle/nerdtree
-	url = https://github.com/vim-scripts/The-NERD-tree.git
-	ignore = dirty
 [submodule ".vim/bundle/autoclose"]
 	path = .vim/bundle/autoclose
 	url = https://github.com/vim-scripts/AutoClose.git
 [submodule ".vim/bundle/dwm"]
 	path = .vim/bundle/dwm
 	url = https://github.com/spolu/dwm.vim.git
-[submodule ".vim/bundle/showmarks"]
-	path = .vim/bundle/showmarks
-	url = https://github.com/jacquesbh/vim-showmarks.git
 [submodule ".vim/bundle/neocomplete"]
 	path = .vim/bundle/neocomplete
 	url = https://github.com/Shougo/neocomplete.vim.git
@@ -24,3 +17,6 @@
 [submodule ".vim/bundle/neosnippet"]
 	path = .vim/bundle/neosnippet
 	url = https://github.com/Shougo/neosnippet.vim.git
+[submodule ".vim/bundle/airline"]
+	path = .vim/bundle/airline
+	url = https://github.com/bling/vim-airline.git

@@ -120,6 +120,15 @@ endif
 " TaskList
 let g:tlTokenList = ['BUG', 'FIXME', 'TODO', 'DIRTY', 'NOTSURE']
 
+" Airline settings
+" Disable airline separators
+"let g:airline_left_sep=''
+"let g:airline_right_sep=''
+
+" Set airline theme
+let g:airline_theme='molokai'
+let g:airline_powerline_fonts = 1
+
 " DWM settings
 nmap <Leader><Return> <Plug>DWMNew
 nmap <Leader>c <Plug>DWMClose
