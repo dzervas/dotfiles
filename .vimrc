@@ -123,7 +123,7 @@ let g:tlTokenList = ['BUG', 'FIXME', 'TODO', 'DIRTY', 'NOTSURE']
 " Airline settings
 " Set airline theme
 let g:airline_theme='molokai'
-let g:airline_powerline_fonts = 1
+let g:airline_powerline_fonts = 0
 
 " DWM settings
 nmap <Leader><Return> <Plug>DWMNew
