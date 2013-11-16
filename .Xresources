@@ -7,36 +7,28 @@
 	<Btn2Up>:		insert-selection(SELECT, CUT_BUFFER0) \n\
 	~Shift<BtnUp>:		select-end(PRIMARY, CUT_BUFFER0) \n\
 	Shift<BtnUp>:		select-end(CLIPBOARD, CUT_BUFFER1)
-*UXterm*saveLines: 2000
+*UXTerm*saveLines: 2000
 
-! Molokai theme
-*UXTerm*background: #101010
-*UXTerm*foreground: #d0d0d0
-*UXTerm*cursorColor: #d0d0d0
-!black
-*UXTerm*color0: #1B1D1E
-!red v
-*UXTerm*color1: #F92672
-!green v
-*UXTerm*color2: #A6E22E
-!yellow v
-*UXTerm*color3: #E6DB74
-!blue
-*UXTerm*color4: #30309b
-!magenta v
-*UXTerm*color5: #AE81FF
-!cyan v
-*UXTerm*color6: #66D9EF
-!white
-*UXTerm*color7: #F8F8F2
-*UXTerm*color8: #303030
-*UXTerm*color9: #ff0090
-*UXTerm*color10: #80ff00
-*UXTerm*color11: #ffba68
-*UXTerm*color12: #5f5fee
-*UXTerm*color13: #bb88dd
-*UXTerm*color14: #4eb4fa
-*UXTerm*color15: #d0d0d0
-!orange FD971F
 *UXTerm*fullscreen: never
 *UXTerm.omitTranslation: fullscreen
+
+!! Molokai !!
+*background: #101010
+*foreground: #d0d0d0
+*cursorColor: #d0d0d0
+*color0: #1B1D1E
+*color1: #F92672
+*color2: #A6E22E
+*color3: #E6DB74
+*color4: #30309b
+*color5: #AE81FF
+*color6: #66D9EF
+*color7: #F8F8F2
+*color8: #303030
+*color9: #ff0090
+*color10: #80ff00
+*color11: #ffba68
+*color12: #5f5fee
+*color13: #bb88dd
+*color14: #4eb4fa
+*color15: #d0d0d0
