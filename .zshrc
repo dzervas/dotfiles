@@ -88,6 +88,14 @@ unalias shopt
 		zle .down-line-or-history "$@"
 	}
 
+	oldpackages() {
+		for pkg in $(pacman -Qqet); do
+			[[ -z "$(pacman -Qi $pkg | grep "Groups *: base")" ]] && \
+			[[ -n "$(find $(pacman -Ql $pkg | grep bin | awk '{print $2}' | grep -v '^/.*/$') -type f -executable -atime +$1)" ]] && \
+			echo $pkg
+		done
+	}
+
 # ZLE definitions
 	zle -N insert-sudo insert_sudo
 	zle -N fake-accept-line
