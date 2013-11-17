@@ -91,7 +91,7 @@ unalias shopt
 	oldpackages() {
 		for pkg in $(pacman -Qqet); do
 			[[ -z "$(pacman -Qi $pkg | grep "Groups *: base")" ]] && \
-			[[ -n "$(find $(pacman -Ql $pkg | grep bin | awk '{print $2}' | grep -v '^/.*/$') -type f -executable -atime +$1)" ]] && \
+			[[ -n "$(find $(pacman -Qlq $pkg | grep -v '^/.*/$') -type f -executable -atime +$1 2>/dev/null)" ]] && \
 			echo $pkg
 		done
 	}
