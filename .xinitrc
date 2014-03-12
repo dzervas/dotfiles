@@ -23,6 +23,7 @@ firefox &
 skype &
 uxterm &
 dwmstatus &
+steam &
 
 exec dwm >> ~/.cache/dwm/stdout 2>> ~/.cache/dwm/stderr
 #xinput create-master Seat2

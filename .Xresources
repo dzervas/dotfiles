@@ -1,7 +1,7 @@
-*UXTerm*faceName:	Consola
-*UXTerm*faceSize:	9
-*UXTerm*locale:		true
-*UXTerm*antialias:	true
+*faceName:	Consola
+*faceSize:	9
+*locale:		true
+*antialias:	true
 *UXTerm*VT100.Translations:	#override \n\
 	Shift Ctrl <KeyPress> V:	insert-selection(CLIPBOARD) \n\
 	<Btn2Up>:		insert-selection(SELECT, CUT_BUFFER0) \n\

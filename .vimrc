@@ -28,7 +28,7 @@ set cursorline			" Highlight the current line
 set ttyfast			" Improves redrawing for newer computers
 set sidescroll=2		" Only scroll horizontally little by little
 set laststatus=2		" Makes the status bar always visible"
-set hidden			" Hide buffs instead of closing them
+"set hidden			" Hide buffs instead of closing them
 set showmatch			" Show matching parentheses
 set noerrorbells		" Don't beep
 set listchars=tab:→\ ,trail:•,extends:#,nbsp:.
@@ -60,7 +60,15 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 " Basic mappings
 " Key accuracy hacks
 nnoremap ; :
-noremap! <F1> <ESC>
+noremap! <F1> <ESC><Right>
+
+" Pedal bindings
+set <F13>=25~
+set <F14>=26~
+set <F15>=28~
+nnoremap <F14> a
+inoremap <F14> <Nop>
+inoremap <F15> <ESC>
 
 " Unhighlight search
 nnoremap <silent> <C-l> :nohl<CR><C-l>
@@ -120,10 +128,19 @@ endif
 " TaskList
 let g:tlTokenList = ['BUG', 'FIXME', 'TODO', 'DIRTY', 'NOTSURE']
 
+" BufferLine
+let g:bufferline_echo = 0
+
 " Airline settings
 " Set airline theme
 let g:airline_theme='molokai'
-let g:airline_powerline_fonts = 0
+let g:airline_powerline_fonts = 1
+
+" Syntastic
+let g:syntastic_error_symbol = '✗'
+let g:syntastic_warning_symbol = '⚠'
+let g:syntastic_enable_balloons = 1
+let g:syntastic_auto_loc_list = 1
 
 " DWM settings
 nmap <Leader><Return> <Plug>DWMNew
