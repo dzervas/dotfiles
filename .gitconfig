@@ -9,4 +9,4 @@
 	acp = !git ac && git push
 	;pullall = !for dir in * && do if [ -d "$dir/.git" ] && then cd $dir && echo "$dir:" && git pull && cd .. && fi && done
 [push]
-	default = matching
+	default = simple
