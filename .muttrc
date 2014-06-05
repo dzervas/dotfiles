@@ -1,16 +1,17 @@
 # Account settings
 set folder	= "imaps://dzervas.gr"
 set imap_user	= "dzervas@dzervas.gr"
+set smtp_url	= "smtp://$imap_user@dzervas.gr"
 set spoolfile	= "+INBOX"
-mailboxes	= +INBOX
 set from	= "01ttouch@gmail.com"
 set realname	= "Dimitris Zervas"
+set ssl_starttls= yes
 
-# Change the following line to a different editor you prefer.
 set editor	= "vim"
 
-# Basic config, you can leave this as is
+#mailboxes	= +INBOX
 set imap_check_subscribed
+
 set mail_check	= 30
 set imap_keepalive = 300
 set postponed	= "+Drafts"
