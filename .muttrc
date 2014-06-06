@@ -15,12 +15,13 @@ set editor		= "vim"
 set mail_check		= 30
 set imap_keepalive	= 300
 set ssl_starttls	= yes
+set sleep_time		= 0
 unset imap_passive
 
 # Dirs and paths
 set header_cache	= ~/.mutt/cache/headers
 set message_cachedir	= ~/.mutt/cache/bodies
-set mailcap_path	= ~/.muttcap
+set mailcap_path	= ~/.mutt/mailcap
 
 # Mail sorting
 set sort		= 'threads'
@@ -36,3 +37,6 @@ macro attach 'V' "<pipe-entry>cat >~/.cache/mutt/mail.html && firefox ~/.cache/m
 set query_command="/usr/bin/pc_query -m '%s'"
 macro index,pager	a "<pipe-message>pycard-import<return>" "Add this sender to your contacts"
 bind editor		<Tab> complete-query
+
+# Coloring
+#source ~/.mutt/monokai.colors
