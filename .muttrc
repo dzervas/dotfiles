@@ -31,3 +31,8 @@ set auto_tag		= yes
 auto_view text/html
 alternative_order text/plain text/enriched text/html
 macro attach 'V' "<pipe-entry>cat >~/.cache/mutt/mail.html && firefox ~/.cache/mutt/mail.html && shred -uzn 2 ~/.cache/mutt/mail.html<enter>"
+
+# Contacts
+set query_command="/usr/bin/pc_query -m '%s'"
+macro index,pager	a "<pipe-message>pycard-import<return>" "Add this sender to your contacts"
+bind editor		<Tab> complete-query
