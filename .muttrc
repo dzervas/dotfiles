@@ -1,23 +1,33 @@
-# Account settings
-set folder	= "imaps://dzervas.gr"
-set imap_user	= "dzervas@dzervas.gr"
-set smtp_url	= "smtp://$imap_user@dzervas.gr"
-set spoolfile	= "+INBOX"
-set from	= "01ttouch@gmail.com"
-set realname	= "Dimitris Zervas"
-set ssl_starttls= yes
+# Server settings
+set folder		= "imaps://dzervas.gr"
+set smtp_url		= "smtp://$imap_user@dzervas.gr"
+set imap_user		= "dzervas@dzervas.gr"
+set from		= $imap_user
+set realname		= "Dimitris Zervas"
 
-set editor	= "vim"
-
-#mailboxes	= +INBOX
+# Mailboxes
 set imap_check_subscribed
+set spoolfile		= "+INBOX"
+set postponed		= "+Drafts"
+set editor		= "vim"
 
-set mail_check	= 30
-set imap_keepalive = 300
-set postponed	= "+Drafts"
-set header_cache=~/.mutt/cache/headers
-set message_cachedir=~/.mutt/cache/bodies
-set sort	= 'threads'
-set sort_aux	= 'reverse-last-date-received'
-set auto_tag	= yes
+# Connection settings
+set mail_check		= 30
+set imap_keepalive	= 300
+set ssl_starttls	= yes
 unset imap_passive
+
+# Dirs and paths
+set header_cache	= ~/.mutt/cache/headers
+set message_cachedir	= ~/.mutt/cache/bodies
+set mailcap_path	= ~/.muttcap
+
+# Mail sorting
+set sort		= 'threads'
+set sort_aux		= 'reverse-last-date-received'
+set auto_tag		= yes
+
+# HTML handling
+auto_view text/html
+alternative_order text/plain text/enriched text/html
+macro attach 'V' "<pipe-entry>cat >~/.cache/mutt/mail.html && firefox ~/.cache/mutt/mail.html && shred -uzn 2 ~/.cache/mutt/mail.html<enter>"
