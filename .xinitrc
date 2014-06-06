@@ -17,6 +17,7 @@ xrdb -merge "${HOME}/.Xresources"
 wmname LG3D
 
 # Autostart
+eval $(gpg-agent --daemon) &
 mpd
 thunar --daemon &
 firefox &

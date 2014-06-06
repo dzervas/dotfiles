@@ -1,7 +1,9 @@
 # Server settings
+source "gpg2 -dq $HOME/.muttpass.gpg |"
 set folder		= "imaps://dzervas.gr"
-set smtp_url		= "smtp://$imap_user@dzervas.gr"
 set imap_user		= "dzervas@dzervas.gr"
+set imap_pass		= $my_pw_dzervas
+set smtp_url		= "smtp://$imap_user:$my_pw_dzervas@dzervas.gr"
 set from		= $imap_user
 set realname		= "Dimitris Zervas"
 
@@ -40,3 +42,12 @@ bind editor		<Tab> complete-query
 
 # Coloring
 #source ~/.mutt/monokai.colors
+
+# PGP
+set pgp_autosign
+set pgp_use_gpg_agent = yes
+set pgp_timeout = 3600
+set crypt_autosign = yes
+set crypt_replyencrypt = yes
+set pgp_sign_as = 47C9CA96
+source ~/.mutt/gpg.rc
