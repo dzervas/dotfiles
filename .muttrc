@@ -9,9 +9,11 @@ set realname		= "Dimitris Zervas"
 
 # Mailboxes
 set imap_check_subscribed
+set beep_new
 set spoolfile		= "+INBOX"
 set postponed		= "+Drafts"
 set editor		= "vim"
+bind index "^" imap-fetch-mail
 
 # Connection settings
 set mail_check		= 30

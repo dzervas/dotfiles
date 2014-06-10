@@ -11,6 +11,7 @@
 
 *UXTerm*fullscreen: never
 *UXTerm.omitTranslation: fullscreen
+*UXTerm*bellIsUrgent: true
 
 !! Molokai !!
 *background: #101010

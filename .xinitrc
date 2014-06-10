@@ -23,6 +23,7 @@ thunar --daemon &
 firefox &
 skype &
 uxterm &
+uxterm -class mutt -e mutt &
 dwmstatus &
 steam &
 
