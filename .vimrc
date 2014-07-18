@@ -141,6 +141,9 @@ let g:syntastic_error_symbol = '✗'
 let g:syntastic_warning_symbol = '⚠'
 let g:syntastic_enable_balloons = 1
 let g:syntastic_auto_loc_list = 1
+let g:syntastic_c_checkers = ['gcc']
+let g:syntastic_c_check_header = 1
+let g:syntastic_c_compiler_options = '-std=c99'
 
 " DWM settings
 nmap <Leader><Return> <Plug>DWMNew
