@@ -7,6 +7,7 @@
 	aa = !git add -u && git add . && git status
 	ac = !git aa && git commit
 	acp = !git ac && git push
+	co = !git checkout
 	;pullall = !for dir in * && do if [ -d "$dir/.git" ] && then cd $dir && echo "$dir:" && git pull && cd .. && fi && done
 [push]
 	default = simple

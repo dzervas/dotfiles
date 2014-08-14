@@ -27,7 +27,7 @@ uxterm &
 dwmstatus &
 #steam &
 
-exec dwm >> ~/.cache/dwm/stdout 2>> ~/.cache/dwm/stderr
+exec dwm > ~/.cache/dwm/stdout 2> ~/.cache/dwm/stderr
 #xinput create-master Seat2
 #DISPLAY=:0.0 exec dwm.seat1 >> ~/.cache/dwm/stdout1 2>> ~/.cache/dwm/stderr1 &
 #DISPLAY=:0.1 exec dwm.seat2 >> ~/.cache/dwm/stdout2 2>> ~/.cache/dwm/stderr2
