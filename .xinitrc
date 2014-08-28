@@ -18,14 +18,10 @@ wmname LG3D
 
 # Autostart
 eval $(gpg-agent --daemon) &
-mpd
 thunar --daemon &
 firefox &
-skype &
 uxterm &
-#uxterm -class mutt -e mutt &
 dwmstatus &
-#steam &
 
 exec dwm > ~/.cache/dwm/stdout 2> ~/.cache/dwm/stderr
 #xinput create-master Seat2
