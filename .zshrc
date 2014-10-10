@@ -132,8 +132,9 @@ unalias shopt
 
 # Aliases
 	alias man='LC_ALL=C LANG=C man'
-	alias ll='ls -al --color=auto'
 	alias ls='ls --color=auto '
+	alias ll='ls -al --color=auto'
+	alias fuck='sudo $(fc -l -n -1)'
 
 
 # Key bindings
