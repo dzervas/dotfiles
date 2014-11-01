@@ -21,13 +21,13 @@ set title
 set nobackup
 set noswapfile			" Disable the fucking .swp files
 set pastetoggle=<F2>		" Toggle paste mode with F2
-set showtabline=1		" Always show the tab bar
+"set showtabline=1		" Always show the tab bar
 set cryptmethod=blowfish	" Use (much) stronger blowfish encryption
-set showmode			" Show current mode 
+"set showmode			" Show current mode
 set cursorline			" Highlight the current line
 set ttyfast			" Improves redrawing for newer computers
 set sidescroll=2		" Only scroll horizontally little by little
-set laststatus=2		" Makes the status bar always visible"
+"set laststatus=2		" Makes the status bar always visible"
 "set hidden			" Hide buffs instead of closing them
 set showmatch			" Show matching parentheses
 set noerrorbells		" Don't beep
@@ -61,14 +61,6 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 " Key accuracy hacks
 nnoremap ; :
 noremap! <F1> <ESC><Right>
-
-" Pedal bindings
-set <F13>=25~
-set <F14>=26~
-set <F15>=28~
-nnoremap <F14> a
-inoremap <F14> <Nop>
-inoremap <F15> <ESC>
 
 " Unhighlight search
 nnoremap <silent> <C-l> :nohl<CR><C-l>
@@ -111,19 +103,19 @@ noremap <F3> :call funcs#ToggleMouse()<CR>
 inoremap <F3> <Esc>:call funcs#ToggleMouse()<CR>a
 
 " Neocomplete
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#enable_smart_case = 1
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
-if has('conceal')
-	set conceallevel=2 concealcursor=i
-endif
+"let g:neocomplete#enable_at_startup = 1
+"let g:neocomplete#enable_smart_case = 1
+"imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+"smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+"xmap <C-k>     <Plug>(neosnippet_expand_target)
+"if has('conceal')
+"	set conceallevel=2 concealcursor=i
+"endif
 
 " Enable heavy omni completion.
-if !exists('g:neocomplete#sources#omni#input_patterns')
-	let g:neocomplete#sources#omni#input_patterns = {}
-endif
+"if !exists('g:neocomplete#sources#omni#input_patterns')
+"	let g:neocomplete#sources#omni#input_patterns = {}
+"endif
 
 " TaskList
 let g:tlTokenList = ['BUG', 'FIXME', 'TODO', 'DIRTY', 'NOTSURE']
@@ -137,13 +129,13 @@ let g:airline_theme='molokai'
 let g:airline_powerline_fonts = 1
 
 " Syntastic
-let g:syntastic_error_symbol = '✗'
-let g:syntastic_warning_symbol = '⚠'
-let g:syntastic_enable_balloons = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_c_checkers = ['gcc']
-let g:syntastic_c_check_header = 1
-let g:syntastic_c_compiler_options = '-std=c99'
+"let g:syntastic_error_symbol = '✗'
+"let g:syntastic_warning_symbol = '⚠'
+"let g:syntastic_enable_balloons = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_c_checkers = ['gcc']
+"let g:syntastic_c_check_header = 1
+"let g:syntastic_c_compiler_options = '-std=c99'
 
 " DWM settings
 nmap <Leader><Return> <Plug>DWMNew
