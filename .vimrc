@@ -1,37 +1,40 @@
 ﻿" Basic settings
 set nocompatible		" This must be first, because it changes other options as side effect
-set mouse=a			" By default mouse is for vim. F2 to cycle between
-set mousefocus			" Hover to change window focus
-set tabstop=8
+
 set autoindent
+set colorcolumn=100		" Where to put the vertical line
+set completeopt=longest,menuone	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
 set copyindent
-set number			" Show line numbers
-set ruler			" Show where are you in the file
-set ignorecase
-set smartcase			" Ignore case when lowercase used in search
-set smarttab			" Helps with backspacing with space indent
-set incsearch
+set cryptmethod=blowfish	" Use (much) stronger blowfish encryption
+set cursorline			" Highlight the current line
+set encoding=utf-8		" Ability to use Alt in gvim
 set foldenable
 set foldmethod=syntax		" Code folding
 set history=100			" Number of commands to remember
-set undolevels=1000		" Undo states to remember
-set wildignore=*.swp,*.b,*.pyc,*.class,*.apk,*.jar,*.o
-set title
-set nobackup
-set noswapfile			" Disable the fucking .swp files
-set pastetoggle=<F2>		" Toggle paste mode with F2
-set cryptmethod=blowfish	" Use (much) stronger blowfish encryption
-set cursorline			" Highlight the current line
-set ttyfast			" Improves redrawing for newer computers
-set sidescroll=2		" Only scroll horizontally little by little
-set showmatch			" Show matching parentheses
-set noerrorbells		" Don't beep
-set listchars=tab:→\ ,trail:•,extends:#,nbsp:.
+set ignorecase
+set incsearch
 set list
-set completeopt=longest,menuone	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
+set listchars=tab:→\ ,trail:•,extends:#,nbsp:.
+set mouse=a			" By default mouse is for vim. F2 to cycle between
+set mousefocus			" Hover to change window focus
+set nobackup
+set noerrorbells		" Don't beep
+set noswapfile			" Disable the fucking .swp files
+set number			" Show line numbers
+set pastetoggle=<F2>		" Toggle paste mode with F2
+set ruler			" Show where are you in the file
 set scrolloff=3			" 3 Lines around cursor when scrolling
 set shortmess=atI		" Error messages are shorter
-set encoding=utf-8		" Ability to use Alt in gvim
+set showmatch			" Show matching parentheses
+set sidescroll=2		" Only scroll horizontally little by little
+set smartcase			" Ignore case when lowercase used in search
+set smarttab			" Helps with backspacing with space indent
+set tabstop=8
+set tags+=~/.vim/systags	" CTags
+set title
+set ttyfast			" Improves redrawing for newer computers
+set undolevels=1000		" Undo states to remember
+set wildignore=*.swp,*.b,*.pyc,*.class,*.apk,*.jar,*.o
 
 let mapleader=","
 
@@ -69,6 +72,7 @@ map <Leader>s :set list!<CR>
 map <Leader>f :Vexplore<CR>
 
 " Tab, buffer and split view manipulation
+map <Leader><Space>		:bdelete<CR>
 map <Leader>.			:bn<CR>
 map <Leader>m			:bp<CR>
 map <Leader><Return>		:vsp<CR>
@@ -86,8 +90,8 @@ autocmd FileType sh,ruby,python,conf,fsta	let b:comment_leader = '# '
 autocmd FileType tex				let b:comment_leader = '% '
 autocmd FileType mail				let b:comment_leader = '> '
 autocmd FileType vim				let b:comment_leader = '" '
-noremap <silent> <Leader>// :<C-B>silent <C-E>s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:noh<CR>
-noremap <silent> <Leader>?? :<C-B>silent <C-E>s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:noh<CR>
+noremap <silent> <Leader>/ :<C-B>silent <C-E>s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:noh<CR>
+noremap <silent> <Leader>? :<C-B>silent <C-E>s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:noh<CR>
 
 " Plugins
 " Load pathogen (bundle plugins)
