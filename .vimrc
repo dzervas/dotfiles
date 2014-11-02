@@ -10,7 +10,6 @@ set ruler			" Show where are you in the file
 set ignorecase
 set smartcase			" Ignore case when lowercase used in search
 set smarttab			" Helps with backspacing with space indent
-set hlsearch			" Highlight search terms
 set incsearch
 set foldenable
 set foldmethod=syntax		" Code folding
@@ -21,14 +20,10 @@ set title
 set nobackup
 set noswapfile			" Disable the fucking .swp files
 set pastetoggle=<F2>		" Toggle paste mode with F2
-"set showtabline=1		" Always show the tab bar
 set cryptmethod=blowfish	" Use (much) stronger blowfish encryption
-"set showmode			" Show current mode
 set cursorline			" Highlight the current line
 set ttyfast			" Improves redrawing for newer computers
 set sidescroll=2		" Only scroll horizontally little by little
-"set laststatus=2		" Makes the status bar always visible"
-"set hidden			" Hide buffs instead of closing them
 set showmatch			" Show matching parentheses
 set noerrorbells		" Don't beep
 set listchars=tab:→\ ,trail:•,extends:#,nbsp:.
@@ -75,17 +70,6 @@ noremap <F8> :%s/        /\t/g
 " Map toggleList
 map <Leader>ch :set list!<CR>
 
-" Tab and buffer manipulation
-nnoremap <Leader>j <C-W>w
-nnoremap <Leader>k <C-W>W
-map <Leader>tn :tabnext<CR>
-map <Leader>tp :tabprevious<CR>
-map <Leader>to :tabnew<CR>
-map <Leader>tc :tabclose<CR>
-map <Leader>ls :ls<CR>
-map <Leader>bn :bn<CR>
-map <Leader>bp :bp<CR>
-
 " File browser
 map <Leader>fe :Vexplore<CR>
 
@@ -102,46 +86,22 @@ colorscheme molokai
 noremap <F3> :call funcs#ToggleMouse()<CR>
 inoremap <F3> <Esc>:call funcs#ToggleMouse()<CR>a
 
-" Neocomplete
-"let g:neocomplete#enable_at_startup = 1
-"let g:neocomplete#enable_smart_case = 1
-"imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-"smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-"xmap <C-k>     <Plug>(neosnippet_expand_target)
-"if has('conceal')
-"	set conceallevel=2 concealcursor=i
-"endif
-
-" Enable heavy omni completion.
-"if !exists('g:neocomplete#sources#omni#input_patterns')
-"	let g:neocomplete#sources#omni#input_patterns = {}
-"endif
-
 " TaskList
-let g:tlTokenList = ['BUG', 'FIXME', 'TODO', 'DIRTY', 'NOTSURE']
+let g:tlTokenList = ['BUG', 'FIXME', 'TODO', 'DIRTY']
 
-" BufferLine
-let g:bufferline_echo = 0
 
-" Airline settings
-" Set airline theme
-let g:airline_theme='molokai'
-let g:airline_powerline_fonts = 1
-
-" Syntastic
-"let g:syntastic_error_symbol = '✗'
-"let g:syntastic_warning_symbol = '⚠'
-"let g:syntastic_enable_balloons = 1
-"let g:syntastic_auto_loc_list = 1
-"let g:syntastic_c_checkers = ['gcc']
-"let g:syntastic_c_check_header = 1
-"let g:syntastic_c_compiler_options = '-std=c99'
-
-" DWM settings
-nmap <Leader><Return> <Plug>DWMNew
-nmap <Leader>c <Plug>DWMClose
-nmap <Leader><Space> <Plug>DWMFocus
-nmap <Leader>l <Plug>DWMGrowMaster
-nmap <Leader>h <Plug>DWMShrinkMaster
-nmap <Leader>. <Plug>DWMRotateClockwise
-nmap <Leader>, <Plug>DWMRotateCounterclockwise
+" Tab and buffer manipulation
+map <Leader>t<Return> :tabnew<CR>
+map <Leader>tc :tabclose<CR>
+map <Leader>tk :tabnext<CR>
+map <Leader>tj :tabprevious<CR>
+map <Leader>. :bn<CR>
+map <Leader>m :bp<CR>
+map <Leader><Return> :vsp<CR>
+nnoremap <Leader><S-Return> <C-W>r
+nnoremap <Leader>c <C-W>q
+nnoremap <Leader>h <C-W>-
+nnoremap <Leader>j <C-W>h
+nnoremap <Leader>k <C-W>l
+nnoremap <Leader>l <C-W>+
+nnoremap <Leader>, <C-W><C-W>
