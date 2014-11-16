@@ -14,20 +14,22 @@ if [ "$HOSTNAME" = poseidon ]; then
 	monitor=`xrandr | grep -i edp | cut -d " " -f 1`
 	xrandr --newmode "1440x900_60.00" 106.50  1440 1528 1672 1904  900 903 909 934 -hsync +vsync
 	xrandr --addmode $monitor 1440x900_60.00
-	xrandr --output $monitor --mode 1440x900_60.00
+# 	xrandr --output $monitor --mode 1440x900_60.00
 fi
 
 xrdb -merge "${HOME}/.Xresources"
-xautolock -time 15 -locker slock -nowlocker slock -detectsleep -corners +000 -cornerdelay 2 &
+xautolock -time 5 -locker slock -nowlocker slock -detectsleep -corners +000 -cornerdelay 2 &
 
 # Hack to fix misbehaving Java applications
 wmname LG3D
 
 # Autostart
 eval $(gpg-agent --daemon) &
+xbindkeys
 thunar --daemon &
 firefox &
 uxterm &
 dwmstatus &
+nch-session nm-applet &
 
-exec dwm > ~/.cache/dwm/stdout 2> ~/.cache/dwm/stderr
+exec /usr/local/bin/dwm > ~/.cache/dwm/stdout 2> ~/.cache/dwm/stderr

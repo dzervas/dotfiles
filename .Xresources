@@ -1,7 +1,3 @@
-*faceName:	Consola
-*faceSize:	9
-*locale:		true
-*antialias:	true
 *UXTerm*VT100.Translations:	#override \n\
 	Shift Ctrl <KeyPress> V:	insert-selection(CLIPBOARD) \n\
 	<Btn2Up>:		insert-selection(SELECT, CUT_BUFFER0) \n\
@@ -12,6 +8,12 @@
 *UXTerm*fullscreen: never
 *UXTerm.omitTranslation: fullscreen
 *UXTerm*bellIsUrgent: true
+
+!*faceName:	Consola
+*faceName:	Monaco:Style=Regular:Size=14
+*faceSize:	14
+*locale:	true
+*antialias:	true
 
 !! Molokai !!
 *background: #101010

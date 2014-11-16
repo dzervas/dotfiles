@@ -1,0 +1,5 @@
+"/usr/bin/brightkbd down"
+  m:0x0 + c:237
+
+"/usr/bin/brightkbd up"
+  m:0x0 + c:238
