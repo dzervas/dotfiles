@@ -71,6 +71,9 @@ map <Leader>s :set list!<CR>
 " File browser
 map <Leader>f :Vexplore<CR>
 
+" Spell checker
+map <Leader>z :set spell spelllang=en_us syntax=off<CR>
+
 " Tab, buffer and split view manipulation
 map <Leader><Space>		:bdelete<CR>
 map <Leader>.			:bn<CR>
@@ -85,11 +88,11 @@ nnoremap <Leader>l		<C-W>+
 nnoremap <Leader>,		<C-W><C-W>
 
 " Commenting blocks of code.
-autocmd FileType c,cpp,java,scala		let b:comment_leader = '// '
-autocmd FileType sh,ruby,python,conf,fsta	let b:comment_leader = '# '
-autocmd FileType tex				let b:comment_leader = '% '
-autocmd FileType mail				let b:comment_leader = '> '
-autocmd FileType vim				let b:comment_leader = '" '
+let b:comment_leader = '# '		" Default Comment leader
+autocmd FileType c,cpp,java,scala	let b:comment_leader = '// '
+autocmd FileType tex			let b:comment_leader = '% '
+autocmd FileType mail			let b:comment_leader = '> '
+autocmd FileType vim			let b:comment_leader = '" '
 noremap <silent> <Leader>/ :<C-B>silent <C-E>s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:noh<CR>
 noremap <silent> <Leader>? :<C-B>silent <C-E>s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:noh<CR>
 
