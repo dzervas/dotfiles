@@ -88,14 +88,6 @@ unalias shopt
 		zle .down-line-or-history "$@"
 	}
 
-	oldpackages() {
-		for pkg in $(pacman -Qqet); do
-			[[ -z "$(pacman -Qi $pkg | grep "Groups *: base")" ]] && \
-			[[ -n "$(find $(pacman -Qlq $pkg | grep -v '^/.*/$') -type f -executable -atime +$1 2>/dev/null)" ]] && \
-			echo $pkg
-		done
-	}
-
 # ZLE definitions
 	zle -N insert-sudo insert_sudo
 	zle -N fake-accept-line
@@ -116,10 +108,10 @@ unalias shopt
 	GIT_PROMPT_SUFFIX="%{$fg[green]%}]%{$reset_color%}"
 	GIT_PROMPT_AHEAD="%{$fg[red]%}ANUM%{$reset_color%}"
 	GIT_PROMPT_BEHIND="%{$fg[cyan]%}BNUM%{$reset_color%}"
-	GIT_PROMPT_MERGING="%{$fg_bold[magenta]%}⚡︎%{$reset_color%}"
-	GIT_PROMPT_UNTRACKED="%{$fg_bold[red]%}●%{$reset_color%}"
-	GIT_PROMPT_MODIFIED="%{$fg_bold[yellow]%}●%{$reset_color%}"
-	GIT_PROMPT_STAGED="%{$fg_bold[green]%}●%{$reset_color%}"
+	GIT_PROMPT_MERGING="%{$fg_bold[magenta]%}/!\\%{$reset_color%}"
+	GIT_PROMPT_UNTRACKED="%{$fg_bold[red]%}•%{$reset_color%}"
+	GIT_PROMPT_MODIFIED="%{$fg_bold[yellow]%}•%{$reset_color%}"
+	GIT_PROMPT_STAGED="%{$fg_bold[green]%}•%{$reset_color%}"
 
 	TZ="Europe/Athens"
 	HISTFILE=$HOME/.zhistory

@@ -9,7 +9,6 @@
 *UXTerm.omitTranslation: fullscreen
 *UXTerm*bellIsUrgent: true
 
-!*faceName:	Consola
 *faceName:	Monaco:Style=Regular:Size=14
 *faceSize:	14
 *locale:	true

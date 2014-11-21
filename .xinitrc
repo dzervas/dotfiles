@@ -25,11 +25,14 @@ wmname LG3D
 
 # Autostart
 eval $(gpg-agent --daemon) &
+eval $(ssh-agent --daemon) &
 xbindkeys
 thunar --daemon &
+pulseaudio --start
 firefox &
 uxterm &
 dwmstatus &
-nch-session nm-applet &
+pasystray &
+wpa_gui &
 
 exec /usr/local/bin/dwm > ~/.cache/dwm/stdout 2> ~/.cache/dwm/stderr

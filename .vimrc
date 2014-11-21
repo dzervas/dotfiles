@@ -14,7 +14,7 @@ set history=100			" Number of commands to remember
 set ignorecase
 set incsearch
 set list
-set listchars=tab:→\ ,trail:•,extends:#,nbsp:.
+set listchars=tab:>_,trail:•,extends:#,nbsp:¶
 set mouse=a			" By default mouse is for vim. F2 to cycle between
 set mousefocus			" Hover to change window focus
 set nobackup
