@@ -119,8 +119,14 @@ unalias shopt
 	SAVEHIST=1000
 	HOSTNAME="`hostname`"
 	PAGER='less'
-	PS1="$GREEN%n $BCYAN%c$NC%(!.#.$) "
-	RPS1='$(git_prompt_string)'
+	if [ -n "$SSH_CLIENT" ]; then
+		SSH_COLOR=$RED
+		export SSH_INFO="@$RED$(uname -n)$NC"
+	else
+		SSH_COLOR=$GREEN
+	fi
+	PS1="$SSH_COLOR%n $BCYAN%c$NC%(!.#.>) "
+	RPS1='${SSH_INFO}$(git_prompt_string)'
 
 # Aliases
 	alias man='LC_ALL=C LANG=C man'

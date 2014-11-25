@@ -104,4 +104,10 @@
 	fi
 
 # Other useful definitions
-	export PS1="${Red}\u ${BBlue}\W${Green}\$(gitbranch)\$(gitstat)${Red}\$ ${NC}"
+	if [ -n "$SSH_CLIENT" ]; then
+		SSH_COLOR=$Red
+		export SSH_INFO="@$Red$(uname -n)"
+	else
+		SSH_COLOR=$Green
+	fi
+	export PS1="${SSH_COLOR}\u${SSH_INFO} ${BBlue}\W${Green}\$(gitbranch)\$(gitstat)${Red}\$ ${NC}"
