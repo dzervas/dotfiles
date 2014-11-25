@@ -19,6 +19,7 @@ set mouse=a			" By default mouse is for vim. F2 to cycle between
 set mousefocus			" Hover to change window focus
 set nobackup
 set noerrorbells		" Don't beep
+set noexpandtab
 set noswapfile			" Disable the fucking .swp files
 set number			" Show line numbers
 set pastetoggle=<F2>		" Toggle paste mode with F2
@@ -26,7 +27,9 @@ set ruler			" Show where are you in the file
 set scrolloff=3			" 3 Lines around cursor when scrolling
 set shortmess=atI		" Error messages are shorter
 set showmatch			" Show matching parentheses
+set shiftwidth=8
 set sidescroll=2		" Only scroll horizontally little by little
+set softtabstop=8
 set smartcase			" Ignore case when lowercase used in search
 set smarttab			" Helps with backspacing with space indent
 set tabstop=8
