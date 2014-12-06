@@ -129,15 +129,20 @@ unalias shopt
 	RPS1='${SSH_INFO}$(git_prompt_string)'
 
 # Aliases
-	alias man='LC_ALL=C LANG=C man'
-#	alias ls='ls --color=auto '
-	alias ls='ls -G '
-	alias ll='ls -al --color=auto'
+	# Called with "cclin <ip>:<port>"
+	alias cclin='openssl s_client -quiet -connect '
+	# Called with "cserv <port>"
+	# Needs .cserv.pem generated with:
+	# openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem
+	alias cserv='openssl s_server -quiet -cert ~/.cserv.pem -accept '
 	alias fuck='sudo $(fc -l -n -1)'
+	alias ls='ls --color=auto '
+	alias ll='ls -al --color=auto'
+	alias man='LC_ALL=C LANG=C man'
 
 
 # Key bindings
-	bindkey -v		# VI key bindings
+#	bindkey -v		# VI key bindings
 	bindkey "^r"		history-incremental-search-backward
 	bindkey "^y"		insert-sudo
 	bindkey "^[[3~"		delete-char
