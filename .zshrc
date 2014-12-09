@@ -129,12 +129,18 @@ unalias shopt
 	RPS1='${SSH_INFO}$(git_prompt_string)'
 
 # Aliases
+	alias cprompt='while true; do
+	read tmp
+	echo "${USER}: ${tmp}"
+done'
 	# Called with "cclin <ip>:<port>"
-	alias cclin='openssl s_client -quiet -connect '
+	alias cclin='cprompt | openssl s_client -quiet -connect '
 	# Called with "cserv <port>"
 	# Needs .cserv.pem generated with:
 	# openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem
-	alias cserv='openssl s_server -quiet -cert ~/.cserv.pem -accept '
+	alias cserv='cprompt | openssl s_server -quiet -cert ~/.cserv.pem -accept '
+	alias chelp='echo "Usage: cclin <ip>:<port>, cserv <port>
+Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem"'
 	alias fuck='sudo $(fc -l -n -1)'
 	alias ls='ls --color=auto '
 	alias ll='ls -al --color=auto'
