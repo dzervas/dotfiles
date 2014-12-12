@@ -129,6 +129,7 @@ unalias shopt
 	RPS1='${SSH_INFO}$(git_prompt_string)'
 
 # Aliases
+	alias cbrowse='avahi-browse -atr | grep "SSL Chat" -A3 | grep = -A3'
 	alias cprompt='while true; do
 	read tmp
 	echo "${USER}: ${tmp}"
@@ -138,7 +139,7 @@ done'
 	# Called with "cserv <port>"
 	# Needs .cserv.pem generated with:
 	# openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem
-	alias cserv='cprompt | openssl s_server -quiet -cert ~/.cserv.pem -accept '
+	alias cserv='avahi-publish -s "SSL Chat" _https._tcp 8080 & ; cprompt | openssl s_server -quiet -cert ~/.cserv.pem -accept '
 	alias chelp='echo "Usage: cclin <ip>:<port>, cserv <port>
 Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem"'
 	alias fuck='sudo $(fc -l -n -1)'
