@@ -28,14 +28,11 @@
 	# No duplicates in history
 	export HISTCONTROL=ignoredups
 	export EDITOR=vim
-	export PATH="$PATH:~/bin"
+
 	# Check the window size after each command to update LINES and COLUMNS if necessary
 	shopt -s checkwinsize
 
 # Alias and function definitions.
-	# remove all *.pyc files in current directory and subdirectories
-	alias rmpyc='find . -name "*.pyc" -exec rm -rf {} \;'
-
 	# git status for command prompt
 	function gitstat() {
 		if [[ $(git status 2> /dev/null | tail -n1) == 'no changes added to commit (use "git add" and/or "git commit -a")' ]]; then
@@ -63,21 +60,6 @@
 		done
 	}
 
-	# execute a command for x seconds
-	# use: timealarm <seconds> <command> [args...]
-	timealarm () {
-		perl -e 'alarm shift; exec @ARGV' "$@";
-	}
-
-	# Prepare the environment for ARM cross compilation
-	cc-arm-kernel() {
-		export PATH=$PATH:/opt/arm-linux-androideabi-4.6/bin
-		export ARCH=arm
-		export SUBARCH=arm
-		export CROSS_COMPILER=arm-linux-androideabi-
-	}
-
-
 	# enable color support of ls and also add handy aliases
 	if [[ "$TERM" != "dumb" ]]; then
 		eval "`dircolors -b`"
@@ -98,9 +80,6 @@
 
 	if [ -f /etc/bash_completion ]; then
 		. /etc/bash_completion
-	fi
-	if [ -f ~/.bash-completion/bash_completion ]; then
-		. ~/.bash-completion/bash_completion
 	fi
 
 # Other useful definitions

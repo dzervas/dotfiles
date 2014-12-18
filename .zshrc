@@ -130,7 +130,7 @@ unalias shopt
 
 # Aliases
 	alias cbrowse='avahi-browse -atr | grep "SSL Chat" -A3 | grep = -A3'
-	alias cprompt='while true; do
+	alias cprompt='echo "User ${USER} logged in!"; while true; do
 	read tmp
 	echo "${USER}: ${tmp}"
 done'
