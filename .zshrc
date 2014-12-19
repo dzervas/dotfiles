@@ -23,6 +23,7 @@ unalias shopt
 # Modules
 	autoload -U colors && colors
 	autoload -U promptinit && promptinit
+	autoload -U compinit && compinit
 
 # Functions
 	# Git prompt
@@ -68,39 +69,28 @@ unalias shopt
 	}
 	
 	# Insert sudo at the beginning of the command
-	insert_sudo () {
+	insert_sudo() {
 		zle beginning-of-line
 		zle -U "sudo "
-#		zle end-of-line
 	}
 
-	fake-accept-line() {
-		if [[ -n "$BUFFER" ]]; then
-			print -S "$BUFFER"
-		fi
-		return 0
-	}
-
-	down-or-fake-accept-line() {
-		if (( HISTNO == HISTCMD )) && [[ "$RBUFFER" != *$'\n'* ]]; then
-			zle fake-accept-line
-		fi
-		zle .down-line-or-history "$@"
+	exec_sudo() {
+		zle up-history
+		zle beginning-of-line
+		zle -U "sudo "
 	}
 
 # ZLE definitions
 	zle -N insert-sudo insert_sudo
-	zle -N fake-accept-line
-	zle -N down-line-or-history down-or-fake-accept-line
+	zle -N exec-sudo exec_sudo
 
 # Variables
-	export EDITOR="vim"
 	# Colors
+	NC="%{$terminfo[sgr0]%}"
 	for color in BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE; do
 		eval B$color='%{$terminfo[bold]$fg[${(L)color}]%}'
 		eval $color='%{$fg[${(L)color}]%}'
 	done
-	NC="%{$terminfo[sgr0]%}"
 
 	# Git
 	GIT_PROMPT_SYMBOL="%{$fg[blue]%}±"
@@ -129,29 +119,14 @@ unalias shopt
 	RPS1='${SSH_INFO}$(git_prompt_string)'
 
 # Aliases
-	alias cbrowse='avahi-browse -atr | grep "SSL Chat" -A3 | grep = -A3'
-	alias cprompt='echo "User ${USER} logged in!"; while true; do
-	read tmp
-	echo "${USER}: ${tmp}"
-done'
-	# Called with "cclin <ip>:<port>"
-	alias cclin='cprompt | openssl s_client -quiet -connect '
-	# Called with "cserv <port>"
-	# Needs .cserv.pem generated with:
-	# openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem
-	alias cserv='avahi-publish -s "SSL Chat" _https._tcp 8080 & ; cprompt | openssl s_server -quiet -cert ~/.cserv.pem -accept '
-	alias chelp='echo "Usage: cclin <ip>:<port>, cserv <port>
-Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem"'
 	alias fuck='sudo $(fc -l -n -1)'
-	alias ls='ls --color=auto '
-	alias ll='ls -al --color=auto'
-	alias man='LC_ALL=C LANG=C man'
-
+	alias duck=fuck
 
 # Key bindings
-#	bindkey -v		# VI key bindings
+	bindkey -e
 	bindkey "^r"		history-incremental-search-backward
-	bindkey "^y"		insert-sudo
+	bindkey "\e\e"		insert-sudo
+	bindkey "\e\`"		exec-sudo
 	bindkey "^[[3~"		delete-char
 	bindkey "\e[1~"		beginning-of-line
 	bindkey "\e[4~"		end-of-line
@@ -171,5 +146,3 @@ Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.c
 
 	# match uppercase from lowercase
 	zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-	
-	autoload -U compinit && compinit

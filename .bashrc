@@ -60,6 +60,24 @@
 		done
 	}
 
+	alias ll='ls -al --color=auto'
+	alias man='LC_ALL=C LANG=C man'
+
+
+	alias cbrowse='avahi-browse -atr | grep "SSL Chat" -A3 | grep = -A3'
+	alias cprompt='echo "User ${USER} logged in!"; while true; do
+	read tmp
+	echo "${USER}: ${tmp}"
+done'
+	# Called with "cclin <ip>:<port>"
+	alias cclin='cprompt | openssl s_client -quiet -connect '
+	# Called with "cserv <port>"
+	# Needs .cserv.pem generated with:
+	# openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem
+	alias cserv='avahi-publish -s "SSL Chat" _https._tcp 8080 & ; cprompt | openssl s_server -quiet -cert ~/.cserv.pem -accept '
+	alias chelp='echo "Usage: cclin <ip>:<port>, cserv <port>
+Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem"'
+
 	# enable color support of ls and also add handy aliases
 	if [[ "$TERM" != "dumb" ]]; then
 		eval "`dircolors -b`"
