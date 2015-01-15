@@ -29,9 +29,9 @@ set shortmess=atI		" Error messages are shorter
 set showmatch			" Show matching parentheses
 set shiftwidth=8
 set sidescroll=2		" Only scroll horizontally little by little
-set softtabstop=8
 set smartcase			" Ignore case when lowercase used in search
 set smarttab			" Helps with backspacing with space indent
+set softtabstop=8
 set tabstop=8
 set tags+=~/.vim/systags	" CTags
 set title
@@ -45,10 +45,13 @@ let mapleader=","
 syntax on
 filetype plugin indent on
 
+setlocal noexpandtab
+
 " Restore cursor position in files
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 " Do not insert comments automatically
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+autocmd FileType python set noexpandtab
 
 " Enable omni completion.
 set omnifunc=syntaxcomplete#Complete
