@@ -79,10 +79,12 @@ unalias shopt
 		zle beginning-of-line
 		zle -U "sudo "
 	}
+	x() { fg }
 
 # ZLE definitions
 	zle -N insert-sudo insert_sudo
 	zle -N exec-sudo exec_sudo
+	zle -N fg x
 
 # Variables
 	# Colors
@@ -125,6 +127,7 @@ unalias shopt
 # Key bindings
 	bindkey -e
 	bindkey "^r"		history-incremental-search-backward
+	bindkey "^z"		fg
 	bindkey "\e\e"		insert-sudo
 	bindkey "\e\`"		exec-sudo
 	bindkey "^[[3~"		delete-char

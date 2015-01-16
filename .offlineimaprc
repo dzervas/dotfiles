@@ -1,0 +1,67 @@
+[general]
+# List of accounts to be synced, separated by a comma.
+accounts = main
+
+# Controls how many accounts may be synced simultaneously
+maxsyncaccounts = 1
+
+[Account main]
+# Minutes between syncs
+autorefresh = 5
+# Number of quick-syncs between autorefreshes. Quick-syncs do not update if the
+# only changes were to IMAP flags
+quick = 10
+
+# Identifier for the local repository; e.g. the maildir to be synced via IMAP.
+localrepository = main-local
+# Identifier for the remote repository; i.e. the actual IMAP, usually non-local.
+remoterepository = main-remote
+# Status cache. Default is plain, which eventually becomes huge and slow.
+status_backend = sqlite
+
+[Repository main-local]
+# Currently, offlineimap only supports maildir and IMAP for local repositories.
+type = Maildir
+# Where should the mail be placed?
+localfolders = ~/.maildir
+
+[Repository main-remote]
+# Instead of closing the connection once a sync is complete, offlineimap will
+# send empty data to the server to hold the connection open. A value of 60
+# attempts to hold the connection for a minute between syncs (both quick and
+# autorefresh).This setting has no effect if autorefresh and holdconnectionopen
+# are not both set.
+keepalive = 60
+# OfflineIMAP normally closes IMAP server connections between refreshes if
+# the global option autorefresh is specified.  If you wish it to keep the
+# connection open, set this to true. This setting has no effect if autorefresh
+# is not set.
+holdconnectionopen = yes
+
+# Remote repos can be IMAP or Gmail, the latter being a preconfigured IMAP.
+type = IMAP
+remotehost = dzervas.gr
+remoteuser = dzervas@dzervas.gr
+
+# SSL settings
+ssl = yes
+
+# SSL version (optional)
+# It is best to leave this unset, in which case the correct version will be
+# automatically detected. In rare cases, it may be necessary to specify a
+# particular version from: tls1, ssl2, ssl3, ssl23 (SSLv2 or SSLv3)
+ssl_version = tls1
+
+# If you connect via SSL/TLS (ssl=true) and you have no CA certificate
+# specified, offlineimap will refuse to sync as it connects to a server
+# with an unknown "fingerprint". If you are sure you connect to the
+# correct server, you can then configure the presented server
+# fingerprint here. OfflineImap will verify that the server fingerprint
+# has not changed on each connect and refuse to connect otherwise.
+# You can also configure this in addition to CA certificate validation
+# above and it will check both ways.
+
+cert_fingerprint = 0bb20dcada13e5283097e90a6f0e3e30737c2bc8
+
+# Default value is
+# auth_mechanisms = GSSAPI, CRAM-MD5, PLAIN, LOGIN
