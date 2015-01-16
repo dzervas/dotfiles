@@ -51,7 +51,7 @@ setlocal noexpandtab
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 " Do not insert comments automatically
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
-autocmd FileType python set noexpandtab
+autocmd FileType * setlocal noexpandtab shiftwidth=8
 
 " Enable omni completion.
 set omnifunc=syntaxcomplete#Complete

@@ -33,6 +33,25 @@
 	shopt -s checkwinsize
 
 # Alias and function definitions.
+	function extract () {
+		if [ -f $1 ] ; then
+			case $1 in
+				*.bz2) bunzip2 $1 ;;
+				*.gz) gunzip $1 ;;
+				*.rar) rar x $1 ;;
+				*.tar*) tar xf $1 ;;
+				*.tbz2) tar xjf $1 ;;
+				*.tgz) tar xzf $1 ;;
+				*.zip) unzip $1 ;;
+				*.Z) uncompress $1 ;;
+				*.7z) 7z x $1 ;;
+				*) echo "'$1' cannot be extracted via extract()" ;;
+			esac
+		else
+			echo "'$1' is not a valid file"
+		fi
+	}
+
 	# git status for command prompt
 	function gitstat() {
 		if [[ $(git status 2> /dev/null | tail -n1) == 'no changes added to commit (use "git add" and/or "git commit -a")' ]]; then
@@ -60,6 +79,8 @@
 		done
 	}
 
+	alias v='vim'
+	alias :q="exit"
 	alias ll='ls -al --color=auto'
 	alias man='LC_ALL=C LANG=C man'
 
