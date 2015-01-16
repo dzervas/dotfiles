@@ -80,7 +80,7 @@
 	}
 
 	alias v='vim'
-	alias :q="exit"
+	alias :q='exit'
 	alias ll='ls -al --color=auto'
 	alias man='LC_ALL=C LANG=C man'
 
@@ -98,6 +98,8 @@ done'
 	alias cserv='avahi-publish -s "SSL Chat" _https._tcp 8080 & ; cprompt | openssl s_server -quiet -cert ~/.cserv.pem -accept '
 	alias chelp='echo "Usage: cclin <ip>:<port>, cserv <port>
 Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem"'
+	alias webserver='python -m SimpleHTTPServer'
+	alias netinfo="ifconfig | awk '/^wlan|^eth|^net|^wifi|^lo/ || /inet/ || /ether/ { if (\$1 == \"inet\") { print \"\tIP: \" \$2 } else if (\$1 == \"inet6\") { print \"\tIPv6: \" \$2 } else if (\$1 == \"ether\") { print \"\tMAC Address: \" \$2 } else { print \"\n\" \$1 } }'"
 
 	# enable color support of ls and also add handy aliases
 	if [[ "$TERM" != "dumb" ]]; then
@@ -129,3 +131,4 @@ Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.c
 		SSH_COLOR=$Green
 	fi
 	export PS1="${SSH_COLOR}\u${SSH_INFO} ${BBlue}\W${Green}\$(gitbranch)\$(gitstat)${Red}\$ ${NC}"
+
