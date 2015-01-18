@@ -83,24 +83,23 @@
 	function statecnt() {
 		job=$(jobcnt)
 		to=$(tocnt)
-# 		echo $to and $job
 
-		if (($job + $to != 0)); then
-			echo -en "$GREEN[$YELLOW"
+		if [[ $job -ne 0 || $to -ne 0 ]]; then
+			echo -en "${GREEN}["
 
-			if (( $to != 0 )); then
-				echo -n "T:$to"
+			if [[ $to -ne 0 ]]; then
+				echo -n "${YELLOW}T${to}"
 			fi
 
-			if (( $job != 0 )); then
-				if [ "$to" -ne 0 ]; then
+			if [[ $job -ne 0 ]]; then
+				if [[ $to -ne 0 ]]; then
 					echo -n " "
 				fi
 
-				echo -n "J:$job"
+				echo -n "${CYAN}J${job}"
 			fi
 
-			echo -en "$GREEN]$NC"
+			echo -en "${GREEN}]${NC}"
 		else
 			return 1
 		fi
