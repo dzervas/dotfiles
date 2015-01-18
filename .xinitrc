@@ -24,8 +24,8 @@ xautolock -time 5 -locker slock -nowlocker slock -detectsleep -corners +000 -cor
 wmname LG3D
 
 # Autostart
-eval $(gpg-agent --daemon) &
-eval $(ssh-agent --daemon) &
+#eval $(gpg-agent --daemon) &
+#eval $(ssh-agent --daemon) &
 xbindkeys
 thunar --daemon &
 pulseaudio --start
@@ -34,6 +34,6 @@ uxterm &
 dwmstatus &
 pasystray &
 wpa_gui &
-offlineimap > ~/.cache/offlineimap/stdout 2> ~/.cache/offlineimap/stderr &
+#offlineimap > ~/.cache/offlineimap/stdout 2> ~/.cache/offlineimap/stderr &
 
 exec /usr/local/bin/dwm > ~/.cache/dwm/stdout 2> ~/.cache/dwm/stderr
