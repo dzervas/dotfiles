@@ -34,13 +34,27 @@
 	shopt -s checkwinsize
 
 # Alias and function definitions.
+	# OpenSSL chat server (for more see below)
+	function cserv() {
+		if [[ -z ${1} ]]; then
+			port=9090
+		else
+			port=${1}
+		fi
+
+		echo "Port: ${port}"
+		avahi-publish -s "SSL Chat" _https._tcp ${port} &
+		cprompt | openssl s_server -quiet -cert ~/.cserv.pem -accept ${port}
+	}
+	# One extract to rule them all
 	function extract () {
 		if [ -f $1 ] ; then
 			case $1 in
+				*.tar.*) tar xf $1 ;;
 				*.bz2) bunzip2 $1 ;;
 				*.gz) gunzip $1 ;;
 				*.rar) rar x $1 ;;
-				*.tar*) tar xf $1 ;;
+				*.tar) tar xf $1 ;;
 				*.tbz2) tar xjf $1 ;;
 				*.tgz) tar xzf $1 ;;
 				*.zip) unzip $1 ;;
@@ -55,7 +69,8 @@
 
 	# git status for command prompt
 	function gitstat() {
-		if [[ $(git status 2> /dev/null | tail -n1) == 'no changes added to commit (use "git add" and/or "git commit -a")' ]]; then
+		if [[ $(git status 2> /dev/null | tail -n1) == \
+			'no changes added to commit (use "git add" and/or "git commit -a")' ]]; then
 			echo -e "${BWHITE}!"
 		elif [[ $(git status 2> /dev/null | grep ahead) != '' ]]; then
 			echo -e "${BYELLOW}>>"
@@ -80,15 +95,16 @@
 		done
 	}
 
+	# Some useful info for the prompt (background job count & task count)
 	function statecnt() {
-		job=$(jobcnt)
+		job=$(jobs | wc -l)
 		to=$(tocnt)
 
 		if [[ $job -ne 0 || $to -ne 0 ]]; then
 			echo -en "${GREEN}["
 
 			if [[ $to -ne 0 ]]; then
-				echo -n "${YELLOW}T${to}"
+				echo -en "${YELLOW}T${to}"
 			fi
 
 			if [[ $job -ne 0 ]]; then
@@ -96,7 +112,7 @@
 					echo -n " "
 				fi
 
-				echo -n "${CYAN}J${job}"
+				echo -en "${CYAN}J${job}"
 			fi
 
 			echo -en "${GREEN}]${NC}"
@@ -105,41 +121,54 @@
 		fi
 	}
 
-	alias v='vim'
-	alias :q='exit'
+	eval "`dircolors -b`"
+
+# Alias
+	# OpenSSL chat system. For more info do "chelp"
+	alias cbrowse="avahi-browse -atr | grep \"SSL Chat\" -A3 | grep = -A3"
+	alias cclin='cprompt | openssl s_client -quiet -connect '
+	alias chelp="echo \"OpenSSL Chat commands:
+Network discovery: cbrowse
+Client: cclin <ip>:<port>
+Server: cserv <port> (requires key in ~/.cserv.pem)
+Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem\""
+	alias cprompt='echo "User ${USER} logged in!"; while true; do
+		read tmp
+		echo "${USER}: ${tmp}"
+	done'
+
+	alias grep='grep --color'
 	alias ll='ls -al --color=auto'
+	alias ls='ls --color=auto'
 	alias man='LC_ALL=C LANG=C man'
 
-
-	alias cbrowse='avahi-browse -atr | grep "SSL Chat" -A3 | grep = -A3'
-	alias cprompt='echo "User ${USER} logged in!"; while true; do
-	read tmp
-	echo "${USER}: ${tmp}"
-done'
-	# Called with "cclin <ip>:<port>"
-	alias cclin='cprompt | openssl s_client -quiet -connect '
-	# Called with "cserv <port>"
-	# Needs .cserv.pem generated with:
-	# openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem
-	alias cserv='avahi-publish -s "SSL Chat" _https._tcp 8080 & ; cprompt | openssl s_server -quiet -cert ~/.cserv.pem -accept '
-	alias chelp='echo "Usage: cclin <ip>:<port>, cserv <port>
-Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem"'
-	alias webserver='python -m SimpleHTTPServer'
-	alias netinfo="ifconfig | awk '/^wlan|^eth|^net|^wifi|^lo/ || /inet/ || /ether/ { if (\$1 == \"inet\") { print \"\tIP: \" \$2 } else if (\$1 == \"inet6\") { print \"\tIPv6: \" \$2 } else if (\$1 == \"ether\") { print \"\tMAC Address: \" \$2 } else { print \"\n\" \$1 } }'"
-	alias todo="sed -e \"s/^\s*+/$YELLOW+/;s/^\s*#/$CYAN#/;s/^\s*-/$GREEN-/\""
+	# Beutiful way to show your NIC's IP/MAC address
+	alias net="ifconfig | awk '/^[a-z]+[0-9]?/ || /inet/ || /ether/ \
+		{ if (\$1 == \"inet\") { print \"\tIP: \" \$2 } else if (\$1 == \"inet6\") \
+		{ print \"\tIPv6: \" \$2 } else if (\$1 == \"ether\") \
+		{ print \"\tMAC Address: \" \$2 } else { print \"\" \$1 } }'"
+	
+	# A simple todo list parser
 	alias tocnt='grep -s "^\s*+\|^\s*#\|^\s*-" .todo | wc -l'
-	alias jobcnt='jobs | wc -l'
+	alias todo='sed -e \"s/^\s*+/\${YELLOW}+/;s/^\s*#/\${CYAN}#/;s/^\s*-/\${GREEN}-/\" .todo'
 
-	# enable color support of ls and also add handy aliases
-	if [[ "$TERM" != "dumb" ]]; then
-		eval "`dircolors -b`"
-		alias ls='ls --color=auto'
-		alias grep='grep --color'
-	fi
+	# Yey! Saved 2 keystrokes! :)
+	alias v='vim'
 
+	# 1 line web server
+	alias webserver="python -m SimpleHTTPServer"
+
+	# Muscle memory...
+	alias :q='exit'
+
+	# Android alias
 	if [[ "`uname -m`" == "armv7l" ]]; then
-		alias stopx='setprop ctl.stop media && setprop ctl.stop zygote && sleep 3 && setprop ctl.stop bootanim'
+		# Start/Stop android's display manager
+		alias stopx='setprop ctl.stop media && setprop ctl.stop zygote && \
+			sleep 3 && setprop ctl.stop bootanim'
 		alias startx='setprop ctl.start zygote && setprop ctl.start media '
+
+		# Fix vim's size issues on such a small screen
 		alias fixterm='stty rows 81 cols 320'
 	fi
 
@@ -153,10 +182,12 @@ Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.c
 	fi
 
 # Other useful definitions
+	# "You are SSHing" reminder (shutdown the server maybe?)
 	if [ -n "$SSH_CLIENT" ]; then
 		SSH_COLOR=$RED
 		export SSH_INFO="@$RED$(uname -n)"
 	else
 		SSH_COLOR=$GREEN
 	fi
+
 	export PS1="${SSH_COLOR}\u${SSH_INFO} \$(statecnt && echo -n ' ')${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${RED}\$ ${NC}"
