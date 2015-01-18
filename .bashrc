@@ -28,6 +28,7 @@
 	# No duplicates in history
 	export HISTCONTROL=ignoredups
 	export EDITOR=vim
+	#export PATH="$PATH:~/.bin"
 
 	# Check the window size after each command to update LINES and COLUMNS if necessary
 	shopt -s checkwinsize
