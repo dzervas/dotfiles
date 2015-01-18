@@ -1,10 +1,3 @@
-######################################################################
-#           jdong's zshrc file v0.2.1 , based on:
-#		      mako's zshrc file, v0.1
-#
-# 
-######################################################################
-
 # Load .bashrc
 # Shopt not found workaround
 alias shopt="false"
@@ -79,12 +72,13 @@ unalias shopt
 		zle beginning-of-line
 		zle -U "sudo "
 	}
-	x() { fg }
+
+	goto_bg() { fg }
 
 # ZLE definitions
 	zle -N insert-sudo insert_sudo
 	zle -N exec-sudo exec_sudo
-	zle -N fg x
+	zle -N fg goto_bg
 
 # Variables
 	# Colors
@@ -111,14 +105,16 @@ unalias shopt
 	SAVEHIST=1000
 	HOSTNAME="`hostname`"
 	PAGER='less'
+
 	if [ -n "$SSH_CLIENT" ]; then
 		SSH_COLOR=$RED
 		export SSH_INFO="@$RED$(uname -n)$NC"
 	else
 		SSH_COLOR=$GREEN
 	fi
+
 	PS1="$SSH_COLOR%n $BCYAN%c$NC%(!.#.>) "
-	RPS1='${SSH_INFO}$(git_prompt_string)'
+	RPS1='${SSH_INFO}$(git_prompt_string)$(statecnt)'
 
 # Aliases
 	alias fuck='sudo $(fc -l -n -1)'

@@ -5,24 +5,24 @@
 	NC='\e[0m'       # Text Reset
 	
 	# Regular Colors
-	Black='\e[0;30m'        # Black
-	Red='\e[0;31m'          # Red
-	Green='\e[0;32m'        # Green
-	Yellow='\e[0;33m'       # Yellow
-	Blue='\e[0;34m'         # Blue
-	Purple='\e[0;35m'       # Purple
-	Cyan='\e[0;36m'         # Cyan
-	White='\e[0;37m'        # White
+	BLACK='\e[0;30m'        # Black
+	RED='\e[0;31m'          # Red
+	GREEN='\e[0;32m'        # Green
+	YELLOW='\e[0;33m'       # Yellow
+	BLUE='\e[0;34m'         # Blue
+	PURPLE='\e[0;35m'       # Purple
+	CYAN='\e[0;36m'         # Cyan
+	WHITE='\e[0;37m'        # White
 	
 	# Bold
-	BBlack='\e[1;30m'       # Black
-	BRed='\e[1;31m'         # Red
-	BGreen='\e[1;32m'       # Green
-	BYellow='\e[1;33m'      # Yellow
-	BBlue='\e[1;34m'        # Blue
-	BPurple='\e[1;35m'      # Purple
-	BCyan='\e[1;36m'        # Cyan
-	BWhite='\e[1;37m'       # White
+	BBLACK='\e[1;30m'       # Black
+	BRED='\e[1;31m'         # Red
+	BGREEN='\e[1;32m'       # Green
+	BYELLOW='\e[1;33m'      # Yellow
+	BBLUE='\e[1;34m'        # Blue
+	BPURPLE='\e[1;35m'      # Purple
+	BCYAN='\e[1;36m'        # Cyan
+	BWHITE='\e[1;37m'       # White
 
 # Variable definitions
 	# No duplicates in history
@@ -56,9 +56,9 @@
 	# git status for command prompt
 	function gitstat() {
 		if [[ $(git status 2> /dev/null | tail -n1) == 'no changes added to commit (use "git add" and/or "git commit -a")' ]]; then
-			echo -e "${BWhite}!"
+			echo -e "${BWHITE}!"
 		elif [[ $(git status 2> /dev/null | grep ahead) != '' ]]; then
-			echo -e "${BYellow}>>"
+			echo -e "${BYELLOW}>>"
 		fi
 	}
 
@@ -78,6 +78,32 @@
 				cd ..
 			fi
 		done
+	}
+
+	function statecnt() {
+		job=$(jobcnt)
+		to=$(tocnt)
+# 		echo $to and $job
+
+		if (($job + $to != 0)); then
+			echo -en "$GREEN[$YELLOW"
+
+			if (( $to != 0 )); then
+				echo -n "T:$to"
+			fi
+
+			if (( $job != 0 )); then
+				if [ "$to" -ne 0 ]; then
+					echo -n " "
+				fi
+
+				echo -n "J:$job"
+			fi
+
+			echo -en "$GREEN]$NC"
+		else
+			return 1
+		fi
 	}
 
 	alias v='vim'
@@ -101,6 +127,9 @@ done'
 Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem"'
 	alias webserver='python -m SimpleHTTPServer'
 	alias netinfo="ifconfig | awk '/^wlan|^eth|^net|^wifi|^lo/ || /inet/ || /ether/ { if (\$1 == \"inet\") { print \"\tIP: \" \$2 } else if (\$1 == \"inet6\") { print \"\tIPv6: \" \$2 } else if (\$1 == \"ether\") { print \"\tMAC Address: \" \$2 } else { print \"\n\" \$1 } }'"
+	alias todo="sed -e \"s/^\s*+/$YELLOW+/;s/^\s*#/$CYAN#/;s/^\s*-/$GREEN-/\""
+	alias tocnt='grep -s "^\s*+\|^\s*#\|^\s*-" .todo | wc -l'
+	alias jobcnt='jobs | wc -l'
 
 	# enable color support of ls and also add handy aliases
 	if [[ "$TERM" != "dumb" ]]; then
@@ -126,10 +155,9 @@ Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.c
 
 # Other useful definitions
 	if [ -n "$SSH_CLIENT" ]; then
-		SSH_COLOR=$Red
-		export SSH_INFO="@$Red$(uname -n)"
+		SSH_COLOR=$RED
+		export SSH_INFO="@$RED$(uname -n)"
 	else
-		SSH_COLOR=$Green
+		SSH_COLOR=$GREEN
 	fi
-	export PS1="${SSH_COLOR}\u${SSH_INFO} ${BBlue}\W${Green}\$(gitbranch)\$(gitstat)${Red}\$ ${NC}"
-
+	export PS1="${SSH_COLOR}\u${SSH_INFO} \$(statecnt && echo -n ' ')${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${RED}\$ ${NC}"
