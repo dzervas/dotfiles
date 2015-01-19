@@ -5,14 +5,14 @@
 	NC='\e[0m'       # Text Reset
 	
 	# Regular Colors
-	BLACK='\e[0;30m'        # Black
-	RED='\e[0;31m'          # Red
-	GREEN='\e[0;32m'        # Green
-	YELLOW='\e[0;33m'       # Yellow
-	BLUE='\e[0;34m'         # Blue
-	PURPLE='\e[0;35m'       # Purple
-	CYAN='\e[0;36m'         # Cyan
-	WHITE='\e[0;37m'        # White
+	BLACK='\e[30m'        # Black
+	RED='\e[31m'          # Red
+	GREEN='\e[32m'        # Green
+	YELLOW='\e[33m'       # Yellow
+	BLUE='\e[34m'         # Blue
+	PURPLE='\e[35m'       # Purple
+	CYAN='\e[36m'         # Cyan
+	WHITE='\e[37m'        # White
 	
 	# Bold
 	BBLACK='\e[1;30m'       # Black
@@ -125,13 +125,13 @@
 
 # Alias
 	# OpenSSL chat system. For more info do "chelp"
-	alias cbrowse="avahi-browse -atr | grep \"SSL Chat\" -A3 | grep = -A3"
+	alias cbrowse='avahi-browse -atr | grep \"SSL Chat\" -A3 | grep = -A3'
 	alias cclin='cprompt | openssl s_client -quiet -connect '
-	alias chelp="echo \"OpenSSL Chat commands:
+	alias chelp='echo "OpenSSL Chat commands:
 Network discovery: cbrowse
 Client: cclin <ip>:<port>
 Server: cserv <port> (requires key in ~/.cserv.pem)
-Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem\""
+Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem"'
 	alias cprompt='echo "User ${USER} logged in!"; while true; do
 		read tmp
 		echo "${USER}: ${tmp}"
@@ -143,20 +143,22 @@ Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.c
 	alias man='LC_ALL=C LANG=C man'
 
 	# Beutiful way to show your NIC's IP/MAC address
-	alias net="ifconfig | awk '/^[a-z]+[0-9]?/ || /inet/ || /ether/ \
+	alias net='ifconfig | awk "/^[a-z]+[0-9]?/ || /inet/ || /ether/ \
 		{ if (\$1 == \"inet\") { print \"\tIP: \" \$2 } else if (\$1 == \"inet6\") \
 		{ print \"\tIPv6: \" \$2 } else if (\$1 == \"ether\") \
-		{ print \"\tMAC Address: \" \$2 } else { print \"\" \$1 } }'"
+		{ print \"\tMAC Address: \" \$2 } else { print \"\" \$1 } }"'
 	
 	# A simple todo list parser
 	alias tocnt='grep -s "^\s*+\|^\s*#\|^\s*-" .todo | wc -l'
-	alias todo='sed -e \"s/^\s*+/\${YELLOW}+/;s/^\s*#/\${CYAN}#/;s/^\s*-/\${GREEN}-/\" .todo'
+	alias todo="sed 's/^\s*+.*/$(echo -en ${YELLOW})&/; \
+		s/^\s*#.*/$(echo -en ${CYAN})&/; \
+		s/^\s*-.*/$(echo -en ${GREEN})&/' .todo 2>/dev/null"
 
 	# Yey! Saved 2 keystrokes! :)
 	alias v='vim'
 
 	# 1 line web server
-	alias webserver="python -m SimpleHTTPServer"
+	alias webserver='python -m SimpleHTTPServer'
 
 	# Muscle memory...
 	alias :q='exit'
