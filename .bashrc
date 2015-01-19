@@ -5,24 +5,24 @@
 	NC='\e[0m'       # Text Reset
 	
 	# Regular Colors
-	BLACK='\e[30m'        # Black
-	RED='\e[31m'          # Red
-	GREEN='\e[32m'        # Green
-	YELLOW='\e[33m'       # Yellow
-	BLUE='\e[34m'         # Blue
-	PURPLE='\e[35m'       # Purple
-	CYAN='\e[36m'         # Cyan
-	WHITE='\e[37m'        # White
+	Black='\e[30m'        # Black
+	Red='\e[31m'          # Red
+	Green='\e[32m'        # Green
+	Yellow='\e[33m'       # Yellow
+	Blue='\e[34m'         # Blue
+	Purple='\e[35m'       # Purple
+	Cyan='\e[36m'         # Cyan
+	White='\e[37m'        # White
 	
 	# Bold
-	BBLACK='\e[1;30m'       # Black
-	BRED='\e[1;31m'         # Red
-	BGREEN='\e[1;32m'       # Green
-	BYELLOW='\e[1;33m'      # Yellow
-	BBLUE='\e[1;34m'        # Blue
-	BPURPLE='\e[1;35m'      # Purple
-	BCYAN='\e[1;36m'        # Cyan
-	BWHITE='\e[1;37m'       # White
+	BBlack='\e[1;30m'       # Black
+	BRed='\e[1;31m'         # Red
+	BGreen='\e[1;32m'       # Green
+	BYellow='\e[1;33m'      # Yellow
+	BBlue='\e[1;34m'        # Blue
+	BPurple='\e[1;35m'      # Purple
+	BCyan='\e[1;36m'        # Cyan
+	BWhite='\e[1;37m'       # White
 
 # Variable definitions
 	# No duplicates in history
@@ -71,9 +71,9 @@
 	function gitstat() {
 		if [[ $(git status 2> /dev/null | tail -n1) == \
 			'no changes added to commit (use "git add" and/or "git commit -a")' ]]; then
-			echo -e "${BWHITE}!"
+			echo -e "${BWhite}!"
 		elif [[ $(git status 2> /dev/null | grep ahead) != '' ]]; then
-			echo -e "${BYELLOW}>>"
+			echo -e "${BYellow}>>"
 		fi
 	}
 
@@ -101,10 +101,10 @@
 		to=$(todo -c)
 
 		if [[ $job -ne 0 || $to -ne 0 ]]; then
-			echo -en "${GREEN}["
+			echo -en "${Green}["
 
 			if [[ $to -ne 0 ]]; then
-				echo -en "${YELLOW}T${to}"
+				echo -en "${Yellow}T${to}"
 			fi
 
 			if [[ $job -ne 0 ]]; then
@@ -112,10 +112,10 @@
 					echo -n " "
 				fi
 
-				echo -en "${CYAN}J${job}"
+				echo -en "${Cyan}J${job}"
 			fi
 
-			echo -en "${GREEN}]${NC}"
+			echo -en "${Green}]"
 		else
 			return 1
 		fi
@@ -150,9 +150,9 @@
 		done
 
 
-		sed "s/^\s*+.*/$(echo -en ${YELLOW})&/; \
-			s/^\s*#.*/$(echo -en ${CYAN})&/; \
-			s/^\s*-.*/$(echo -en ${GREEN})&/" \
+		sed "s/^\s*+.*/$(echo -en ${Yellow})&/; \
+			s/^\s*#.*/$(echo -en ${Cyan})&/; \
+			s/^\s*-.*/$(echo -en ${Green})&/" \
 			${tpath}/.todo 2>/dev/null
 	}
 
@@ -215,10 +215,10 @@ Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.c
 # Other useful definitions
 	# "You are SSHing" reminder (shutdown the server maybe?)
 	if [ -n "$SSH_CLIENT" ]; then
-		SSH_COLOR=$RED
-		export SSH_INFO="@$RED$(uname -n)"
+		SSH_COLOR=$Red
+		export SSH_INFO="@$Red$(uname -n)"
 	else
-		SSH_COLOR=$GREEN
+		SSH_COLOR=$Green
 	fi
 
-	export PS1="${SSH_COLOR}\u${SSH_INFO} \$(statecnt && echo -n ' ')${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${RED}\$ ${NC}"
+	export PS1="${SSH_COLOR}\u${SSH_INFO} \$(statecnt && echo -n ' ')${BCyan}\W${Green}\$(gitbranch)\$(gitstat)${Red}\$ ${NC}"
