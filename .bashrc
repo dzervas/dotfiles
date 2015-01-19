@@ -98,7 +98,7 @@
 	# Some useful info for the prompt (background job count & task count)
 	function statecnt() {
 		job=$(jobs | wc -l)
-		to=$(tocnt)
+		to=$(todo -c)
 
 		if [[ $job -ne 0 || $to -ne 0 ]]; then
 			echo -en "${GREEN}["
@@ -121,11 +121,46 @@
 		fi
 	}
 
+	function todo() {
+# 		OPTIND=1	# Reset getopt
+		tpath="."
+
+		while getopts "chr" opt; do
+			case "$opt" in
+				c)
+					grep -s "^\s*+\|^\s*#\|^\s*-" .todo | wc -l
+					return
+					;;
+				h)
+					echo "Usage ${0} [-c] [-h] [-r] [path]\n"
+					echo "path\t\tPath of directory which contains .todo, default to current directory"
+					echo "-c\t\tReturns number of tasks"
+					echo "-h\t\tShows this message"
+					echo "-r\t\tShows tasks of all subfolders, recursively"
+					return
+					;;
+				r)
+					find . -name .todo -exec echo {}
+					return
+					;;
+				*)
+					tpath=$opt
+					;;
+			esac
+		done
+
+
+		sed "s/^\s*+.*/$(echo -en ${YELLOW})&/; \
+			s/^\s*#.*/$(echo -en ${CYAN})&/; \
+			s/^\s*-.*/$(echo -en ${GREEN})&/" \
+			${tpath}/.todo 2>/dev/null
+	}
+
 	eval "`dircolors -b`"
 
 # Alias
 	# OpenSSL chat system. For more info do "chelp"
-	alias cbrowse='avahi-browse -atr | grep \"SSL Chat\" -A3 | grep = -A3'
+	alias cbrowse='avahi-browse -atr | grep "SSL Chat" -A3 | grep = -A3'
 	alias cclin='cprompt | openssl s_client -quiet -connect '
 	alias chelp='echo "OpenSSL Chat commands:
 Network discovery: cbrowse
@@ -147,12 +182,6 @@ Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.c
 		{ if (\$1 == \"inet\") { print \"\tIP: \" \$2 } else if (\$1 == \"inet6\") \
 		{ print \"\tIPv6: \" \$2 } else if (\$1 == \"ether\") \
 		{ print \"\tMAC Address: \" \$2 } else { print \"\" \$1 } }"'
-	
-	# A simple todo list parser
-	alias tocnt='grep -s "^\s*+\|^\s*#\|^\s*-" .todo | wc -l'
-	alias todo="sed 's/^\s*+.*/$(echo -en ${YELLOW})&/; \
-		s/^\s*#.*/$(echo -en ${CYAN})&/; \
-		s/^\s*-.*/$(echo -en ${GREEN})&/' .todo 2>/dev/null"
 
 	# Yey! Saved 2 keystrokes! :)
 	alias v='vim'
