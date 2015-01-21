@@ -148,3 +148,6 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 
 	# match uppercase from lowercase
 	zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+	# Rebuild $PATH on each execution (may be performance intensive)
+	zstyle ":completion:*:commands" rehash 1

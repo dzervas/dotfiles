@@ -5,30 +5,30 @@
 	NC='\e[0m'       # Text Reset
 	
 	# Regular Colors
-	Black='\e[30m'        # Black
-	Red='\e[31m'          # Red
-	Green='\e[32m'        # Green
-	Yellow='\e[33m'       # Yellow
-	Blue='\e[34m'         # Blue
-	Purple='\e[35m'       # Purple
-	Cyan='\e[36m'         # Cyan
-	White='\e[37m'        # White
+	BLACK='\e[30m'        # Black
+	RED='\e[31m'          # Red
+	GREEN='\e[32m'        # Green
+	YELLOW='\e[33m'       # Yellow
+	BLUE='\e[34m'         # Blue
+	PURPLE='\e[35m'       # Purple
+	CYAN='\e[36m'         # Cyan
+	WHITE='\e[37m'        # White
 	
 	# Bold
-	BBlack='\e[1;30m'       # Black
-	BRed='\e[1;31m'         # Red
-	BGreen='\e[1;32m'       # Green
-	BYellow='\e[1;33m'      # Yellow
-	BBlue='\e[1;34m'        # Blue
-	BPurple='\e[1;35m'      # Purple
-	BCyan='\e[1;36m'        # Cyan
-	BWhite='\e[1;37m'       # White
+	BBLACK='\e[1;30m'       # Black
+	BRED='\e[1;31m'         # Red
+	BGREEN='\e[1;32m'       # Green
+	BYELLOW='\e[1;33m'      # Yellow
+	BBLUE='\e[1;34m'        # Blue
+	BPURPLE='\e[1;35m'      # Purple
+	BCYAN='\e[1;36m'        # Cyan
+	BWHITE='\e[1;37m'       # White
 
 # Variable definitions
 	# No duplicates in history
 	export HISTCONTROL=ignoredups
 	export EDITOR=vim
-	#export PATH="$PATH:~/.bin"
+	export PATH="$PATH:$(readlink ~/.bin)"
 
 	# Check the window size after each command to update LINES and COLUMNS if necessary
 	shopt -s checkwinsize
@@ -71,9 +71,9 @@
 	function gitstat() {
 		if [[ $(git status 2> /dev/null | tail -n1) == \
 			'no changes added to commit (use "git add" and/or "git commit -a")' ]]; then
-			echo -e "${BWhite}!"
+			echo -e "${BWHITE}!"
 		elif [[ $(git status 2> /dev/null | grep ahead) != '' ]]; then
-			echo -e "${BYellow}>>"
+			echo -e "${BYELLOW}>>"
 		fi
 	}
 
@@ -98,13 +98,13 @@
 	# Some useful info for the prompt (background job count & task count)
 	function statecnt() {
 		job=$(jobs | wc -l)
-		to=$(todo -c)
+		to=$(todo -c | tr -d "\n")
 
 		if [[ $job -ne 0 || $to -ne 0 ]]; then
-			echo -en "${Green}["
+			echo -en "${GREEN}["
 
 			if [[ $to -ne 0 ]]; then
-				echo -en "${Yellow}T${to}"
+				echo -en "${YELLOW}T${to}"
 			fi
 
 			if [[ $job -ne 0 ]]; then
@@ -112,48 +112,13 @@
 					echo -n " "
 				fi
 
-				echo -en "${Cyan}J${job}"
+				echo -en "${CYAN}J${job}"
 			fi
 
-			echo -en "${Green}]"
+			echo -en "${GREEN}]"
 		else
 			return 1
 		fi
-	}
-
-	function todo() {
-# 		OPTIND=1	# Reset getopt
-		tpath="."
-
-		while getopts "chr" opt; do
-			case "$opt" in
-				c)
-					grep -s "^\s*+\|^\s*#\|^\s*-" .todo | wc -l
-					return
-					;;
-				h)
-					echo "Usage ${0} [-c] [-h] [-r] [path]\n"
-					echo "path\t\tPath of directory which contains .todo, default to current directory"
-					echo "-c\t\tReturns number of tasks"
-					echo "-h\t\tShows this message"
-					echo "-r\t\tShows tasks of all subfolders, recursively"
-					return
-					;;
-				r)
-					find . -name .todo -exec echo {}
-					return
-					;;
-				*)
-					tpath=$opt
-					;;
-			esac
-		done
-
-
-		sed "s/^\s*+.*/$(echo -en ${Yellow})&/; \
-			s/^\s*#.*/$(echo -en ${Cyan})&/; \
-			s/^\s*-.*/$(echo -en ${Green})&/" \
-			${tpath}/.todo 2>/dev/null
 	}
 
 	eval "`dircolors -b`"
@@ -215,10 +180,10 @@ Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.c
 # Other useful definitions
 	# "You are SSHing" reminder (shutdown the server maybe?)
 	if [ -n "$SSH_CLIENT" ]; then
-		SSH_COLOR=$Red
-		export SSH_INFO="@$Red$(uname -n)"
+		SSH_COLOR=$RED
+		export SSH_INFO="@$RED$(uname -n)"
 	else
-		SSH_COLOR=$Green
+		SSH_COLOR=$GREEN
 	fi
 
-	export PS1="${SSH_COLOR}\u${SSH_INFO} \$(statecnt && echo -n ' ')${BCyan}\W${Green}\$(gitbranch)\$(gitstat)${Red}\$ ${NC}"
+	export PS1="${SSH_COLOR}\u${SSH_INFO} \$(statecnt && echo -n ' ')${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${RED}\$ ${NC}"

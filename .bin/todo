@@ -1,0 +1,36 @@
+#!/bin/sh
+LOW='\x1b[32m'		#Green
+MID='\x1b[36m'		#Cyan
+HIGH='\x1b[33m'		#Yellow
+
+tpath="."
+
+while getopts "chr" opt; do
+	case "$opt" in
+		c)
+			grep -cs "^\s*+\|^\s*#\|^\s*-" .todo
+			exit
+			;;
+		h)
+			echo -e "Usage ${0} [-c] [-h] [-r] [path]\n"
+			echo -e "\tpath\tPath of directory which contains .todo, default to current directory"
+			echo -e "\t-c\tReturns number of tasks"
+			echo -e "\t-h\tShows this message"
+			echo -e "\t-r\tShows tasks of all subfolders, recursively"
+			exit
+			;;
+		r)
+			find . -name .todo -exec echo {}
+			exit
+			;;
+		*)
+			tpath=$opt
+			;;
+	esac
+done
+
+
+sed "s/^\s*+.*/${HIGH}&/; \
+	s/^\s*#.*/${MID}&/; \
+	s/^\s*-.*/${LOW}&/" \
+	${tpath}/.todo 2>/dev/null
