@@ -34,6 +34,11 @@
 	shopt -s checkwinsize
 
 # Alias and function definitions.
+	# Search CommandLineFU.com via the API
+	cmdfu(){
+		curl "http://www.commandlinefu.com/commands/matching/$@/$(echo -n $@ | openssl base64)/plaintext"
+	}
+
 	# OpenSSL chat server (for more see below)
 	function cserv() {
 		if [[ -z ${1} ]]; then
@@ -124,6 +129,8 @@
 	eval "`dircolors -b`"
 
 # Alias
+	alias busy='my_file=$(find /usr/include -type f | sort -R | head -n 1); my_len=$(wc -l $my_file | awk "{print $1}"); let "r = $RANDOM % $my_len" 2>/dev/null; vim +$r $my_file'
+
 	# OpenSSL chat system. For more info do "chelp"
 	alias cbrowse='avahi-browse -atr | grep "SSL Chat" -A3 | grep = -A3'
 	alias cclin='cprompt | openssl s_client -quiet -connect '
