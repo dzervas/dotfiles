@@ -1,2 +1,2 @@
 text/html; w3m -I %{charset} -T text/html; copiousoutput;
-application/pdf; xpdf -q %s; test=RunningX;
+application/pdf; mupdf %s; test=RunningX;

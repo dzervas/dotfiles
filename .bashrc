@@ -148,6 +148,7 @@ Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.c
 	alias ll='ls -al --color=auto'
 	alias ls='ls --color=auto'
 	alias man='LC_ALL=C LANG=C man'
+	alias mutt='TERM=xterm-256color mutt'
 
 	# Beutiful way to show your NIC's IP/MAC address
 	alias net='ifconfig | awk "/^[a-z]+[0-9]?/ || /inet/ || /ether/ \

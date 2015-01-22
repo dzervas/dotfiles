@@ -1,55 +1,45 @@
 # Server settings
-source "gpg2 -dq $HOME/.muttpass.gpg |"
-set folder		= "imaps://dzervas.gr"
-set imap_user		= "dzervas@dzervas.gr"
-set imap_pass		= $my_pw_dzervas
-set smtp_url		= "smtp://$imap_user:$my_pw_dzervas@dzervas.gr"
-set from		= $imap_user
+set from		= "dzervas@dzervas.gr"
 set realname		= "Dimitris Zervas"
 
 # Mailboxes
-set imap_check_subscribed
 set beep_new
-set spoolfile		= "+INBOX"
-set postponed		= "+Drafts"
 set editor		= "vim"
-bind index "^" imap-fetch-mail
+set mbox_type		= "Maildir"
+set folder		= $HOME/.maildir/dzervas
+set spoolfile		= "+INBOX"
+set charset		= "utf8"
 
 # Connection settings
-set mail_check		= 30
-set imap_keepalive	= 300
-set ssl_starttls	= yes
 set sleep_time		= 0
-unset imap_passive
 
 # Dirs and paths
 set header_cache	= ~/.mutt/cache/headers
-set message_cachedir	= ~/.mutt/cache/bodies
 set mailcap_path	= ~/.mutt/mailcap
 
 # Mail sorting
-set sort		= 'threads'
-set sort_aux		= 'reverse-last-date-received'
+set sort		= "threads"
+set sort_aux		= "reverse-last-date-received"
 set auto_tag		= yes
 
 # HTML handling
 auto_view text/html
 alternative_order text/plain text/enriched text/html
-macro attach 'V' "<pipe-entry>cat >~/.cache/mutt/mail.html && firefox ~/.cache/mutt/mail.html && shred -uzn 2 ~/.cache/mutt/mail.html<enter>"
-
-# Contacts
-set query_command="/usr/bin/pc_query -m '%s'"
-macro index,pager	a "<pipe-message>pycard-import<return>" "Add this sender to your contacts"
-bind editor		<Tab> complete-query
+#macro attach 'V' "<pipe-entry>cat >~/.cache/mutt/mail.html && firefox ~/.cache/mutt/mail.html && shred -uzn 2 ~/.cache/mutt/mail.html<enter>"
+set pager_stop
 
 # Coloring
-#source ~/.mutt/monokai.colors
+source ~/.mutt/monokai.colors
 
 # PGP
-set pgp_autosign
 set pgp_use_gpg_agent = yes
 set pgp_timeout = 3600
-set crypt_autosign = yes
 set crypt_replyencrypt = yes
 set pgp_sign_as = 47C9CA96
-source ~/.mutt/gpg.rc
+#source ~/.mutt/gpg.rc
+
+# Bindings
+bind pager q exit
+bind pager <Up> previous-line
+bind pager <Down> next-line
+# bind pager ^<space> previous-page
