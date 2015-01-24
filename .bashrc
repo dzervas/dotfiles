@@ -39,7 +39,7 @@
 # Alias and function definitions.
 	# Stack job lister, to get shit together...
 	function ++() {
-		echo $(date +"[%d/%m %I/%M]") "$@" >> ~/.stack
+		echo "$(date +'[%d/%m %I:%M]') $@" >> ~/.stack
 	}
 
 	function --() {
@@ -51,7 +51,7 @@
 		datec="\x1b[32m"
 		jobc="\x1b[00m"
 
-		sed "s/^\[.*\]/${datec}&${jobc}/" ~/.stack
+		sed "s/^\[.*\]/${datec}&${jobc}/" ~/.stack | tac
 	}
 
 	function sc() {
