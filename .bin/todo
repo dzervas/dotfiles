@@ -12,7 +12,8 @@ while getopts "chr" opt; do
 			exit
 			;;
 		h)
-			echo -e "Usage ${0} [-c] [-h] [-r] [path]\n"
+			echo -e "ToDir v0.3"
+			echo -e "Usage ${0}: [-c] [-h] [-r] [path]\n"
 			echo -e "\tpath\tPath of directory which contains .todo, default to current directory"
 			echo -e "\t-c\tReturns number of tasks"
 			echo -e "\t-h\tShows this message"

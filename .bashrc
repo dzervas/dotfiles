@@ -39,18 +39,6 @@
 		curl "http://www.commandlinefu.com/commands/matching/$@/$(echo -n $@ | openssl base64)/plaintext"
 	}
 
-	# OpenSSL chat server (for more see below)
-	function cserv() {
-		if [[ -z ${1} ]]; then
-			port=9090
-		else
-			port=${1}
-		fi
-
-		echo "Port: ${port}"
-		avahi-publish -s "SSL Chat" _https._tcp ${port} &
-		cprompt | openssl s_server -quiet -cert ~/.cserv.pem -accept ${port}
-	}
 	# One extract to rule them all
 	function extract () {
 		if [ -f $1 ] ; then
@@ -131,23 +119,11 @@
 # Alias
 	alias busy='my_file=$(find /usr/include -type f | sort -R | head -n 1); my_len=$(wc -l $my_file | awk "{print $1}"); let "r = $RANDOM % $my_len" 2>/dev/null; vim +$r $my_file'
 
-	# OpenSSL chat system. For more info do "chelp"
-	alias cbrowse='avahi-browse -atr | grep "SSL Chat" -A3 | grep = -A3'
-	alias cclin='cprompt | openssl s_client -quiet -connect '
-	alias chelp='echo "OpenSSL Chat commands:
-Network discovery: cbrowse
-Client: cclin <ip>:<port>
-Server: cserv <port> (requires key in ~/.cserv.pem)
-Key generation: openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.cserv.pem -out ~/.cserv.pem"'
-	alias cprompt='echo "User ${USER} logged in!"; while true; do
-		read tmp
-		echo "${USER}: ${tmp}"
-	done'
-
 	alias grep='grep --color'
 	alias ll='ls -al --color=auto'
 	alias ls='ls --color=auto'
 	alias man='LC_ALL=C LANG=C man'
+	# Come on mutt, we're on 2015...
 	alias mutt='TERM=xterm-256color mutt'
 
 	# Beutiful way to show your NIC's IP/MAC address

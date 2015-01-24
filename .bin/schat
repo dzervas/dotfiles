@@ -1,0 +1,59 @@
+#!/bin/sh
+cert="${HOME}/.schat.pem"
+port=9090
+server=false
+
+while getopts ":chfp:s" opt; do
+	case "$opt" in
+		c)
+			cert=$OPTARG
+			;;
+		h)
+			echo -e "OpenSSL Chat v0.2"
+			echo -e "Usage: ${0}i [-c cert] [-h] [-f] [-p port] [-s] [ip]\n"
+			echo -e "\tip\tConnect to server <ip>, at port given"
+			echo -e "\t-c <cert>\tCertificate to use for the server."
+			echo -e "\t\t\tDefault to ~/.schat.pem"
+			echo -e "\t-h\tShows this message"
+			echo -e "\t-f\tFind available servers in network"
+			echo -e "\t-p <port>\tDefines port to use for server and client. Default=9090"
+			echo -e "\t-s\tStart a server listening at port given"
+			echo -e "\nNOTE: To generate a certificate:"
+			echo -e "openssl req -x509 -nodes -days 365 -newkey rsa:8192 -keyout ~/.schat.pem -out ~/.schat.pem"
+			exit
+			;;
+		f)
+			echo "Available schat servers on network:"
+			avahi-browse -atrp | awk -F ";" '/^=/ && /SChat/ { print "\t" $7 "[" $8 "]:" $9 }'
+			exit
+			;;
+		p)
+			port=$OPTARG
+			;;
+		s)
+			server=true
+			;;
+		*)
+			echo $opt $OPTARG
+#			cprompt | openssl s_client -quiet -connect $@
+			;;
+	esac
+done
+
+function cprompt() {
+	echo "User ${USER} logged in!"
+	while true; do
+		read tmp
+		echo "${USER}: ${tmp}"
+	done
+}
+
+if $server; then
+	echo "Listening on port ${port}..."
+	avahi-publish -s "SChat" _https._tcp ${port} &
+	cprompt | openssl s_server -quiet -cert ${cert} -accept ${port}
+else
+	shift $(($OPTIND - 1))
+	echo "Connectig at ${1}:${port}"
+	cprompt | openssl s_client -quiet -connect "${1}:${port}"
+fi
