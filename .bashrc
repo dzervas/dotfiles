@@ -34,8 +34,22 @@
 	shopt -s checkwinsize
 
 # Alias and function definitions.
+	# Stack job lister, to get shit together...
+	function ++() {
+		echo "$@" >> ~/.stack
+	}
+
+	function --() {
+		cp ~/.stack{,.last}
+		head -n -1 ~/.stack.last > ~/.stack
+	}
+
+	function sl() {
+		cat ~/.stack
+	}
+
 	# Search CommandLineFU.com via the API
-	cmdfu(){
+	function cmdfu(){
 		curl "http://www.commandlinefu.com/commands/matching/$@/$(echo -n $@ | openssl base64)/plaintext"
 	}
 
