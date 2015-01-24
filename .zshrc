@@ -102,12 +102,9 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	GIT_PROMPT_MODIFIED="%{$fg_bold[yellow]%}•%{$reset_color%}"
 	GIT_PROMPT_STAGED="%{$fg_bold[green]%}•%{$reset_color%}"
 
-	TZ="Europe/Athens"
 	HISTFILE=$HOME/.zhistory
 	HISTSIZE=1000
 	SAVEHIST=1000
-	HOSTNAME="`hostname`"
-	PAGER='less'
 
 	if [ -n "$SSH_CLIENT" ]; then
 		SSH_COLOR=$RED
@@ -116,7 +113,7 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 		SSH_COLOR=$GREEN
 	fi
 
-	PS1="$SSH_COLOR%n${SSH_INFO} $BCYAN%c$NC%(!.#.>) "
+	PS1='$SSH_COLOR%n${SSH_INFO} $BCYAN%c${BRED}$(sc)$NC%(!.#.>) '
 	RPS1='$(git_prompt_string)$(statecnt)${NC}'
 
 # Aliases

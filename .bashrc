@@ -26,9 +26,12 @@
 
 # Variable definitions
 	# No duplicates in history
-	export HISTCONTROL=ignoredups
-	export EDITOR=vim
+	export EDITOR="vim"
+	export HISTCONTROL="ignoredups"
+	export HOSTNAME="`hostname`"
+	export PAGER="less"
 	export PATH="$PATH:$(readlink ~/.bin)"
+	export TZ="Europe/Athens"
 
 	# Check the window size after each command to update LINES and COLUMNS if necessary
 	shopt -s checkwinsize
@@ -36,7 +39,7 @@
 # Alias and function definitions.
 	# Stack job lister, to get shit together...
 	function ++() {
-		echo "$@" >> ~/.stack
+		echo $(date +"[%d/%m %I/%M]") "$@" >> ~/.stack
 	}
 
 	function --() {
@@ -45,7 +48,19 @@
 	}
 
 	function sl() {
-		cat ~/.stack
+		datec="\x1b[32m"
+		jobc="\x1b[00m"
+
+		sed "s/^\[.*\]/${datec}&${jobc}/" ~/.stack
+	}
+
+	function sc() {
+		count=$(sl | wc -l)
+		if (( $count > 0 )); then
+			echo -en " $count"
+		else
+			return 1
+		fi
 	}
 
 	# Search CommandLineFU.com via the API
@@ -184,4 +199,4 @@
 		SSH_COLOR=$GREEN
 	fi
 
-	export PS1="${SSH_COLOR}\u${SSH_INFO} \$(statecnt && echo -n ' ')${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${RED}\$ ${NC}"
+	export PS1="${SSH_COLOR}\u${SSH_INFO} \$(statecnt && echo -n ' ')${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${BRED}\$(sc)${RED}\$ ${NC}"
