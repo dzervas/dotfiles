@@ -116,8 +116,8 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 		SSH_COLOR=$GREEN
 	fi
 
-	PS1="$SSH_COLOR%n $BCYAN%c$NC%(!.#.>) "
-	RPS1='${SSH_INFO}$(git_prompt_string)$(statecnt)${NC}'
+	PS1="$SSH_COLOR%n${SSH_INFO} $BCYAN%c$NC%(!.#.>) "
+	RPS1='$(git_prompt_string)$(statecnt)${NC}'
 
 # Aliases
 	alias fuck='sudo $(fc -l -n -1)'
