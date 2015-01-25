@@ -3,7 +3,6 @@
 # Code search for .todo
 # Pick a mail client (mailutils?)
 # Vim as sudoer (better support than now)
-# Make ssh-agent work
 # Make vim automatically resume suspended vim
 # Mount USB flash as regular user
 - NFC for wifi pass
@@ -11,4 +10,3 @@
 - Disable card reader (laptop)
 - Fix MPD in dwmstatus
 - dwm vim-like key bindings (command mode)
-- Make gpg-agent work
