@@ -1,5 +1,19 @@
 import binascii
 import codecs
+import os
+import subprocess
+
+# password
+
+def mailpasswd(acct):
+	acct = os.path.basename(acct)
+	path = "~/.offlineimap/%s.gpg" % acct
+	path = os.path.expanduser(path)
+	args = ["gpg", "--quiet", "--for-your-eyes-only", "--no-tty", "--decrypt", path]
+	try:
+		return subprocess.check_output(args).strip()
+	except subprocess.CalledProcessError:
+		return ""
 
 # encoding
 

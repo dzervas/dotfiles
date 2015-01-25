@@ -1,7 +1,7 @@
 [general]
 accounts = dzervas
 maxsyncaccounts = 1
-pythonfile = ~/.offlineimap-utf7.py
+pythonfile = ~/.offlineimap.py
 #ui = Noninteractive.Quiet
 
 [Account dzervas]
@@ -24,6 +24,7 @@ nametrans = lambda foldername: foldername.decode('imap4-utf-7').encode('utf-8')
 type = IMAP
 remotehost = dzervas.gr
 remoteuser = dzervas@dzervas.gr
+remotepasseval = mailpasswd("dzervas")
 
 ssl = yes
 ssl_version = tls1
