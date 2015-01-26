@@ -36,6 +36,7 @@ export SSH_AUTH_SOCK   # enable gpg-agent for ssh
 
 # Autostart
 #xbindkeys
+mpd
 thunar --daemon &
 pulseaudio --start
 firefox &

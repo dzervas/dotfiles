@@ -8,7 +8,7 @@ tpath="."
 while getopts "chr" opt; do
 	case "$opt" in
 		c)
-			grep -cs "^\s*+\|^\s*#\|^\s*-" .todo
+			grep -cs "^\s*+\|^\s*#\|^\s*-" .todir
 			exit
 			;;
 		h)
@@ -21,7 +21,7 @@ while getopts "chr" opt; do
 			exit
 			;;
 		r)
-			find . -name .todo -exec echo {}
+			find . -name .todir -exec echo {}
 			exit
 			;;
 		*)
@@ -34,4 +34,4 @@ done
 sed "s/^\s*+.*/${HIGH}&/; \
 	s/^\s*#.*/${MID}&/; \
 	s/^\s*-.*/${LOW}&/" \
-	${tpath}/.todo 2>/dev/null
+	${tpath}/.todir 2>/dev/null

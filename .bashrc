@@ -120,7 +120,7 @@
 	# Some useful info for the prompt (background job count & task count)
 	function statecnt() {
 		job=$(jobs | wc -l)
-		to=$(todo -c | tr -d "\n")
+		to=$(todir -c | tr -d "\n")
 
 		if [[ $job -ne 0 || $to -ne 0 ]]; then
 			echo -en "${GREEN}["
@@ -162,7 +162,9 @@
 		{ print \"\tMAC Address: \" \$2 } else { print \"\" \$1 } }"'
 
 	# Yey! Saved 2 keystrokes! :)
+	alias t='todir'
 	alias v='vim'
+	alias vt='vim .todir'
 
 	# 1 line web server
 	alias webserver='python -m SimpleHTTPServer'

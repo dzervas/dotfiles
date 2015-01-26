@@ -48,6 +48,7 @@ filetype plugin indent on
 setlocal noexpandtab
 
 " Restore cursor position in files
+au BufRead,BufNewFile .todir set filetype=todir
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 " Do not insert comments automatically
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
