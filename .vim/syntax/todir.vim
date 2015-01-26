@@ -8,6 +8,6 @@ syn match todirLow  "^\s*-.*$"
 
 let b:current_syntax = "todir"
 
-hi def link todirHigh		StorageClass
-hi def link todirMid		Type
-hi def link todirLow		PreProc
+hi todirHigh ctermfg=Yellow
+hi todirMid ctermfg=Cyan
+hi todirLow ctermfg=Green
