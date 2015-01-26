@@ -1,6 +1,4 @@
-+ openssl s_server does not listen, just exits
-# Vim support for .todo
-# Code search for .todo
+# Source code search for todir
 # Pick a mail client (mailutils?)
 # Vim as sudoer (better support than now)
 # Make vim automatically resume suspended vim

@@ -169,6 +169,7 @@
 	alias t='todir'
 	alias v='vim'
 	alias vt='vim .todir'
+	alias vs='vim .stack'
 
 	# 1 line web server
 	alias webserver='python -m SimpleHTTPServer'

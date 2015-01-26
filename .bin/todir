@@ -3,9 +3,7 @@ LOW='\x1b[32m'		#Green
 MID='\x1b[36m'		#Cyan
 HIGH='\x1b[33m'		#Yellow
 
-tpath="."
-
-while getopts "chr" opt; do
+while getopts "chrs" opt; do
 	case "$opt" in
 		c)
 			grep -cs "^\s*+\|^\s*#\|^\s*-" .todir
@@ -18,19 +16,28 @@ while getopts "chr" opt; do
 			echo -e "\t-c\tReturns number of tasks"
 			echo -e "\t-h\tShows this message"
 			echo -e "\t-r\tShows tasks of all subfolders, recursively"
+			echo -e "\t-s\tSearch source code under path for tasks"
 			exit
 			;;
 		r)
-			find . -name .todir -exec echo {}
-			exit
+			find . -name .todir -exec echo "$0:" \; -exec $0 {} \; -exec echo "" \;
+			;;
+		s)
 			;;
 		*)
-			tpath=$opt
 			;;
 	esac
 done
 
+shift $(($OPTIND - 1))
+# echo $1
+tpath=$(echo ${1} | sed "s/.todir$//")
 
+if [ -z "$tpath" ]; then
+	tpath="."
+fi
+
+# echo $tpath
 sed "s/^\s*+.*/${HIGH}&/; \
 	s/^\s*#.*/${MID}&/; \
 	s/^\s*-.*/${LOW}&/" \
