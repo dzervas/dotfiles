@@ -42,6 +42,10 @@
 		echo "$(date +'[%d/%m %I:%M]') $@" >> ~/.stack
 	}
 
+	function +-() {
+		mv ~/.stack{.last,}
+	}
+
 	function --() {
 		cp ~/.stack{,.last}
 		head -n -1 ~/.stack.last > ~/.stack
