@@ -28,4 +28,4 @@ remotepasseval = mailpasswd("dzervas")
 
 ssl = yes
 ssl_version = tls1
-cert_fingerprint = 0bb20dcada13e5283097e90a6f0e3e30737c2bc8
+cert_fingerprint = 2c9f241fb4747fc4a63e094a63d6949536d8e813

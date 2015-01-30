@@ -23,6 +23,7 @@ while getopts "chrs" opt; do
 			find . -name .todir -exec echo "$0:" \; -exec $0 {} \; -exec echo "" \;
 			;;
 		s)
+			grep -r "FIXME\|TODO\|XXX" *
 			;;
 		*)
 			;;

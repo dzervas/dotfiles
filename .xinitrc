@@ -44,6 +44,6 @@ uxterm &
 dwmstatus &
 pasystray &
 wpa_gui &
-#offlineimap > ~/.cache/offlineimap/stdout 2> ~/.cache/offlineimap/stderr &
+offlineimap > ~/.cache/offlineimap/stdout 2> ~/.cache/offlineimap/stderr &
 
 exec /usr/local/bin/dwm > ~/.cache/dwm/stdout 2> ~/.cache/dwm/stderr
