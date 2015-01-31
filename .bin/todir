@@ -46,9 +46,9 @@ if [ -z "$tpath" ]; then
 fi
 
 if [ -z "$data" ]; then
-	data="$(cat $tpath/.todir 2>/dev/null)"
+	data="$(grep -v '^//' $tpath/.todir 2>/dev/null)"
 else
-	data="$data\n$(cat $tpath/.todir 2>/dev/null)"
+	data="$data\n$(grep -v '^//' $tpath/.todir 2>/dev/null)"
 fi
 
 echo -e "$data" | sed "s/^\s*+.*/a${HIGH}&/; \
