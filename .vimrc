@@ -95,11 +95,11 @@ nnoremap <Leader>l		<C-W>+
 nnoremap <Leader>,		<C-W><C-W>
 
 " Commenting blocks of code.
-let b:comment_leader = '# '		" Default Comment leader
-autocmd FileType c,cpp,java,scala	let b:comment_leader = '// '
-autocmd FileType tex			let b:comment_leader = '% '
-autocmd FileType mail			let b:comment_leader = '> '
-autocmd FileType vim			let b:comment_leader = '" '
+let b:comment_leader = '#'		" Default Comment leader
+autocmd FileType c,cpp,java,scala	let b:comment_leader = '//'
+autocmd FileType tex			let b:comment_leader = '%'
+autocmd FileType mail			let b:comment_leader = '>'
+autocmd FileType vim			let b:comment_leader = '"'
 noremap <silent> <Leader>/ :<C-B>silent <C-E>s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:noh<CR>
 noremap <silent> <Leader>? :<C-B>silent <C-E>s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:noh<CR>
 

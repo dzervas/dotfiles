@@ -1,4 +1,6 @@
 #!/bin/sh
+# For syntax highlighting take a look at .vim/syntax/todir.vim
+
 LOW='\x1b[32m'		#Green
 MID='\x1b[36m'		#Cyan
 HIGH='\x1b[33m'		#Yellow
@@ -10,9 +12,10 @@ while getopts "chrs" opt; do
 			exit
 			;;
 		h)
-			echo -e "ToDir v0.3"
+			echo -e "ToDir v0.4"
 			echo -e "Usage ${0}: [-c] [-h] [-r] [path]\n"
-			echo -e "\tpath\tPath of directory which contains .todo, default to current directory"
+			echo -e "A directory based todo list manager. Create a .todir file and add tasks!\n"
+			echo -e "\tpath\tPath of directory which contains .todir, default to current directory"
 			echo -e "\t-c\tReturns number of tasks"
 			echo -e "\t-h\tShows this message"
 			echo -e "\t-r\tShows tasks of all subfolders, recursively"
@@ -23,7 +26,12 @@ while getopts "chrs" opt; do
 			find . -name .todir -exec echo "$0:" \; -exec $0 {} \; -exec echo "" \;
 			;;
 		s)
-			grep -r "FIXME\|TODO\|XXX" *
+			data=`grep -r "FIXME\|TODO\|XXX" * | \
+				awk -F ":" '/FIXME|TODO|XXX/ \
+				{ printf "%s", $2; for(i=3;i<=NF;++i) printf "%s", $i; print ", at: " $1 }' | \
+				sed "s/.*TODO\s*/- /; \
+				s/.*FIXME\s*/# /; \
+				s/.*XXX\s*/+ /"`
 			;;
 		*)
 			;;
@@ -31,15 +39,19 @@ while getopts "chrs" opt; do
 done
 
 shift $(($OPTIND - 1))
-# echo $1
 tpath=$(echo ${1} | sed "s/.todir$//")
 
 if [ -z "$tpath" ]; then
 	tpath="."
 fi
 
-# echo $tpath
-sed "s/^\s*+.*/${HIGH}&/; \
-	s/^\s*#.*/${MID}&/; \
-	s/^\s*-.*/${LOW}&/" \
-	${tpath}/.todir 2>/dev/null
+if [ -z "$data" ]; then
+	data="$(cat $tpath/.todir 2>/dev/null)"
+else
+	data="$data\n$(cat $tpath/.todir 2>/dev/null)"
+fi
+
+echo -e "$data" | sed "s/^\s*+.*/a${HIGH}&/; \
+	s/^\s*#.*/b${MID}&/; \
+	s/^\s*-.*/c${LOW}&/" | \
+	sort -s -k 1.1,1.1 | sed "s/^[abc]//"
