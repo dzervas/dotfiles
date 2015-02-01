@@ -76,7 +76,7 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	}
 
 	# Stupid ZLE hack
-	goto_bg() { fg }
+	goto_bg() { fg > /dev/null 2>&1 }
 
 # ZLE definitions
 	zle -N insert-sudo insert_sudo

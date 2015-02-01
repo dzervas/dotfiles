@@ -1,4 +1,5 @@
 #!/bin/sh
+# .todir syntax: "+" high, "#" medium, "-" low priority and "//" comment.
 # For syntax highlighting take a look at .vim/syntax/todir.vim
 
 LOW='\x1b[32m'		#Green

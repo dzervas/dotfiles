@@ -120,4 +120,5 @@ inoremap <F3> <Esc>:call funcs#ToggleMouse()<CR>a
 inoremap <Tab> <C-R>=funcs#TabComplete()<CR>
 
 " TaskList
-let g:tlTokenList = ['BUG', 'FIXME', 'TODO', 'DIRTY']
+let g:tlRememberPosition = 1
+let g:tlWindowPosition = 1

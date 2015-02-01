@@ -166,6 +166,7 @@
 		{ print \"\tMAC Address: \" \$2 } else { print \"\" \$1 } }"'
 
 	# Yey! Saved 2 keystrokes! :)
+	alias g='git'
 	alias t='todir'
 	alias v='vim'
 	alias vt='vim .todir'
