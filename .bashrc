@@ -153,7 +153,7 @@
 	alias busy='my_file=$(find /usr/include -type f | sort -R | head -n 1); my_len=$(wc -l $my_file | awk "{print $1}"); let "r = $RANDOM % $my_len" 2>/dev/null; vim +$r $my_file'
 
 	alias grep='grep --color'
-	alias ll='ls -al --color=auto'
+	alias ll='ls -hal --color=auto'
 	alias ls='ls --color=auto'
 	alias man='LC_ALL=C LANG=C man'
 	# Come on mutt, we're on 2015...

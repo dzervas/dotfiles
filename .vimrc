@@ -66,7 +66,7 @@ noremap! <F1> <ESC><Right>
 nnoremap <silent> <C-l> :noh<CR><C-l>
 
 " Don't forget sudo ever again!
-cmap w!! w !sudo tee % >/dev/null
+cmap W w !sudo tee % >/dev/null
 
 " Fix identation
 noremap <F4> :%s/    /\t/g

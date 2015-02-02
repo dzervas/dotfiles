@@ -1,4 +1,6 @@
 #!/bin/sh
+# Simple, directory based, todo list manager.
+# Just create a .todir file in and add tasks!
 # .todir syntax: "+" high, "#" medium, "-" low priority and "//" comment.
 # For syntax highlighting take a look at .vim/syntax/todir.vim
 
@@ -13,9 +15,10 @@ while getopts "chrs" opt; do
 			exit
 			;;
 		h)
-			echo -e "ToDir v0.4"
-			echo -e "Usage ${0}: [-c] [-h] [-r] [path]\n"
-			echo -e "A directory based todo list manager. Create a .todir file and add tasks!\n"
+			echo -e "ToDir v0.5"
+			echo -e "Usage: todir [-c] [-h] [-r] [-s] [path]\n"
+			echo -e "A directory based todo list manager. Create a .todir file and add tasks"
+			echo -e ".todir syntax: \"+\" high priority, \"#\" medium and \"-\" low. \"//\" is comment.\n"
 			echo -e "\tpath\tPath of directory which contains .todir, default to current directory"
 			echo -e "\t-c\tReturns number of tasks"
 			echo -e "\t-h\tShows this message"
@@ -24,15 +27,10 @@ while getopts "chrs" opt; do
 			exit
 			;;
 		r)
-			find . -name .todir -exec echo "$0:" \; -exec $0 {} \; -exec echo "" \;
+			recurse=true
 			;;
 		s)
-			data=`grep -r "FIXME\|TODO\|XXX" * | \
-				awk -F ":" '/FIXME|TODO|XXX/ \
-				{ printf "%s", $2; for(i=3;i<=NF;++i) printf "%s", $i; print ", at: " $1 }' | \
-				sed "s/.*TODO\s*/- /; \
-				s/.*FIXME\s*/# /; \
-				s/.*XXX\s*/+ /"`
+			surf=true
 			;;
 		*)
 			;;
@@ -46,10 +44,27 @@ if [ -z "$tpath" ]; then
 	tpath="."
 fi
 
-if [ -z "$data" ]; then
-	data="$(grep -v '^//' $tpath/.todir 2>/dev/null)"
+if [ -z $surf ]; then
+	if [ -z $recurse ]; then
+		data="$(grep -v '^//' $tpath/.todir 2>/dev/null)"
+	else
+		find ${tpath} -name .todir -exec echo "$0:" \; -exec $0 {} \; -exec echo "" \;
+		exit
+	fi
 else
-	data="$data\n$(grep -v '^//' $tpath/.todir 2>/dev/null)"
+	if [ -z $recurse ]; then
+		sargs=" "
+	else
+		sargs="-r"
+	fi
+
+	data=$(grep ${sargs} "FIXME\|TODO\|XXX" * 2> /dev/null | \
+		awk -F ":" '/FIXME|TODO|XXX/ \
+		{ printf "%s", $2; for(i=3;i<=NF;++i) printf "%s", $i; print ", at: " $1 }' | \
+			sed "s/.*TODO\s*/- /; \
+			s/.*FIXME\s*/# /; \
+			s/.*XXX\s*/+ /; \
+			s/\s*\*\///")
 fi
 
 echo -e "$data" | sed "s/^\s*+.*/a${HIGH}&/; \
