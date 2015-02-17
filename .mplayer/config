@@ -6,3 +6,9 @@ subcp=ISO-8859-7
 # Set subtitle file encoding.
 unicode=yes
 utf8=yes
+
+ao=alsa
+vo=gl
+
+cache=8192
+cache-min=4

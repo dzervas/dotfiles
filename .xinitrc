@@ -37,12 +37,10 @@ export SSH_AUTH_SOCK   # enable gpg-agent for ssh
 # Autostart
 #xbindkeys
 mpd
-thunar --daemon &
-pulseaudio --start
 firefox &
+telegram &
 uxterm &
 dwmstatus &
-pasystray &
 wpa_gui &
 offlineimap > ~/.cache/offlineimap/stdout 2> ~/.cache/offlineimap/stderr &
 
