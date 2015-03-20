@@ -1,8 +1,10 @@
 [general]
 accounts = dzervas
-maxsyncaccounts = 1
+#, csd, ics, labaki
+maxsyncaccounts = 5
 pythonfile = ~/.offlineimap.py
 #ui = Noninteractive.Quiet
+socktimeout = 20
 
 [Account dzervas]
 autorefresh = 5
@@ -29,3 +31,107 @@ remotepasseval = mailpasswd("dzervas")
 ssl = yes
 ssl_version = tls1
 cert_fingerprint = 2c9f241fb4747fc4a63e094a63d6949536d8e813
+
+[Account gmail]
+autorefresh = 5
+quick = 5
+
+localrepository = gmail-local
+remoterepository = gmail-remote
+status_backend = sqlite
+
+[Repository gmail-local]
+type = Maildir
+localfolders = ~/.maildir/gmail
+
+[Repository gmail-remote]
+keepalive = 60
+holdconnectionopen = yes
+nametrans = lambda foldername: foldername.decode('imap4-utf-7').encode('utf-8')
+
+type = IMAP
+remotehost = imap.gmail.com
+remoteuser = 01ttouch
+remotepasseval = mailpasswd("gmail")
+
+ssl = yes
+ssl_version = tls1
+cert_fingerprint = e0478e5b1535d51ac3672543f3a0d5943fb19fa2
+
+[Account csd]
+autorefresh = 5
+quick = 5
+
+localrepository = csd-local
+remoterepository = csd-remote
+status_backend = sqlite
+
+[Repository csd-local]
+type = Maildir
+localfolders = ~/.maildir/csd
+
+[Repository csd-remote]
+keepalive = 60
+holdconnectionopen = yes
+nametrans = lambda foldername: foldername.decode('imap4-utf-7').encode('utf-8')
+
+type = IMAP
+remotehost = mailhost.csd.uoc.gr
+remoteuser = csd3502
+remotepasseval = mailpasswd("csd")
+
+ssl = yes
+ssl_version = tls1
+cert_fingerprint = c7195a72518ee9180f20d4a8f11adae2ad260690
+
+[Account ics]
+autorefresh = 5
+quick = 5
+
+localrepository = ics-local
+remoterepository = ics-remote
+status_backend = sqlite
+
+[Repository ics-local]
+type = Maildir
+localfolders = ~/.maildir/ics
+
+[Repository ics-remote]
+keepalive = 60
+holdconnectionopen = yes
+nametrans = lambda foldername: foldername.decode('imap4-utf-7').encode('utf-8')
+
+type = IMAP
+remotehost = mailhost.ics.forth.gr
+remoteuser = dzervas
+remotepasseval = mailpasswd("ics")
+
+ssl = yes
+ssl_version = tls1
+cert_fingerprint = 3930b915784f964b393cf77b61f52356f113cb60
+
+[Account labaki]
+autorefresh = 5
+quick = 5
+
+localrepository = labaki-local
+remoterepository = labaki-remote
+status_backend = sqlite
+
+[Repository labaki-local]
+type = Maildir
+localfolders = ~/.maildir/labaki
+
+[Repository labaki-remote]
+keepalive = 60
+holdconnectionopen = yes
+nametrans = lambda foldername: foldername.decode('imap4-utf-7').encode('utf-8')
+
+type = IMAP
+remotehost = mail.tolabaki.gr
+remoteuser = dzervas
+remotepasseval = mailpasswd("labaki")
+
+ssl = yes
+ssl_version = tls1
+cert_fingerprint = 5ac6ab50f3bb7107b2a729c837b3bbb1810e888d

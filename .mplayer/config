@@ -12,3 +12,4 @@ vo=gl
 
 cache=8192
 cache-min=4
+framedrop=yes
