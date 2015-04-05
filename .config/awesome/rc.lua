@@ -10,6 +10,7 @@ local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
+local vicious = require("vicious")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -34,13 +35,37 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/usr/share/awesome/themes/default/theme.lua")
+--beautiful.init("/usr/share/awesome/themes/default/theme.lua")
+beautiful.init("/home/ttouch/.config/awesome/powerarrowf/theme.lua")
+font = "Monaco 14"
 
 -- User settings
+scstep = 10
+kbstep = 10
 terminal = "termite"
 volcard = 0
 volstep = 5
 editor = "vim"
+
+-- {{ These are the power arrow dividers/separators }} --
+arr1 = wibox.widget.imagebox()
+arr1:set_image(beautiful.arr1)
+arr2 = wibox.widget.imagebox()
+arr2:set_image(beautiful.arr2)
+arr3 = wibox.widget.imagebox()
+arr3:set_image(beautiful.arr3)
+arr4 = wibox.widget.imagebox()
+arr4:set_image(beautiful.arr4)
+arr5 = wibox.widget.imagebox()
+arr5:set_image(beautiful.arr5)
+arr6 = wibox.widget.imagebox()
+arr6:set_image(beautiful.arr6)
+arr7 = wibox.widget.imagebox()
+arr7:set_image(beautiful.arr7)
+arr8 = wibox.widget.imagebox()
+arr8:set_image(beautiful.arr8)
+arr9 = wibox.widget.imagebox()
+arr9:set_image(beautiful.arr9)
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -92,7 +117,7 @@ tags = {}
 for s = 1, screen.count() do
 	-- Each screen has its own tag table.
 	if screen.count() == 1 then
-		tags[s] = awful.tag({"Term", "Browser", "IM", "Media", "Dev", "Tmp"}, s, layouts[1])
+		tags[s] = awful.tag({"T", "B", "I", "M", "D", "T"}, s, layouts[1])
 	elseif screen.count() == 2 then
 		if s == 2 then
 			tags[s] = awful.tag({"Browser", "Dev", "Tmp"}, s, layouts[1])
@@ -122,7 +147,86 @@ end
 
 -- {{{ Wibox
 -- Create a textclock widget
-mytextclock = awful.widget.textclock()
+--mytextclock = awful.widget.textclock()
+--{{-- Time and Date Widget }} --
+tdwidget = wibox.widget.textbox()
+local strf = '<span font="' .. font .. '" color="#EEEEEE" background="#777E76">  %b %d %I:%M </span>'
+vicious.register(tdwidget, vicious.widgets.date, strf, 20)
+
+clockicon = wibox.widget.imagebox()
+clockicon:set_image(beautiful.clock)
+
+--{{ Net Widget }} --
+netwidget = wibox.widget.textbox()
+vicious.register(netwidget, vicious.widgets.net, function(widget, args)
+    local interface = ""
+    if args["{wlp3s0 carrier}"] == 1 then
+        interface = "wlp3s0"
+    elseif args["{enp0s25 carrier}"] == 1 then
+        interface = "enp0s25"
+    else
+        return ""
+    end
+    return '<span background="#C2C2A4"> <span color="#FFFFFF">'..args["{"..interface.." down_kb}"]..'kbps'..'</span></span>' end, 10)
+
+---{{---| Wifi Signal Widget |-------
+neticon = wibox.widget.imagebox()
+vicious.register(neticon, vicious.widgets.wifi, function(widget, args)
+    local sigstrength = tonumber(args["{link}"])
+    if sigstrength > 69 then
+        neticon:set_image(beautiful.nethigh)
+    elseif sigstrength > 40 and sigstrength < 70 then
+        neticon:set_image(beautiful.netmedium)
+    else
+        neticon:set_image(beautiful.netlow)
+    end
+end, 120, 'wlp3s0')
+
+
+--{{ Battery Widget }} --
+baticon = wibox.widget.imagebox()
+baticon:set_image(beautiful.baticon)
+
+batwidget = wibox.widget.textbox()
+vicious.register( batwidget, vicious.widgets.bat, '<span background="#92B0A0"><span color="#FFFFFF"> Pwr: $1$2% </span></span>', 30, "BAT0" )
+
+
+----{{--| Volume / volume icon |----------
+volume = wibox.widget.textbox()
+vicious.register(volume, vicious.widgets.volume,
+ 
+'<span background="#D0785D"> <span color="#EEEEEE"> Vol:$1 </span></span>', 0.3, "Master")
+volumeicon = wibox.widget.imagebox()
+vicious.register(volumeicon, vicious.widgets.volume, function(widget, args)
+    local paraone = tonumber(args[1])
+
+    if args[2] == "♩" or paraone == 0 then
+        volumeicon:set_image(beautiful.mute)
+    elseif paraone >= 67 and paraone <= 100 then
+        volumeicon:set_image(beautiful.volhi)
+    elseif paraone >= 33 and paraone <= 66 then
+        volumeicon:set_image(beautiful.volmed)
+    else
+        volumeicon:set_image(beautiful.vollow)
+    end
+
+end, 0.3, "Master")
+
+--{{--| Mail widget |---------
+mailicon = wibox.widget.imagebox()
+
+vicious.register(mailicon, vicious.widgets.gmail, function(widget, args)
+    local newMail = tonumber(args["{count}"])
+    if newMail > 0 then
+        mailicon:set_image(beautiful.mail)
+    else
+        mailicon:set_image(beautiful.mailopen)
+    end
+end, 15)
+
+-- to make GMail pop up when pressed:
+mailicon:buttons(awful.util.table.join(awful.button({ }, 1,
+function () awful.util.spawn("thunderbird") end)))
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -163,21 +267,26 @@ for s = 1, screen.count() do
 	mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
 	-- Create the wibox
-	mywibox[s] = awful.wibox({position = "top", screen = s})
+	mywibox[s] = awful.wibox({position = "top", height = "24", screen = s})
 
 	-- Widgets that are aligned to the left
 	local left_layout = wibox.layout.fixed.horizontal()
---	left_layout:add(mylauncher)
 	left_layout:add(mytaglist[s])
+	left_layout:add(mylayoutbox[s])
 	left_layout:add(mypromptbox[s])
 
 	-- Widgets that are aligned to the right
 	local right_layout = wibox.layout.fixed.horizontal()
-	if s == 1 then
-		right_layout:add(wibox.widget.systray())
-	end
-	right_layout:add(mytextclock)
-	right_layout:add(mylayoutbox[s])
+	right_layout:add(wibox.widget.systray())
+	right_layout:add(mailicon)
+	right_layout:add(volumeicon)
+	right_layout:add(volume)
+	right_layout:add(baticon)
+	right_layout:add(batwidget)
+	right_layout:add(neticon)
+	right_layout:add(netwidget)
+	right_layout:add(clockicon)
+	right_layout:add(tdwidget)
 
 	-- Now bring it all together (with the tasklist in the middle)
 	local layout = wibox.layout.align.horizontal()
@@ -243,12 +352,20 @@ globalkeys = awful.util.table.join(
 	awful.key({"Mod1"}, "Shift_L", function () kbdcfg.switch() end),
 
 	-- Media keys
-	awful.key({}, "XF86MonBrightnessDown", function ()  end),
-	awful.key({}, "XF86MonBrightnessUp", function ()  end),
+	awful.key({}, "XF86MonBrightnessDown", function ()
+		awful.util.spawn("xbacklight -dec " .. scstep)
+	end),
+	awful.key({}, "XF86MonBrightnessUp", function ()
+		awful.util.spawn("xbacklight -inc " .. scstep)
+	end),
 	awful.key({}, "XF86LaunchA", function () awful.layout.set(awful.layout.suit.float) end),
 	awful.key({}, "XF86LaunchB", function () awful.layout.set(awful.layout.suit.tile) end),
-	awful.key({}, "XF86KbdBrightnessDown", function ()  end),
-	awful.key({}, "XF86KbdBrightnessUp", function ()  end),
+	awful.key({}, "XF86KbdBrightnessDown", function ()
+		awful.util.spawn("kbdlight down " .. kbstep)
+	end),
+	awful.key({}, "XF86KbdBrightnessUp", function ()
+		awful.util.spawn("kbdlight up " .. kbstep)
+	end),
 	awful.key({}, "XF86AudioPrev", function () awful.util.spawn("mpc prev") end),
 	awful.key({}, "XF86AudioPlay", function () awful.util.spawn("mpc toggle") end),
 	awful.key({}, "XF86AudioNext", function () awful.util.spawn("mpc prev") end),
@@ -355,6 +472,8 @@ awful.rules.rules = {
 awful.util.spawn("thunderbird")
 awful.util.spawn("firefox")
 awful.util.spawn(terminal)
+awful.util.spawn("pasystray")
+awful.util.spawn("wpa_gui -t")
 
 -- {{{ Signals
 -- Signal function to execute when a new client appears.
@@ -416,6 +535,9 @@ client.connect_signal("manage", function (c, startup)
 				awful.titlebar(c):set_widget(layout)
 		end
 end)
+
+beautiful.border_focus = "#000000"
+beautiful.border_normal = "#000000"
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)

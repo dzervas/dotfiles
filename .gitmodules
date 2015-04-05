@@ -7,6 +7,3 @@
 [submodule ".vim/bundle/auto-pairs"]
 	path = .vim/bundle/auto-pairs
 	url = git://github.com/jiangmiao/auto-pairs.git
-[submodule ".config/awesome/pro"]
-	path = .config/awesome/pro
-	url = https://github.com/barwinco/pro.git

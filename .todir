@@ -4,5 +4,3 @@
 - NFC for wifi pass
 - Touchpad (3 finger text select and 2 finger side scroll back/forward in ff, laptop)
 - Disable card reader (laptop)
-- Fix MPD in dwmstatus
-- dwm vim-like key bindings (command mode)
