@@ -2,7 +2,7 @@
 set nocompatible		" This must be first, because it changes other options as side effect
 
 set autoindent
-set colorcolumn=100		" Where to put the vertical line
+set colorcolumn=80		" Where to put the vertical line
 set completeopt=longest,menuone	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
 set copyindent
 set cryptmethod=blowfish	" Use (much) stronger blowfish encryption
@@ -24,6 +24,7 @@ set noswapfile			" Disable the fucking .swp files
 set number			" Show line numbers
 set pastetoggle=<F2>		" Toggle paste mode with F2
 set ruler			" Show where are you in the file
+set rnu				" Relative line numbers
 set scrolloff=3			" 3 Lines around cursor when scrolling
 set shortmess=atI		" Error messages are shorter
 set showmatch			" Show matching parentheses

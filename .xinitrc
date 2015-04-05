@@ -29,14 +29,15 @@ export SSH_AUTH_SOCK   # enable gpg-agent for ssh
 
 # Autostart
 #xbindkeys
-mpd
-firefox-bin &
-thunderbird-bin &
-telegram &
-uxterm &
-dwmstatus &
-wpa_gui &
-/opt/viber/Viber &
-mumble &
+#mpd
+#firefox-bin &
+#thunderbird-bin &
+#telegram &
+#uxterm &
+#dwmstatus &
+#wpa_gui &
+#/opt/viber/Viber &
+#mumble &
 
-exec /usr/local/bin/dwm > ~/.cache/dwm/stdout 2> ~/.cache/dwm/stderr
+#exec /usr/local/bin/dwm > ~/.cache/dwm/stdout 2> ~/.cache/dwm/stderr
+awesome

@@ -7,7 +7,7 @@ subcp=ISO-8859-7
 unicode=yes
 utf8=yes
 
-ao=alsa
+ao=pulse
 vo=gl
 
 cache=8192

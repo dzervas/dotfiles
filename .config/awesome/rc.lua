@@ -36,10 +36,11 @@ end
 -- Themes define colours, icons, and wallpapers
 beautiful.init("/usr/share/awesome/themes/default/theme.lua")
 
--- This is used later as the default terminal and editor to run.
-terminal = "uxterm"
-editor = os.getenv("EDITOR") or "vim"
-editor_cmd = terminal .. " -e " .. editor
+-- User settings
+terminal = "termite"
+volcard = 0
+volstep = 5
+editor = "vim"
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -52,18 +53,14 @@ makesloppy = true
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 local layouts = {
-	awful.layout.suit.floating,
 	awful.layout.suit.tile,
-	awful.layout.suit.tile.left,
-	awful.layout.suit.tile.bottom,
-	awful.layout.suit.tile.top,
-	awful.layout.suit.fair,
-	awful.layout.suit.fair.horizontal,
-	awful.layout.suit.spiral,
-	awful.layout.suit.spiral.dwindle,
+--	awful.layout.suit.tile.left,
+--	awful.layout.suit.tile.bottom,
+--	awful.layout.suit.tile.top,
+	awful.layout.suit.floating,
 	awful.layout.suit.max,
 	awful.layout.suit.max.fullscreen,
-	awful.layout.suit.magnifier
+--	awful.layout.suit.magnifier
 }
 
 kbdcfg = {}
@@ -95,41 +92,32 @@ tags = {}
 for s = 1, screen.count() do
 	-- Each screen has its own tag table.
 	if screen.count() == 1 then
-		tags[s] = awful.tag({"Browser", "Terminal", "Skype", "Tmp"}, s, layouts[2])
+		tags[s] = awful.tag({"Term", "Browser", "IM", "Media", "Dev", "Tmp"}, s, layouts[1])
 	elseif screen.count() == 2 then
-		if s == 1 then
-			tags[s] = awful.tag({"Browser", "Terminal", "Tmp"}, s, layouts[2])
+		if s == 2 then
+			tags[s] = awful.tag({"Browser", "Dev", "Tmp"}, s, layouts[1])
 		else
-			tags[s] = awful.tag({"Terminal", "Skype", "Games", "Tmp"}, s, layouts[2])
+			tags[s] = awful.tag({"Term", "IM", "Media", "Tmp"}, s, layouts[1])
 		end
 	else
-		tags[s] = awful.tag({ 11, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[2])
+		tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[1])
 	end
 end
 
 order = {}
 if screen.count() == 2 then
-	order["term"] = tags[2][1]
-	order["skype"] = tags[2][2]
+	order["browser"] = tags[2][1]
+	order["dev"] = tags[2][2]
+	order["im"] = tags[2][1]
+	order["media"] = tags[2][3]
+	order["term"] = tags[1][1]
 else
-	order["term"] = tags[1][2]
-	order["skype"] = tags[1][3]
+	order["browser"] = tags[1][2]
+	order["dev"] = tags[1][5]
+	order["im"] = tags[1][3]
+	order["media"] = tags[1][4]
+	order["term"] = tags[1][1]
 end
--- }}}
-
--- {{{ Menu
--- Create a laucher widget and a main menu
-mymainmenu = awful.menu({items = {
-	{"Restart awesome", awesome.restart, beautiful.awesome_icon},
-	{"VLC", "vlc"},
-	{"File Manager", "thunar"},
-	{"Log out", '~/bin/shutdown_dialog.sh'},
-}})
-
-mylauncher = awful.widget.launcher({image = beautiful.awesome_icon, menu = mymainmenu })
-
--- Menubar configuration
-menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
 -- {{{ Wibox
@@ -152,41 +140,10 @@ mytaglist.buttons = awful.util.table.join(
 mytasklist = {}
 mytasklist.buttons = awful.util.table.join(
 	awful.button({}, 1, function (c)
-		if c == client.focus then
-			c.minimized = true
-		else
-			-- Without this, the following
-			-- :isvisible() makes no sense
-			c.minimized = false
-			if not c:isvisible() then
-				awful.tag.viewonly(c:tags()[1])
-			end
-			-- This will also un-minimize
-			-- the client, if needed
-			client.focus = c
-			c:raise()
-		end
-	end),
-	awful.button({}, 3, function ()
-		if instance then
-			instance:hide()
-			instance = nil
-		else
-			instance = awful.menu.clients({width=250})
-		end
-	end),
-	awful.button({}, 4, function ()
-		awful.client.focus.byidx(1)
-		if client.focus then
-			client.focus:raise()
-		end
-	end),
-	awful.button({}, 5, function ()
-		awful.client.focus.byidx(-1)
-		if client.focus then
-			client.focus:raise()
-		end
-	end))
+		client.focus = c
+		c:raise()
+	end)
+)
 
 for s = 1, screen.count() do
 	-- Create a promptbox for each screen
@@ -210,7 +167,7 @@ for s = 1, screen.count() do
 
 	-- Widgets that are aligned to the left
 	local left_layout = wibox.layout.fixed.horizontal()
-	left_layout:add(mylauncher)
+--	left_layout:add(mylauncher)
 	left_layout:add(mytaglist[s])
 	left_layout:add(mypromptbox[s])
 
@@ -234,7 +191,6 @@ end
 
 -- {{{ Mouse bindings
 root.buttons(awful.util.table.join(
-	awful.button({}, 3, function () mymainmenu:toggle() end),
 	awful.button({}, 4, awful.tag.viewnext),
 	awful.button({}, 5, awful.tag.viewprev)
 ))
@@ -244,80 +200,80 @@ root.buttons(awful.util.table.join(
 globalkeys = awful.util.table.join(
 	awful.key({modkey,}, "Left", awful.tag.viewprev),
 	awful.key({modkey,}, "Right", awful.tag.viewnext),
-	awful.key({modkey,}, "Escape", awful.tag.history.restore),
-	awful.key({modkey,}, "j", function ()
+	awful.key({modkey,}, "Tab", awful.tag.history.restore),
+	awful.key({modkey,}, "Up", function ()
 		awful.client.focus.byidx( 1)
 		if client.focus then client.focus:raise() end
 	end),
-	awful.key({ modkey, }, "k", function ()
+	awful.key({ modkey, }, "Down", function ()
 		awful.client.focus.byidx(-1)
 		if client.focus then
 			client.focus:raise()
 		end
 	end),
-	awful.key({modkey,}, "w", function () mymainmenu:show() end),
 
 	-- Layout manipulation
-	awful.key({modkey, "Shift"}, "j", function () awful.client.swap.byidx(1) end),
-	awful.key({modkey, "Shift"}, "k", function () awful.client.swap.byidx(-1) end),
-	awful.key({modkey, "Control"}, "j", function () awful.screen.focus_relative(1) end),
-	awful.key({modkey, "Control"}, "k", function () awful.screen.focus_relative(-1) end),
-	awful.key({modkey,}, "u", awful.client.urgent.jumpto),
-	awful.key({modkey,}, "Tab", function ()
-		awful.client.focus.history.previous()
-		if client.focus then
-			client.focus:raise()
-		end
-	end),
+	awful.key({modkey, "Shift"}, "Up", function () awful.client.swap.byidx(1) end),
+	awful.key({modkey, "Shift"}, "Down", function () awful.client.swap.byidx(-1) end),
+	awful.key({modkey,}, ",", function () awful.screen.focus_relative(1) end),
+	awful.key({modkey,}, ".", function () awful.screen.focus_relative(-1) end),
+	awful.key({modkey,}, "space", function () awful.layout.inc(layouts, 1) end),
+	awful.key({modkey, "Shift"}, "space", function () awful.layout.inc(layouts, -1) end),
+	awful.key({modkey, "Shift"}, "Right", function () awful.tag.incmwfact( 0.05) end),
+	awful.key({modkey, "Shift"}, "Left", function () awful.tag.incmwfact(-0.05) end),
 
 	-- Standard program
 	awful.key({modkey,}, "Return", function () awful.util.spawn(terminal) end),
-	awful.key({modkey, "Control" }, "r", awesome.restart),
-	awful.key({modkey, "Shift" }, "q", awesome.quit),
-	awful.key({modkey,}, "l", function () awful.tag.incmwfact( 0.05) end),
-	awful.key({modkey,}, "h", function () awful.tag.incmwfact(-0.05) end),
-	awful.key({modkey, "Shift" }, "h", function () awful.tag.incnmaster(1) end),
-	awful.key({modkey, "Shift" }, "l", function () awful.tag.incnmaster(-1) end),
-	awful.key({modkey, "Control" }, "h", function () awful.tag.incncol(1) end),
-	awful.key({modkey, "Control" }, "l", function () awful.tag.incncol(-1) end),
-	awful.key({modkey,}, "space", function () awful.layout.inc(layouts, 1) end),
-	awful.key({modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
-	awful.key({modkey, "Control" }, "n", awful.client.restore),
+	awful.key({modkey, "Shift" }, "Esc", awesome.quit),
+	awful.key({modkey, "Shift" }, "q", awesome.restart),
 
 	-- Prompt
-	awful.key({ modkey }, "r", function () mypromptbox[mouse.screen]:run() end),
-	awful.key({ modkey }, "x", function ()
+	awful.key({modkey,}, "r", function () mypromptbox[mouse.screen]:run() end),
+	awful.key({modkey,}, "x", function ()
 		awful.prompt.run({ prompt = "Run Lua code: " },
 		mypromptbox[mouse.screen].widget,
 		awful.util.eval, nil,
 		awful.util.getdir("cache") .. "/history_eval")
 	end),
+
 	-- Menubar
 	awful.key({ modkey }, "p", function() menubar.show() end),
-	-- Change menu layout
-	awful.key({ "Mod1" }, "Shift_L", function () kbdcfg.switch() end),
-	-- Toggle sloppy
-	awful.key({ modkey, "Shift"   }, "s", function ()
-		if makesloppy then
-			makesloppy = false
-		else
-			makesloppy = true
-		end
-	end)
+
+	-- Change keyboard layout
+	awful.key({"Mod1"}, "Shift_L", function () kbdcfg.switch() end),
+
+	-- Media keys
+	awful.key({}, "XF86MonBrightnessDown", function ()  end),
+	awful.key({}, "XF86MonBrightnessUp", function ()  end),
+	awful.key({}, "XF86LaunchA", function () awful.layout.set(awful.layout.suit.float) end),
+	awful.key({}, "XF86LaunchB", function () awful.layout.set(awful.layout.suit.tile) end),
+	awful.key({}, "XF86KbdBrightnessDown", function ()  end),
+	awful.key({}, "XF86KbdBrightnessUp", function ()  end),
+	awful.key({}, "XF86AudioPrev", function () awful.util.spawn("mpc prev") end),
+	awful.key({}, "XF86AudioPlay", function () awful.util.spawn("mpc toggle") end),
+	awful.key({}, "XF86AudioNext", function () awful.util.spawn("mpc prev") end),
+	awful.key({}, "XF86AudioMute", function ()
+		awful.util.spawn("pactl set-sink-mute " .. volcard .. " 1")
+	end),
+	awful.key({}, "XF86AudioLowerVolume", function ()
+		awful.util.spawn("pactl set-sink-mute " .. volcard .. " 0")
+		awful.util.spawn("pactl set-sink-volume " .. volcard .. " -" .. volstep .. "%")
+	end),
+	awful.key({}, "XF86AudioRaiseVolume", function ()
+		awful.util.spawn("pactl set-sink-mute " .. volcard .. " 0")
+		awful.util.spawn("pactl set-sink-volume " .. volcard .. " +" .. volstep .. "%")
+	end),
+	awful.key({}, "", function ()  end)
 )
 
 clientkeys = awful.util.table.join(
 		awful.key({ modkey}, "f", function (c) c.fullscreen = not c.fullscreen end),
-		awful.key({ modkey, "Shift"}, "c", function (c) c:kill() end),
-		awful.key({ modkey, "Control"}, "space", awful.client.floating.toggle),
-		awful.key({ modkey, "Control"}, "Return", function (c) c:swap(awful.client.getmaster()) end),
+		awful.key({ modkey}, "c", function (c) c:kill() end),
+		awful.key({ modkey, "Shift"}, "space", awful.client.floating.toggle),
+		awful.key({ modkey, "Shift"}, "Return", function (c) c:swap(awful.client.getmaster()) end),
 		awful.key({ modkey}, "o", awful.client.movetoscreen),
 		awful.key({ modkey}, "t", function (c) c.ontop = not c.ontop end),
-		awful.key({ modkey}, "n", function (c) c.minimized = true end),
-		awful.key({ modkey}, "m", function (c)
-			c.maximized_horizontal = not c.maximized_horizontal
-			c.maximized_vertical   = not c.maximized_vertical
-		end)
+		awful.key({ modkey}, "m", function (c) awful.layout.set(awful.layout.suit.max) end)
 )
 
 -- Compute the maximum number of digit we need, limited to 9
@@ -376,18 +332,29 @@ awful.rules.rules = {
 			buttons = clientbuttons
 		}
 	},
-	{rule = {class = "MPlayer"}, properties = {floating = true }},
-	{rule = {class = "pinentry"}, properties = {floating = true }},
+
+	{rule = {class = "pinentry"}, properties = {floating = true}},
 	{rule = {class = "gimp"}, properties = {floating = true}},
-	{rule = {class = "Google Chrome"}, properties = {tag = tags[1][1]}},
+
+	{rule = {class = "Firefox"}, properties = {tag = order["browser"]}},
+
+	{rule = {class = "Mumble"}, properties = {tag = order["im"]}},
+	{rule = {class = "Skype"}, properties = {tag = order["im"]}},
+	{rule = {class = "Telegram"}, properties = {tag = order["im"]}},
+	{rule = {class = "Thunderbird"}, properties = {tag = order["im"]}},
+	{rule = {class = "ViberPC"}, properties = {tag = order["im"]}},
+
+	{rule = {class = "MPlayer"}, properties = {tag = order["media"]}},
+	{rule = {class = "PlayOnLinux"}, properties = {tag = order["media"]}},
+
 	{rule = {instance = "Terminal"}, properties = {tag = order["term"]}},
-	{rule = {class = "Skype"}, properties = {tag = order["skype"]}},
+	{rule = {instance = "Termite"}, properties = {tag = order["term"]}},
 }
 -- }}}
 
-awful.util.spawn("google-chrome")
-awful.util.spawn("skype")
-awful.util.spawn("uxterm -name Terminal")
+awful.util.spawn("thunderbird")
+awful.util.spawn("firefox")
+awful.util.spawn(terminal)
 
 -- {{{ Signals
 -- Signal function to execute when a new client appears.

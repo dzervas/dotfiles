@@ -17,6 +17,7 @@ unalias shopt
 	autoload -U colors && colors
 	autoload -U promptinit && promptinit
 	autoload -U compinit && compinit
+	autoload -U zmv
 
 # Functions
 	# Git prompt
