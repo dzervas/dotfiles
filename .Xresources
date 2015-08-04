@@ -9,7 +9,7 @@
 *UXTerm.omitTranslation: fullscreen
 *UXTerm*bellIsUrgent: true
 
-*faceName:	Monaco:Style=Regular:Size=14
+*faceName:	Inconsolata:Size=14:Style=Regular
 *faceSize:	14
 *locale:	true
 *antialias:	true

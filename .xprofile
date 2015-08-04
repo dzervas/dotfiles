@@ -19,9 +19,9 @@ export SSH_AUTH_SOCK   # enable gpg-agent for ssh
 mpd
 firefox &
 thunderbird &
-telegram &
 termite &
 dwmstatus &
 pasystray &
-connman-ui-gtk &
+nm-applet &
 xss-lock -- dm-tool lock &
+feh --bg-scale .wallpaper.jpg

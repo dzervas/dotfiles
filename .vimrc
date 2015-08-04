@@ -80,7 +80,7 @@ map <Leader>s :set list!<CR>
 map <Leader>f :Vexplore<CR>
 
 " Spell checker
-map <Leader>z :set spell spelllang=en_us syntax=off<CR>
+map <Leader>z :set spell spelllang=en_us<CR>
 
 " Tab, buffer and split view manipulation
 map <Leader><Space>		:bdelete<CR>

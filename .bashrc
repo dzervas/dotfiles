@@ -164,9 +164,16 @@
 		{ if (\$1 == \"inet\") { print \"\tIP: \" \$2 } else if (\$1 == \"inet6\") \
 		{ print \"\tIPv6: \" \$2 } else if (\$1 == \"ether\") \
 		{ print \"\tMAC Address: \" \$2 } else { print \"\" \$1 } }"'
+	alias encfind='file -bi'
+	alias encfix='recode UTF-8'
 
 	# Yey! Saved 2 keystrokes! :)
+	alias e='emacs -nw'
+	alias et='emacs -nw .todir'
+	alias es='emacs -nw ~/.stack'
 	alias g='git'
+	alias l='ls --color=auto'
+	alias mc='java -jar .minecraft/minecraft.jar'
 	alias py='python'
 	alias ss='import -display :0 -window root screenshot ~/.screenshot.jpg'
 	alias t='todir'
@@ -175,7 +182,7 @@
 	alias vs='vim ~/.stack'
 
 	# 1 line web server
-	alias webserver='python -m SimpleHTTPServer'
+	alias webserver='python2 -m SimpleHTTPServer'
 
 	# Muscle memory...
 	alias :q='exit'

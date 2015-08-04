@@ -2,6 +2,7 @@
 
 # Set font encoding.
 subcp=ISO-8859-7
+#subcp=UTF-8
 
 # Set subtitle file encoding.
 unicode=yes
@@ -13,3 +14,7 @@ vo=gl
 cache=8192
 cache-min=4
 framedrop=yes
+
+quiet=yes
+nojoystick=yes
+nolirc=yes
