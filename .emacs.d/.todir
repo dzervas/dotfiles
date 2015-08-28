@@ -8,6 +8,8 @@
 # Sudo hack
 # Identationi fix (tab instead of space) shortcut
 # Spell checking
+# Automatically add semicolons where needed
+- Add todir/sl minor mode
 - Encoding
 - Key accuracy hacks (and caps lock)
 - Tasklist

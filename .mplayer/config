@@ -18,3 +18,5 @@ framedrop=yes
 quiet=yes
 nojoystick=yes
 nolirc=yes
+
+prefer-ipv4=yes
