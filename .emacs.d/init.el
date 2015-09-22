@@ -50,3 +50,7 @@
 ;; TODO: Whitespace
 ;; (setq-default show-trailing-whitespace nil) ;Disable mode line
 ;; (require 'whitespace)
+
+;; SQLite support
+(require 'sql)
+(defalias 'sql-get-login 'ignore)

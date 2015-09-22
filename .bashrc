@@ -26,7 +26,8 @@
 
 # Variable definitions
 	# No duplicates in history
-	export EDITOR="vim"
+	export EDITOR="emacsclient -nw"
+	export ALTERNATE_EDITOR="vim"
 	export HISTCONTROL="ignoredups"
 	export HOSTNAME="`hostname`"
 	export PAGER="less"
@@ -168,9 +169,9 @@
 	alias encfix='recode UTF-8'
 
 	# Yey! Saved 2 keystrokes! :)
-	alias e='emacs -nw'
-	alias et='emacs -nw .todir'
-	alias es='emacs -nw ~/.stack'
+	alias e='emacsclient -nw'
+	alias et='emacsclient -nw .todir'
+	alias es='emacsclient -nw ~/.stack'
 	alias g='git'
 	alias l='ls --color=auto'
 	alias mc='java -jar .minecraft/minecraft.jar'
