@@ -20,8 +20,9 @@ mpd
 firefox &
 thunderbird &
 termite &
-dwmstatus &
+dwmstatus || xsetroot --name "Who killed Bob?" &
 pasystray &
 nm-applet &
-xss-lock -- dm-tool lock &
+#xautolock -time 10 -locker "physlock -s" &
+xautolock -time 10 -locker slock &
 feh --bg-scale .wallpaper.jpg

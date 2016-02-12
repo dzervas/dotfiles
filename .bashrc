@@ -52,6 +52,14 @@
 		head -n -1 ~/.stack.last > ~/.stack
 	}
 
+	function decthis() {
+		gpg -o- $1 | tar zxvf -
+	}
+
+	function encthis() {
+		tar czf - $1 | gpg -c --cipher-algo aes256 -o $(basename $1)-$(date +%d.%m.%y).tgz.aes
+	}
+
 	function sl() {
 		datec="\x1b[32m"
 		jobc="\x1b[00m"
@@ -152,6 +160,8 @@
 
 # Alias
 	alias busy='my_file=$(find /usr/include -type f | sort -R | head -n 1); my_len=$(wc -l $my_file | awk "{print $1}"); let "r = $RANDOM % $my_len" 2>/dev/null; vim +$r $my_file'
+	alias webserver='python2 -m SimpleHTTPServer'
+	alias passgen='gpg --gen-random --armor 1 '
 
 	alias grep='grep --color'
 	alias ll='ls -hal --color=auto'
@@ -181,9 +191,6 @@
 	alias v='vim'
 	alias vt='vim .todir'
 	alias vs='vim ~/.stack'
-
-	# 1 line web server
-	alias webserver='python2 -m SimpleHTTPServer'
 
 	# Muscle memory...
 	alias :q='exit'
