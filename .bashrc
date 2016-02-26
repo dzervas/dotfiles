@@ -76,6 +76,20 @@
 		fi
 	}
 
+	function bin2hex() {
+		printf '0x%x\n' "$((2#${1}))"
+	}
+
+	function hex2bin() {
+		echo -ne 0b
+		inp=$(echo ${1} | awk '{print toupper($0)}')
+		bc <<EOF
+ibase=16
+obase=2
+${inp}
+EOF
+	}
+
 	# Search CommandLineFU.com via the API
 	function cmdfu(){
 		curl "http://www.commandlinefu.com/commands/matching/$@/$(echo -n $@ | openssl base64)/plaintext"
