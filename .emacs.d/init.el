@@ -1,5 +1,3 @@
-
-
 ;(add-to-list 'load-path (expand-file-name "configs" user-emacs-directory))
 
 ;; Emacs specific
@@ -51,6 +49,12 @@
 ;; Auto complete
 (require 'auto-complete)
 (global-auto-complete-mode t)
+
+;; Spell checking
+;;(dolist (hook '(text-mode-hook))
+;;  (add-hook hook (lambda () (flyspell-mode 1))))
+;;(dolist (hook '(change-log-mode-hook log-edit-mode-hook))
+;;  (add-hook hook (lambda () (flyspell-mode -1))))
 
 ;; Syntax cheking
 ;(add-hook 'find-file-hook 'flymake-find-file-hook)
