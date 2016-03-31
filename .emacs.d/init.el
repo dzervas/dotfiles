@@ -25,8 +25,14 @@
 
 ;; Bindings
 (global-set-key (kbd "M-c") 'kill-this-buffer)
-(global-set-key [M-left] 'previous-buffer)
-(global-set-key [M-right] 'next-buffer)
+(global-set-key (kbd "M-<left>") 'previous-buffer)
+(global-set-key (kbd "M-<right>") 'next-buffer)
+
+(global-set-key (kbd "M-S-c") 'delete-window)
+(global-set-key (kbd "M-RET") 'split-window-right)
+(global-set-key (kbd "M-S-RET") 'split-window-below)
+(global-set-key (kbd "M-<down>") 'previous-multiframe-window)
+(global-set-key (kbd "M-<up>") 'next-multiframe-window)
 
 ;; Evil
 (require 'evil)
@@ -49,6 +55,14 @@
 ;; Auto complete
 (require 'auto-complete)
 (global-auto-complete-mode t)
+
+;; SSH
+(require 'ssh)
+(add-hook 'ssh-mode-hook
+	(lambda ()
+		(setq ssh-directory-tracking-mode t)
+		(shell-dirtrack-mode t)
+		(setq dirtrackp nil)))
 
 ;; Spell checking
 ;;(dolist (hook '(text-mode-hook))

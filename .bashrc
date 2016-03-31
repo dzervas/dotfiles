@@ -52,6 +52,11 @@
 		head -n -1 ~/.stack.last > ~/.stack
 	}
 
+	function cm() {
+		mkdir ${1}
+		cd ${1}
+	}
+
 	function decthis() {
 		gpg -o- $1 | tar zxvf -
 	}
@@ -174,6 +179,8 @@ EOF
 
 # Alias
 	alias busy='my_file=$(find /usr/include -type f | sort -R | head -n 1); my_len=$(wc -l $my_file | awk "{print $1}"); let "r = $RANDOM % $my_len" 2>/dev/null; vim +$r $my_file'
+	alias docker_rm='docker rm $(docker ps --no-trunc -aqf status=exited)'
+	alias docker_rmi='docker rmi $(docker images --no-trunc -qf dangling=true)'
 	alias webserver='python2 -m SimpleHTTPServer'
 	alias passgen='gpg --gen-random --armor 1 '
 
@@ -189,10 +196,9 @@ EOF
 		{ if (\$1 == \"inet\") { print \"\tIP: \" \$2 } else if (\$1 == \"inet6\") \
 		{ print \"\tIPv6: \" \$2 } else if (\$1 == \"ether\") \
 		{ print \"\tMAC Address: \" \$2 } else { print \"\" \$1 } }"'
-	alias encfind='file -bi'
-	alias encfix='recode UTF-8'
 
 	# Yey! Saved 2 keystrokes! :)
+	alias mc='cm'
 	alias e='emacsclient -nw'
 	alias et='emacsclient -nw .todir'
 	alias es='emacsclient -nw ~/.stack'
