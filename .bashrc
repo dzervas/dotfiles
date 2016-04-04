@@ -38,6 +38,10 @@
 	shopt -s checkwinsize
 
 # Alias and function definitions.
+	function precmd() {
+		print -Pn "\e]0;%n@%m: %~\a"
+	}
+
 	# Stack job lister, to get shit together...
 	function ++() {
 		echo "$(date +'[%d/%m %I:%M]') $@" >> ~/.stack
@@ -57,19 +61,12 @@
 		cd ${1}
 	}
 
-	function decthis() {
-		gpg -o- $1 | tar zxvf -
-	}
-
 	function encthis() {
 		tar czf - $1 | gpg -c --cipher-algo aes256 -o $(basename $1)-$(date +%d.%m.%y).tgz.aes
 	}
 
-	function sl() {
-		datec="\x1b[32m"
-		jobc="\x1b[00m"
-
-		sed "s/^\[.*\]/${datec}&${jobc}/" ~/.stack | tac
+	function decthis() {
+		gpg -o- $1 | tar zxvf -
 	}
 
 	function sc() {
@@ -79,6 +76,13 @@
 		else
 			return 1
 		fi
+	}
+
+	function sl() {
+		datec="\x1b[32m"
+		jobc="\x1b[00m"
+
+		sed "s/^\[.*\]/${datec}&${jobc}/" ~/.stack | tac
 	}
 
 	function bin2hex() {
@@ -175,6 +179,18 @@ EOF
 		fi
 	}
 
+	# Change prompt of remote machine (removes bashrc!)
+	function ssh-fix-prompt() {
+		command="rm -f ~/.bashrc; sudo sed -i 's/^PS1=.*/PS1=\"\\\e\[${2}m\\\u\@\\\h\\\e\[0m:\\\w\\\$ \"/g' /etc/bash.bashrc"
+		if [[ ${3} == "forsure" ]]; then
+			ssh -t "${1}" "$command"
+		else
+			echo "Usage: ${0} <ssh host> <bash color> forsure"
+			echo "Command (did not execute):"
+			echo "$command"
+		fi
+	}
+
 	eval "`dircolors -b`"
 
 # Alias
@@ -190,6 +206,7 @@ EOF
 	alias man='LC_ALL=C LANG=C man'
 	# Come on mutt, we're on 2015...
 	alias mutt='TERM=xterm-256color mutt'
+	alias ssh='TERM=xterm-256color ssh'
 
 	# Beutiful way to show your NIC's IP/MAC address
 	alias net='ifconfig | awk "/^[a-z]+[0-9]?/ || /inet/ || /ether/ \
@@ -246,19 +263,7 @@ EOF
 
 	export PS1="${SSH_COLOR}\u${SSH_INFO} \$(statecnt && echo -n ' ')${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${BRED}\$(sc)${RED}\$ ${NC}"
 
-# Add environment variable COCOS_CONSOLE_ROOT for cocos2d-x
-export COCOS_CONSOLE_ROOT=/opt/cocos2d-x/tools/cocos2d-console/bin
-export PATH=$COCOS_CONSOLE_ROOT:$PATH
-
-# Add environment variable COCOS_X_ROOT for cocos2d-x
-export COCOS_X_ROOT=/opt
-export PATH=$COCOS_X_ROOT:$PATH
-
-# Add environment variable COCOS_TEMPLATES_ROOT for cocos2d-x
-export COCOS_TEMPLATES_ROOT=/opt/cocos2d-x/templates
-export PATH=$COCOS_TEMPLATES_ROOT:$PATH
-
-export ANT_ROOT=/usr/bin/
-export ANDROID_SDK_ROOT=~/.android/sdk
-export ANDROID_HOME=~/.android/sdk
-export NDK_ROOT=~/.android/ndk
+	export ANT_ROOT=/usr/bin/
+	export ANDROID_SDK_ROOT=~/.android/sdk
+	export ANDROID_HOME=~/.android/sdk
+	export NDK_ROOT=~/.android/ndk
