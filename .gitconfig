@@ -16,3 +16,5 @@
 	autocrlf = input
 [commit]
 	gpgsign = true
+[tag]
+	gpgsign = true

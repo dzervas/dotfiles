@@ -186,6 +186,7 @@ EOF
 			ssh -t "${1}" "$command"
 		else
 			echo "Usage: ${0} <ssh host> <bash color> forsure"
+			echo "For colors check: http://misc.flogisoft.com/bash/tip_colors_and_formatting"
 			echo "Command (did not execute):"
 			echo "$command"
 		fi
@@ -223,7 +224,8 @@ EOF
 	alias l='ls --color=auto'
 	alias mc='java -jar .minecraft/minecraft.jar'
 	alias py='python'
-	alias ss='import -display :0 -window root screenshot ~/.screenshot.jpg'
+	alias ss='import /tmp/screenshot.jpg'
+	alias ssall='import -window root /tmp/screenshot.jpg'
 	alias t='todir'
 	alias v='vim'
 	alias vt='vim .todir'

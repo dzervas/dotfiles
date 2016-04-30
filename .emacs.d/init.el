@@ -10,6 +10,22 @@
 (setq-default tab-always-indent t)
 (setq-default tab-width 4)
 (setq-default c-basic-offset 4)
+(setq-default lua-basic-offset 4)
+(setq-default html-basic-offset 4)
+(setq-default lua-indent-level 4)
+(add-hook 'prog-mode-hook #'hs-minor-mode)
+(add-hook 'html-mode-hook
+	(lambda ()
+		;; Default indentation is usually 2 spaces, changing to 4.
+		(set (make-local-variable 'sgml-basic-offset) 4)
+	)
+)
+(setq frame-title-format
+	  '("emacs - " (buffer-file-name "%f"
+									 (dired-directory dired-directory "%b")
+									 )
+		)
+	  )
 
 (electric-pair-mode) ;Auto pairing
 (menu-bar-mode -1) ;Disable the menu bar
@@ -63,6 +79,10 @@
 		(setq ssh-directory-tracking-mode t)
 		(shell-dirtrack-mode t)
 		(setq dirtrackp nil)))
+
+;; Web mode
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 
 ;; Spell checking
 ;;(dolist (hook '(text-mode-hook))
