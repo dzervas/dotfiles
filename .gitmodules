@@ -13,3 +13,12 @@
 [submodule ".vim/bundle/vim-l9"]
 	path = .vim/bundle/vim-l9
 	url = https://github.com/eparreno/vim-l9
+[submodule ".vim/bundle/vim-bbye"]
+	path = .vim/bundle/vim-bbye
+	url = https://github.com/moll/vim-bbye
+[submodule ".vim/bundle/nerdcommenter"]
+	path = .vim/bundle/nerdcommenter
+	url = https://github.com/scrooloose/nerdcommenter.git
+[submodule ".vim/bundle/xonsh-vim"]
+	path = .vim/bundle/xonsh-vim
+	url = https://github.com/linkinpark342/xonsh-vim

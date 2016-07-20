@@ -5,7 +5,7 @@ set autoindent
 set colorcolumn=80		" Where to put the vertical line
 set completeopt=longest,menuone,preview	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
 set copyindent
-set cryptmethod=blowfish	" Use (much) stronger blowfish encryption
+set cryptmethod=blowfish2	" Use (much) stronger blowfish encryption
 set cursorline			" Highlight the current line
 set encoding=utf-8		" Ability to use Alt in gvim
 set foldenable
@@ -20,6 +20,8 @@ set nobackup
 set noerrorbells		" Don't beep
 set noexpandtab
 set noswapfile			" Disable the fucking .swp files
+set nowritebackup
+set nowrap
 set number			" Show line numbers
 set ruler			" Show where are you in the file
 set rnu				" Relative line numbers
@@ -46,9 +48,11 @@ filetype plugin indent on
 
 " Restore cursor position in files
 au BufRead,BufNewFile .todir set filetype=todir
+au BufRead,BufNewFile *.cshtml set filetype=html
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 " Do not insert comments automatically
 autocmd FileType * setlocal formatoptions=tc
+autocmd FileType python setlocal foldmethod=indent
 
 " Enable omni completion.
 set omnifunc=syntaxcomplete#Complete
@@ -60,34 +64,37 @@ nnoremap q: :
 nnoremap q; :
 
 " Unhighlight search
-nmap <silent> <C-l> :noh<CR><C-l>
+nmap <silent> <A-l> :noh<CR><C-l>
 
 " Don't forget sudo ever again!
 cmap W w !sudo tee % >/dev/null
 
-map <A-s> :set spell! spelllang=en_us<CR>
-map <A-w> :set list! rnu! number!<CR>
+noremap <A-s> :set spell! spelllang=en_us<CR>
+noremap <A-y> :set list! rnu! number!<CR>
 
-" Tab, buffer and split view manipulation
-map <A-c>		:bdelete<CR>
+" Tab, buffer and window manipulation
+noremap <A-t>			:tabnew<CR>
+noremap <A-w>			:tabclose<CR>
+noremap <A-S-w>			:tabonly<CR>
+noremap <A-S-left>		:tabp<CR>
+noremap <A-S-right>		:tabn<CR>
+
+noremap <A-c>			:Bdelete<CR>
+noremap <A-left>		:bp<CR>
+noremap <A-right>		:bn<CR>
+
+noremap <A-S-c>			:close<CR>
 noremap <A-up>		<C-W>l
 noremap <A-down>	<C-W>h
-map <A-left>		:bp<CR>
-map <A-right>		:bn<CR>
-map <leader><return>	:vsp<CR>
+noremap <leader><return>	:vsp<CR>
+noremap <leader><S-return>	:sp<CR>
 
 " Completion
-inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
+"inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
 inoremap <expr> <Tab> pumvisible() ? '<C-y>' : '<Tab>'
 
 " Commenting blocks of code.
-let b:comment_leader = '#'		" Default Comment leader
-autocmd FileType c,cpp,java,scala	let b:comment_leader = '//'
-autocmd FileType tex			let b:comment_leader = '%'
-autocmd FileType mail			let b:comment_leader = '>'
-autocmd FileType vim			let b:comment_leader = '"'
-noremap <silent> <Leader>/ :<C-B>silent <C-E>s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:noh<CR>
-noremap <silent> <Leader>? :<C-B>silent <C-E>s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:noh<CR>
+map //			<leader>c<space>
 
 " Plugins
 " Load pathogen (bundle plugins)

@@ -21,8 +21,11 @@ firefox &
 thunderbird &
 termite &
 dwmstatus || xsetroot --name "Who killed Bob?" &
+blueberry-tray &
 pasystray &
 nm-applet &
 #xautolock -time 10 -locker "physlock -s" &
 xautolock -time 10 -locker slock &
 feh --bg-scale .wallpaper.jpg
+skype &
+linphone &

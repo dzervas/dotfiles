@@ -26,7 +26,7 @@
 
 # Variable definitions
 	# No duplicates in history
-	export EDITOR="emacsclient -nw"
+	export EDITOR="vim"
 	export ALTERNATE_EDITOR="vim"
 	export HISTCONTROL="ignoredups"
 	export HOSTNAME="`hostname`"
@@ -67,6 +67,11 @@
 
 	function decthis() {
 		gpg -o- $1 | tar zxvf -
+	}
+
+	# Beutiful way to show your NIC's IP/MAC address
+	function netstate() {
+		ifconfig | awk "/^[a-z]+[0-9]?/ || /inet/ || /ether/ { if (\$1 == \"inet\") { print \"\tIP: \" \$2 } else if (\$1 == \"inet6\") { print \"\tIPv6: \" \$2 } else if (\$1 == \"ether\") { print \"\tMAC Address: \" \$2 } else { print \"\" \$1 } }"
 	}
 
 	function sc() {
@@ -201,28 +206,26 @@ EOF
 	alias webserver='python2 -m SimpleHTTPServer'
 	alias passgen='gpg --gen-random --armor 1 '
 
+	alias diff='colordiff -ub'
 	alias grep='grep --color'
+	alias less='less -R'
 	alias ll='ls -hal --color=auto'
 	alias ls='ls --color=auto'
 	alias man='LC_ALL=C LANG=C man'
 	# Come on mutt, we're on 2015...
 	alias mutt='TERM=xterm-256color mutt'
+	alias pgrep='pgrep -a'
 	alias ssh='TERM=xterm-256color ssh'
 
-	# Beutiful way to show your NIC's IP/MAC address
-	alias net='ifconfig | awk "/^[a-z]+[0-9]?/ || /inet/ || /ether/ \
-		{ if (\$1 == \"inet\") { print \"\tIP: \" \$2 } else if (\$1 == \"inet6\") \
-		{ print \"\tIPv6: \" \$2 } else if (\$1 == \"ether\") \
-		{ print \"\tMAC Address: \" \$2 } else { print \"\" \$1 } }"'
-
 	# Yey! Saved 2 keystrokes! :)
-	alias mc='cm'
-	alias e='emacsclient -nw'
-	alias et='emacsclient -nw .todir'
-	alias es='emacsclient -nw ~/.stack'
+	alias 8ping='ping 8.8.8.8'
+	alias e='${EDITOR}'
+	alias et='${EDITOR} .todir'
+	alias es='${EDITOR} ~/.stack'
 	alias g='git'
 	alias l='ls --color=auto'
-	alias mc='java -jar .minecraft/minecraft.jar'
+	alias mc='cm'
+	#alias mc='java -jar .minecraft/minecraft.jar'
 	alias py='python'
 	alias ss='import /tmp/screenshot.jpg'
 	alias ssall='import -window root /tmp/screenshot.jpg'
