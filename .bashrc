@@ -225,7 +225,7 @@ EOF
 	alias g='git'
 	alias l='ls --color=auto'
 	alias mc='cm'
-	alias n='mpg123 -q ~/Music/notification.mp3'
+	alias n='echo -e "\a"; mpg123 -q ~/Music/notification.mp3'
 	#alias mc='java -jar .minecraft/minecraft.jar'
 	alias py='python'
 	alias ss='import /tmp/screenshot.jpg'
