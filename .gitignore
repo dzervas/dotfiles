@@ -4,10 +4,6 @@
 .vim/.netrwhist
 tags
 
-# Emacs temprary files
-*~
-.emacs.d/ac-comphist.dat
-
 # Python objects
 *.pyc
 
