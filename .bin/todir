@@ -46,7 +46,7 @@ fi
 
 if [ -z $surf ]; then
 	if [ -z $recurse ]; then
-		data="$(grep -v '^//' $tpath/.todir 2>/dev/null)"
+		data="$(grep -v '^\s*//' $tpath/.todir 2>/dev/null | grep -ve '^$' 2>/dev/null)"
 	else
 		find ${tpath} -name .todir -exec echo "$0:" \; -exec $0 {} \; -exec echo "" \;
 		exit
