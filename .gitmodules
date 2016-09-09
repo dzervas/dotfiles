@@ -4,14 +4,9 @@
 [submodule ".vim/bundle/auto-pairs"]
 	path = .vim/bundle/auto-pairs
 	url = git://github.com/jiangmiao/auto-pairs.git
-[submodule ".vim/bundle/vim-autocomplpop"]
-	path = .vim/bundle/vim-autocomplpop
-	url = https://github.com/othree/vim-autocomplpop
-	ignore = dirty
 [submodule ".vim/bundle/vim-l9"]
 	path = .vim/bundle/vim-l9
 	url = https://github.com/eparreno/vim-l9
-	ignore = dirty
 [submodule ".vim/bundle/vim-bbye"]
 	path = .vim/bundle/vim-bbye
 	url = https://github.com/moll/vim-bbye
