@@ -4,10 +4,6 @@
 [submodule ".vim/bundle/auto-pairs"]
 	path = .vim/bundle/auto-pairs
 	url = git://github.com/jiangmiao/auto-pairs.git
-[submodule ".vim/bundle/vim-alt-mappings"]
-	path = .vim/bundle/vim-alt-mappings
-	url = https://github.com/vim-utils/vim-alt-mappings
-	ignore = dirty
 [submodule ".vim/bundle/vim-autocomplpop"]
 	path = .vim/bundle/vim-autocomplpop
 	url = https://github.com/othree/vim-autocomplpop
@@ -25,3 +21,12 @@
 [submodule ".vim/bundle/xonsh-vim"]
 	path = .vim/bundle/xonsh-vim
 	url = https://github.com/linkinpark342/xonsh-vim
+[submodule ".vim/bundle/vim-surround"]
+	path = .vim/bundle/vim-surround
+	url = https://github.com/tpope/vim-surround
+[submodule ".vim/bundle/vim-gitgutter"]
+	path = .vim/bundle/vim-gitgutter
+	url = https://github.com/airblade/vim-gitgutter
+[submodule ".vim/bundle/deoplete.nvim"]
+	path = .vim/bundle/deoplete.nvim
+	url = https://github.com/Shougo/deoplete.nvim

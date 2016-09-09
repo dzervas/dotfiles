@@ -5,12 +5,12 @@ set autoindent
 set colorcolumn=80		" Where to put the vertical line
 set completeopt=longest,menuone,preview	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
 set copyindent
-set cryptmethod=blowfish2	" Use (much) stronger blowfish encryption
 set cursorline			" Highlight the current line
 set encoding=utf-8		" Ability to use Alt in gvim
 set foldenable
 set foldmethod=syntax		" Code folding
 set history=100			" Number of commands to remember
+set hlsearch
 set ignorecase
 set incsearch
 set list
@@ -46,10 +46,11 @@ let mapleader=","
 syntax on
 filetype plugin indent on
 
-" Restore cursor position in files
 au BufRead,BufNewFile .todir set filetype=todir
 au BufRead,BufNewFile *.cshtml set filetype=html
+" Restore cursor position in files
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+
 " Do not insert comments automatically
 autocmd FileType * setlocal formatoptions=tc
 autocmd FileType python setlocal foldmethod=indent
@@ -64,7 +65,7 @@ nnoremap q: :
 nnoremap q; :
 
 " Unhighlight search
-nmap <silent> <A-l> :noh<CR><C-l>
+noremap <C-l> :noh<CR><C-l>
 
 " Don't forget sudo ever again!
 cmap W w !sudo tee % >/dev/null
@@ -90,7 +91,6 @@ noremap <leader><return>	:vsp<CR>
 noremap <leader><S-return>	:sp<CR>
 
 " Completion
-"inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
 inoremap <expr> <Tab> pumvisible() ? '<C-y>' : '<Tab>'
 
 " Commenting blocks of code.
@@ -105,8 +105,9 @@ call pathogen#helptags()
 set t_Co=256
 colorscheme molokai
 
-" Tab completion
-"inoremap <Tab> <C-R>=funcs#TabComplete()<CR>
+" Deoplete
+let g:deoplete#enable_at_startup = 1
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 
 " TaskList
 let g:tlRememberPosition = 1

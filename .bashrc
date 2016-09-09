@@ -26,8 +26,8 @@
 
 # Variable definitions
 	# No duplicates in history
-	export EDITOR="vim"
-	export ALTERNATE_EDITOR="vim"
+	export EDITOR="nvim"
+	export ALTERNATE_EDITOR="nvim"
 	export HISTCONTROL="ignoredups"
 	export HOSTNAME="`hostname`"
 	export PAGER="less"
@@ -200,7 +200,7 @@ EOF
 	eval "`dircolors -b`"
 
 # Alias
-	alias busy='my_file=$(find /usr/include -type f | sort -R | head -n 1); my_len=$(wc -l $my_file | awk "{print $1}"); let "r = $RANDOM % $my_len" 2>/dev/null; vim +$r $my_file'
+	alias busy='my_file=$(find /usr/include -type f | sort -R | head -n 1); my_len=$(wc -l $my_file | awk "{print $1}"); let "r = $RANDOM % $my_len" 2>/dev/null; nvim +$r $my_file'
 	alias docker_rm='docker rm $(docker ps --no-trunc -aqf status=exited)'
 	alias docker_rmi='docker rmi $(docker images --no-trunc -qf dangling=true)'
 	alias webserver='python2 -m SimpleHTTPServer'
@@ -233,9 +233,9 @@ EOF
 	alias ss='import /tmp/screenshot.jpg'
 	alias ssall='import -window root /tmp/screenshot.jpg'
 	alias t='todir'
-	alias v='vim'
-	alias vt='vim .todir'
-	alias vs='vim ~/.stack'
+	alias v='nvim'
+	alias vt='nvim .todir'
+	alias vs='nvim ~/.stack'
 
 	# Muscle memory...
 	alias :q='exit'
