@@ -98,8 +98,7 @@ map //			<leader>c<space>
 
 " Plugins
 " Load pathogen (bundle plugins)
-call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
+execute pathogen#infect()
 
 " Set 256 colors and the theme
 set t_Co=256
@@ -108,6 +107,16 @@ colorscheme molokai
 " Deoplete
 let g:deoplete#enable_at_startup = 1
 autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+
+" Syntastic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
 
 " TaskList
 let g:tlRememberPosition = 1
