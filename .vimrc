@@ -8,7 +8,7 @@ set copyindent
 set cursorline			" Highlight the current line
 set encoding=utf-8		" Ability to use Alt in gvim
 set foldenable
-set foldmethod=syntax		" Code folding
+set foldmethod=syntax	" Code folding
 set history=100			" Number of commands to remember
 set hlsearch
 set ignorecase
@@ -22,9 +22,9 @@ set noexpandtab
 set noswapfile			" Disable the fucking .swp files
 set nowritebackup
 set nowrap
-set number			" Show line numbers
-set ruler			" Show where are you in the file
-set rnu				" Relative line numbers
+set number				" Show line numbers
+set ruler				" Show where are you in the file
+set rnu					" Relative line numbers
 set scrolloff=3			" 3 Lines around cursor when scrolling
 set shortmess=atI		" Error messages are shorter
 set showmatch			" Show matching parentheses
@@ -36,7 +36,7 @@ set smarttab			" Helps with backspacing with space indent
 set tabstop=4
 set tags+=~/.vim/systags	" CTags
 set title
-set ttyfast			" Improves redrawing for newer computers
+set ttyfast				" Improves redrawing for newer computers
 set undolevels=1000		" Undo states to remember
 set wildignore=*.swp,*.b,*.pyc,*.class,*.apk,*.jar,*.o
 
@@ -55,8 +55,12 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 autocmd FileType * setlocal formatoptions=tc
 autocmd FileType python setlocal foldmethod=indent
 
+" Insert mode folding workaround
+autocmd InsertEnter * let w:last_fdm=&foldmethod | setlocal foldmethod=manual
+autocmd InsertLeave * let &l:foldmethod=w:last_fdm
+
 " Enable omni completion.
-set omnifunc=syntaxcomplete#Complete
+"set omnifunc=syntaxcomplete#Complete
 
 " Basic mappings
 " Key accuracy hacks
@@ -101,8 +105,8 @@ map //			<leader>c<space>
 execute pathogen#infect()
 
 " Set 256 colors and the theme
-set t_Co=256
 colorscheme molokai
+let g:rehash256 = 1
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
@@ -110,7 +114,11 @@ autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 
 " NeoMake
 autocmd! BufWritePost * Neomake
+autocmd! BufReadPost * Neomake
 
 " TaskList
 let g:tlRememberPosition = 1
 let g:tlWindowPosition = 1
+
+" Rainbow parentheses
+let g:rainbow_active = 1

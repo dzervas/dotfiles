@@ -28,3 +28,21 @@
 [submodule ".vim/bundle/neomake"]
 	path = .vim/bundle/neomake
 	url = https://github.com/neomake/neomake
+[submodule ".vim/bundle/vim-togglelist"]
+	path = .vim/bundle/vim-togglelist
+	url = https://github.com/milkypostman/vim-togglelist
+[submodule ".vim/bundle/vim-multiple-cursors"]
+	path = .vim/bundle/vim-multiple-cursors
+	url = https://github.com/terryma/vim-multiple-cursors
+[submodule ".vim/bundle/deoplete-clang"]
+	path = .vim/bundle/deoplete-clang
+	url = https://github.com/zchee/deoplete-clang
+[submodule ".vim/bundle/deoplete-ternjs"]
+	path = .vim/bundle/deoplete-ternjs
+	url = https://github.com/carlitux/deoplete-ternjs
+[submodule ".vim/bundle/deoplete-jedi"]
+	path = .vim/bundle/deoplete-jedi
+	url = https://github.com/zchee/deoplete-jedi
+[submodule ".vim/bundle/deoplete-zsh"]
+	path = .vim/bundle/deoplete-zsh
+	url = https://github.com/zchee/deoplete-zsh

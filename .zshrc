@@ -19,6 +19,8 @@ unalias shopt
 	autoload -U compinit && compinit
 	autoload -U zmv
 
+	zmodload zsh/zpty
+
 # Functions
 	# Git prompt
 	# Show Git branch/tag, or name-rev if on detached head
