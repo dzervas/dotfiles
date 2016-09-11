@@ -25,6 +25,6 @@
 [submodule ".vim/bundle/deoplete.nvim"]
 	path = .vim/bundle/deoplete.nvim
 	url = https://github.com/Shougo/deoplete.nvim
-[submodule ".vim/bundle/syntastic"]
-	path = .vim/bundle/syntastic
-	url = https://github.com/scrooloose/syntastic
+[submodule ".vim/bundle/neomake"]
+	path = .vim/bundle/neomake
+	url = https://github.com/neomake/neomake

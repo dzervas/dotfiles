@@ -108,19 +108,8 @@ colorscheme molokai
 let g:deoplete#enable_at_startup = 1
 autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 
-" Syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
-let g:syntastic_c_check_header = 1
-let g:syntastic_c_compiler_options = ' -std=c99'
-
+" NeoMake
+autocmd! BufWritePost * Neomake
 
 " TaskList
 let g:tlRememberPosition = 1
