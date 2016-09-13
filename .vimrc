@@ -8,6 +8,7 @@ set copyindent
 set cursorline			" Highlight the current line
 set encoding=utf-8		" Ability to use Alt in gvim
 set foldenable
+"set foldlevelstart=99
 set foldmethod=syntax	" Code folding
 set history=100			" Number of commands to remember
 set hlsearch
@@ -52,18 +53,19 @@ au BufRead,BufNewFile *.cshtml set filetype=html
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 
 " Do not insert comments automatically
-autocmd FileType * setlocal formatoptions=tc
-autocmd FileType python setlocal foldmethod=indent
+"autocmd FileType * setlocal formatoptions=tc
+"autocmd FileType python setlocal foldmethod=indent
 
 " Insert mode folding workaround
-autocmd InsertEnter * let w:last_fdm=&foldmethod | setlocal foldmethod=manual
-autocmd InsertLeave * let &l:foldmethod=w:last_fdm
+"autocmd InsertEnter * let w:last_fdm=&foldmethod | setlocal foldmethod=manual
+"autocmd InsertLeave * let &l:foldmethod=w:last_fdm
 
 " Enable omni completion.
 "set omnifunc=syntaxcomplete#Complete
 
 " Basic mappings
 " Key accuracy hacks
+nnoremap ' :OverCommandLine<CR>
 nnoremap ; :
 nnoremap q: :
 nnoremap q; :
@@ -115,6 +117,9 @@ autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 " NeoMake
 autocmd! BufWritePost * Neomake
 autocmd! BufReadPost * Neomake
+
+" Over
+let g:over_enable_auto_nohlsearch = 1
 
 " TaskList
 let g:tlRememberPosition = 1

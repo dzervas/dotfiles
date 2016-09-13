@@ -20,3 +20,5 @@
 	gpgsign = true
 [tag]
 	gpgsign = true
+[web]
+	browser = chromium
