@@ -2,6 +2,7 @@
 # Shopt not found workaround
 alias shopt="false"
 source ~/.bashrc
+source /etc/profile.d/vte.sh
 unalias shopt
 
 # Settings
@@ -170,20 +171,3 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	zstyle ":completion:*:commands" rehash 1
 
 	source ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# Add environment variable COCOS_CONSOLE_ROOT for cocos2d-x
-export COCOS_CONSOLE_ROOT=/opt/cocos2d-x/tools/cocos2d-console/bin
-export PATH=$COCOS_CONSOLE_ROOT:$PATH
-
-# Add environment variable COCOS_X_ROOT for cocos2d-x
-export COCOS_X_ROOT=/opt
-export PATH=$COCOS_X_ROOT:$PATH
-
-# Add environment variable COCOS_TEMPLATES_ROOT for cocos2d-x
-export COCOS_TEMPLATES_ROOT=/opt/cocos2d-x/templates
-export PATH=$COCOS_TEMPLATES_ROOT:$PATH
-
-export ANT_ROOT=/usr/bin/
-export ANDROID_SDK_ROOT=~/.android/sdk
-export ANDROID_HOME=~/.android/sdk
-export NDK_ROOT=~/.android/ndk

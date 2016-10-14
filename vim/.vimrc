@@ -8,8 +8,8 @@ set copyindent
 set cursorline			" Highlight the current line
 set encoding=utf-8		" Ability to use Alt in gvim
 set foldenable
-"set foldlevelstart=99
-set foldmethod=syntax	" Code folding
+set foldlevelstart=10
+set foldmethod=indent	" Code folding
 set history=100			" Number of commands to remember
 set hlsearch
 set ignorecase
@@ -28,6 +28,7 @@ set ruler				" Show where are you in the file
 set rnu					" Relative line numbers
 set scrolloff=3			" 3 Lines around cursor when scrolling
 set shortmess=atI		" Error messages are shorter
+set showcmd
 set showmatch			" Show matching parentheses
 set shiftwidth=4
 set sidescroll=2		" Only scroll horizontally little by little
@@ -40,6 +41,7 @@ set title
 set ttyfast				" Improves redrawing for newer computers
 set undolevels=1000		" Undo states to remember
 set wildignore=*.swp,*.b,*.pyc,*.class,*.apk,*.jar,*.o
+set wildmenu			" Autocompletion menu for commands
 
 let mapleader=","
 

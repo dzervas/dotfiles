@@ -31,7 +31,7 @@
 	export HISTCONTROL="ignoredups"
 	export HOSTNAME="`hostname`"
 	export PAGER="less"
-	export PATH="$PATH:$(readlink ~/.bin)"
+	export PATH="$HOME/.bin:$PATH"
 	export TZ="Europe/Athens"
 
 	# Check the window size after each command to update LINES and COLUMNS if necessary
@@ -219,6 +219,7 @@ EOF
 
 	# Yey! Saved 2 keystrokes! :)
 	alias 8ping='ping 8.8.8.8'
+	alias cdt='cd `mktemp -d`'
 	alias e='${EDITOR}'
 	alias et='${EDITOR} .todir'
 	alias es='${EDITOR} ~/.stack'
