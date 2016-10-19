@@ -1,0 +1,34 @@
+{
+	"env": {
+		"ANDROID_HOME": "~/.android/sdk",
+		"ANDROID_SDK_ROOT": "~/.android/sdk",
+		"ANT_ROOT": "/usr/bin/",
+		"AUTO_CD": true,
+		"CASE_SENSITIVE_COMPLETIONS": false,
+		"EDITOR": "nvim",
+		"IGNOREEOF": true,
+		"NDK_ROOT": "~/.android/ndk",
+		"PAGER": "less",
+		"PATH": [
+			"/usr/sbin",
+			"/usr/bin",
+			"/usr/local/sbin",
+			"/usr/local/bin",
+			"/usr/bin/core_perl",
+			"/usr/bin/site_perl",
+			"/usr/bin/vendor_perl",
+			"/usr/lib/jvm/default/bin",
+			"/opt/android-sdk/platform-tools",
+			"~/.bin"
+		],
+		"PROMPT": "x{INTENSE_GREEN}{user} {BOLD_CYAN}{short_cwd}{stack}{NO_COLOR}> ",
+		"RIGHT_PROMPT": "{git}{todir}{jobs}",
+		"SHELL_TYPE": "prompt_toolkit",
+		"TITLE": "{current_job}{user}@{hostname}: {cwd}",
+		"TZ": "Europe/Athens",
+		"XONSH_COLOR_STYLE": "monokai"
+	},
+	"xontribs": [
+		"vox"
+	]
+}
