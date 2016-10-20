@@ -1,3 +1,5 @@
++ Split xonsh file
++ Port remaining things to xonsh
 + Create dotfiles package manger (git based & EASY)
 # Mount USB flash as regular user
 # Password store dmenu create password
