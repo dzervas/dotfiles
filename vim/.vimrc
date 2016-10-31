@@ -93,8 +93,9 @@ noremap <A-left>		:bp<CR>
 noremap <A-right>		:bn<CR>
 
 noremap <A-S-c>			:close<CR>
-noremap <A-up>		<C-W>l
-noremap <A-down>	<C-W>h
+noremap <A-Tab>			<C-W><C-W>
+noremap <A-up>			<C-W>l
+noremap <A-down>		<C-W>h
 noremap <leader><return>	:vsp<CR>
 noremap <leader><S-return>	:sp<CR>
 
