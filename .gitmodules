@@ -34,9 +34,6 @@
 [submodule ".vim/bundle/vim-multiple-cursors"]
 	path = vim/.vim/bundle/vim-multiple-cursors
 	url = https://github.com/terryma/vim-multiple-cursors
-[submodule ".vim/bundle/deoplete-clang"]
-	path = vim/.vim/bundle/deoplete-clang
-	url = https://github.com/zchee/deoplete-clang
 [submodule ".vim/bundle/deoplete-ternjs"]
 	path = vim/.vim/bundle/deoplete-ternjs
 	url = https://github.com/carlitux/deoplete-ternjs

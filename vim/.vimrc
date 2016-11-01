@@ -99,6 +99,8 @@ noremap <A-down>		<C-W>h
 noremap <leader><return>	:vsp<CR>
 noremap <leader><S-return>	:sp<CR>
 
+noremap <leader>f	:Lexplore<CR>
+
 " Completion
 inoremap <expr> <Tab> pumvisible() ? '<C-y>' : '<Tab>'
 
