@@ -53,17 +53,8 @@ au BufRead,BufNewFile .todir set filetype=todir
 au BufRead,BufNewFile *.cshtml set filetype=html
 " Restore cursor position in files
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-
-" Do not insert comments automatically
-"autocmd FileType * setlocal formatoptions=tc
-"autocmd FileType python setlocal foldmethod=indent
-
-" Insert mode folding workaround
-"autocmd InsertEnter * let w:last_fdm=&foldmethod | setlocal foldmethod=manual
-"autocmd InsertLeave * let &l:foldmethod=w:last_fdm
-
-" Enable omni completion.
-"set omnifunc=syntaxcomplete#Complete
+" Auto-update ctags
+au BufWritePost *.py,*.c,*.cpp,*.h silent! !eval 'ctags -R -o newtags; mv newtags tags' &
 
 " Basic mappings
 " Key accuracy hacks
@@ -110,6 +101,7 @@ map //			<leader>c<space>
 " Plugins
 " Load pathogen (bundle plugins)
 execute pathogen#infect()
+execute pathogen#helptags()
 
 " Set 256 colors and the theme
 colorscheme molokai
@@ -125,10 +117,3 @@ autocmd! BufReadPost * Neomake
 
 " Over
 let g:over_enable_auto_nohlsearch = 1
-
-" TaskList
-let g:tlRememberPosition = 1
-let g:tlWindowPosition = 1
-
-" Rainbow parentheses
-let g:rainbow_active = 1
