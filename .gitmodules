@@ -46,3 +46,6 @@
 [submodule ".vim/bundle/vim-over"]
 	path = vim/.vim/bundle/vim-over
 	url = https://github.com/osyo-manga/vim-over
+[submodule "vim/.vim/bundle/vim-vebugger"]
+	path = vim/.vim/bundle/vim-vebugger
+	url = https://github.com/idanarye/vim-vebugger
