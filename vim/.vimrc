@@ -38,7 +38,6 @@ set smarttab			" Helps with backspacing with space indent
 set tabstop=4
 set tags+=~/.vim/systags	" CTags
 set title
-set ttyfast				" Improves redrawing for newer computers
 set undolevels=1000		" Undo states to remember
 set wildignore=*.swp,*.b,*.pyc,*.class,*.apk,*.jar,*.o
 set wildmenu			" Autocompletion menu for commands
@@ -54,7 +53,10 @@ au BufRead,BufNewFile *.cshtml set filetype=html
 " Restore cursor position in files
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 " Auto-update ctags
-au BufWritePost *.py,*.c,*.cpp,*.h silent! !eval 'ctags -R -o newtags; mv newtags tags' &
+au BufReadPost,BufWritePost *.py,*.c,*.cpp,*.h,*.java silent! !eval 'ctags -R -o tags' &
+" Session auto-handling
+"autocmd VimLeave * mksession! %:p:h/.session.vim
+"autocmd VimEnter * source %:p:h/.session.vim
 
 " Basic mappings
 " Key accuracy hacks
@@ -87,8 +89,9 @@ noremap <A-S-c>			:close<CR>
 noremap <A-Tab>			<C-W><C-W>
 noremap <A-up>			<C-W>l
 noremap <A-down>		<C-W>h
-noremap <leader><return>	:vsp<CR>
-noremap <leader><S-return>	:sp<CR>
+noremap <A-s>			<C-W>o
+noremap <A-return>	:vsp<CR>
+noremap <A-S-return>	:sp<CR>
 
 noremap <leader>f	:Lexplore<CR>
 
@@ -117,3 +120,10 @@ autocmd! BufReadPost * Neomake
 
 " Over
 let g:over_enable_auto_nohlsearch = 1
+
+" Vebugger
+" Mapped: b, B, c, e, E, i, o, O, r, R, t, x, X
+" See: help vebugger-keymaps
+let g:vebugger_leader = mapleader
+nnoremap <leader>s	:VBGstartPDB %
+nnoremap <leader>k	:VBGkill<CR>
