@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Simple, directory based, todo list manager.
 # Just create a .todir file in and add tasks!
 # .todir syntax: "+" high, "#" medium, "-" low priority and "//" comment.

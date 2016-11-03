@@ -1,8 +1,10 @@
 # Vim temporary files
-*.swp
-.vim/info/
-.vim/.netrwhist
 tags
+*.swp
+vim/.vim/info/
+vim/.vim/.netrwhist
+vim/.vim/eclim
+vim/.vim/plugin
 
 # Python objects
 *.pyc

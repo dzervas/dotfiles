@@ -1,5 +1,5 @@
 from datetime import datetime
-from xonsh.base_shell import print_color
+#from xonsh.base_shell import print_color
 from xonsh.events import events, Event
 from xonsh.prompt.gitstatus import gitstatus_prompt
 import builtins
@@ -46,7 +46,7 @@ def stacklist(args=None, stdin=None):
 		return result
 
 	for line in result:
-		print_color(line)
+		__xonsh_shell__.shell.print_color(line)
 
 def stackprompt():
 	if stackcount() > 0:

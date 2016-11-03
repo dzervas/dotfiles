@@ -10,15 +10,9 @@
 		"NDK_ROOT": "~/.android/ndk",
 		"PAGER": "less",
 		"PATH": [
-			"/usr/sbin",
-			"/usr/bin",
-			"/usr/local/sbin",
 			"/usr/local/bin",
-			"/usr/bin/core_perl",
-			"/usr/bin/site_perl",
-			"/usr/bin/vendor_perl",
-			"/usr/lib/jvm/default/bin",
-			"/opt/android-sdk/platform-tools",
+			"/usr/bin",
+			"/bin",
 			"~/.bin"
 		],
 		"PROMPT": "x{INTENSE_GREEN}{user} {BOLD_CYAN}{short_cwd}{stack}{NO_COLOR}> ",
