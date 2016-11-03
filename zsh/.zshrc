@@ -66,21 +66,6 @@ unalias shopt
 		[ -n "$git_where" ] && echo "$GIT_PROMPT_SYMBOL$(parse_git_state)\
 $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUFFIX"
 	}
-
-	# Detect empty enter, execute git status if in git dir
-	magic-enter () {
-		if [[ -z $BUFFER  ]]; then
-			echo -ne '\n'
-
-			if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-				git status -sb
-			else
-				ls -lAh
-			fi
-		fi
-
-		zle accept-line
-	}
 	
 	# Insert sudo at the beginning of the command
 	insert_sudo() {
@@ -101,7 +86,6 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	zle -N exec-sudo exec_sudo
 	zle -N fg goto_bg
 	zle -N insert-sudo insert_sudo
-	zle -N magic-enter
 
 # Variables
 	# Colors
@@ -144,7 +128,6 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	bindkey -e
 	bindkey "^r"		history-incremental-search-backward
 	bindkey "^z"		fg
-	bindkey "^M"		magic-enter
 	bindkey "\e\e"		insert-sudo
 	bindkey "\e\`"		exec-sudo
 	bindkey "^[[3~"		delete-char

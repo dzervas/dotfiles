@@ -30,3 +30,4 @@ feh --bg-scale .wallpaper.jpg
 #skype &
 #qtox &
 syncthing-gtk &
+xflux -l 35.3 -g 25.1 -k 4200
