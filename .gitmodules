@@ -49,6 +49,6 @@
 [submodule "vim/.vim/bundle/vim-vebugger"]
 	path = vim/.vim/bundle/vim-vebugger
 	url = https://github.com/idanarye/vim-vebugger
-[submodule "vim/.vim/bundle/vimproc"]
-	path = vim/.vim/bundle/vimproc
+[submodule "vim/.vim/bundle/vimproc.vim"]
+	path = vim/.vim/bundle/vimproc.vim
 	url = https://github.com/Shougo/vimproc.vim
