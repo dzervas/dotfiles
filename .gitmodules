@@ -1,51 +1,54 @@
-[submodule ".vim/bundle/molokai"]
+[submodule "vim/.vim/bundle/molokai"]
 	path = vim/.vim/bundle/molokai
 	url = https://github.com/tomasr/molokai.git
-[submodule ".vim/bundle/auto-pairs"]
+[submodule "vim/.vim/bundle/auto-pairs"]
 	path = vim/.vim/bundle/auto-pairs
 	url = git://github.com/jiangmiao/auto-pairs.git
-[submodule ".vim/bundle/vim-l9"]
+[submodule "vim/.vim/bundle/vim-l9"]
 	path = vim/.vim/bundle/vim-l9
 	url = https://github.com/eparreno/vim-l9
-[submodule ".vim/bundle/vim-bbye"]
+[submodule "vim/.vim/bundle/vim-bbye"]
 	path = vim/.vim/bundle/vim-bbye
 	url = https://github.com/moll/vim-bbye
-[submodule ".vim/bundle/nerdcommenter"]
+[submodule "vim/.vim/bundle/nerdcommenter"]
 	path = vim/.vim/bundle/nerdcommenter
 	url = https://github.com/scrooloose/nerdcommenter.git
-[submodule ".vim/bundle/xonsh-vim"]
+[submodule "vim/.vim/bundle/xonsh-vim"]
 	path = vim/.vim/bundle/xonsh-vim
 	url = https://github.com/linkinpark342/xonsh-vim
-[submodule ".vim/bundle/vim-surround"]
+[submodule "vim/.vim/bundle/vim-surround"]
 	path = vim/.vim/bundle/vim-surround
 	url = https://github.com/tpope/vim-surround
-[submodule ".vim/bundle/vim-gitgutter"]
+[submodule "vim/.vim/bundle/vim-gitgutter"]
 	path = vim/.vim/bundle/vim-gitgutter
 	url = https://github.com/airblade/vim-gitgutter
-[submodule ".vim/bundle/deoplete.nvim"]
+[submodule "vim/.vim/bundle/deoplete.nvim"]
 	path = vim/.vim/bundle/deoplete.nvim
 	url = https://github.com/Shougo/deoplete.nvim
-[submodule ".vim/bundle/neomake"]
+[submodule "vim/.vim/bundle/neomake"]
 	path = vim/.vim/bundle/neomake
 	url = https://github.com/neomake/neomake
-[submodule ".vim/bundle/vim-togglelist"]
+[submodule "vim/.vim/bundle/vim-togglelist"]
 	path = vim/.vim/bundle/vim-togglelist
 	url = https://github.com/milkypostman/vim-togglelist
-[submodule ".vim/bundle/vim-multiple-cursors"]
+[submodule "vim/.vim/bundle/vim-multiple-cursors"]
 	path = vim/.vim/bundle/vim-multiple-cursors
 	url = https://github.com/terryma/vim-multiple-cursors
-[submodule ".vim/bundle/deoplete-ternjs"]
+[submodule "vim/.vim/bundle/deoplete-ternjs"]
 	path = vim/.vim/bundle/deoplete-ternjs
 	url = https://github.com/carlitux/deoplete-ternjs
-[submodule ".vim/bundle/deoplete-jedi"]
+[submodule "vim/.vim/bundle/deoplete-jedi"]
 	path = vim/.vim/bundle/deoplete-jedi
 	url = https://github.com/zchee/deoplete-jedi
-[submodule ".vim/bundle/deoplete-zsh"]
+[submodule "vim/.vim/bundle/deoplete-zsh"]
 	path = vim/.vim/bundle/deoplete-zsh
 	url = https://github.com/zchee/deoplete-zsh
-[submodule ".vim/bundle/vim-over"]
+[submodule "vim/.vim/bundle/vim-over"]
 	path = vim/.vim/bundle/vim-over
 	url = https://github.com/osyo-manga/vim-over
 [submodule "vim/.vim/bundle/vim-vebugger"]
 	path = vim/.vim/bundle/vim-vebugger
 	url = https://github.com/idanarye/vim-vebugger
+[submodule "vim/.vim/bundle/vimproc.vim"]
+	path = vim/.vim/bundle/vimproc.vim
+	url = https://github.com/Shougo/vimproc.vim

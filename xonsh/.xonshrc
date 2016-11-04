@@ -1,6 +1,7 @@
 from datetime import datetime
 #from xonsh.base_shell import print_color
 from xonsh.prompt.gitstatus import gitstatus_prompt
+import builtins
 import re
 
 def gitprompt():
@@ -95,9 +96,10 @@ aliases["py"]="python"
 aliases["py2"]="python2"
 aliases["ss"]="import /tmp/screenshot.jpg"
 aliases["ssall"]="import -window root /tmp/screenshot.jpg"
-aliases["ssh"]="TERM=xterm-256color ssh"
+#aliases["ssh"]="TERM=xterm-256color ssh"
 aliases["t"]="todir"
 aliases["v"]="nvim"
+aliases["vim"]="nvim"
 aliases["vt"]="nvim .todir"
 aliases["vs"]="nvim ~/.stack"
 aliases["webserver"]="python2 -m SimpleHTTPServer"

@@ -1,8 +1,8 @@
 # Vim temporary files
-*.swp
-vim/.vim/info
-vim/.vim/.netrwhist
 tags
+*.swp
+vim/.vim/info/
+vim/.vim/.netrwhist
 vim/.vim/eclim
 vim/.vim/plugin
 
