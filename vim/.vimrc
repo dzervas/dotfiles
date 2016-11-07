@@ -53,7 +53,7 @@ au BufRead,BufNewFile *.cshtml set filetype=html
 " Restore cursor position in files
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 " Auto-update ctags
-au BufReadPost,BufWritePost *.py,*.c,*.cpp,*.h,*.java silent! !eval 'ctags -R -o tags' &
+au BufReadPost,BufWritePost *.py,*.c,*.cpp,*.h,*.java silent! !eval 'ctags --fields=afmikKlnsStz --extra=fq -R -o tags' &
 " Session auto-handling
 "autocmd VimLeave * mksession! %:p:h/.session.vim
 "autocmd VimEnter * source %:p:h/.session.vim
