@@ -66,13 +66,13 @@ nnoremap q: :
 nnoremap q; :
 
 " Unhighlight search
-noremap <C-l> :noh<CR><C-l>
+noremap <C-l>			:noh<CR>
 
 " Don't forget sudo ever again!
-cmap W w !sudo tee % >/dev/null
+cnoremap w!				w !sudo tee % >/dev/null
 
-noremap <A-s> :set spell! spelllang=en_us<CR>
-noremap <A-y> :set list! rnu! number!<CR>
+noremap <A-s>			:set spell! spelllang=en_us<CR>
+noremap <A-y>			:set list! rnu! number!<CR>
 
 " Tab, buffer and window manipulation
 noremap <A-t>			:tabnew<CR>
@@ -90,7 +90,7 @@ noremap <A-Tab>			<C-W><C-W>
 noremap <A-up>			<C-W>l
 noremap <A-down>		<C-W>h
 noremap <A-s>			<C-W>o
-noremap <A-return>	:vsp<CR>
+noremap <A-return>		:vsp<CR>
 noremap <A-S-return>	:sp<CR>
 
 noremap <leader>f	:Lexplore<CR>
