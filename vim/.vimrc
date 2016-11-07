@@ -102,6 +102,9 @@ inoremap <expr> <Tab> pumvisible() ? '<C-y>' : '<Tab>'
 map //			<leader>c<space>
 
 " Plugins
+let g:python_host_prog = "/usr/bin/python"
+let g:python3_host_prog = "/usr/bin/python3"
+
 " Load pathogen (bundle plugins)
 execute pathogen#infect()
 execute pathogen#helptags()
@@ -127,3 +130,7 @@ let g:over_enable_auto_nohlsearch = 1
 let g:vebugger_leader = mapleader
 nnoremap <leader>s	:VBGstartPDB %
 nnoremap <leader>k	:VBGkill<CR>
+
+" Airline
+let g:airline_powerline_fonts = 1
+let g:airline_theme = "molokai"
