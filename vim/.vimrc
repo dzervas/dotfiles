@@ -60,7 +60,6 @@ au BufReadPost,BufWritePost *.py,*.c,*.cpp,*.h,*.java silent! !eval 'ctags --fie
 
 " Basic mappings
 " Key accuracy hacks
-nnoremap ' :OverCommandLine<CR>
 nnoremap ; :
 nnoremap q: :
 nnoremap q; :
@@ -98,9 +97,6 @@ noremap <leader>f	:Lexplore<CR>
 " Completion
 inoremap <expr> <Tab> pumvisible() ? '<C-y>' : '<Tab>'
 
-" Commenting blocks of code.
-map //			<leader>c<space>
-
 " Plugins
 let g:python_host_prog = "/usr/bin/python"
 let g:python3_host_prog = "/usr/bin/python3"
@@ -112,6 +108,15 @@ execute pathogen#helptags()
 " Set 256 colors and the theme
 colorscheme molokai
 let g:rehash256 = 1
+
+" Nerd Commenter
+map //		<leader>c<space>
+
+" Over
+nnoremap '	:OverCommandLine<CR>
+
+" Tagbar
+nnoremap <leader>t :TagbarToggle<CR>
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
@@ -127,10 +132,12 @@ let g:over_enable_auto_nohlsearch = 1
 " Vebugger
 " Mapped: b, B, c, e, E, i, o, O, r, R, t, x, X
 " See: help vebugger-keymaps
-let g:vebugger_leader = mapleader
-nnoremap <leader>s	:VBGstartPDB %
-nnoremap <leader>k	:VBGkill<CR>
+"let g:vebugger_leader = <C>
+"nnoremap <C-s>	:VBGstartPDB %
+"nnoremap <C-k>	:VBGkill<CR>
 
 " Airline
 let g:airline_powerline_fonts = 1
 let g:airline_theme = "molokai"
+let g:airline#extensions#syntastic#enabled = 1
+let g:airline#extensions#hunks#non_zero_only = 0
