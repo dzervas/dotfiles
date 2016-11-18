@@ -20,14 +20,14 @@ mpd
 chromium &
 thunderbird &
 termite &
-dwmstatus || xsetroot --name "Who killed Bob?" &
+#dwmstatus || xsetroot --name "Who killed Bob?" &
 blueberry-tray &
 pasystray &
-nm-applet &
+wicd-gtk -t &
 #xautolock -time 10 -locker "physlock -s" &
-xautolock -time 10 -locker slock &
+#xautolock -time 10 -locker slock &
 feh --bg-scale .wallpaper.jpg
 #skype &
 #qtox &
-syncthing-gtk &
-xflux -l 35.3 -g 25.1 -k 4200
+#syncthing-gtk &
+#xflux -l 35.3 -g 25.1 -k 4200

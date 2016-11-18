@@ -127,3 +127,6 @@ let g:over_enable_auto_nohlsearch = 1
 let g:vebugger_leader = mapleader
 nnoremap <leader>s	:VBGstartPDB %
 nnoremap <leader>k	:VBGkill<CR>
+
+" Airline
+let g:airline_powerline_fonts = 1

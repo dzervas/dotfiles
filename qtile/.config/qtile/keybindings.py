@@ -26,14 +26,8 @@ def conf(groups=None, mod=None):
     ]
 
     for index, grp in enumerate(groups):
-        # mod1 + letter of group = switch to group
-        keys.append(
-            Key([mod], str(index+1), lazy.group[grp.name].toscreen())
-        )
+        keys.append(Key([mod], str(index+1), lazy.group[grp.name].toscreen()))
 
-        # mod1 + shift + letter of group = switch to & move focused window to group
-        keys.append(
-            Key([mod, "shift"], str(index+1), lazy.window.togroup(grp.name))
-        )
+        keys.append(Key([mod, "shift"], str(index+1), lazy.window.togroup(grp.name)))
 
     return keys

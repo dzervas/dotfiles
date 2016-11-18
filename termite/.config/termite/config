@@ -5,7 +5,7 @@
 	cursor_blink = on
 	cursor_shape = block
 	dynamic_title = true
-	font = Inconsolata 16
+	font = Inconsolata 8
 	resize_grip = false
 	scroll_on_keystroke = true
 	scroll_on_output = false
