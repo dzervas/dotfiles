@@ -1,8 +1,9 @@
-from libqtile.config import Screen, Group, Drag, Click
+from libqtile.config import Screen, Group
 from libqtile.command import lazy
 from libqtile import layout, bar, widget
-import keybindings
 import events
+import keybindings
+from layouts import MasterTile
 
 mod = "mod4"
 
@@ -15,17 +16,17 @@ groups = [
      Group('Other')
 ]
 
-keys = keybindings.conf(mod=mod, groups=groups)
+(keys, mouse) = keybindings.conf(mod=mod, groups=groups)
 
 layouts = [
     layout.Max(),
-    layout.Tile(border_width=1)
+    MasterTile(ratio=0.5, border_focus="232526")
 ]
 
 widget_defaults = dict(
     font='Inconsolatas',
-    fontsize=20,
-    padding=5,
+    fontsize=22,
+    padding=1,
 )
 
 screens = [
@@ -41,15 +42,6 @@ screens = [
             30,
         ),
     ),
-]
-
-# Drag floating layouts.
-mouse = [
-    Drag([mod], "Button1", lazy.window.set_position_floating(),
-        start=lazy.window.get_position()),
-    Drag([mod], "Button3", lazy.window.set_size_floating(),
-        start=lazy.window.get_size()),
-    Click([mod], "Button2", lazy.window.toggle_floating())
 ]
 
 dgroups_key_binder = None
