@@ -1,33 +1,15 @@
-#!/bin/sh
-xrdb -merge "${HOME}/.Xresources"
+#!/bin/bash
+xrandr --output DVI-I-2 --rotate left --mode 1920x1080 --pos 0x0 --output DVI-I-1 --mode 1920x1080 --pos 1080x0
 
 # Hack to fix misbehaving Java applications
 wmname LG3D
 
-envfile="$HOME/.gnupg/gpg-agent.env"
-
-if [[ -e "$envfile" ]] && kill -0 $(grep GPG_AGENT_INFO "$envfile" | cut -d: -f 2) 2>/dev/null; then
-    eval "$(cat "$envfile")"
-else
-    eval "$(gpg-agent --daemon --enable-ssh-support --write-env-file "$envfile")"
-fi
-
-export GPG_AGENT_INFO  # the env file does not contain the export statement
-export SSH_AUTH_SOCK   # enable gpg-agent for ssh
-
 # Autostart
-mpd
 chromium &
-thunderbird &
+icedove &
 termite &
-#dwmstatus || xsetroot --name "Who killed Bob?" &
 blueberry-tray &
 pasystray &
 wicd-gtk -t &
 #xautolock -time 10 -locker "physlock -s" &
-#xautolock -time 10 -locker slock &
 feh --bg-scale .wallpaper.jpg
-#skype &
-#qtox &
-#syncthing-gtk &
-#xflux -l 35.3 -g 25.1 -k 4200

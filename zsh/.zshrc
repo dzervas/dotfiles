@@ -94,6 +94,8 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 		eval B$color='%{$fg_bold[${(L)color}]%}'
 		eval $color='%{$fg[${(L)color}]%}'
 	done
+	eval "$(pyenv init -)"
+	eval "$(pyenv virtualenv-init -)"
 
 	# Git
 	GIT_PROMPT_SYMBOL="%{$fg[blue]%}±"

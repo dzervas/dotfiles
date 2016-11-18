@@ -31,7 +31,7 @@
 	export HISTCONTROL="ignoredups"
 	export HOSTNAME="`hostname`"
 	export PAGER="less"
-	export PATH="$HOME/.bin:$PATH"
+	export PATH="$HOME/.pyenv/bin:$HOME/.bin:$PATH"
 	export TZ="Europe/Athens"
 
 	# Check the window size after each command to update LINES and COLUMNS if necessary
@@ -276,3 +276,6 @@ EOF
 	export ANDROID_SDK_ROOT=~/.android/sdk
 	export ANDROID_HOME=~/.android/sdk
 	export NDK_ROOT=~/.android/ndk
+
+	eval "$(pyenv init -)"
+	eval "$(pyenv virtualenv-init -)"

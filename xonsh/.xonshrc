@@ -1,6 +1,5 @@
 from datetime import datetime
 #from xonsh.base_shell import print_color
-from xonsh.events import events, Event
 from xonsh.prompt.gitstatus import gitstatus_prompt
 import builtins
 import re

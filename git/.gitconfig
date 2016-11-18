@@ -1,7 +1,6 @@
 [user]
 	name = Dimitris Zervas
-	email = dzervas@dzervas.gr
-	signingkey = 528636D3
+	email = d.zervas@encodegroup.com
 [color]
 	ui = auto
 [alias]
@@ -17,9 +16,5 @@
 [core]
 	autocrlf = input
 	excludesfile = ~/.gitignore
-[commit]
-	gpgsign = true
-[tag]
-	gpgsign = true
 [web]
 	browser = chromium
