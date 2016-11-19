@@ -36,6 +36,7 @@ screens = [
                 widget.GroupBox(),
                 widget.Prompt(),
                 widget.WindowName(),
+                widget.Battery(charge_char="⚡", discharge_char=""),
                 widget.Systray(),
                 widget.Clock(format='%a %d %I:%M'),
             ],

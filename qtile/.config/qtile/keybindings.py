@@ -7,24 +7,28 @@ def conf(groups=None, mod=None):
         Key([mod], "Down", lazy.group.prev_window()),
         Key([mod], "Right", lazy.screen.next_group()),
         Key([mod], "Left", lazy.screen.prev_group()),
+        Key([mod], "period", lazy.next_screen()),
+        Key([mod], "comma", lazy.prev_screen()),
 
-        Key([mod, "shift"], "Up", lazy.layout.shuffle_up()),
-        Key([mod, "shift"], "Down", lazy.layout.shuffle_down()),
-
-        Key([mod], "s", lazy.group.setlayout("max")),
-        Key([mod], "t", lazy.group.setlayout("mastertile")),
-
-        Key([mod], "f", lazy.window.enable_floating()),
-        Key([mod], "Return", lazy.spawn("termite")),
-
+        Key([mod, "shift"], "Up", lazy.layout.increase_ratio()),
+        Key([mod, "shift"], "Down", lazy.layout.decrease_ratio()),
+        Key([mod], "equal", lazy.layout.increase_nmaster()),
+        Key([mod], "minus", lazy.layout.decrease_nmaster()),
         Key([mod, "shift"], "Return", lazy.layout.shift()),
 
-        # Toggle between different layouts as defined below
-        Key([mod], "space", lazy.layout.next()),
+        Key([mod], "b", lazy.hide_show_bar()),
+        Key([mod], "f", lazy.window.toggle_fullscreen()),
+        Key([mod], "s", lazy.group.setlayout("max")),
+        Key([mod], "t", lazy.group.setlayout("mastertile")),
+        Key([mod], "space", lazy.next_layout()),
+
         Key([mod], "c", lazy.window.kill()),
+        Key([mod], "r", lazy.spawncmd()),
+        Key([mod], "x", lazy.execute("xautolock", "-locknow")),
+        Key([mod], "Return", lazy.spawn("termite")),
+
 
         Key([mod, "shift"], "q", lazy.restart()),
-        Key([mod], "r", lazy.spawncmd()),
     ]
 
     mouse = [

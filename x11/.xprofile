@@ -11,5 +11,5 @@ termite &
 blueberry-tray &
 pasystray &
 wicd-gtk -t &
-#xautolock -time 10 -locker "physlock -s" &
+xautolock -time 10 -locker "physlock -sd" &
 feh --bg-scale .wallpaper.jpg
