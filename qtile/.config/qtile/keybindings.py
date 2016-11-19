@@ -21,10 +21,11 @@ def conf(groups=None, mod=None):
         Key([mod], "s", lazy.group.setlayout("max")),
         Key([mod], "t", lazy.group.setlayout("mastertile")),
         Key([mod], "space", lazy.next_layout()),
+        Key([mod], "Tab", lazy.screen.togglegroup()),
 
         Key([mod], "c", lazy.window.kill()),
         Key([mod], "r", lazy.spawncmd()),
-        Key([mod], "x", lazy.execute("xautolock", "-locknow")),
+        Key([mod], "x", lazy.spawn("xautolock -locknow")),
         Key([mod], "Return", lazy.spawn("termite")),
 
 

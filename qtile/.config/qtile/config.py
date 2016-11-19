@@ -1,4 +1,4 @@
-from libqtile.config import Screen, Group
+from libqtile.config import Screen, Group, Match
 from libqtile.command import lazy
 from libqtile import layout, bar, widget
 import events
@@ -8,12 +8,32 @@ from layouts import MasterTile
 mod = "mod4"
 
 groups = [
-     Group('Term'),
-     Group('Browser'),
-     Group('Mail'),
-     Group('Dev'),
-     Group('Media'),
-     Group('Other')
+    Group('Term', matches=[
+        Match(wm_class=["Termite"]),
+        ]),
+    Group('Browser', matches=[
+        Match(wm_class=["Firefox"]),
+        Match(wm_class=["Chromium"]),
+        ]),
+    Group('Mail', matches=[
+        Match(wm_class=["Linphone"]),
+        Match(wm_class=["Mumble"]),
+        Match(wm_class=["Skype"]),
+        Match(wm_class=["Telegram"]),
+        Match(wm_class=["Thunderbird"]),
+        ]),
+    Group('Dev', matches=[
+        Match(wm_class=["jetbrains-studio"]),
+        Match(wm_class=["Eclipse"]),
+        Match(wm_class=["Pronterface.py"]),
+        Match(wm_class=["Slic3r"]),
+        ]),
+    Group('Media', matches=[
+        Match(wm_class=["MPlayer"]),
+        Match(wm_class=["Steam"]),
+        Match(wm_class=["Wine"]),
+        ]),
+    Group('Other')
 ]
 
 (keys, mouse) = keybindings.conf(mod=mod, groups=groups)

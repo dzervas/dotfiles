@@ -6,6 +6,7 @@ wmname LG3D
 
 # Autostart
 chromium &
+thunderbird &
 icedove &
 termite &
 blueberry-tray &
