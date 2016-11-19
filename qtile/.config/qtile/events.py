@@ -14,7 +14,7 @@ def dialogs(window):
 def xrandr_restart(qtile, ev):
     qtile.cmd_restart()
 
-@hook.subscribe.startup
+@hook.subscribe.startup_once
 def xprofile():
     home = os.path.expanduser('~')
     subprocess.call([home + '/.xprofile'])
