@@ -1,4 +1,6 @@
 from libqtile import hook
+import os
+import subprocess
 
 # Make dialogs floating
 @hook.subscribe.client_new
@@ -11,3 +13,8 @@ def dialogs(window):
 @hook.subscribe.screen_change
 def xrandr_restart(qtile, ev):
     qtile.cmd_restart()
+
+@hook.subscribe.startup
+def xprofile():
+    home = os.path.expanduser('~')
+    subprocess.call([home + '/.xprofile'])

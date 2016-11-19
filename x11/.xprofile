@@ -7,10 +7,10 @@ wmname LG3D
 # Autostart
 chromium &
 thunderbird &
-icedove &
+#icedove &
 termite &
 blueberry-tray &
 pasystray &
 wicd-gtk -t &
 xautolock -time 10 -locker "physlock -sd" &
-feh --bg-scale .wallpaper.jpg
+feh --bg-scale .wallpaper.jpg &
