@@ -28,6 +28,32 @@ def conf(groups=None, mod=None):
         Key([mod], "x", lazy.spawn("xautolock -locknow")),
         Key([mod], "Return", lazy.spawn("termite")),
 
+        Key([], "XF86KbdBrightnessUp", lazy.spawn("kbdlight up 10")),
+        Key([], "XF86KbdBrightnessDown", lazy.spawn("kbdlight down 10")),
+        Key(["shift"], "XF86KbdBrightnessUp", lazy.spawn("kbdlight max")),
+        Key(["shift"], "XF86KbdBrightnessDown", lazy.spawn("kbdlight set 0")),
+
+        Key([], "XF86MonBrightnessUp", lazy.spawn("xbacklight +5")),
+        Key([], "XF86MonBrightnessDown", lazy.spawn("xbacklight -5")),
+        Key(["shift"], "XF86MonBrightnessUp", lazy.spawn("xbacklight =100")),
+        Key(["shift"], "XF86MonBrightnessDown", lazy.spawn("xbacklight =0")),
+
+        Key([], "XF86AudioRaiseVolume", lazy.spawn(
+            "pactl set-sink-volume @DEFAULT_SINK@ +5%")),
+        Key([], "XF86AudioLowerVolume", lazy.spawn(
+            "pactl set-sink-volume @DEFAULT_SINK@ -5%")),
+        Key([], "XF86AudioMute", lazy.spawn(
+            "pactl set-sink-mute @DEFAULT_SINK@ 1")),
+        Key(["shift"], "XF86AudioMute", lazy.spawn(
+            "pactl set-sink-mute @DEFAULT_SINK@ 0")),
+
+        Key([], "XF86AudioNext", lazy.spawn("mpc next")),
+        Key([], "XF86AudioPrev", lazy.spawn("mpc prev")),
+        Key([], "XF86AudioPlay", lazy.spawn("mpc toggle")),
+        Key([], "XF86AudioPause", lazy.spawn("mpc toggle")),
+
+        # Key([], "XF86LaunchA", ),
+        # Key([], "XF86LaunchB", ),
 
         Key([mod, "shift"], "q", lazy.restart()),
     ]

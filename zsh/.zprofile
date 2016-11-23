@@ -1,1 +1,1 @@
-.bash_profile
+../bash/.bash_profile

@@ -214,7 +214,7 @@ EOF
 	alias man='LC_ALL=C LANG=C man'
 	# Come on mutt, we're on 2015...
 	alias mutt='TERM=xterm-256color mutt'
-	alias pgrep='pgrep -a'
+	alias pgrep='pgrep -af'
 	alias ssh='TERM=xterm-256color ssh'
 
 	# Yey! Saved 2 keystrokes! :)

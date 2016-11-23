@@ -132,6 +132,7 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	bindkey "^z"		fg
 	bindkey "\e\e"		insert-sudo
 	bindkey "\e\`"		exec-sudo
+	bindkey "\ea"		exec-sudo
 	bindkey "^[[3~"		delete-char
 	bindkey "\e[1~"		beginning-of-line
 	bindkey "\e[4~"		end-of-line
