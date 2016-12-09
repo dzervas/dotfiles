@@ -6,6 +6,13 @@ vim/.vim/.netrwhist
 vim/.vim/eclim
 vim/.vim/plugin
 
+# Emacs temporary files
+emacs/.emacs.d/auto-save-list
+emacs/.emacs.d/history
+emacs/.emacs.d/elpa
+emacs/.emacs.d/places
+emacs/.emacs.d/.python-environments
+
 # Python objects
 *.pyc
 
