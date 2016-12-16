@@ -1,7 +1,5 @@
 from libqtile.config import Screen, Group, Match
-from libqtile.command import lazy
 from libqtile import layout, bar, widget
-import events
 import keybindings
 from layouts import MasterTile
 
@@ -57,9 +55,10 @@ screens = [
                 widget.GroupBox(),
                 widget.Prompt(),
                 widget.WindowName(),
-                widget.Mpd(do_color_progress=True, padding=3),
+                widget.Mpd(do_color_progress=True, padding=3, msg_nc=""),
                 widget.ThermalSensor(padding=3),
-                widget.Battery(charge_char="⚡", discharge_char="", padding=3),
+                widget.Battery(charge_char="⚡", discharge_char="", padding=3,
+                               error_message=""),
                 widget.Systray(),
                 widget.Clock(format="%a %d %I:%M"),
             ],
