@@ -1,8 +1,3 @@
-[user]
-	name = Dimitris Zervas
-	email = d.zervas@encodegroup.com
-[color]
-	ui = auto
 [alias]
 	aa = !git add -A && git status
 	ac = !git aa && git commit
@@ -11,10 +6,18 @@
 	cd = !git clone $2 && cd $(basename "$2")
 	co = !git checkout
 	;pullall = !for dir in * && do if [ -d "$dir/.git" ] && then cd $dir && echo "$dir:" && git pull && cd .. && fi && done
-[push]
-	default = simple
+[color]
+	ui = auto
+[commit]
+	gpgsign = true
 [core]
 	autocrlf = input
 	excludesfile = ~/.gitignore
+[push]
+	default = simple
+[user]
+	name = Dimitris Zervas
+	email = dzervas@dzervas.gr
+	signingkey = 528636D3
 [web]
 	browser = chromium

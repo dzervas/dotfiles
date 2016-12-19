@@ -138,6 +138,6 @@ let g:over_enable_auto_nohlsearch = 1
 
 " Airline
 let g:airline_powerline_fonts = 1
-let g:airline_theme = "molokai"
+let g:airline_theme = "badwolf"
 let g:airline#extensions#syntastic#enabled = 1
 let g:airline#extensions#hunks#non_zero_only = 0
