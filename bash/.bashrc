@@ -26,7 +26,7 @@
 
 # Variable definitions
 	# No duplicates in history
-	export EDITOR="nvim"
+	export EDITOR="emacsclient -nw"
 	export ALTERNATE_EDITOR="nvim"
 	export HISTCONTROL="ignoredups"
 	export HOSTNAME="`hostname`"
@@ -220,9 +220,11 @@ EOF
 	# Yey! Saved 2 keystrokes! :)
 	alias 8ping='ping 8.8.8.8'
 	alias cdt='cd `mktemp -d`'
-	alias e='${EDITOR}'
-	alias et='${EDITOR} .todir'
-	alias es='${EDITOR} ~/.stack'
+	alias e='emacsclient -t'
+	alias ec='emacsclient -n'
+	alias eg='emacsclient -c -n'
+	alias et='emacsclient -t .todir'
+	alias es='emacsclient -t ~/.stack'
 	alias g='git'
 	alias jc='curl -si -H "Content-Type: application/json"'
 	alias l='ls --color=auto'

@@ -1,6 +1,16 @@
 #!/bin/bash
-xrandr --output DVI-I-2 --rotate left --mode 1920x1080 --pos 0x0 --output DVI-I-1 --mode 1920x1080 --pos 1080x0
 xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
+
+envfile="$HOME/.gnupg/gpg-agent.env"
+
+if [[ -e "$envfile" ]] && kill -0 $(grep GPG_AGENT_INFO "$envfile" | cut -d: -f 2) 2>/dev/null; then
+    eval "$(cat "$envfile")"
+else
+    eval "$(gpg-agent --daemon --enable-ssh-support --write-env-file "$envfile")"
+fi
+
+export GPG_AGENT_INFO  # the env file does not contain the export statement
+export SSH_AUTH_SOCK   # enable gpg-agent for ssh
 
 # Hack to fix misbehaving Java applications
 wmname LG3D
