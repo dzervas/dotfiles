@@ -5,7 +5,6 @@
 	c = !git clone
 	cd = !git clone $2 && cd $(basename "$2")
 	co = !git checkout
-	;pullall = !for dir in * && do if [ -d "$dir/.git" ] && then cd $dir && echo "$dir:" && git pull && cd .. && fi && done
 [color]
 	ui = auto
 [commit]

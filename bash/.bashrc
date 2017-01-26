@@ -161,26 +161,9 @@ EOF
 	# Some useful info for the prompt (background job count & task count)
 	function statecnt() {
 		job=$(jobs | wc -l)
-		to=$(todir -c | tr -d "\n")
 
-		if [[ $job -ne 0 || $to -ne 0 ]]; then
-			echo -en "${GREEN}["
-
-			if [[ $to -ne 0 ]]; then
-				echo -en "${YELLOW}T${to}"
-			fi
-
-			if [[ $job -ne 0 ]]; then
-				if [[ $to -ne 0 ]]; then
-					echo -n " "
-				fi
-
-				echo -en "${CYAN}J${job}"
-			fi
-
-			echo -en "${GREEN}]"
-		else
-			return 1
+		if [[ $job -ne 0 ]]; then
+			echo -en "${GREEN}[${CYAN}J${job}${GREEN}]${NC}"
 		fi
 	}
 
