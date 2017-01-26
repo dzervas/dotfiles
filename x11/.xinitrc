@@ -1,2 +1,0 @@
-exec qtile
-#source ~/.xprofile

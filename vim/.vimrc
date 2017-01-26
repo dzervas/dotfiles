@@ -11,6 +11,7 @@ set foldenable
 set foldlevelstart=10
 set foldmethod=indent	" Code folding
 set history=100			" Number of commands to remember
+set hidden				" Hide instead of closing buffers
 set hlsearch
 set ignorecase
 set incsearch
