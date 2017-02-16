@@ -2,6 +2,7 @@
 set nocompatible		" This must be first, because it changes other options as side effect
 
 set autoindent
+set autochdir
 set colorcolumn=80		" Where to put the vertical line
 set completeopt=longest,menuone,preview	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
 set copyindent
@@ -58,6 +59,7 @@ au BufReadPost,BufWritePost *.py,*.c,*.cpp,*.h,*.java silent! !eval 'ctags --fie
 " Session auto-handling
 "autocmd VimLeave * mksession! %:p:h/.session.vim
 "autocmd VimEnter * source %:p:h/.session.vim
+"autocmd BufWinEnter,WinEnter term://* set statusline=%{b:term_title} | set titlestring=%{b:term_title}
 
 " Basic mappings
 " Key accuracy hacks
@@ -89,9 +91,27 @@ noremap <A-S-c>			:close<CR>
 noremap <A-Tab>			<C-W><C-W>
 noremap <A-up>			<C-W>l
 noremap <A-down>		<C-W>h
-noremap <A-s>			<C-W>o
+noremap <A-f>			<C-W>o
 noremap <A-return>		:vsp<CR>
 noremap <A-S-return>	:sp<CR>
+
+tnoremap <A-t>			<C-\><C-n><A-t>
+tnoremap <A-w>			<C-\><C-n><A-w>
+tnoremap <A-S-w>		<C-\><C-n><A-S-w>
+tnoremap <A-S-left>		<C-\><C-n><A-S-left>
+tnoremap <A-S-right>	<C-\><C-n><A-S-right>
+
+tnoremap <A-c>			<C-\><C-n><A-c>
+tnoremap <A-left>		<C-\><C-n><A-left>
+tnoremap <A-right>		<C-\><C-n><A-right>
+
+tnoremap <A-S-c>		<C-\><C-n><A-S-c>
+tnoremap <A-Tab>		<C-\><C-n><A-Tab>
+tnoremap <A-up>			<C-\><C-n><A-up>
+tnoremap <A-down>		<C-\><C-n><A-down>
+tnoremap <A-f>			<C-\><C-n><A-f>
+tnoremap <A-return>		<C-\><C-n><A-return>
+tnoremap <A-S-return>	<C-\><C-n><A-S-return>
 
 noremap <leader>f	:Lexplore<CR>
 

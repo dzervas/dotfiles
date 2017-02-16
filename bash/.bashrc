@@ -26,8 +26,8 @@
 
 # Variable definitions
 	# No duplicates in history
-	export EDITOR="emacsclient -nw"
-	export ALTERNATE_EDITOR="nvim"
+	export EDITOR="nvimt"
+	export ALTERNATE_EDITOR="vim"
 	export HISTCONTROL="ignoredups"
 	export HOSTNAME="`hostname`"
 	export PAGER="less"
@@ -203,11 +203,7 @@ EOF
 	# Yey! Saved 2 keystrokes! :)
 	alias 8ping='ping 8.8.8.8'
 	alias cdt='cd `mktemp -d`'
-	alias e='emacsclient -t'
-	alias ec='emacsclient -n'
-	alias eg='emacsclient -c -n'
-	alias et='emacsclient -t .todir'
-	alias es='emacsclient -t ~/.stack'
+	alias e=${EDITOR}
 	alias g='git'
 	alias jc='curl -si -H "Content-Type: application/json"'
 	alias l='ls --color=auto'
@@ -219,9 +215,9 @@ EOF
 	alias ss='import /tmp/screenshot.jpg'
 	alias ssall='import -window root /tmp/screenshot.jpg'
 	alias t='todir'
-	alias v='nvim'
-	alias vt='nvim .todir'
-	alias vs='nvim ~/.stack'
+	alias v='nvimt'
+	alias vt='nvimt .todir'
+	alias vs='nvimt ~/.stack'
 
 	# Muscle memory...
 	alias :q='exit'
