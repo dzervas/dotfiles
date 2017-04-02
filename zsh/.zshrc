@@ -142,6 +142,9 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	bindkey "\eOF"		end-of-line
 	bindkey "^[[H"		beginning-of-line
 	bindkey "^[[F"		end-of-line
+	bindkey "^[[1;5C" forward-word
+	bindkey "^[[1;5D" backward-word
+
 
 # Style
 	# Menu completion
@@ -156,4 +159,4 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	# Rebuild $PATH on each execution (may be performance intensive)
 	zstyle ":completion:*:commands" rehash 1
 
-	source ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+	#source ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
