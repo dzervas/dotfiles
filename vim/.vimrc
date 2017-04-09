@@ -4,7 +4,7 @@ set nocompatible		" This must be first, because it changes other options as side
 set autoindent
 set autochdir
 set colorcolumn=80		" Where to put the vertical line
-set completeopt=longest,menuone,preview	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
+"set completeopt=longest,menuone,preview	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
 set copyindent
 set cursorline			" Highlight the current line
 set encoding=utf-8		" Ability to use Alt in gvim
@@ -77,8 +77,10 @@ call plug#begin("~/.vim/bundle")
 
 	" Autocompletion
 	Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+		Plug 'Shougo/neco-vim'
 		Plug 'zchee/deoplete-jedi'
-		Plug 'zchee/deoplete-zsh'
+		Plug 'zchee/deoplete-clang'
+		Plug 'padawan-php/deoplete-padawan'
 
 	" Linting, debugging & building
 	Plug 'idanarye/vim-vebugger'
@@ -93,6 +95,7 @@ call plug#begin("~/.vim/bundle")
 		Plug 'glts/vim-textobj-comment'
 		Plug 'kana/vim-textobj-function'
 		Plug 'kana/vim-textobj-indent'
+		Plug 'padawan-php/deoplete-padawan'
 call plug#end()
 
 " Syntax highlighting
@@ -183,7 +186,17 @@ nnoremap <leader>t :TagbarToggle<CR>
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
-autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
+let g:deoplete#sources#clang#clang_header = '/usr/lib/clang'
+"autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+
+let g:deoplete#sources = {}
+let g:deoplete#sources._ = ['tag', 'buffer']
+let g:deoplete#sources.c = ['tag', 'clang', 'buffer']
+let g:deoplete#sources.cpp = ['tag', 'clang', 'buffer']
+let g:deoplete#sources.php = ['tag', 'padawan', 'buffer']
+let g:deoplete#sources.python = ['tag', 'jedi', 'buffer']
+let g:deoplete#sources.vim = ['tag', 'vim', 'buffer']
 
 " NeoMake
 autocmd! BufWritePost * Neomake
