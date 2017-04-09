@@ -126,9 +126,13 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	alias fuck='sudo $(fc -l -n -1)'
 	alias duck=fuck
 
+for f in /usr/share/**/*.zsh; do source $f; done
+
 # Key bindings
 	bindkey -e
-	bindkey "^r"		history-incremental-search-backward
+	bindkey "^r"		fzf-history-widget
+	bindkey "^f"		fzf-file-widget
+	bindkey "^g"		fzf-cd-widget
 	bindkey "^z"		fg
 	bindkey "\e\e"		insert-sudo
 	bindkey "\e\`"		exec-sudo
@@ -158,5 +162,3 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 
 	# Rebuild $PATH on each execution (may be performance intensive)
 	zstyle ":completion:*:commands" rehash 1
-
-	#source ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

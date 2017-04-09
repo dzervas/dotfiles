@@ -5,6 +5,7 @@ vim/.vim/info/
 vim/.vim/.netrwhist
 vim/.vim/eclim
 vim/.vim/plugin
+vim/.vim/bundle
 
 # Emacs temporary files
 emacs/.emacs.d/auto-save-list

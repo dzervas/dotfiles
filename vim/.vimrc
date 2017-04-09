@@ -22,6 +22,7 @@ set mouse=nvc			" By default mouse is for vim. F2 to cycle between
 set nobackup
 set noerrorbells		" Don't beep
 set noexpandtab
+set nofsync				" Don't sync automatically to disk (FTPFS is a pain...)
 set noswapfile			" Disable the fucking .swp files
 set nowritebackup
 set nowrap
@@ -46,119 +47,38 @@ set wildmenu			" Autocompletion menu for commands
 
 let mapleader=","
 
-" Syntax highlighting
-syntax on
-filetype plugin indent on
-
-au BufRead,BufNewFile .todir set filetype=todir
-au BufRead,BufNewFile *.cshtml set filetype=html
-" Restore cursor position in files
-au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-" Auto-update ctags
-au BufReadPost,BufWritePost *.py,*.c,*.cpp,*.h,*.java silent! !eval 'ctags --fields=afmikKlnsStz --extra=fq -R -o tags' &
-" Session auto-handling
-"autocmd VimLeave * mksession! %:p:h/.session.vim
-"autocmd VimEnter * source %:p:h/.session.vim
-"autocmd BufWinEnter,WinEnter term://* set statusline=%{b:term_title} | set titlestring=%{b:term_title}
-
-" Basic mappings
-" Key accuracy hacks
-nnoremap ; :
-nnoremap q: :
-nnoremap q; :
-
-" Unhighlight search
-noremap <C-l>			:noh<CR>
-
-" Don't forget sudo ever again!
-cnoremap w!				w !sudo tee % >/dev/null
-
-noremap <A-s>			:set spell! spelllang=en_us<CR>
-noremap <A-y>			:set list! rnu! number!<CR>
-
-" Tab, buffer and window manipulation
-noremap <A-t>			:tabnew<CR>
-noremap <A-w>			:tabclose<CR>
-noremap <A-S-w>			:tabonly<CR>
-noremap <A-S-left>		:tabp<CR>
-noremap <A-S-right>		:tabn<CR>
-
-noremap <A-c>			:Bdelete<CR>
-noremap <A-left>		:bp<CR>
-noremap <A-right>		:bn<CR>
-
-noremap <A-S-c>			:close<CR>
-noremap <A-Tab>			<C-W><C-W>
-noremap <A-up>			<C-W>l
-noremap <A-down>		<C-W>h
-noremap <A-f>			<C-W>o
-noremap <A-return>		:vsp<CR>
-noremap <A-S-return>	:sp<CR>
-
-tnoremap <A-t>			<C-\><C-n><A-t>
-tnoremap <A-w>			<C-\><C-n><A-w>
-tnoremap <A-S-w>		<C-\><C-n><A-S-w>
-tnoremap <A-S-left>		<C-\><C-n><A-S-left>
-tnoremap <A-S-right>	<C-\><C-n><A-S-right>
-
-tnoremap <A-c>			<C-\><C-n><A-c>
-tnoremap <A-left>		<C-\><C-n><A-left>
-tnoremap <A-right>		<C-\><C-n><A-right>
-
-tnoremap <A-S-c>		<C-\><C-n><A-S-c>
-tnoremap <A-Tab>		<C-\><C-n><A-Tab>
-tnoremap <A-up>			<C-\><C-n><A-up>
-tnoremap <A-down>		<C-\><C-n><A-down>
-tnoremap <A-f>			<C-\><C-n><A-f>
-tnoremap <A-return>		<C-\><C-n><A-return>
-tnoremap <A-S-return>	<C-\><C-n><A-S-return>
-
-noremap <leader>f	:Lexplore<CR>
-
-" Completion
-inoremap <expr> <Tab> pumvisible() ? '<C-y>' : '<Tab>'
-
 " Plugins
-let g:python_host_prog = "/usr/bin/python"
+let g:python_host_prog = "/usr/bin/python2"
 let g:python3_host_prog = "/usr/bin/python3"
 
-" Load pathogen (bundle plugins)
-execute pathogen#infect()
-execute pathogen#helptags()
+" Load vim-plug
+call plug#begin("~/.vim/bundle")
+Plug 'eparreno/vim-l9'
+Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 
-" Set 256 colors and the theme
-colorscheme molokai
-let g:rehash256 = 1
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'airblade/vim-gitgutter'
 
-" Nerd Commenter
-map //		<leader>c<space>
+Plug 'tomasr/molokai'
 
-" Over
-nnoremap '	:OverCommandLine<CR>
+Plug 'jiangmiao/auto-pairs'
+Plug 'scrooloose/nerdcommenter'
+Plug 'moll/vim-bbye'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'osyo-manga/vim-over'
+Plug 'tpope/vim-surround'
 
-" Tagbar
-nnoremap <leader>t :TagbarToggle<CR>
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'zchee/deoplete-jedi'
+"Plug 'carlitux/deoplete-ternjs'
+Plug 'zchee/deoplete-zsh'
 
-" Deoplete
-let g:deoplete#enable_at_startup = 1
-autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+Plug 'neomake/neomake'
 
-" NeoMake
-autocmd! BufWritePost * Neomake
-autocmd! BufReadPost * Neomake
+Plug 'idanarye/vim-vebugger'
+Plug 'lepture/vim-jinja'
 
-" Over
-let g:over_enable_auto_nohlsearch = 1
-
-" Vebugger
-" Mapped: b, B, c, e, E, i, o, O, r, R, t, x, X
-" See: help vebugger-keymaps
-"let g:vebugger_leader = <C>
-"nnoremap <C-s>	:VBGstartPDB %
-"nnoremap <C-k>	:VBGkill<CR>
-
-" Airline
-let g:airline_powerline_fonts = 1
-let g:airline_theme = "badwolf"
-let g:airline#extensions#syntastic#enabled = 1
-let g:airline#extensions#hunks#non_zero_only = 0
+Plug 'majutsushi/tagbar'
+Plug 'milkypostman/vim-togglelist'
+call plug#end()
