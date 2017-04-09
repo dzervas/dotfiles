@@ -4,7 +4,6 @@ set nocompatible		" This must be first, because it changes other options as side
 set autoindent
 set autochdir
 set colorcolumn=80		" Where to put the vertical line
-"set completeopt=longest,menuone,preview	" Popup menu doesn't select the first completion item, but rather just inserts the longest common
 set copyindent
 set cursorline			" Highlight the current line
 set encoding=utf-8		" Ability to use Alt in gvim
@@ -119,8 +118,9 @@ au BufReadPost,BufWritePost *.py,*.c,*.cpp,*.h,*.java silent! !eval 'ctags --fie
 " Basic mappings
 " Key accuracy hacks
 nnoremap ; :
-nnoremap q: :
-nnoremap q; :
+
+" Completion
+inoremap <silent><expr> <Tab> pumvisible() ? '<C-n>' : '<Tab>'
 
 " Unhighlight search
 noremap <C-l>			:noh<CR>
@@ -170,9 +170,6 @@ tmap <A-S-return>		<C-\><C-n><A-S-return>
 
 noremap <leader>f		:Lexplore<CR>
 
-" Completion
-inoremap <expr> <Tab> pumvisible() ? '<C-y>' : '<Tab>'
-
 " Airline
 let g:airline_powerline_fonts = 1
 let g:airline_theme = "badwolf"
@@ -191,17 +188,21 @@ nnoremap <leader>t :TagbarToggle<CR>
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
-let g:deoplete#sources#clang#clang_header = '/usr/lib/clang'
 autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 
+let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
+let g:deoplete#sources#clang#clang_header = '/usr/lib/clang'
+
+let g:jedi#show_docstring = 1
+let g:jedi#show_call_signatures = 2
+
 let g:deoplete#sources = {}
-let g:deoplete#sources._ = ['tag', 'syntax', 'buffer', 'file']
-let g:deoplete#sources.c = ['tag', 'clang', 'ultisnips', 'syntax', 'buffer', 'file']
-let g:deoplete#sources.cpp = ['tag', 'clang', 'ultisnips', 'syntax', 'buffer', 'file']
-let g:deoplete#sources.php = ['tag', 'padawan', 'ultisnips', 'syntax', 'buffer', 'file']
-let g:deoplete#sources.python = ['tag', 'jedi', 'ultisnips', 'syntax', 'buffer', 'file']
-let g:deoplete#sources.vim = ['tag', 'vim', 'ultisnips', 'syntax', 'buffer', 'file']
+let g:deoplete#sources._ = ['tag', 'syntax', 'omni', 'buffer', 'member', 'file']
+let g:deoplete#sources.c = ['tag', 'clang', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
+let g:deoplete#sources.cpp = ['tag', 'clang', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
+let g:deoplete#sources.php = ['tag', 'padawan', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
+let g:deoplete#sources.python = ['tag', 'jedi', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
+let g:deoplete#sources.vim = ['tag', 'vim', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
 
 " NeoMake
 autocmd! BufWritePost * Neomake
