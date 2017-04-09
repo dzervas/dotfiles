@@ -77,10 +77,15 @@ call plug#begin("~/.vim/bundle")
 
 	" Autocompletion
 	Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+		Plug 'Shougo/neco-syntax'
 		Plug 'Shougo/neco-vim'
 		Plug 'zchee/deoplete-jedi'
 		Plug 'zchee/deoplete-clang'
 		Plug 'padawan-php/deoplete-padawan'
+
+	" Snippets
+	Plug 'SirVer/ultisnips'
+		Plug 'honza/vim-snippets'
 
 	" Linting, debugging & building
 	Plug 'idanarye/vim-vebugger'
@@ -145,25 +150,25 @@ noremap <A-f>			<C-W>o
 noremap <A-return>		:vsp<CR>
 noremap <A-S-return>	:sp<CR>
 
-tmap <A-t>			<C-\><C-n><A-t>
-tmap <A-w>			<C-\><C-n><A-w>
-tmap <A-S-w>		<C-\><C-n><A-S-w>
-tmap <A-S-left>		<C-\><C-n><A-S-left>
-tmap <A-S-right>	<C-\><C-n><A-S-right>
+tmap <A-t>				<C-\><C-n><A-t>
+tmap <A-w>				<C-\><C-n><A-w>
+tmap <A-S-w>			<C-\><C-n><A-S-w>
+tmap <A-S-left>			<C-\><C-n><A-S-left>
+tmap <A-S-right>		<C-\><C-n><A-S-right>
 
-tmap <A-c>			<C-\><C-n><A-c>
-tmap <A-left>		<C-\><C-n><A-left>
-tmap <A-right>		<C-\><C-n><A-right>
+tmap <A-c>				<C-\><C-n><A-c>
+tmap <A-left>			<C-\><C-n><A-left>
+tmap <A-right>			<C-\><C-n><A-right>
 
-tmap <A-S-c>		<C-\><C-n><A-S-c>
-tmap <A-Tab>		<C-\><C-n><A-Tab>
-tmap <A-up>			<C-\><C-n><A-up>
-tmap <A-down>		<C-\><C-n><A-down>
-tmap <A-f>			<C-\><C-n><A-f>
-tmap <A-return>		<C-\><C-n><A-return>
-tmap <A-S-return>	<C-\><C-n><A-S-return>
+tmap <A-S-c>			<C-\><C-n><A-S-c>
+tmap <A-Tab>			<C-\><C-n><A-Tab>
+tmap <A-up>				<C-\><C-n><A-up>
+tmap <A-down>			<C-\><C-n><A-down>
+tmap <A-f>				<C-\><C-n><A-f>
+tmap <A-return>			<C-\><C-n><A-return>
+tmap <A-S-return>		<C-\><C-n><A-S-return>
 
-noremap <leader>f	:Lexplore<CR>
+noremap <leader>f		:Lexplore<CR>
 
 " Completion
 inoremap <expr> <Tab> pumvisible() ? '<C-y>' : '<Tab>'
@@ -188,15 +193,15 @@ nnoremap <leader>t :TagbarToggle<CR>
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
 let g:deoplete#sources#clang#clang_header = '/usr/lib/clang'
-"autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 
 let g:deoplete#sources = {}
-let g:deoplete#sources._ = ['tag', 'buffer']
-let g:deoplete#sources.c = ['tag', 'clang', 'buffer']
-let g:deoplete#sources.cpp = ['tag', 'clang', 'buffer']
-let g:deoplete#sources.php = ['tag', 'padawan', 'buffer']
-let g:deoplete#sources.python = ['tag', 'jedi', 'buffer']
-let g:deoplete#sources.vim = ['tag', 'vim', 'buffer']
+let g:deoplete#sources._ = ['tag', 'syntax', 'buffer', 'file']
+let g:deoplete#sources.c = ['tag', 'clang', 'ultisnips', 'syntax', 'buffer', 'file']
+let g:deoplete#sources.cpp = ['tag', 'clang', 'ultisnips', 'syntax', 'buffer', 'file']
+let g:deoplete#sources.php = ['tag', 'padawan', 'ultisnips', 'syntax', 'buffer', 'file']
+let g:deoplete#sources.python = ['tag', 'jedi', 'ultisnips', 'syntax', 'buffer', 'file']
+let g:deoplete#sources.vim = ['tag', 'vim', 'ultisnips', 'syntax', 'buffer', 'file']
 
 " NeoMake
 autocmd! BufWritePost * Neomake
