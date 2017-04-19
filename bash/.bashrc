@@ -253,10 +253,18 @@ EOF
 
 	export PS1="${SSH_COLOR}\u${SSH_INFO} \$(statecnt && echo -n ' ')${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${BRED}\$(sc)${RED}\$ ${NC}"
 
+	# Android env vars
 	export ANT_ROOT=/usr/bin/
 	export ANDROID_SDK_ROOT=~/.android/sdk
 	export ANDROID_HOME=~/.android/sdk
 	export NDK_ROOT=~/.android/ndk
+
+	# GoLang env vars
+	export GOOS=linux
+	export GOARCH=amd64
+	export GOROOT="${HOME}/go"
+	export GOBIN="${GOROOT}/bin"
+	export PATH="${PATH}:${GOBIN}"
 
 	eval "$(pyenv init -)"
 	eval "$(pyenv virtualenv-init -)"

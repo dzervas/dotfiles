@@ -5,6 +5,19 @@ source ~/.bashrc
 source /etc/profile.d/vte.sh
 unalias shopt
 
+# Plugins
+if [ -f /usr/share/zsh/share/antigen.zsh ]; then
+	source /usr/share/zsh/share/antigen.zsh
+
+	antigen bundle hlissner/zsh-autopair
+	antigen bundle jreese/zsh-titles
+	antigen bundle zdharma/fast-syntax-highlighting
+	antigen bundle zsh-users/zsh-autosuggestions
+
+	#antigen bundle RobSis/zsh-completion-generator
+fi
+
+
 # Settings
 	setopt APPEND_HISTORY
 	setopt CORRECT			# command CORRECTION
