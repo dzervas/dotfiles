@@ -78,8 +78,9 @@ call plug#begin("~/.vim/bundle")
 	Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 		Plug 'Shougo/neco-syntax'
 		Plug 'Shougo/neco-vim'
-		Plug 'zchee/deoplete-jedi'
 		Plug 'zchee/deoplete-clang'
+		Plug 'zchee/deoplete-go', { 'do': 'make'}
+		Plug 'zchee/deoplete-jedi'
 		Plug 'padawan-php/deoplete-padawan'
 
 	" Snippets
