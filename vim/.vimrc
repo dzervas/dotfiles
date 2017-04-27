@@ -201,6 +201,7 @@ let g:deoplete#sources = {}
 let g:deoplete#sources._ = ['tag', 'syntax', 'omni', 'buffer', 'member', 'file']
 let g:deoplete#sources.c = ['tag', 'clang', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
 let g:deoplete#sources.cpp = ['tag', 'clang', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
+let g:deoplete#sources.go = ['tag', 'go', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
 let g:deoplete#sources.php = ['tag', 'padawan', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
 let g:deoplete#sources.python = ['tag', 'jedi', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
 let g:deoplete#sources.vim = ['tag', 'vim', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']

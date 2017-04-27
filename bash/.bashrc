@@ -26,7 +26,7 @@
 
 # Variable definitions
 	# No duplicates in history
-	export EDITOR="nvimt"
+	export EDITOR="nvr -cc vsplit --remote-wait"
 	export ALTERNATE_EDITOR="vim"
 	export HISTCONTROL="ignoredups"
 	export HOSTNAME="`hostname`"
@@ -215,9 +215,9 @@ EOF
 	alias ss='import /tmp/screenshot.jpg'
 	alias ssall='import -window root /tmp/screenshot.jpg'
 	alias t='todir'
-	alias v='nvimt'
-	alias vt='nvimt .todir'
-	alias vs='nvimt ~/.stack'
+	alias v='nvr -cc tabnew'
+	alias vt='v .todir'
+	alias vs='v ~/.stack'
 
 	# Muscle memory...
 	alias :q='exit'
