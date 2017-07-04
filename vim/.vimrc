@@ -2,7 +2,7 @@
 set nocompatible		" This must be first, because it changes other options as side effect
 
 set autoindent
-set autochdir
+"set autochdir
 set colorcolumn=80		" Where to put the vertical line
 set copyindent
 set cursorline			" Highlight the current line
@@ -37,6 +37,7 @@ set sidescroll=2		" Only scroll horizontally little by little
 set smartcase			" Ignore case when lowercase used in search
 set smartindent
 set smarttab			" Helps with backspacing with space indent
+set spelllang=en_us,el_gr
 set tabstop=4
 set tags+=~/.vim/systags	" CTags
 set title
@@ -50,16 +51,22 @@ let mapleader=","
 let g:python_host_prog = "/usr/bin/python2"
 let g:python3_host_prog = "/usr/bin/python3"
 
+" NetRW
+let g:netrw_ftp_options = "-N /home/dzervas/.netrc -i -p"
+
 " Load vim-plug
 call plug#begin("~/.vim/bundle")
 	" Libs
 	Plug 'eparreno/vim-l9'
 	Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 
-	" Buffer view helpers
+	" Git Helpers
 	Plug 'airblade/vim-gitgutter'
+
+	" Buffer view helpers
 	Plug 'majutsushi/tagbar'
 	Plug 'milkypostman/vim-togglelist'
+	Plug 'tpope/vim-repeat'
 	Plug 'vim-airline/vim-airline'
 	Plug 'vim-airline/vim-airline-themes'
 
@@ -101,6 +108,9 @@ call plug#begin("~/.vim/bundle")
 		Plug 'kana/vim-textobj-function'
 		Plug 'kana/vim-textobj-indent'
 		Plug 'padawan-php/deoplete-padawan'
+
+	" NyaoVim
+	Plug 'rhysd/nyaovim-markdown-preview'
 call plug#end()
 
 " Syntax highlighting
@@ -116,12 +126,14 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 " Auto-update ctags
 au BufReadPost,BufWritePost *.py,*.c,*.cpp,*.h,*.java silent! !eval 'ctags --fields=afmikKlnsStz --extra=fq -R -o tags' &
 
-" Basic mappings
-" Key accuracy hacks
-nnoremap ; :
+" Terminal mode config
+autocmd TermOpen * setlocal statusline=%{b:term_title}
+autocmd BufWinEnter,WinEnter term://* startinsert
+autocmd BufLeave term://* stopinsert
 
+" Basic mappings
 " Completion
-inoremap <silent><expr> <Tab> pumvisible() ? '<C-n>' : '<Tab>'
+inoremap <silent><expr> <Tab> pumvisible() ? '<C-y>' : '<Tab>'
 
 " Unhighlight search
 noremap <C-l>			:noh<CR>
@@ -129,8 +141,7 @@ noremap <C-l>			:noh<CR>
 " Don't forget sudo ever again!
 cnoremap w!				w !sudo tee % >/dev/null
 
-noremap <A-s>			:set spell! spelllang=en_us<CR>
-noremap <A-y>			:set list! rnu! number!<CR>
+noremap <A-s>			:set spell!<CR>
 
 " Tab, buffer and window manipulation
 noremap <A-t>			:tabnew<CR>
@@ -151,23 +162,23 @@ noremap <A-f>			<C-W>o
 noremap <A-return>		:vsp<CR>
 noremap <A-S-return>	:sp<CR>
 
-tmap <A-t>				<C-\><C-n><A-t>
-tmap <A-w>				<C-\><C-n><A-w>
-tmap <A-S-w>			<C-\><C-n><A-S-w>
-tmap <A-S-left>			<C-\><C-n><A-S-left>
-tmap <A-S-right>		<C-\><C-n><A-S-right>
+tmap <A-t>			<C-\><C-n><A-t>
+tmap <A-w>			<C-\><C-n><A-w>
+tmap <A-S-w>		<C-\><C-n><A-S-w>
+tmap <A-S-left>		<C-\><C-n><A-S-left>
+tmap <A-S-right>	<C-\><C-n><A-S-right>
 
-tmap <A-c>				<C-\><C-n><A-c>
-tmap <A-left>			<C-\><C-n><A-left>
-tmap <A-right>			<C-\><C-n><A-right>
+tmap <A-c>			<C-\><C-n><A-c>
+tmap <A-left>		<C-\><C-n><A-left>
+tmap <A-right>		<C-\><C-n><A-right>
 
-tmap <A-S-c>			<C-\><C-n><A-S-c>
-tmap <A-Tab>			<C-\><C-n><A-Tab>
-tmap <A-up>				<C-\><C-n><A-up>
-tmap <A-down>			<C-\><C-n><A-down>
-tmap <A-f>				<C-\><C-n><A-f>
-tmap <A-return>			<C-\><C-n><A-return>
-tmap <A-S-return>		<C-\><C-n><A-S-return>
+tmap <A-S-c>		<C-\><C-n><A-S-c>
+tmap <A-Tab>		<C-\><C-n><A-Tab>
+tmap <A-up>			<C-\><C-n><A-up>
+tmap <A-down>		<C-\><C-n><A-down>
+tmap <A-f>			<C-\><C-n><A-f>
+tmap <A-return>		<C-\><C-n><A-return>
+tmap <A-S-return>	<C-\><C-n><A-S-return>
 
 noremap <leader>f		:Lexplore<CR>
 

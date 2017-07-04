@@ -1,11 +1,9 @@
 # Vim temporary files
 tags
 *.swp
-vim/.vim/info/
 vim/.vim/.netrwhist
-vim/.vim/eclim
-vim/.vim/plugin
 vim/.vim/bundle
+vim/.vim/spell
 
 # Emacs temporary files
 emacs/.emacs.d/auto-save-list

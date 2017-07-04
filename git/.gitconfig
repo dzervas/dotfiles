@@ -2,9 +2,12 @@
 	aa = !git add -A && git status
 	ac = !git aa && git commit
 	acp = !git ac && git push
-	c = !git clone
+	c = clone
 	cd = !git clone $2 && cd $(basename "$2")
-	co = !git checkout
+	co = checkout
+	#graph = 'log —graph —pretty="\'"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset"\'" —abbrev-commit —all'
+	g = graph
+	s = status
 [color]
 	ui = auto
 [commit]

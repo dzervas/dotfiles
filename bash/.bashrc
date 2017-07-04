@@ -26,7 +26,7 @@
 
 # Variable definitions
 	# No duplicates in history
-	export EDITOR="nvr -cc vsplit --remote-wait"
+	export EDITOR="nvr --remote-wait-silent"
 	export ALTERNATE_EDITOR="vim"
 	export HISTCONTROL="ignoredups"
 	export HOSTNAME="`hostname`"
@@ -215,7 +215,7 @@ EOF
 	alias ss='import /tmp/screenshot.jpg'
 	alias ssall='import -window root /tmp/screenshot.jpg'
 	alias t='todir'
-	alias v='nvr -cc tabnew'
+	alias v='nvr -cc tabnew --remote-silent'
 	alias vt='v .todir'
 	alias vs='v ~/.stack'
 
