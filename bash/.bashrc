@@ -192,8 +192,8 @@ EOF
 	alias diff='colordiff -ub'
 	alias grep='grep --color'
 	alias less='less -R'
-	alias ll='ls -hal --color=auto'
-	alias ls='ls --color=auto'
+	alias ll='ls -Fhal --color=auto'
+	alias ls='ls -F --color=auto'
 	alias man='LC_ALL=C LANG=C man'
 	# Come on mutt, we're on 2015...
 	alias mutt='TERM=xterm-256color mutt'
@@ -203,6 +203,8 @@ EOF
 	# Yey! Saved 2 keystrokes! :)
 	alias 8ping='ping 8.8.8.8'
 	alias cdt='cd `mktemp -d`'
+	alias d='docker'
+	alias dc='docker-compose'
 	alias e=${EDITOR}
 	alias g='git'
 	alias jc='curl -si -H "Content-Type: application/json"'
@@ -215,7 +217,7 @@ EOF
 	alias ss='import /tmp/screenshot.jpg'
 	alias ssall='import -window root /tmp/screenshot.jpg'
 	alias t='todir'
-	alias v='nvr -cc tabnew --remote-silent'
+	alias v='nvr --remote-silent'
 	alias vt='v .todir'
 	alias vs='v ~/.stack'
 

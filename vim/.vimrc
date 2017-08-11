@@ -4,6 +4,7 @@ set nocompatible		" This must be first, because it changes other options as side
 set autoindent
 "set autochdir
 set colorcolumn=80		" Where to put the vertical line
+set completeopt=menuone,noselect
 set copyindent
 set cursorline			" Highlight the current line
 set encoding=utf-8		" Ability to use Alt in gvim
@@ -22,6 +23,7 @@ set nobackup
 set noerrorbells		" Don't beep
 set noexpandtab
 set nofsync				" Don't sync automatically to disk (FTPFS is a pain...)
+set noshowmode			" Do not show mode in cmdline
 set noswapfile			" Disable the fucking .swp files
 set nowritebackup
 set nowrap
@@ -46,6 +48,7 @@ set wildignore=*.swp,*.b,*.pyc,*.class,*.apk,*.jar,*.o
 set wildmenu			" Autocompletion menu for commands
 
 let mapleader=","
+let highlight_sedtabs = 1
 
 " Python
 let g:python_host_prog = "/usr/bin/python2"
@@ -69,13 +72,14 @@ call plug#begin("~/.vim/bundle")
 	Plug 'tpope/vim-repeat'
 	Plug 'vim-airline/vim-airline'
 	Plug 'vim-airline/vim-airline-themes'
+	Plug 'tpope/vim-vinegar'
 
 	" The one and the only...
 	Plug 'tomasr/molokai'
 
 	" Editing helpers
 	Plug 'matze/vim-move'
-	Plug 'moll/vim-bbye'
+	"Plug 'moll/vim-bbye'
 	Plug 'jiangmiao/auto-pairs'
 	Plug 'scrooloose/nerdcommenter'
 	Plug 'terryma/vim-multiple-cursors'
@@ -83,15 +87,17 @@ call plug#begin("~/.vim/bundle")
 
 	" Autocompletion
 	Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+		Plug 'Shougo/echodoc.vim'
 		Plug 'Shougo/neco-syntax'
-		Plug 'Shougo/neco-vim'
-		Plug 'zchee/deoplete-clang'
-		Plug 'zchee/deoplete-go', { 'do': 'make'}
-		Plug 'zchee/deoplete-jedi'
-		Plug 'padawan-php/deoplete-padawan'
+		Plug 'Shougo/neco-vim', { 'for': 'vim' }
+		Plug 'zchee/deoplete-clang', { 'for': ['c', 'c++'] }
+		Plug 'zchee/deoplete-go', { 'for': 'go', 'do': 'make'}
+		Plug 'zchee/deoplete-jedi', { 'for': 'python' }
+		Plug 'php-vim/phpcd.vim', { 'for': 'php' }
 
 	" Snippets
-	Plug 'SirVer/ultisnips'
+	Plug 'Shougo/neosnippet.vim'
+		Plug 'Shougo/neosnippet-snippets'
 		Plug 'honza/vim-snippets'
 
 	" Linting, debugging & building
@@ -99,7 +105,8 @@ call plug#begin("~/.vim/bundle")
 	Plug 'neomake/neomake'
 
 	" Syntax
-	Plug 'lepture/vim-jinja'
+	Plug 'lepture/vim-jinja', { 'for': 'jinja' }
+	Plug 'fatih/vim-go', { 'for': 'go' }
 
 	" Text objects
 	Plug 'wellle/targets.vim'
@@ -107,10 +114,9 @@ call plug#begin("~/.vim/bundle")
 		Plug 'glts/vim-textobj-comment'
 		Plug 'kana/vim-textobj-function'
 		Plug 'kana/vim-textobj-indent'
-		Plug 'padawan-php/deoplete-padawan'
 
 	" NyaoVim
-	Plug 'rhysd/nyaovim-markdown-preview'
+	"Plug 'rhysd/nyaovim-markdown-preview'
 call plug#end()
 
 " Syntax highlighting
@@ -133,7 +139,10 @@ autocmd BufLeave term://* stopinsert
 
 " Basic mappings
 " Completion
-inoremap <silent><expr> <Tab> pumvisible() ? '<C-y>' : '<Tab>'
+imap <silent><expr> <Tab> pumvisible() ? '<C-n>' : neosnippet#expandable_or_jumpable() ? '<Plug>(neosnippet_expand_or_jump)' : '<Tab>'
+smap <silent><expr> <Tab> neosnippet#expandable_or_jumpable() ? '<Plug>(neosnippet_expand_or_jump)' : '<Tab>'
+inoremap <silent><expr> <C-Tab> pumvisible() ? '<C-p>' : '<Tab>'
+inoremap <silent><expr> <CR> pumvisible() ? '<C-y>' : '<CR>'
 
 " Unhighlight search
 noremap <C-l>			:noh<CR>
@@ -150,7 +159,7 @@ noremap <A-S-w>			:tabonly<CR>
 noremap <A-S-left>		:tabp<CR>
 noremap <A-S-right>		:tabn<CR>
 
-noremap <A-c>			:Bdelete<CR>
+noremap <A-c>			:bdelete<CR>
 noremap <A-left>		:bp<CR>
 noremap <A-right>		:bn<CR>
 
@@ -161,6 +170,16 @@ noremap <A-down>		<C-W>h
 noremap <A-f>			<C-W>o
 noremap <A-return>		:vsp<CR>
 noremap <A-S-return>	:sp<CR>
+
+nnoremap <Tab>			==
+nnoremap <S-Tab>		>>
+nnoremap <C-Tab>		<<
+vnoremap <Tab>			==
+vnoremap <S-Tab>		>>
+vnoremap <C-Tab>		<<
+
+"noremap <C-S-c>			"+y
+"noremap <C-S-c>			"+p
 
 tmap <A-t>			<C-\><C-n><A-t>
 tmap <A-w>			<C-\><C-n><A-w>
@@ -179,6 +198,11 @@ tmap <A-down>		<C-\><C-n><A-down>
 tmap <A-f>			<C-\><C-n><A-f>
 tmap <A-return>		<C-\><C-n><A-return>
 tmap <A-S-return>	<C-\><C-n><A-S-return>
+
+tmap <A-Esc>		<C-\><C-n>
+
+"tmap <C-S-c>		<C-\><C-n><C-S-c>
+"tmap <C-S-v>		<C-\><C-n><C-S-v>
 
 noremap <leader>f		:Lexplore<CR>
 
@@ -200,26 +224,29 @@ nnoremap <leader>t :TagbarToggle<CR>
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
-autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+let g:echodoc_enable_at_startup = 1
+autocmd InsertLeave * if !pumvisible() | pclose | endif
 
 let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
 let g:deoplete#sources#clang#clang_header = '/usr/lib/clang'
+call deoplete#custom#source('_', 'converters',
+			\ ['converter_auto_paren', 'converter_auto_delimiter'])
 
 let g:jedi#show_docstring = 1
 let g:jedi#show_call_signatures = 2
+let g:jedi#popup_select_first = 0
 
-let g:deoplete#sources = {}
-let g:deoplete#sources._ = ['tag', 'syntax', 'omni', 'buffer', 'member', 'file']
-let g:deoplete#sources.c = ['tag', 'clang', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
-let g:deoplete#sources.cpp = ['tag', 'clang', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
-let g:deoplete#sources.go = ['tag', 'go', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
-let g:deoplete#sources.php = ['tag', 'padawan', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
-let g:deoplete#sources.python = ['tag', 'jedi', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
-let g:deoplete#sources.vim = ['tag', 'vim', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
+"let g:deoplete#sources = {}
+"let g:deoplete#sources._ = ['tag', 'syntax', 'omni', 'buffer', 'member', 'file']
+"let g:deoplete#sources.c = ['tag', 'clang', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
+"let g:deoplete#sources.cpp = ['tag', 'clang', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
+"let g:deoplete#sources.go = ['tag', 'go', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
+"let g:deoplete#sources.php = ['tag', 'phpcd', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
+"let g:deoplete#sources.python = ['tag', 'jedi', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
+"let g:deoplete#sources.vim = ['tag', 'vim', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
 
 " NeoMake
-autocmd! BufWritePost * Neomake
-autocmd! BufReadPost * Neomake
+autocmd! BufReadPost,BufWritePost * Neomake
 
 " Move
 let g:move_map_keys = 0
