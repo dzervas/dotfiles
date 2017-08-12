@@ -4,6 +4,7 @@
 	acp = !git ac && git push
 	c = clone
 	co = checkout
+	d = diff
 	#graph = 'log —graph —pretty="\'"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset"\'" —abbrev-commit —all'
 	#g = graph
 	# Parse positional params

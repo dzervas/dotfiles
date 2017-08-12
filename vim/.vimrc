@@ -2,7 +2,6 @@
 set nocompatible		" This must be first, because it changes other options as side effect
 
 set autoindent
-"set autochdir
 set colorcolumn=80		" Where to put the vertical line
 set completeopt=menuone,noselect
 set copyindent
@@ -79,7 +78,7 @@ call plug#begin("~/.vim/bundle")
 
 	" Editing helpers
 	Plug 'matze/vim-move'
-	"Plug 'moll/vim-bbye'
+	Plug 'moll/vim-bbye'
 	Plug 'jiangmiao/auto-pairs'
 	Plug 'scrooloose/nerdcommenter'
 	Plug 'terryma/vim-multiple-cursors'
@@ -96,8 +95,7 @@ call plug#begin("~/.vim/bundle")
 		Plug 'php-vim/phpcd.vim', { 'for': 'php' }
 
 	" Snippets
-	Plug 'Shougo/neosnippet.vim'
-		Plug 'Shougo/neosnippet-snippets'
+	Plug 'SirVer/ultisnips'
 		Plug 'honza/vim-snippets'
 
 	" Linting, debugging & building
@@ -114,9 +112,6 @@ call plug#begin("~/.vim/bundle")
 		Plug 'glts/vim-textobj-comment'
 		Plug 'kana/vim-textobj-function'
 		Plug 'kana/vim-textobj-indent'
-
-	" NyaoVim
-	"Plug 'rhysd/nyaovim-markdown-preview'
 call plug#end()
 
 " Syntax highlighting
@@ -139,8 +134,7 @@ autocmd BufLeave term://* stopinsert
 
 " Basic mappings
 " Completion
-imap <silent><expr> <Tab> pumvisible() ? '<C-n>' : neosnippet#expandable_or_jumpable() ? '<Plug>(neosnippet_expand_or_jump)' : '<Tab>'
-smap <silent><expr> <Tab> neosnippet#expandable_or_jumpable() ? '<Plug>(neosnippet_expand_or_jump)' : '<Tab>'
+imap <silent><expr> <Tab> pumvisible() ? '<C-n>' : '<Tab>'
 inoremap <silent><expr> <C-Tab> pumvisible() ? '<C-p>' : '<Tab>'
 inoremap <silent><expr> <CR> pumvisible() ? '<C-y>' : '<CR>'
 
@@ -159,7 +153,7 @@ noremap <A-S-w>			:tabonly<CR>
 noremap <A-S-left>		:tabp<CR>
 noremap <A-S-right>		:tabn<CR>
 
-noremap <A-c>			:bdelete<CR>
+noremap <A-c>			:Bdelete<CR>
 noremap <A-left>		:bp<CR>
 noremap <A-right>		:bn<CR>
 
@@ -236,14 +230,8 @@ let g:jedi#show_docstring = 1
 let g:jedi#show_call_signatures = 2
 let g:jedi#popup_select_first = 0
 
-"let g:deoplete#sources = {}
-"let g:deoplete#sources._ = ['tag', 'syntax', 'omni', 'buffer', 'member', 'file']
-"let g:deoplete#sources.c = ['tag', 'clang', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
-"let g:deoplete#sources.cpp = ['tag', 'clang', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
-"let g:deoplete#sources.go = ['tag', 'go', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
-"let g:deoplete#sources.php = ['tag', 'phpcd', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
-"let g:deoplete#sources.python = ['tag', 'jedi', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
-"let g:deoplete#sources.vim = ['tag', 'vim', 'ultisnips', 'syntax', 'omni', 'buffer', 'member', 'file']
+let g:UltiSnipsExpandTrigger = "<c-j>"
+let g:UltiSnipsListSnippets = "<NUL>"
 
 " NeoMake
 autocmd! BufReadPost,BufWritePost * Neomake
