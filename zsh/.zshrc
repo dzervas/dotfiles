@@ -20,7 +20,6 @@ fi
 
 # Settings
 	setopt APPEND_HISTORY
-	setopt CORRECT			# command CORRECTION
 	setopt hist_ignore_all_dups	# Ignore duplicate commands from history
 	setopt hist_ignore_space	# Ignore commands starting with space from history
 	setopt autocd			# /etc instead of cd /etc
@@ -136,10 +135,10 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	RPS1='$(git_prompt_string)$(statecnt)${NC}'
 
 # Aliases
-	alias fuck='sudo $(fc -l -n -1)'
-	alias duck=fuck
+	#alias fuck='sudo $(fc -l -n -1)'
+	#alias duck=fuck
 
-for f in /usr/share/**/*.zsh; do source $f; done
+#for f in /usr/share/**/*.zsh; do source $f; done
 
 # Key bindings
 	bindkey -e

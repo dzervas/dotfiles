@@ -180,6 +180,16 @@ EOF
 		fi
 	}
 
+	command_not_found_handler() {
+		# Looks like a vim command
+		[[ "$1" == :* ]] && {
+			return `nvr -c "${1}"`
+		}
+		# Otherwise, replicate the default error message
+		printf '(ba/z)sh: command not found: %s\n' $1 >&2
+		return 127
+	}
+
 	eval "`dircolors -b`"
 
 # Alias
@@ -190,10 +200,10 @@ EOF
 	alias passgen='gpg --gen-random --armor 1 '
 
 	alias diff='colordiff -ub'
-	alias grep='grep --color'
+	alias grep='rg --color'
 	alias less='less -R'
-	alias ll='ls -Fhal --color=auto'
-	alias ls='ls -F --color=auto'
+	alias ll='exa -Fhal --color=auto'
+	alias ls='exa -F --color=auto'
 	alias man='LC_ALL=C LANG=C man'
 	# Come on mutt, we're on 2015...
 	alias mutt='TERM=xterm-256color mutt'
@@ -208,11 +218,13 @@ EOF
 	alias e=${EDITOR}
 	alias g='git'
 	alias jc='curl -si -H "Content-Type: application/json"'
-	alias l='ls --color=auto'
+	alias ipy='ipython'
+	alias l='exa --color=auto'
 	alias mc='cm'
 	alias n='echo -e "\a"; mpg123 -q ~/Music/notification.mp3'
 	#alias mc='java -jar .minecraft/minecraft.jar'
 	alias py='python'
+	alias py2='python2'
 	alias s='sl'
 	alias ss='import /tmp/screenshot.jpg'
 	alias ssall='import -window root /tmp/screenshot.jpg'
@@ -222,6 +234,7 @@ EOF
 	alias vs='v ~/.stack'
 
 	# Muscle memory...
+	alias :e='v'
 	alias :q='exit'
 
 	# Android alias
@@ -270,3 +283,5 @@ EOF
 
 	eval "$(pyenv init -)"
 	eval "$(pyenv virtualenv-init -)"
+	#eval "$(thefuck --alias)"
+alias open=xdg-open

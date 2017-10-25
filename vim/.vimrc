@@ -83,6 +83,7 @@ call plug#begin("~/.vim/bundle")
 	Plug 'scrooloose/nerdcommenter'
 	Plug 'terryma/vim-multiple-cursors'
 	Plug 'tpope/vim-surround'
+	Plug 'mbbill/undotree'
 
 	" Autocompletion
 	Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -92,7 +93,7 @@ call plug#begin("~/.vim/bundle")
 		Plug 'zchee/deoplete-clang', { 'for': ['c', 'c++'] }
 		Plug 'zchee/deoplete-go', { 'for': 'go', 'do': 'make'}
 		Plug 'zchee/deoplete-jedi', { 'for': 'python' }
-		Plug 'php-vim/phpcd.vim', { 'for': 'php' }
+		Plug 'php-vim/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
 
 	" Snippets
 	Plug 'SirVer/ultisnips'
@@ -101,6 +102,7 @@ call plug#begin("~/.vim/bundle")
 	" Linting, debugging & building
 	Plug 'idanarye/vim-vebugger'
 	Plug 'neomake/neomake'
+	Plug 'mattboehm/vim-unstack'
 
 	" Syntax
 	Plug 'lepture/vim-jinja', { 'for': 'jinja' }
@@ -246,6 +248,18 @@ vmap	<C-down>	<Plug>MoveBlockDown
 " Vebugger
 " Mapped: b, B, c, e, E, i, o, O, r, R, t, x, X
 " See: help vebugger-keymaps
-"let g:vebugger_leader = <C>
-"nnoremap <C-s>	:VBGstartPDB %
-"nnoremap <C-k>	:VBGkill<CR>
+let g:vebugger_leader = '<leader>d'
+
+function! VBGpyEnv()
+	if !empty(glob('~/.pyenv/versions/'.expand('%:p:h:t').'/bin/python'))
+		let g:vebugger_path_python = glob('~/.pyenv/versions/'.expand('%:p:h:t').'/bin/python')
+	endif
+endfunction
+
+autocmd BufEnter *.py call VBGpyEnv()
+
+" Unstack
+let g:unstack_showsigns = 0
+
+" UndoTree
+nnoremap	<leader>u :UndotreeToggle<CR>
