@@ -9,7 +9,7 @@ set cursorline			" Highlight the current line
 set encoding=utf-8		" Ability to use Alt in gvim
 set foldenable
 set foldlevelstart=10
-set foldmethod=indent	" Code folding
+set foldmethod=syntax	" Code folding
 set history=100			" Number of commands to remember
 set hidden				" Hide instead of closing buffers
 set hlsearch
@@ -55,6 +55,8 @@ let g:python3_host_prog = "/usr/bin/python3"
 
 " NetRW
 let g:netrw_ftp_options = "-N /home/dzervas/.netrc -i -p"
+
+let g:markdown_folding = 1
 
 " Load vim-plug
 call plug#begin("~/.vim/bundle")
@@ -103,6 +105,7 @@ call plug#begin("~/.vim/bundle")
 	Plug 'idanarye/vim-vebugger'
 	Plug 'neomake/neomake'
 	Plug 'mattboehm/vim-unstack'
+	Plug 'fidian/hexmode'
 
 	" Syntax
 	Plug 'lepture/vim-jinja', { 'for': 'jinja' }
@@ -263,3 +266,7 @@ let g:unstack_showsigns = 0
 
 " UndoTree
 nnoremap	<leader>u :UndotreeToggle<CR>
+
+" HexMode
+let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
+let g:hexmode_autodetect = 1

@@ -1,6 +1,7 @@
 # Vim temporary files
 tags
 *.swp
+*.old
 vim/.vim/.netrwhist
 vim/.vim/bundle
 vim/.vim/spell

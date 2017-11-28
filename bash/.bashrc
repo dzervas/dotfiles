@@ -200,7 +200,7 @@ EOF
 	alias passgen='gpg --gen-random --armor 1 '
 
 	alias diff='colordiff -ub'
-	alias grep='rg --color'
+	alias grep='rg'
 	alias less='less -R'
 	alias ll='exa -Fhal --color=auto'
 	alias ls='exa -F --color=auto'
