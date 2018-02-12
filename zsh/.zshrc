@@ -2,7 +2,6 @@
 # Shopt not found workaround
 alias shopt="false"
 source ~/.bashrc
-source /etc/profile.d/vte.sh
 unalias shopt
 
 # Plugins
@@ -15,6 +14,7 @@ if [ -f /usr/share/zsh/share/antigen.zsh ]; then
 	antigen bundle zsh-users/zsh-autosuggestions
 
 	#antigen bundle RobSis/zsh-completion-generator
+	antigen apply
 fi
 
 
@@ -22,8 +22,8 @@ fi
 	setopt APPEND_HISTORY
 	setopt hist_ignore_all_dups	# Ignore duplicate commands from history
 	setopt hist_ignore_space	# Ignore commands starting with space from history
-	setopt autocd			# /etc instead of cd /etc
-	setopt prompt_subst		# Update PS1 every time
+	setopt autocd				# /etc instead of cd /etc
+	setopt prompt_subst			# Update PS1 every time
 	setopt transientrprompt		# Indicate insert/command mode
 
 # Modules
@@ -131,14 +131,14 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 		SSH_COLOR=$GREEN
 	fi
 
-	PS1='$SSH_COLOR%n${SSH_INFO} $BCYAN%c${BRED}$(sc)$NC%(!.#.>) '
+	PS1='$SSH_COLOR%n${SSH_INFO} $BCYAN%c$NC%(!.#.>) '
 	RPS1='$(git_prompt_string)$(statecnt)${NC}'
 
 # Aliases
 	#alias fuck='sudo $(fc -l -n -1)'
 	#alias duck=fuck
 
-#for f in /usr/share/**/*.zsh; do source $f; done
+for f in /usr/share/*/*.zsh; do source $f; done
 
 # Key bindings
 	bindkey -e

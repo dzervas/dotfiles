@@ -108,8 +108,11 @@ call plug#begin("~/.vim/bundle")
 	Plug 'fidian/hexmode'
 
 	" Syntax
+	Plug 'editorconfig/editorconfig-vim'
+	Plug 'leafgarland/typescript-vim'
 	Plug 'lepture/vim-jinja', { 'for': 'jinja' }
 	Plug 'fatih/vim-go', { 'for': 'go' }
+	Plug 'rust-lang/rust.vim'
 
 	" Text objects
 	Plug 'wellle/targets.vim'

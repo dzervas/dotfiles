@@ -5,33 +5,36 @@
 	NC='\e[0m'       # Text Reset
 	
 	# Regular Colors
-	BLACK='\e[30m'        # Black
-	RED='\e[31m'          # Red
-	GREEN='\e[32m'        # Green
-	YELLOW='\e[33m'       # Yellow
-	BLUE='\e[34m'         # Blue
-	PURPLE='\e[35m'       # Purple
-	CYAN='\e[36m'         # Cyan
-	WHITE='\e[37m'        # White
+	export BLACK='\e[30m'        # Black
+	export RED='\e[31m'          # Red
+	export GREEN='\e[32m'        # Green
+	export YELLOW='\e[33m'       # Yellow
+	export BLUE='\e[34m'         # Blue
+	export PURPLE='\e[35m'       # Purple
+	export CYAN='\e[36m'         # Cyan
+	export WHITE='\e[37m'        # White
 	
 	# Bold
-	BBLACK='\e[1;30m'       # Black
-	BRED='\e[1;31m'         # Red
-	BGREEN='\e[1;32m'       # Green
-	BYELLOW='\e[1;33m'      # Yellow
-	BBLUE='\e[1;34m'        # Blue
-	BPURPLE='\e[1;35m'      # Purple
-	BCYAN='\e[1;36m'        # Cyan
-	BWHITE='\e[1;37m'       # White
+	export BBLACK='\e[1;30m'       # Black
+	export BRED='\e[1;31m'         # Red
+	export BGREEN='\e[1;32m'       # Green
+	export BYELLOW='\e[1;33m'      # Yellow
+	export BBLUE='\e[1;34m'        # Blue
+	export BPURPLE='\e[1;35m'      # Purple
+	export BCYAN='\e[1;36m'        # Cyan
+	export BWHITE='\e[1;37m'       # White
 
 # Variable definitions
 	# No duplicates in history
-	export EDITOR="nvr --remote-wait-silent"
 	export ALTERNATE_EDITOR="vim"
+	export EDITOR="nvr --remote-wait-silent"
 	export HISTCONTROL="ignoredups"
-	export HOSTNAME="`hostname`"
+	export HOSTNAME=$(hostname)
+	export MANPATH="$MANPATH:$NPM_PACKAGES/share/man"
+	export NPM_PACKAGES="${HOME}/.npm-packages"
 	export PAGER="less"
-	export PATH="$HOME/.pyenv/bin:$HOME/.bin:$PATH"
+	#export PATH="$HOME/.pyenv/bin:$HOME/.bin:$PATH:$NPM_PACKAGES/bin:$PATH"
+	export PATH="$HOME/.bin:$PATH:$NPM_PACKAGES/bin"
 	export TZ="Europe/Athens"
 
 	# Check the window size after each command to update LINES and COLUMNS if necessary
@@ -42,52 +45,22 @@
 		print -Pn "\e]0;%n@%m: %~\a"
 	}
 
-	# Stack job lister, to get shit together...
-	function ++() {
-		echo "$(date +'[%d/%m %I:%M]') $@" >> ~/.stack
-	}
-
-	function +-() {
-		mv ~/.stack{.last,}
-	}
-
-	function --() {
-		cp ~/.stack{,.last}
-		head -n -1 ~/.stack.last > ~/.stack
-	}
-
 	function cm() {
-		mkdir ${1}
-		cd ${1}
+		mkdir -p "${1}"
+		cd "${1}" || return
 	}
 
 	function encthis() {
-		tar czf - $1 | gpg -c --cipher-algo aes256 -o $(basename $1)-$(date +%d.%m.%y).tgz.aes
+		tar czf - "$1" | gpg -c --cipher-algo aes256 -o "$(basename $1)-$(date +%d.%m.%y).tgz.aes"
 	}
 
 	function decthis() {
-		gpg -o- $1 | tar zxvf -
+		gpg -o- "$1" | tar zxvf -
 	}
 
 	# Beutiful way to show your NIC's IP/MAC address
 	function netstate() {
 		ifconfig | awk "/^[a-z]+[0-9]?/ || /inet/ || /ether/ { if (\$1 == \"inet\") { print \"\tIP: \" \$2 } else if (\$1 == \"inet6\") { print \"\tIPv6: \" \$2 } else if (\$1 == \"ether\") { print \"\tMAC Address: \" \$2 } else { print \"\" \$1 } }"
-	}
-
-	function sc() {
-		count=$(sl | wc -l)
-		if (( $count > 0 )); then
-			echo -en " $count"
-		else
-			return 1
-		fi
-	}
-
-	function sl() {
-		datec="\x1b[32m"
-		jobc="\x1b[00m"
-
-		sed "s/^\[.*\]/${datec}&${jobc}/" ~/.stack | tac
 	}
 
 	function bin2hex() {
@@ -96,38 +69,12 @@
 
 	function hex2bin() {
 		echo -ne 0b
-		inp=$(echo ${1} | awk '{print toupper($0)}')
+		inp=$(echo "${1}" | awk '{print toupper($0)}')
 		bc <<EOF
 ibase=16
 obase=2
 ${inp}
 EOF
-	}
-
-	# Search CommandLineFU.com via the API
-	function cmdfu(){
-		curl "http://www.commandlinefu.com/commands/matching/$@/$(echo -n $@ | openssl base64)/plaintext"
-	}
-
-	# One extract to rule them all
-	function extract () {
-		if [ -f $1 ] ; then
-			case $1 in
-				*.tar.*) tar xf $1 ;;
-				*.bz2) bunzip2 $1 ;;
-				*.gz) gunzip $1 ;;
-				*.rar) unrar x $1 ;;
-				*.tar) tar xf $1 ;;
-				*.tbz2) tar xjf $1 ;;
-				*.tgz) tar xzf $1 ;;
-				*.zip) unzip $1 ;;
-				*.Z) uncompress $1 ;;
-				*.7z) 7z x $1 ;;
-				*) echo "'$1' cannot be extracted via extract()" ;;
-			esac
-		else
-			echo "'$1' is not a valid file"
-		fi
 	}
 
 	# git status for command prompt
@@ -142,7 +89,7 @@ EOF
 
 	# git branch for command prompt
 	function gitbranch() {
-		branch=`git rev-parse --abbrev-ref HEAD 2>/dev/null`
+		branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 		[ ! -z $branch ] && echo " $branch"
 	}
 
@@ -150,7 +97,7 @@ EOF
 	function gitup() {
 		for dir in *; do
 			if [ -d "$dir/.git" ]; then
-				cd $dir
+				cd "$dir" || continue
 				echo "$dir:"
 				git pull
 				cd ..
@@ -180,17 +127,27 @@ EOF
 		fi
 	}
 
-	command_not_found_handler() {
+	function command_not_found_handler() {
 		# Looks like a vim command
 		[[ "$1" == :* ]] && {
-			return `nvr -c "${1}"`
+			return $(nvr -c "${1}")
 		}
 		# Otherwise, replicate the default error message
-		printf '(ba/z)sh: command not found: %s\n' $1 >&2
+		printf '(ba/z)sh: command not found: %s\n' "$1" >&2
 		return 127
 	}
 
-	eval "`dircolors -b`"
+	function tombo() {
+		tomb open "${1}" -k "${1}.key" -gr "${2}"
+	}
+
+	function tombc() {
+		tomb dig -s "${2}" "${1}"
+		tomb forge "${1}.key" -gr "${3}"
+		tomb lock "${1}" -k "${1}.key" -gr "${3}"
+	}
+
+	eval "$(dircolors -b)"
 
 # Alias
 	alias busy='my_file=$(find /usr/include -type f | sort -R | head -n 1); my_len=$(wc -l $my_file | awk "{print $1}"); let "r = $RANDOM % $my_len" 2>/dev/null; nvim +$r $my_file'
@@ -212,7 +169,7 @@ EOF
 
 	# Yey! Saved 2 keystrokes! :)
 	alias 8ping='ping 8.8.8.8'
-	alias cdt='cd `mktemp -d`'
+	alias cdt='cd $(mktemp -d)'
 	alias d='docker'
 	alias dc='docker-compose'
 	alias e=${EDITOR}
@@ -225,9 +182,6 @@ EOF
 	#alias mc='java -jar .minecraft/minecraft.jar'
 	alias py='python'
 	alias py2='python2'
-	alias s='sl'
-	alias ss='import /tmp/screenshot.jpg'
-	alias ssall='import -window root /tmp/screenshot.jpg'
 	alias t='todir'
 	alias v='nvr --remote-silent'
 	alias vt='v .todir'
@@ -237,19 +191,8 @@ EOF
 	alias :e='v'
 	alias :q='exit'
 
-	# Android alias
-	if [[ "`uname -m`" == "armv7l" ]]; then
-		# Start/Stop android's display manager
-		alias stopx='setprop ctl.stop media && setprop ctl.stop zygote && \
-			sleep 3 && setprop ctl.stop bootanim'
-		alias startx='setprop ctl.start zygote && setprop ctl.start media '
-
-		# Fix vim's size issues on such a small screen
-		alias fixterm='stty rows 81 cols 320'
-	fi
-
 # Enable completions
-	if [[ `shopt` == `false` ]]; then
+	if [[ $(shopt) == $(false) ]]; then
 		return
 	fi
 
@@ -261,12 +204,14 @@ EOF
 	# "You are SSHing" reminder (shutdown the server maybe?)
 	if [ -n "$SSH_CLIENT" ]; then
 		SSH_COLOR=$RED
-		export SSH_INFO="@$RED$(uname -n)"
+		SSH_INFO="@$RED$(uname -n)"
+
+		export SSH_INFO
 	else
 		SSH_COLOR=$GREEN
 	fi
 
-	export PS1="${SSH_COLOR}\u${SSH_INFO} \$(statecnt && echo -n ' ')${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${BRED}\$(sc)${RED}\$ ${NC}"
+	export PS1="${SSH_COLOR}\u${SSH_INFO} \$(statecnt && echo -n ' ')${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${RED}\$ ${NC}"
 
 	# Android env vars
 	export ANT_ROOT=/usr/bin/
@@ -281,7 +226,7 @@ EOF
 	export GOBIN="${GOROOT}/bin"
 	export PATH="${PATH}:${GOBIN}"
 
-	eval "$(pyenv init -)"
-	eval "$(pyenv virtualenv-init -)"
+	#eval "$(pyenv init -)"
+	#eval "$(pyenv virtualenv-init -)"
 	#eval "$(thefuck --alias)"
-alias open=xdg-open
+	alias open=xdg-open
