@@ -154,6 +154,7 @@ EOF
 	alias docker_rm='docker rm $(docker ps --no-trunc -aqf status=exited)'
 	alias docker_rmi='docker rmi $(docker images --no-trunc -qf dangling=true)'
 	alias webserver='python2 -m SimpleHTTPServer'
+	alias open='xdg-open'
 	alias passgen='gpg --gen-random --armor 1 '
 
 	alias diff='colordiff -ub'
@@ -192,10 +193,6 @@ EOF
 	alias :q='exit'
 
 # Enable completions
-	if [[ $(shopt) == $(false) ]]; then
-		return
-	fi
-
 	if [ -f /etc/bash_completion ]; then
 		. /etc/bash_completion
 	fi
@@ -229,4 +226,3 @@ EOF
 	#eval "$(pyenv init -)"
 	#eval "$(pyenv virtualenv-init -)"
 	#eval "$(thefuck --alias)"
-	alias open=xdg-open

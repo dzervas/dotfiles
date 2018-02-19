@@ -120,6 +120,9 @@ call plug#begin("~/.vim/bundle")
 		Plug 'glts/vim-textobj-comment'
 		Plug 'kana/vim-textobj-function'
 		Plug 'kana/vim-textobj-indent'
+
+	" GUI plugins
+	Plug 'dzhou121/gonvim-fuzzy'
 call plug#end()
 
 " Syntax highlighting
