@@ -7,15 +7,17 @@ unalias shopt
 # Plugins
 if [ -f /usr/share/zsh/share/antigen.zsh ]; then
 	source /usr/share/zsh/share/antigen.zsh
-
-	antigen bundle hlissner/zsh-autopair
-	antigen bundle jreese/zsh-titles
-	antigen bundle zdharma/fast-syntax-highlighting
-	antigen bundle zsh-users/zsh-autosuggestions
-
-	#antigen bundle RobSis/zsh-completion-generator
-	antigen apply
+elif [ -f /usr/local/share/antigen/antigen.zsh ]; then
+	source /usr/local/share/antigen/antigen.zsh
 fi
+
+antigen bundle hlissner/zsh-autopair
+antigen bundle jreese/zsh-titles
+antigen bundle zdharma/fast-syntax-highlighting
+antigen bundle zsh-users/zsh-autosuggestions
+
+#antigen bundle RobSis/zsh-completion-generator
+antigen apply
 
 
 # Settings
@@ -134,11 +136,7 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	PS1='$SSH_COLOR%n${SSH_INFO} $BCYAN%c$NC%(!.#.>) '
 	RPS1='$(git_prompt_string)$(statecnt)${NC}'
 
-# Aliases
-	#alias fuck='sudo $(fc -l -n -1)'
-	#alias duck=fuck
-
-for f in /usr/share/*/*.zsh; do source $f; done
+for f in /usr/share/*/*.zsh; do source $f; done 2>/dev/null
 
 # Key bindings
 	bindkey -e

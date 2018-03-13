@@ -22,6 +22,6 @@
 [user]
 	name = Dimitris Zervas
 	email = dzervas@dzervas.gr
-	signingkey = 528636D3
+	signingkey = 476C99DCB41F2DF9F780AECC48208C493D50D69E
 [web]
-	browser = chromium
+	browser = firefox

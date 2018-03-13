@@ -147,7 +147,7 @@ EOF
 		tomb lock "${1}" -k "${1}.key" -gr "${3}"
 	}
 
-	eval "$(dircolors -b)"
+	eval "$(dircolors -b 2>/dev/null || gdircolors -b)"
 
 # Alias
 	alias busy='my_file=$(find /usr/include -type f | sort -R | head -n 1); my_len=$(wc -l $my_file | awk "{print $1}"); let "r = $RANDOM % $my_len" 2>/dev/null; nvim +$r $my_file'
@@ -160,7 +160,7 @@ EOF
 	alias diff='colordiff -ub'
 	alias grep='rg'
 	alias less='less -R'
-	alias ll='exa -Fhal --color=auto'
+	alias ll='exa -Fhalg --color=auto'
 	alias ls='exa -F --color=auto'
 	alias man='LC_ALL=C LANG=C man'
 	# Come on mutt, we're on 2015...
@@ -217,11 +217,7 @@ EOF
 	export NDK_ROOT=~/.android/ndk
 
 	# GoLang env vars
-	export GOOS=linux
-	export GOARCH=amd64
-	export GOROOT="${HOME}/go"
-	export GOBIN="${GOROOT}/bin"
-	export PATH="${PATH}:${GOBIN}"
+	export PATH="${PATH}:~/go/bin"
 
 	#eval "$(pyenv init -)"
 	#eval "$(pyenv virtualenv-init -)"

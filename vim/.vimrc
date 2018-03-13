@@ -53,6 +53,10 @@ let highlight_sedtabs = 1
 let g:python_host_prog = "/usr/bin/python2"
 let g:python3_host_prog = "/usr/bin/python3"
 
+if empty(glob(g:python3_host_prog))
+	let g:python3_host_prog = "/usr/local/bin/python3"
+endif
+
 " NetRW
 let g:netrw_ftp_options = "-N /home/dzervas/.netrc -i -p"
 
@@ -122,7 +126,14 @@ call plug#begin("~/.vim/bundle")
 		Plug 'kana/vim-textobj-indent'
 
 	" GUI plugins
+	Plug 'equalsraf/neovim-gui-shim'
 	Plug 'dzhou121/gonvim-fuzzy'
+
+	" Vim8 compatibility
+	if !has("nvim")
+		Plug 'roxma/nvim-yarp'
+		Plug 'roxma/vim-hug-neovim-rpc'
+	endif
 call plug#end()
 
 " Syntax highlighting
@@ -136,12 +147,14 @@ au BufRead,BufNewFile *.inc set filetype=php
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 
 " Auto-update ctags
-au BufReadPost,BufWritePost *.py,*.c,*.cpp,*.h,*.java silent! !eval 'ctags --fields=afmikKlnsStz --extra=fq -R -o tags' &
+au BufReadPost,BufWritePost *.py,*.c,*.cpp,*.h,*.java silent! !eval 'ctags --fields=afmikKlnsStz --extra=fq -R -o tags 2>/dev/null' &
 
 " Terminal mode config
-autocmd TermOpen * setlocal statusline=%{b:term_title}
-autocmd BufWinEnter,WinEnter term://* startinsert
-autocmd BufLeave term://* stopinsert
+if has("nvim")
+	autocmd TermOpen * setlocal statusline=%{b:term_title}
+	autocmd BufWinEnter,WinEnter term://* startinsert
+	autocmd BufLeave term://* stopinsert
+endif
 
 " Basic mappings
 " Completion
@@ -186,28 +199,30 @@ vnoremap <C-Tab>		<<
 "noremap <C-S-c>			"+y
 "noremap <C-S-c>			"+p
 
-tmap <A-t>			<C-\><C-n><A-t>
-tmap <A-w>			<C-\><C-n><A-w>
-tmap <A-S-w>		<C-\><C-n><A-S-w>
-tmap <A-S-left>		<C-\><C-n><A-S-left>
-tmap <A-S-right>	<C-\><C-n><A-S-right>
+if has("nvim")
+	tmap <A-t>			<C-\><C-n><A-t>
+	tmap <A-w>			<C-\><C-n><A-w>
+	tmap <A-S-w>		<C-\><C-n><A-S-w>
+	tmap <A-S-left>		<C-\><C-n><A-S-left>
+	tmap <A-S-right>	<C-\><C-n><A-S-right>
 
-tmap <A-c>			<C-\><C-n><A-c>
-tmap <A-left>		<C-\><C-n><A-left>
-tmap <A-right>		<C-\><C-n><A-right>
+	tmap <A-c>			<C-\><C-n><A-c>
+	tmap <A-left>		<C-\><C-n><A-left>
+	tmap <A-right>		<C-\><C-n><A-right>
 
-tmap <A-S-c>		<C-\><C-n><A-S-c>
-tmap <A-Tab>		<C-\><C-n><A-Tab>
-tmap <A-up>			<C-\><C-n><A-up>
-tmap <A-down>		<C-\><C-n><A-down>
-tmap <A-f>			<C-\><C-n><A-f>
-tmap <A-return>		<C-\><C-n><A-return>
-tmap <A-S-return>	<C-\><C-n><A-S-return>
+	tmap <A-S-c>		<C-\><C-n><A-S-c>
+	tmap <A-Tab>		<C-\><C-n><A-Tab>
+	tmap <A-up>			<C-\><C-n><A-up>
+	tmap <A-down>		<C-\><C-n><A-down>
+	tmap <A-f>			<C-\><C-n><A-f>
+	tmap <A-return>		<C-\><C-n><A-return>
+	tmap <A-S-return>	<C-\><C-n><A-S-return>
 
-tmap <A-Esc>		<C-\><C-n>
+	tmap <A-Esc>		<C-\><C-n>
 
-"tmap <C-S-c>		<C-\><C-n><C-S-c>
-"tmap <C-S-v>		<C-\><C-n><C-S-v>
+	"tmap <C-S-c>		<C-\><C-n><C-S-c>
+	"tmap <C-S-v>		<C-\><C-n><C-S-v>
+endif
 
 noremap <leader>f		:Lexplore<CR>
 
@@ -276,3 +291,8 @@ nnoremap	<leader>u :UndotreeToggle<CR>
 " HexMode
 let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
 let g:hexmode_autodetect = 1
+
+" GitGutter
+if !has("nvim")
+	let g:gitgutter_async = 0
+endif
