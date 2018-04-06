@@ -169,7 +169,7 @@ EOF
 	alias ssh='TERM=xterm-256color ssh'
 
 	# Yey! Saved 2 keystrokes! :)
-	alias 8ping='ping 8.8.8.8'
+	alias 1ping='ping 1.1.1.1'
 	alias cdt='cd $(mktemp -d)'
 	alias d='docker'
 	alias dc='docker-compose'
@@ -182,7 +182,8 @@ EOF
 	alias n='echo -e "\a"; mpg123 -q ~/Music/notification.mp3'
 	#alias mc='java -jar .minecraft/minecraft.jar'
 	alias py='python'
-	alias py2='python2'
+	alias py2='python2.7'
+	alias py3='python3.6'
 	alias t='todir'
 	alias v='nvr --remote-silent'
 	alias vt='v .todir'

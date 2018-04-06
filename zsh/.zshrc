@@ -1,3 +1,7 @@
+if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "/etc/zprofile" ]]; then
+  source "/etc/zprofile"
+fi
+
 # Load .bashrc
 # Shopt not found workaround
 alias shopt="false"

@@ -15,6 +15,7 @@ set hidden				" Hide instead of closing buffers
 set hlsearch
 set ignorecase
 set incsearch
+set inccommand=nosplit	" THAT's IT! It took them 37 years and 1 fork, but they did it...
 set list
 set listchars=tab:>_,trail:•,extends:#,nbsp:¶
 set mouse=nvc			" By default mouse is for vim. F2 to cycle between
@@ -57,6 +58,10 @@ if empty(glob(g:python3_host_prog))
 	let g:python3_host_prog = "/usr/local/bin/python3"
 endif
 
+if empty(glob(g:python_host_prog))
+	let g:python_host_prog = "/usr/local/bin/python2.7"
+endif
+
 " NetRW
 let g:netrw_ftp_options = "-N /home/dzervas/.netrc -i -p"
 
@@ -78,6 +83,7 @@ call plug#begin("~/.vim/bundle")
 	Plug 'vim-airline/vim-airline'
 	Plug 'vim-airline/vim-airline-themes'
 	Plug 'tpope/vim-vinegar'
+	Plug 'junegunn/fzf'
 
 	" The one and the only...
 	Plug 'tomasr/molokai'
@@ -95,6 +101,10 @@ call plug#begin("~/.vim/bundle")
 	Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 		Plug 'Shougo/echodoc.vim'
 		Plug 'Shougo/neco-syntax'
+		Plug 'autozimu/LanguageClient-neovim', {
+					\ 'branch': 'next',
+					\ 'do': 'bash install.sh',
+					\ }
 		Plug 'Shougo/neco-vim', { 'for': 'vim' }
 		Plug 'zchee/deoplete-clang', { 'for': ['c', 'c++'] }
 		Plug 'zchee/deoplete-go', { 'for': 'go', 'do': 'make'}
@@ -191,13 +201,13 @@ noremap <A-S-return>	:sp<CR>
 
 nnoremap <Tab>			==
 nnoremap <S-Tab>		>>
-nnoremap <C-Tab>		<<
+nnoremap <A-Tab>		<<
 vnoremap <Tab>			==
 vnoremap <S-Tab>		>>
-vnoremap <C-Tab>		<<
+vnoremap <A-Tab>		<<
 
-"noremap <C-S-c>			"+y
-"noremap <C-S-c>			"+p
+"noremap <A-S-c>			"+y
+"noremap <A-S-c>			"+p
 
 if has("nvim")
 	tmap <A-t>			<C-\><C-n><A-t>
@@ -220,8 +230,8 @@ if has("nvim")
 
 	tmap <A-Esc>		<C-\><C-n>
 
-	"tmap <C-S-c>		<C-\><C-n><C-S-c>
-	"tmap <C-S-v>		<C-\><C-n><C-S-v>
+	"tmap <A-S-c>		<C-\><C-n><C-S-c>
+	"tmap <A-S-v>		<C-\><C-n><C-S-v>
 endif
 
 noremap <leader>f		:Lexplore<CR>
@@ -264,10 +274,10 @@ autocmd! BufReadPost,BufWritePost * Neomake
 
 " Move
 let g:move_map_keys = 0
-nmap	<C-up>		<Plug>MoveLineUp
-nmap	<C-down>	<Plug>MoveLineDown
-vmap	<C-up>		<Plug>MoveBlockUp
-vmap	<C-down>	<Plug>MoveBlockDown
+"nmap	<C-up>		<Plug>MoveLineUp
+"nmap	<C-down>	<Plug>MoveLineDown
+"vmap	<C-up>		<Plug>MoveBlockUp
+"vmap	<C-down>	<Plug>MoveBlockDown
 
 " Vebugger
 " Mapped: b, B, c, e, E, i, o, O, r, R, t, x, X

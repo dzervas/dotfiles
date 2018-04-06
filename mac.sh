@@ -14,9 +14,10 @@ echo "Installing shit..."
 
 brew update
 brew upgrade
-brew tap caskroom/fonts
-brew cask install firefox gpg-suite font-iosevka
+brew tap caskroom/fonts caskroom/drivers
+brew cask install firefox gpg-suite font-iosevka iterm2
 brew install neovim stow pass wget exa ripgrep git python3 npm pyenv pyenv-virtualenv antigen jq coreutils mtr
+# For Arduino: brew cask install arduino ftdi-vcp-driver wch-ch34x-usb-serial-driver
 
 chsh -s $(which zsh)
 
