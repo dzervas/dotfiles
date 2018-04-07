@@ -1,1 +1,1 @@
-/Users/dzervas/.vimrc
+../.vimrc

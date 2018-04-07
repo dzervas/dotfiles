@@ -1,0 +1,46 @@
+general {
+	colors = true
+	interval = 5
+}
+
+#order += "ipv6"
+#order += "disk /"
+order += "wireless _first_"
+order += "ethernet _first_"
+order += "load"
+order += "battery all"
+order += "tztime local"
+
+wireless _first_ {
+	format_up = "W: (%quality at %essid) %ip"
+	format_down = "W: down"
+}
+
+ethernet _first_ {
+	format_up = "E: %ip"
+	format_down = "E: down"
+}
+
+battery all {
+	format = "%status%percentage %remaining"
+	format_down = "No battery"
+	status_chr = "⚡"
+	status_bat = "🔋"
+	status_unk = "?"
+	status_full = "☻"
+	low_threshold = 10
+	hide_seconds = true
+	integer_battery_capacity = true
+}
+
+tztime local {
+	format = "%d/%m %I:%M"
+}
+
+load {
+	format = "%1min"
+}
+
+disk "/" {
+	format = "%avail"
+}

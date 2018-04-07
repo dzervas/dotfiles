@@ -1,0 +1,13 @@
+# Position: /etc/systemd/system/suspend@.service
+[Unit]
+Description=Lock on suspend
+Before=suspend.target
+
+[Service]
+Type=forking
+User=%I
+ExecStart=/usr/local/bin/swaylock-civilized
+ExecStartPost=/usr/local/sleep 1
+
+[Install]
+WantedBy=sleep.target

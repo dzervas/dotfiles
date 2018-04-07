@@ -1,5 +1,11 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
+if [[ $(tty) == "/dev/tty1" ]]; then
+	export XKB_DEFAULT_LAYOUT=us,gr
+	export XKB_DEFAULT_OPTIONS=caps:escape,grp:win_space_toggle
+	sway
+	exit 0
+fi
 
 # Colors
 	NC='\e[0m'       # Text Reset
@@ -188,6 +194,7 @@ EOF
 	alias v='nvr --remote-silent'
 	alias vt='v .todir'
 	alias vs='v ~/.stack'
+	alias sv='sudoedit'
 
 	# Muscle memory...
 	alias :e='v'
