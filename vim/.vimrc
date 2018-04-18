@@ -84,6 +84,7 @@ call plug#begin("~/.vim/bundle")
 	Plug 'vim-airline/vim-airline-themes'
 	Plug 'tpope/vim-vinegar'
 	Plug 'junegunn/fzf'
+	Plug 'numkil/ag.nvim'
 
 	" The one and the only...
 	Plug 'tomasr/molokai'
@@ -162,7 +163,7 @@ au BufReadPost,BufWritePost *.py,*.c,*.cpp,*.h,*.java silent! !eval 'ctags --fie
 " Terminal mode config
 if has("nvim")
 	autocmd TermOpen * setlocal statusline=%{b:term_title}
-	autocmd BufWinEnter,WinEnter term://* startinsert
+	autocmd BufWinEnter,WinEnter term://* startinsert | nohlsearch
 	autocmd BufLeave term://* stopinsert
 endif
 
@@ -173,7 +174,7 @@ inoremap <silent><expr> <C-Tab> pumvisible() ? '<C-p>' : '<Tab>'
 inoremap <silent><expr> <CR> pumvisible() ? '<C-y>' : '<CR>'
 
 " Unhighlight search
-noremap <C-l>			:noh<CR>
+noremap <C-l>			:nohlsearch<CR>
 
 " Don't forget sudo ever again!
 cnoremap w!				w !sudo tee % >/dev/null
@@ -234,7 +235,7 @@ if has("nvim")
 	"tmap <A-S-v>		<C-\><C-n><C-S-v>
 endif
 
-noremap <leader>f		:Lexplore<CR>
+noremap <leader>f		:15Lexplore<CR>
 
 " Airline
 let g:airline_powerline_fonts = 1
