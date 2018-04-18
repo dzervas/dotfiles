@@ -11,6 +11,7 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 
 ### Input configuration
 input "1739:30383:DLL075B:01_06CB:76AF_To" {
+   accel_profile flat
    dwt enabled
    tap enabled
    natural_scroll enabled
@@ -32,6 +33,8 @@ bindsym $mod+Up focus next
 bindsym $mod+Down focus prev
 bindsym $mod+Right workspace next_on_output
 bindsym $mod+Left workspace prev_on_output
+# TODO: Fix this
+bindsym $mod+Tab workspace prev_on_output
 # Move focus to the parent container
 bindsym $mod+a focus parent
 
@@ -101,10 +104,10 @@ bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 
 # Resizing containers:
 mode "resize" {
-	bindsym Left resize grow width 10 px or 10 ppt
-	bindsym Down resize shrink height 10 px or 10 ppt
-	bindsym Up resize grow height 10 px or 10 ppt
-	bindsym Right resize shrink width 10 px or 10 ppt
+	bindsym Left resize grow width 5 px or 5 ppt
+	bindsym Down resize shrink height 5 px or 5 ppt
+	bindsym Up resize grow height 5 px or 5 ppt
+	bindsym Right resize shrink width 5 px or 5 ppt
 
 	# return to default mode
 	bindsym Return mode "default"
