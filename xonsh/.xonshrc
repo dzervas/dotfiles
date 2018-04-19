@@ -1,0 +1,62 @@
+from datetime import datetime
+from prompt_toolkit.keys import Keys
+#from xonsh.base_shell import print_color
+from xonsh.prompt.gitstatus import gitstatus_prompt
+import builtins
+import re
+
+def gitprompt():
+	if gitstatus_prompt():
+		return "±{BOLD_GREEN}[" + gitstatus_prompt() + "{BOLD_GREEN}]"
+
+def jobsprompt():
+	jobs = $(jobs).splitlines()
+	jobs = len(jobs) - 1
+
+	if jobs > 0:
+		return "{{BOLD_GREEN}}[{{INTENSE_CYAN}}J{}{{BOLD_GREEN}}]".format(jobs)
+
+def mkcd(args, stdin=None):
+	mkdir @(args[0])
+	cd @(args[0])
+
+$PROMPT_FIELDS["git"] = gitprompt
+$PROMPT_FIELDS["jobs"] = jobsprompt
+
+# Coloured man page support
+$LESS_TERMCAP_mb = "\033[01;31m"     # begin blinking
+$LESS_TERMCAP_md = "\033[01;31m"     # begin bold
+$LESS_TERMCAP_me = "\033[0m"         # end mode
+$LESS_TERMCAP_so = "\033[01;44;36m"  # begin standout-mode (bottom of screen)
+$LESS_TERMCAP_se = "\033[0m"         # end standout-mode
+$LESS_TERMCAP_us = "\033[00;36m"     # begin underline
+$LESS_TERMCAP_ue = "\033[0m"         # end underline
+
+$FZF_HISTORY_BINDING = Keys.ControlR
+
+aliases["1ping"]="ping 1.1.1.1"
+aliases["cdt"]="cd $(mktemp -d)"
+aliases["d"]="docker"
+aliases["dc"]="docker-compose"
+aliases["diff"]="colordiff -ub"
+aliases["docker_rm"]="docker rm $(docker ps --no-trunc -aqf status=exited)"
+aliases["docker_rmi"]="docker rmi $(docker images --no-trunc -qf dangling=true)"
+aliases["e"]="${EDITOR}"
+aliases["g"]="git"
+aliases["grep"]="rg"
+aliases["less"]="less -R"
+aliases["l"]="exa --color=auto"
+aliases["ll"]="ls -Fhalg --color=auto"
+aliases["ls"]="exa -F --color=auto"
+aliases["mc"]=mkcd
+aliases["pgrep"]="pgrep -af"
+aliases["passgen"]="gpg --gen-random --armor 1 "
+aliases["pgrep"]="pgrep -a"
+aliases["py"]="python"
+aliases["py2"]="python2"
+aliases["py3"]="python3"
+aliases["sv"]="sudoedit"
+aliases["v"]="nvr --remote-silent"
+aliases["webserver"]="python2 -m SimpleHTTPServer"
+aliases[":q"]="exit"
+aliases[";q"]="exit"

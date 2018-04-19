@@ -190,10 +190,7 @@ EOF
 	alias py='python'
 	alias py2='python2.7'
 	alias py3='python3.6'
-	alias t='todir'
 	alias v='nvr --remote-silent'
-	alias vt='v .todir'
-	alias vs='v ~/.stack'
 	alias sv='sudoedit'
 
 	# Muscle memory...

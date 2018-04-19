@@ -1,0 +1,38 @@
+{
+	"env": {
+		"ANT_ROOT": "/usr/bin/",
+		"AUTO_CD": true,
+		"CASE_SENSITIVE_COMPLETIONS": false,
+		"EDITOR": "nvim",
+		"IGNOREEOF": false,
+		"PAGER": "less",
+		"PATH": [
+			"/usr/local/Cellar/pyenv-virtualenv/1.1.1/shims",
+			"~/.pyenv/shims",
+			"~/.bin",
+			"/usr/local/bin",
+			"/usr/bin",
+			"/bin",
+			"/usr/sbin",
+			"/sbin",
+			"/usr/local/MacGPG2/bin",
+			"~/go/bin",
+			"~/.npm-packages/bin"
+		],
+		"PROMPT": "{vte_new_tab_cwd}{GREEN}{user} {BOLD_CYAN}{short_cwd}{NO_COLOR}> ",
+		"RIGHT_PROMPT": "{git}{jobs}",
+		"SHELL_TYPE": "prompt_toolkit",
+		"TITLE": "{current_job}{user}@{hostname}: {cwd}",
+		"TZ": "Europe/Athens",
+		"XONSH_COLOR_STYLE": "monokai"
+	},
+	"xontribs": [
+		"avox",
+		"bashisms",
+		"docker_tabcomplete",
+		"fzf-widgets",
+		"jedi",
+		"vox",
+		"vox_tabcomplete"
+	]
+}
