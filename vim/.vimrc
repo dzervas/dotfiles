@@ -275,10 +275,10 @@ autocmd! BufReadPost,BufWritePost * Neomake
 
 " Move
 let g:move_map_keys = 0
-"nmap	<C-up>		<Plug>MoveLineUp
-"nmap	<C-down>	<Plug>MoveLineDown
-"vmap	<C-up>		<Plug>MoveBlockUp
-"vmap	<C-down>	<Plug>MoveBlockDown
+nmap	<C-up>		<Plug>MoveLineUp
+nmap	<C-down>	<Plug>MoveLineDown
+vmap	<C-up>		<Plug>MoveBlockUp
+vmap	<C-down>	<Plug>MoveBlockDown
 
 " Vebugger
 " Mapped: b, B, c, e, E, i, o, O, r, R, t, x, X
