@@ -84,7 +84,6 @@ call plug#begin("~/.vim/bundle")
 	Plug 'vim-airline/vim-airline-themes'
 	Plug 'tpope/vim-vinegar'
 	Plug 'junegunn/fzf'
-	Plug 'numkil/ag.nvim'
 
 	" The one and the only...
 	Plug 'tomasr/molokai'
@@ -192,7 +191,7 @@ noremap <A-c>			:Bdelete<CR>
 noremap <A-left>		:bp<CR>
 noremap <A-right>		:bn<CR>
 
-noremap <A-S-c>			:close<CR>
+noremap <A-backspace>	:close<CR>
 noremap <A-Tab>			<C-W><C-W>
 noremap <A-up>			<C-W>l
 noremap <A-down>		<C-W>h
