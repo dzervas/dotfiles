@@ -14,9 +14,9 @@ echo "Installing shit..."
 
 brew update
 brew upgrade
-brew tap caskroom/fonts caskroom/drivers
-brew cask install firefox gpg-suite font-iosevka iterm2
-brew install neovim stow pass wget exa ripgrep git python3 npm pyenv pyenv-virtualenv antigen jq coreutils mtr
+brew tap caskroom/cask caskroom/fonts caskroom/drivers
+brew cask install firefox gpg-suite font-iosevka iterm2 karabiner-elements
+brew install neovim stow pass wget exa ripgrep git python3 npm pyenv pyenv-virtualenv antigen jq coreutils mtr ag xonsh
 # For Arduino: brew cask install arduino ftdi-vcp-driver wch-ch34x-usb-serial-driver
 
 chsh -s $(which zsh)
@@ -27,7 +27,8 @@ sudo python /get-pip.py
 
 echo "Installing dotfiles"
 
-git clone git@github.com:dzervas/dotfiles Lab/dotfiles
+mkdir Lab
+git clone https://github.com/dzervas/dotfiles Lab/dotfiles
 stow -d Lab/dotfiles -t . -S bash git vim zsh
 ln -s $HOME/.vimrc $HOME/.vim/init.vim
 ln -s $HOME/Lab/dotfiles/vim/.vim $HOME/.config/nvim

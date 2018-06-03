@@ -1,5 +1,10 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/"))
+
+;; Damn you OS X
+(require 'gnutls)
+(add-to-list 'gnutls-trustfiles "/usr/local/etc/openssl/cert.pem")
 
 (setq package-enable-at-startup nil)
 

@@ -181,7 +181,7 @@ EOF
 	alias dc='docker-compose'
 	alias e=${EDITOR}
 	alias g='git'
-	alias jc='curl -si -H "Content-Type: application/json"'
+	alias jc='curl -i -H "Content-Type: application/json"'
 	alias ipy='ipython'
 	alias l='exa --color=auto'
 	alias mc='cm'
