@@ -222,7 +222,8 @@ EOF
 	export NDK_ROOT=~/.android/ndk
 
 	# GoLang env vars
-	export PATH="${PATH}:~/go/bin"
+	export GOPATH="$HOME/go"
+	export PATH="${PATH}:${GOPATH}/bin"
 
 	#eval "$(pyenv init -)"
 	#eval "$(pyenv virtualenv-init -)"

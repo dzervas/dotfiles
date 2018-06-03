@@ -22,14 +22,14 @@
 (global-set-key (kbd "M-t") 'elscreen-create)
 (global-set-key (kbd "M-w") 'elscreen-kill)
 (global-set-key (kbd "M-W") 'elscreen-kill-others)
-(global-set-key (kbd "M-S-<left>") 'elscreen-next)
-(global-set-key (kbd "M-S-<right>") 'elscreen-previous)
+(global-set-key (kbd "M-S-<left>") 'elscreen-previous)
+(global-set-key (kbd "M-S-<right>") 'elscreen-next)
 
 ;; Buffers
 ;; TODO: Manage special buffers, per window, sort/order them on demand
 (global-set-key (kbd "M-c") 'kill-this-buffer)
-(global-set-key (kbd "M-<left>") 'next-buffer)
-(global-set-key (kbd "M-<right>") 'previous-buffer)
+(global-set-key (kbd "M-<left>") 'previous-buffer)
+(global-set-key (kbd "M-<right>") 'next-buffer)
 
 ;; Windows
 (global-set-key (kbd "M-RET") 'split-window-right)
@@ -42,8 +42,8 @@
 (evil-leader/set-key "f" 'speedbar-get-focus)
 
 (with-eval-after-load 'evil-maps
-    (define-key evil-normal-state-map "//" 'comment-line)
-    (define-key evil-visual-state-map "//" 'comment-dwim)
+    (define-key evil-normal-state-map (kbd "M-/") 'comment-line)
+    (define-key evil-visual-state-map (kbd "M-/") 'comment-dwim)
 )
 
 ;; Internal functions
@@ -83,7 +83,7 @@
  '(initial-frame-alist (quote ((fullscreen . maximized))))
  '(package-selected-packages
    (quote
-    (evil-mc company company-jedi molokai-theme linum-relative flycheck fill-column-indicator evil-visual-mark-mode evil-smartparens evil-matchit ecb airline-themes))))
+    (evil-escape powerline molokai-theme linum-relative imenu-list git-gutter-fringe+ flycheck fill-column-indicator evil-surround evil-smartparens evil-mc evil-matchit evil-leader elscreen dtrt-indent company-tern company-quickhelp company-jedi company-irony company-go))))
 
 
 ;; Package Settings
@@ -93,7 +93,9 @@
 
 ;; Molokai
 (require-package 'molokai-theme)
+(add-to-list 'custom-theme-load-path "~/.emacs.d/molokai-overrides-theme.el")
 (load-theme 'molokai t)
+(load-theme 'molokai-overrides t)
 (setq molokai-theme-kit t)
 (setq font-lock-maximum-decoration t)
 (setq custom-safe-themes t)
@@ -118,7 +120,7 @@
 
 ;; Relative line numbers
 (require-package 'linum-relative)
-(global-linum-mode t)
+(linum-on)
 (linum-relative-mode t)
 
 ;; Powerline
@@ -138,6 +140,10 @@
 ;; Emacs Code Browser
 ;; (require-package 'ecb)
 
+;; Evil Escape everything
+(require-package 'evil-escape)
+(evil-escape-mode t)
+
 ;; Advanced blocks
 (require-package 'evil-matchit)
 (global-evil-matchit-mode t)
@@ -149,6 +155,8 @@
 (global-set-key (kbd "C-n") 'evil-mc-make-and-goto-next-match)
 (global-set-key (kbd "C-p") 'evil-mc-make-and-goto-prev-match)
 (global-set-key (kbd "C-x") 'evil-mc-skip-and-goto-next-match)
+(add-hook 'evil-mc-mode
+  (local-set-key [escape] 'evil-mc-undo-all-cursors))
 
 ;; SmartParens
 (require-package 'evil-smartparens)
@@ -161,45 +169,69 @@
 (global-evil-surround-mode t)
 
 ;; Column rule
-(require-package 'fill-column-indicator)
-(setq-default fill-column 80)
-(add-hook 'prog-mode-hook 'fci-mode)
+; TODO: Incompatibility with company mode
+;(require-package 'fill-column-indicator)
+;(setq-default fill-column 80)
+;(add-hook 'prog-mode-hook 'fci-mode)
+
+;; Highlight Characters
+; TODO: Fix only trailing
+; TODO: Fix character indicators
+(load "~/.emacs.d/highlight-chars")
+(require 'highlight-chars)
+(hc-toggle-highlight-tabs)
+(hc-toggle-highlight-trailing-whitespace)
+;(font-lock-add-keywords nil `(("[\240\040\t]+$" (0 'hc-trailing-whitespace ,hc-font-lock-override))) 'APPEND)
+(setq hc-trailing-whitespace '((t (:strike-through))))
+(setq hc-tab '((t (:background "#888888"))))
 
 
 ;; Autocompletion
 
 ;; Company auto-completion
-; TODO: Auto completion
 (require-package 'company)
 (setq company-tooltip-limit 20)
 (setq company-idle-delay 0)
 (setq company-echo-delay 0)
+(setq company-auto-complete t)
+
 (add-hook 'after-init-hook 'global-company-mode)
-;(add-hook 'python-mode-hook
-  ;(with-eval-after-load 'company
-    ;(add-to-list 'company-backends 'company-jedi)))
+;(add-hook 'company-completion-started-hook '(fci-mode -1))
+;(add-hook 'company-completion-finished-hook '(fci-mode 1))
+;(add-hook 'company-completion-cancelled-hook '(fci-mode 1))
 
 ;; Company Quickhelp
-;(require-package 'company-quickhelp)
-;(company-quickhelp-mode)
+(require-package 'company-quickhelp)
+(company-quickhelp-mode)
+(setq company-quickhelp-delay 0)
 
 ;; Company Languages
 
+(add-to-list 'company-backends 'company-capf)
+
 (require-package 'company-go)       ; Go. Needs go get -u github.com/nsf/gocode
+(setq company-go-gocode-command "~/go/bin/gocode")
 (add-to-list 'company-backends 'company-go)
+
 (require-package 'jedi-core)
-(require-package 'company-jedi)     ; Python
+(require-package 'company-jedi)     ; Python. Needs M-x jedi:install-server
 (add-to-list 'company-backends 'company-jedi)
+
 (require-package 'company-irony)    ; C/C++/ObjC/ObjC++
 (add-to-list 'company-backends 'company-irony)
+
 (require-package 'company-tern)     ; JS
 (add-to-list 'company-backends 'company-tern)
+
 ;(require-package 'company-web-html) ; HTML
 ;(add-to-list 'company-backends 'company-web-html)
+
 ;(require-package 'company-web-jade) ; Jade
 ;(add-to-list 'company-backends 'company-web-jade)
+
 ;(require-package 'company-web-slim) ; Slim
 ;(add-to-list 'company-backends 'company-web-slim)
+
 ;(require-package 'php-extras)       ; PHP
 ;(add-to-list 'company-backends 'php-extras)
 
@@ -224,31 +256,6 @@
 
 
 ;; Syntax
-
-
-
-;; Escape madness
-;; esc quits
-(defun minibuffer-keyboard-quit ()
-  "Abort recursive edit.
-In Delete Selection mode, if the mark is active, just deactivate it;
-then it takes a second \\[keyboard-quit] to abort the minibuffer."
-  (interactive)
-  (if (and delete-selection-mode transient-mark-mode mark-active)
-      (setq deactivate-mark  t)
-    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-    (abort-recursive-edit)))
-(define-key evil-normal-state-map [escape] 'keyboard-quit)
-(define-key evil-visual-state-map [escape] 'keyboard-quit)
-(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-(global-set-key [escape] 'evil-exit-emacs-state)
-
-
-
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

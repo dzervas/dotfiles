@@ -12,6 +12,7 @@ emacs/.emacs.d/history
 emacs/.emacs.d/elpa
 emacs/.emacs.d/places
 emacs/.emacs.d/.python-environments
+emacs/.emacs.d/session.*
 
 # Python objects
 *.pyc
