@@ -25,8 +25,8 @@
 ;; Buffers
 ;; TODO: Manage special buffers, per window, sort/order them on demand
 (global-set-key (kbd "M-c") 'kill-this-buffer)
-(global-set-key (kbd "M-<left>") 'previous-buffer)
-(global-set-key (kbd "M-<right>") 'next-buffer)
+(global-set-key (kbd "M-<left>") 'bs-cycle-previous)
+(global-set-key (kbd "M-<right>") 'bs-cycle-next)
 
 ;; Windows
 (global-set-key (kbd "M-RET") 'split-window-right)
@@ -35,6 +35,8 @@
 (global-set-key (kbd "M-<down>") 'previous-multiframe-window)
 (global-set-key (kbd "M-<up>") 'next-multiframe-window)
 ;(global-set-key (kbd "M-S-RET") 'split-window-below)
+
+(global-set-key (kbd "C-f") 'list-matching-lines)
 
 (evil-leader/set-key "f" 'speedbar-get-focus)
 
@@ -52,8 +54,8 @@
 ;; Highlight current line
 (global-hl-line-mode t)
 
-;; Disable the menu bar
-(menu-bar-mode -1)
+;; Disable the tool bar
+(tool-bar-mode -1)
 
 ;; Disable the scroll bar
 (scroll-bar-mode -1)
@@ -70,18 +72,6 @@
 ;; IComplete for the modeline
 (icomplete-mode t)
 
-;; Start maximized
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
- '(initial-frame-alist (quote ((fullscreen . maximized))))
- '(package-selected-packages
-   (quote
-    (evil-escape powerline molokai-theme linum-relative imenu-list git-gutter-fringe+ flycheck fill-column-indicator evil-surround evil-smartparens evil-mc evil-matchit evil-leader elscreen dtrt-indent company-tern company-quickhelp company-jedi company-irony company-go))))
-
 
 ;; Package Settings
 ;; Evil Mode
@@ -93,7 +83,6 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/molokai-overrides-theme.el")
 (load-theme 'molokai t)
 (load-theme 'molokai-overrides t)
-(setq molokai-theme-kit t)
 (setq font-lock-maximum-decoration t)
 (setq custom-safe-themes t)
 
@@ -108,24 +97,20 @@
 
 ;; Buffer/View Helpers
 
-;; ELScreen
+;; ElScreen
 (require-package 'elscreen)
 (elscreen-start)
 
-;; Tag Bar
-(require-package 'imenu-list)
-
 ;; Relative line numbers
 (require-package 'linum-relative)
-(linum-on)
 (linum-relative-mode t)
 
 ;; Powerline
 (require-package 'powerline)
 (powerline-center-theme)
 
-;(require-package 'airline-themes)
-;(load-theme 'airline-badwolf)
+;; Multi-Term
+(require-package 'multi-term)
 
 
 ;; Editing Helpers
@@ -139,7 +124,6 @@
 
 ;; Evil Escape everything
 (require-package 'evil-escape)
-(evil-escape-mode t)
 
 ;; Advanced blocks
 (require-package 'evil-matchit)
@@ -158,12 +142,6 @@
 (global-set-key (kbd "C-x") 'evil-mc-skip-and-goto-next-match)
 (add-hook 'evil-mc-mode
   (local-set-key [escape] 'evil-mc-undo-all-cursors))
-
-;; SmartParens
-(require-package 'evil-smartparens)
-(require 'smartparens-config)
-(add-hook 'prog-mode-hook #'smartparens-mode)
-(add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
 
 ;; Change surroundings
 (require-package 'evil-surround)
@@ -257,9 +235,121 @@
 
 
 ;; Syntax
+
+
+;; Start maximized
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(align-c++-modes (quote (c++-mode c-mode java-mode js-mode php-mode)))
+ '(align-open-comment-modes
+   (quote
+	(emacs-lisp-mode lisp-interaction-mode lisp-mode scheme-mode c++-mode c-mode java-mode perl-mode cperl-mode python-mode makefile-mode go-mode js-mode web-mode php-mode)))
+ '(align-text-modes (quote (text-mode outline-mode markdown-mode org-mode)))
+ '(auto-insert-mode t)
+ '(auto-revert-check-vc-info t)
+ '(bs-cycle-configuration-name "files")
+ '(comment-inline-offset 2)
+ '(comment-style (quote aligned))
+ '(company-auto-complete t)
+ '(company-auto-complete-chars (quote ignore))
+ '(company-dabbrev-code-modes
+   (quote
+	(prog-mode batch-file-mode csharp-mode css-mode erlang-mode haskell-mode jde-mode lua-mode python-mode go-mode js-mode php-mode web-mode)))
+ '(company-files-exclusions \.git)
+ '(company-go-begin-after-member-access nil)
+ '(company-go-show-annotation t)
+ '(company-idle-delay 0)
+ '(company-quickhelp-delay 0)
+ '(company-quickhelp-use-propertized-text t)
+ '(company-search-regexp-function (quote company-search-flex-regexp))
+ '(company-selection-wrap-around t)
+ '(company-show-numbers t)
+ '(company-tooltip-align-annotations t)
+ '(company-tooltip-idle-delay 0)
+ '(compilation-ask-about-save nil)
+ '(create-lockfiles nil)
+ '(display-raw-bytes-as-hex t)
+ '(dtrt-indent-global-mode t)
+ '(dtrt-indent-ignore-single-chars-flag t)
+ '(dtrt-indent-mode t nil (dtrt-indent))
+ '(ede-auto-add-method (quote multi-ask))
+ '(electric-pair-inhibit-predicate (quote electric-pair-conservative-inhibit))
+ '(electric-pair-mode t)
+ '(evil-disable-insert-state-bindings nil)
+ '(evil-escape-mode t)
+ '(evil-ex-interactive-search-highlight (quote selected-window))
+ '(evil-indent-convert-tabs nil)
+ '(evil-jumps-cross-buffers nil)
+ '(evil-magic (quote very-magic))
+ '(evil-search-module (quote evil-search))
+ '(evil-symbol-word-search t)
+ '(evil-want-Y-yank-to-eol t)
+ '(evil-want-fine-undo t)
+ '(fill-column 80)
+ '(flycheck-display-errors-function (function flycheck-pos-tip-error-messages))
+ '(global-auto-revert-mode t)
+ '(global-ede-mode t)
+ '(global-evil-surround-mode t)
+ '(global-hl-line-mode t)
+ '(global-hl-line-sticky-flag t)
+ '(global-linum-mode t)
+ '(global-semantic-highlight-edits-mode t)
+ '(global-semantic-highlight-func-mode t)
+ '(global-semantic-idle-breadcrumbs-mode t nil (semantic/idle))
+ '(global-semantic-idle-completions-mode t nil (semantic/idle))
+ '(global-semantic-idle-local-symbol-highlight-mode t nil (semantic/idle))
+ '(global-semantic-idle-summary-mode t)
+ '(global-semantic-stickyfunc-mode t)
+ '(global-undo-tree-mode t)
+ '(godoc-use-completing-read t)
+ '(grep-command "rg")
+ '(help-at-pt-display-when-idle (quote never) nil (help-at-pt))
+ '(imenu-auto-rescan t)
+ '(imenu-list-auto-resize t)
+ '(imenu-list-focus-after-activation t)
+ '(imenu-max-item-length 30)
+ '(imenu-max-items 50)
+ '(imenu-use-popup-menu t)
+ '(initial-buffer-choice (quote remember-notes))
+ '(initial-frame-alist (quote ((fullscreen . maximized))))
+ '(isearch-allow-scroll t)
+ '(js-chain-indent t)
+ '(linum-format (quote linum-relative))
+ '(linum-relative-backend (quote display-line-numbers-mode))
+ '(linum-relative-current-symbol "")
+ '(package-selected-packages
+   (quote
+	(evil-escape powerline molokai-theme linum-relative imenu-list git-gutter-fringe+ flycheck fill-column-indicator evil-surround evil-smartparens evil-mc evil-matchit evil-leader elscreen dtrt-indent company-tern company-quickhelp company-jedi company-irony company-go)))
+ '(plstore-select-keys nil)
+ '(prog-mode-hook
+   (quote
+	(flyspell-prog-mode prettify-symbols-mode hs-minor-mode)))
+ '(scalable-fonts-allowed t)
+ '(search-default-mode t)
+ '(search-exit-option nil)
+ '(semantic-complete-inline-analyzer-displayor-class (quote semantic-displayor-tooltip))
+ '(semantic-mode t)
+ '(semanticdb-project-roots (quote ("~/Lab")))
+ '(show-paren-delay 0)
+ '(show-paren-mode t)
+ '(show-paren-style (quote mixed))
+ '(show-paren-when-point-in-periphery t)
+ '(show-paren-when-point-inside-paren t)
+ '(tab-always-indent nil)
+ '(tab-width 4)
+ '(tooltip-mode t)
+ '(tramp-adb-connect-if-not-connected t nil (tramp))
+ '(word-wrap t)
+ '(words-include-escapes t))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#1B1D1E" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 145 :width normal :foundry "nil" :family "Iosevka")))))
+ '(default ((t (:inherit nil :stipple nil :background "#1B1D1E" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 145 :width normal :foundry "nil" :family "Iosevka"))))
+ '(hc-tab ((t (:underline (:color "dim gray" :style wave)))))
+ '(hc-trailing-whitespace ((t (:strike-through "dim gray")))))

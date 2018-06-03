@@ -9,10 +9,14 @@ vim/.vim/spell
 # Emacs temporary files
 emacs/.emacs.d/auto-save-list
 emacs/.emacs.d/elpa
+emacs/.emacs.d/ede-projects.el
 emacs/.emacs.d/history
 emacs/.emacs.d/network-security.data
 emacs/.emacs.d/places
+emacs/.emacs.d/semanticdb
+emacs/.emacs.d/srecode-map.el
 emacs/.emacs.d/session.*
+emacs/.emacs.d/tramp
 emacs/.emacs.d/.python-environments
 
 # Python objects
