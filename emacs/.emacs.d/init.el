@@ -30,6 +30,21 @@
   (forward-line -1)
   (indent-according-to-mode))
 
+(defun speedbar-cycle (dir)
+  "Go to the next speedbar mode"
+  (interactive)
+  (let ((modes
+		 (mapcar (lambda (x)
+				   (nth 0 x)) speedbar-initial-expansion-mode-alist)))
+	(let
+		((current-mode (cl-position
+					  speedbar-initial-expansion-list-name modes :test 'equal)))
+	 (if current-mode
+		 (speedbar-change-initial-expansion-list
+		  (nth (+ dir current-mode) modes)
+	      nil)))))
+
+
 ;; Keybindings
 
 ;; Tabs
@@ -44,6 +59,8 @@
 (global-set-key (kbd "M-c") 'kill-this-buffer)
 (global-set-key (kbd "M-<left>") 'bs-cycle-previous)
 (global-set-key (kbd "M-<right>") 'bs-cycle-next)
+(global-set-key (kbd "M-<left>") 'bs-cycle-previous)
+(global-set-key (kbd "M-<right>") 'bs-cycle-next)
 
 (evil-leader/set-key "b" 'sr-speedbar-toggle)
 
@@ -51,6 +68,7 @@
 (global-set-key (kbd "M-RET") 'split-window-right)
 (global-set-key (kbd "M-<backspace>") 'delete-window)
 (global-set-key (kbd "M-f") 'delete-other-windows)
+(global-set-key (kbd "M-C") 'delete-window)
 (global-set-key (kbd "M-<down>") 'previous-multiframe-window)
 (global-set-key (kbd "M-<up>") 'next-multiframe-window)
 ;(global-set-key (kbd "M-S-RET") 'split-window-below)
@@ -126,6 +144,7 @@
 ;; SrSpeedBar - Speedbar in-frame
 (load "~/.emacs.d/sr-speedbar")
 (require 'sr-speedbar)
+(require 'semantic/sb)
 
 ;; Highlight Characters
 (load "~/.emacs.d/highlight-chars")
@@ -261,11 +280,15 @@
    (quote
 	(("all" nil nil nil nil nil)
 	 ("files" nil nil nil bs-visits-non-file bs-sort-buffer-interns-are-last)
-	 ;; Cycle through buffers with the same major mode
-	 ("same-mm" nil nil nil (lambda (buf)
-					  (let ((original-mm major-mode))
-                      (with-current-buffer buf
-                         (not (eq major-mode original-mm))))) bs-sort-interns-are-last))))
+	 ("same-mm" nil nil nil
+	  (lambda
+		(buf)
+		(let
+			((original-mm major-mode))
+		  (with-current-buffer buf
+			(not
+			 (eq major-mode original-mm)))))
+	  bs-sort-interns-are-last))))
  '(bs-cycle-configuration-name "same-mm")
  '(comment-inline-offset 2)
  '(company-auto-complete t)
@@ -357,6 +380,20 @@
  '(show-paren-style (quote mixed))
  '(show-paren-when-point-in-periphery t)
  '(show-paren-when-point-inside-paren t)
+ '(speedbar-mode-hook
+   (quote
+	((lambda nil
+	   (local-set-key
+		(kbd "M-<left>")
+		(lambda nil
+		  (interactive)
+		  (speedbar-cycle -1))))
+	 (lambda nil
+	   (local-set-key
+		(kbd "M-<right>")
+		(lambda nil
+		  (interactive)
+		  (speedbar-cycle 1)))))))
  '(tab-always-indent nil)
  '(tab-width 4)
  '(term-mode-hook
