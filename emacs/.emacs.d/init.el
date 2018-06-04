@@ -45,7 +45,7 @@
 (global-set-key (kbd "M-<left>") 'bs-cycle-previous)
 (global-set-key (kbd "M-<right>") 'bs-cycle-next)
 
-(evil-leader/set-key "b" 'speedbar-get-focus)
+(evil-leader/set-key "b" 'sr-speedbar-toggle)
 
 ;; Windows
 (global-set-key (kbd "M-RET") 'split-window-right)
@@ -115,9 +115,23 @@
 
 ;; Buffer/View Helpers
 
+;; Column rule (hooks @prog-mode)
+(load "~/.emacs.d/column-marker")
+(require 'column-marker)
+
 ;; ElScreen
 (require-package 'elscreen)
 (elscreen-start)
+
+;; SrSpeedBar - Speedbar in-frame
+(load "~/.emacs.d/sr-speedbar")
+(require 'sr-speedbar)
+
+;; Highlight Characters
+(load "~/.emacs.d/highlight-chars")
+(require 'highlight-chars)
+(hc-toggle-highlight-tabs)
+(hc-toggle-highlight-trailing-whitespace)
 
 ;; Relative line numbers
 (require-package 'linum-relative)
@@ -148,10 +162,6 @@
 (require-package 'evil-matchit)
 (global-evil-matchit-mode t)
 
-;; Undo Tree
-;(require-package 'undo-tree)
-;(global-undo-tree-mode)
-
 ;; Multiple cursors
 ;; TODO: Escape this
 (require-package 'evil-mc)
@@ -165,16 +175,6 @@
 ;; Change surroundings
 (require-package 'evil-surround)
 (global-evil-surround-mode t)
-
-;; Column rule (hooks @prog-mode)
-(load "~/.emacs.d/column-marker")
-(require 'column-marker)
-
-;; Highlight Characters
-(load "~/.emacs.d/highlight-chars")
-(require 'highlight-chars)
-(hc-toggle-highlight-tabs)
-(hc-toggle-highlight-trailing-whitespace)
 
 
 ;; Autocompletion
