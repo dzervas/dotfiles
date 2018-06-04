@@ -10,9 +10,26 @@
 ;; Leader key (should be BEFORE evil)
 (require-package 'evil-leader)
 (global-evil-leader-mode)
-(evil-leader/set-leader ",")
+(evil-leader/set-leader "<SPC>")
 
 ;; Native settings
+
+;; Functions
+(defun move-line-up ()
+  "Move up the current line."
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
+
+(defun move-line-down ()
+  "Move down the current line."
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
+
 ;; Keybindings
 
 ;; Tabs
@@ -28,6 +45,8 @@
 (global-set-key (kbd "M-<left>") 'bs-cycle-previous)
 (global-set-key (kbd "M-<right>") 'bs-cycle-next)
 
+(evil-leader/set-key "b" 'speedbar-get-focus)
+
 ;; Windows
 (global-set-key (kbd "M-RET") 'split-window-right)
 (global-set-key (kbd "M-<backspace>") 'delete-window)
@@ -36,23 +55,22 @@
 (global-set-key (kbd "M-<up>") 'next-multiframe-window)
 ;(global-set-key (kbd "M-S-RET") 'split-window-below)
 
-(global-set-key (kbd "C-f") 'list-matching-lines)
+;; Editing & Navigation
+;; (global-set-key '[(M-mouse-1)] 'semantic-ia-fast-mouse-jump)
+(global-set-key (kbd "C-l") 'evil-ex-nohighlight)
+(global-set-key (kbd "M-/") 'comment-line)
+(global-set-key (kbd "C-]") 'semantic-ia-fast-jump)
+(global-set-key (kbd "C-<down>") 'move-line-down)
+(global-set-key (kbd "C-<up>") 'move-line-up)
 
-(evil-leader/set-key "f" 'speedbar-get-focus)
+(evil-leader/set-key "f" 'list-matching-lines)
+
 
 (with-eval-after-load 'evil-maps
-    (define-key evil-normal-state-map (kbd "M-/") 'comment-line)
-    (define-key evil-visual-state-map (kbd "M-/") 'comment-dwim)
-)
+    (define-key evil-visual-state-map (kbd "M-/") 'comment-dwim))
 
 ;; Internal functions
 (define-key global-map (kbd "RET") 'newline-and-indent)
-
-;; Hide/Show stuff
-(add-hook 'prog-mode-hook 'hs-minor-mode)
-
-;; Highlight current line
-(global-hl-line-mode t)
 
 ;; Disable the tool bar
 (tool-bar-mode -1)
@@ -105,12 +123,16 @@
 (require-package 'linum-relative)
 (linum-relative-mode t)
 
+;; Multi-Term
+(require-package 'multi-term)
+
 ;; Powerline
 (require-package 'powerline)
 (powerline-center-theme)
 
-;; Multi-Term
-(require-package 'multi-term)
+;; Replace for occur-mode
+(load "~/.emacs.d/replace+")
+(require 'replace+)
 
 
 ;; Editing Helpers
@@ -118,9 +140,6 @@
 ;; Indentation
 (require-package 'dtrt-indent)
 (dtrt-indent-mode t)
-
-;; Emacs Code Browser
-;; (require-package 'ecb)
 
 ;; Evil Escape everything
 (require-package 'evil-escape)
@@ -147,22 +166,15 @@
 (require-package 'evil-surround)
 (global-evil-surround-mode t)
 
-;; Column rule
-; TODO: Incompatibility with company mode
-;(require-package 'fill-column-indicator)
-;(setq-default fill-column 80)
-;(add-hook 'prog-mode-hook 'fci-mode)
+;; Column rule (hooks @prog-mode)
+(load "~/.emacs.d/column-marker")
+(require 'column-marker)
 
 ;; Highlight Characters
-; TODO: Fix only trailing
-; TODO: Fix character indicators
 (load "~/.emacs.d/highlight-chars")
 (require 'highlight-chars)
 (hc-toggle-highlight-tabs)
 (hc-toggle-highlight-trailing-whitespace)
-;(font-lock-add-keywords nil `(("[\240\040\t]+$" (0 'hc-trailing-whitespace ,hc-font-lock-override))) 'APPEND)
-(setq hc-trailing-whitespace '((t (:strike-through))))
-(setq hc-tab '((t (:background "#888888"))))
 
 
 ;; Autocompletion
@@ -219,19 +231,14 @@
 
 ;; Flycheck syntax checker
 (require-package 'flycheck)
-(add-hook 'after-init-hook #'global-flycheck-mode)
+(require-package 'flycheck-pos-tip)
 (after 'flycheck
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
   (setq flycheck-checkers (delq 'emacs-lisp-checkdoc flycheck-checkers))
   (setq flycheck-checkers (delq 'html-tidy flycheck-checkers))
-  (setq flycheck-standard-error-navigation nil))
-(global-flycheck-mode t)
-
-;; flycheck errors on a tooltip (doesnt work on console)
-(when (display-graphic-p (selected-frame))
-  (eval-after-load 'flycheck
-    '(custom-set-variables
-      '(flycheck-display-errors-function #'flycheck-pos-tip-error-messages))))
+  (setq flycheck-standard-error-navigation nil)
+  (flycheck-pos-tip-mode))
+(evil-leader/set-key "e" 'flycheck-list-errors)
 
 
 ;; Syntax
@@ -250,9 +257,17 @@
  '(align-text-modes (quote (text-mode outline-mode markdown-mode org-mode)))
  '(auto-insert-mode t)
  '(auto-revert-check-vc-info t)
- '(bs-cycle-configuration-name "files")
+ '(bs-configurations
+   (quote
+	(("all" nil nil nil nil nil)
+	 ("files" nil nil nil bs-visits-non-file bs-sort-buffer-interns-are-last)
+	 ;; Cycle through buffers with the same major mode
+	 ("same-mm" nil nil nil (lambda (buf)
+					  (let ((original-mm major-mode))
+                      (with-current-buffer buf
+                         (not (eq major-mode original-mm))))) bs-sort-interns-are-last))))
+ '(bs-cycle-configuration-name "same-mm")
  '(comment-inline-offset 2)
- '(comment-style (quote aligned))
  '(company-auto-complete t)
  '(company-auto-complete-chars (quote ignore))
  '(company-dabbrev-code-modes
@@ -326,7 +341,11 @@
  '(plstore-select-keys nil)
  '(prog-mode-hook
    (quote
-	(flyspell-prog-mode prettify-symbols-mode hs-minor-mode)))
+	(flyspell-prog-mode flycheck-mode prettify-symbols-mode hs-minor-mode
+						(lambda nil
+						  (interactive)
+						  (column-marker-1 80)))))
+ '(replace-w-completion-flag t)
  '(scalable-fonts-allowed t)
  '(search-default-mode t)
  '(search-exit-option nil)
@@ -340,6 +359,13 @@
  '(show-paren-when-point-inside-paren t)
  '(tab-always-indent nil)
  '(tab-width 4)
+ '(term-mode-hook
+   (quote
+	((lambda nil
+	   (linum-mode -1))
+	 (lambda nil
+	   (setq-local global-hl-line-mode nil)))))
+ '(text-mode-hook (quote (turn-on-flyspell text-mode-hook-identify)))
  '(tooltip-mode t)
  '(tramp-adb-connect-if-not-connected t nil (tramp))
  '(word-wrap t)
