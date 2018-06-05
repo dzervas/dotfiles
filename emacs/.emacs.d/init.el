@@ -37,12 +37,12 @@
 		 (mapcar (lambda (x)
 				   (nth 0 x)) speedbar-initial-expansion-mode-alist)))
 	(let
-		((current-mode (cl-position
-					  speedbar-initial-expansion-list-name modes :test 'equal)))
-	 (if current-mode
-		 (speedbar-change-initial-expansion-list
-		  (nth (+ dir current-mode) modes)
-	      nil)))))
+		((new-mode (nth
+					(+ dir (cl-position speedbar-initial-expansion-list-name modes :test 'equal))
+					modes)))
+	 (if new-mode
+	     (speedbar-change-initial-expansion-list new-mode)
+	   nil))))
 
 
 ;; Keybindings
