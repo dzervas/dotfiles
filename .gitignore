@@ -19,6 +19,7 @@ emacs/.emacs.d/semanticdb
 emacs/.emacs.d/session.*
 emacs/.emacs.d/srecode-map.el
 emacs/.emacs.d/tramp
+emacs/.emacs.d/url
 emacs/.emacs.d/.python-environments
 
 # Python objects
