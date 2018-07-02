@@ -310,6 +310,7 @@
    (quote
 	(emacs-lisp-mode lisp-interaction-mode lisp-mode scheme-mode c++-mode c-mode java-mode perl-mode cperl-mode python-mode makefile-mode go-mode js-mode web-mode php-mode)))
  '(align-text-modes (quote (text-mode outline-mode markdown-mode org-mode)))
+ '(auth-source-gpg-encrypt-to (quote ("dzervas@census-labs.com")))
  '(auto-insert-mode t)
  '(auto-revert-check-vc-info t)
  '(bs-configurations
@@ -357,6 +358,13 @@
  '(ede-auto-add-method (quote multi-ask))
  '(electric-pair-inhibit-predicate (quote electric-pair-conservative-inhibit))
  '(electric-pair-mode t)
+ '(erc-autojoin-channels-alist (quote (("token.census" "#census"))))
+ '(erc-email-userid "dzervas")
+ '(erc-modules
+   (quote
+	(autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands notifications readonly ring smiley stamp spelling track)))
+ '(erc-nick "dzervas")
+ '(erc-nick-uniquifier "_")
  '(evil-disable-insert-state-bindings nil)
  '(evil-escape-mode t)
  '(evil-ex-interactive-search-highlight (quote selected-window))
@@ -383,6 +391,13 @@
  '(global-semantic-idle-summary-mode t)
  '(global-semantic-stickyfunc-mode t)
  '(global-undo-tree-mode t)
+ '(gnus-secondary-select-methods
+   (quote
+	((nnimap "dzervas@census-labs.com"
+			 (nnimap-address mail\.webfaction\.com)
+			 (nnimap-server-port 993)
+			 (nnimap-authinfo-file "~/.authinfo.gpg")
+			 (nnimap-stream ssl)))))
  '(godoc-use-completing-read t)
  '(grep-command "rg")
  '(help-at-pt-display-when-idle (quote never) nil (help-at-pt))
@@ -438,6 +453,7 @@
  '(semantic-complete-inline-analyzer-displayor-class (quote semantic-displayor-tooltip))
  '(semantic-mode t)
  '(semanticdb-project-roots (quote ("~/Lab")))
+ '(send-mail-function (quote smtpmail-send-it))
  '(show-paren-delay 0)
  '(show-paren-mode t)
  '(show-paren-style (quote mixed))

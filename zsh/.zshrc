@@ -143,6 +143,7 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 for f in /usr/share/*/*.zsh; do source $f; done 2>/dev/null
 
 # Key bindings
+	export KEYTIMEOUT=1
 	bindkey -e
 	bindkey "^r"		fzf-history-widget
 	bindkey "^f"		fzf-file-widget

@@ -2,7 +2,7 @@
 
 ### Variables
 set $mod Mod4
-set $term gnome-terminal
+set $term termite
 set $menu rofi -show run
 set $lock swaylock-civilized
 
@@ -102,6 +102,9 @@ bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 # If there are multiple scratchpad windows, this command cycles through them.
 #bindsym $mod+equal scratchpad show
 
+for_window [title="rofi"] floating enable, focus;
+for_window [class="[Pp]inentry-.*"] floating enable, focus;
+
 # Resizing containers:
 mode "resize" {
 	bindsym Left resize grow width 5 px or 5 ppt
@@ -120,6 +123,7 @@ bindsym $mod+p mode "resize"
 bar {
 	position top
 	status_command i3status
+	font Iosevka 10
 	colors {
 		statusline #ffffff
 		background #323232

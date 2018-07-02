@@ -1,11 +1,12 @@
 # Position: /etc/systemd/system/suspend@.service
+# Then: systemctl enable suspend@sleep.service
 [Unit]
 Description=Lock on suspend
 Before=suspend.target
 
 [Service]
 Type=forking
-User=%I
+User=dzervas
 ExecStart=/usr/local/bin/swaylock-civilized
 ExecStartPost=/usr/local/sleep 1
 
