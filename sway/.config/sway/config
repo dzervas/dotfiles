@@ -29,8 +29,8 @@ bindsym $mod+f fullscreen
 bindsym $mod+c kill
 
 # Focus:
-bindsym $mod+Up focus next
-bindsym $mod+Down focus prev
+bindsym $mod+Up focus right
+bindsym $mod+Down focus left
 bindsym $mod+Right workspace next_on_output
 bindsym $mod+Left workspace prev_on_output
 # TODO: Fix this

@@ -12,6 +12,9 @@
 (global-evil-leader-mode)
 (evil-leader/set-leader "<SPC>")
 
+;; RealGUD
+(require-package 'realgud)
+
 ;; Native settings
 
 ;; Functions
@@ -108,6 +111,9 @@
 ;; IComplete for the modeline
 (icomplete-mode t)
 
+;; _ is part of word
+(modify-syntax-entry ?_ "w")
+
 
 ;; Package Settings
 ;; Evil Mode
@@ -129,6 +135,12 @@
 (require-package 'git-gutter-fringe+)
 (global-git-gutter+-mode)
 (git-gutter-fr+-minimal)
+
+;; Projectile
+(require-package 'projectile)
+(require-package 'projectile-speedbar)
+(projectile-mode t)
+(evil-leader/set-key "p" 'projectile-speedbar-open-current-buffer-in-tree)
 
 
 ;; Buffer/View Helpers
@@ -232,15 +244,29 @@
 
 (require-package 'company-tern)     ; JS
 (add-to-list 'company-backends 'company-tern)
+;; Enable JavaScript completion between <script>...</script> etc.
+(advice-add 'company-tern :before
+            #'(lambda (&rest _)
+                (if (equal major-mode 'web-mode)
+                    (let ((web-mode-cur-language
+                           (web-mode-language-at-pos)))
+                      (if (or (string= web-mode-cur-language "javascript")
+                              (string= web-mode-cur-language "jsx"))
+                          (unless tern-mode (tern-mode))
+                        (if tern-mode (tern-mode -1)))))))
 
-;(require-package 'company-web-html) ; HTML
-;(add-to-list 'company-backends 'company-web-html)
+(require-package 'company-web)
+(require-package 'ac-html-angular)
+(require-package 'ac-html-bootstrap)
+(require-package 'ac-html-csswatcher)
+(require 'company-web-html) ; HTML
+(add-to-list 'company-backends 'company-web-html)
 
-;(require-package 'company-web-jade) ; Jade
-;(add-to-list 'company-backends 'company-web-jade)
+(require 'company-web-jade) ; Jade
+(add-to-list 'company-backends 'company-web-jade)
 
-;(require-package 'company-web-slim) ; Slim
-;(add-to-list 'company-backends 'company-web-slim)
+(require 'company-web-slim) ; Slim
+(add-to-list 'company-backends 'company-web-slim)
 
 ;(require-package 'php-extras)       ; PHP
 ;(add-to-list 'company-backends 'php-extras)
@@ -262,8 +288,18 @@
 
 ;; Syntax
 
+;; Arduino
+(require-package 'arduino-mode)
+(require-package 'platformio-mode)
 
-;; Start maximized
+;; Python
+(require-package 'virtualenvwrapper)
+;; (add-hook 'python-mode-hook #'auto-virtualenvwrapper-activate)
+
+;; (require-package 'elpy)
+;; (elpy-enable)
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -293,6 +329,11 @@
  '(comment-inline-offset 2)
  '(company-auto-complete t)
  '(company-auto-complete-chars (quote ignore))
+ '(company-backends
+   (quote
+	(company-tern company-irony company-jedi company-go company-bbdb company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-css company-files
+				  (company-dabbrev-code company-gtags company-etags company-keywords)
+				  company-oddmuse company-dabbrev)))
  '(company-dabbrev-code-modes
    (quote
 	(prog-mode batch-file-mode csharp-mode css-mode erlang-mode haskell-mode jde-mode lua-mode python-mode go-mode js-mode php-mode web-mode)))
@@ -360,7 +401,7 @@
  '(linum-relative-current-symbol "")
  '(package-selected-packages
    (quote
-	(evil-escape powerline molokai-theme linum-relative imenu-list git-gutter-fringe+ flycheck fill-column-indicator evil-surround evil-smartparens evil-mc evil-matchit evil-leader elscreen dtrt-indent company-tern company-quickhelp company-jedi company-irony company-go)))
+	(projectile evil-escape powerline molokai-theme linum-relative imenu-list git-gutter-fringe+ flycheck fill-column-indicator evil-surround evil-smartparens evil-mc evil-matchit evil-leader elscreen dtrt-indent company-tern company-quickhelp company-jedi company-irony company-go)))
  '(plstore-select-keys nil)
  '(prog-mode-hook
    (quote
@@ -368,6 +409,28 @@
 						(lambda nil
 						  (interactive)
 						  (column-marker-1 80)))))
+ '(projectile-mode t nil (projectile))
+ '(projectile-mode-line (quote (:eval (format " [%s]" (projectile-project-name)))))
+ '(projectile-other-file-alist
+   (quote
+	(("cpp" "h" "hpp" "ipp")
+	 ("ipp" "h" "hpp" "cpp")
+	 ("hpp" "h" "ipp" "cpp" "cc")
+	 ("cxx" "h" "hxx" "ixx")
+	 ("ixx" "h" "hxx" "cxx")
+	 ("hxx" "h" "ixx" "cxx")
+	 ("c" "h")
+	 ("m" "h")
+	 ("mm" "h")
+	 ("h" "c" "cc" "cpp" "ipp" "hpp" "cxx" "ixx" "hxx" "m" "mm")
+	 ("cc" "h" "hh" "hpp")
+	 ("hh" "cc")
+	 ("vert" "frag")
+	 ("frag" "vert")
+	 (nil "lock" "gpg")
+	 ("lock" "")
+	 ("gpg" "")
+	 ("java" . "smali"))))
  '(replace-w-completion-flag t)
  '(scalable-fonts-allowed t)
  '(search-default-mode t)
@@ -413,6 +476,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#1B1D1E" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 145 :width normal :foundry "nil" :family "Iosevka"))))
+ '(default ((t (:inherit nil :stipple nil :background "#1B1D1E" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 145 :width normal :foundry "CYEL" :family "Iosevka"))))
  '(hc-tab ((t (:underline (:color "dim gray" :style wave)))))
  '(hc-trailing-whitespace ((t (:strike-through "dim gray")))))

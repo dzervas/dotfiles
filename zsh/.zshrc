@@ -160,8 +160,9 @@ for f in /usr/share/*/*.zsh; do source $f; done 2>/dev/null
 	bindkey "\eOF"		end-of-line
 	bindkey "^[[H"		beginning-of-line
 	bindkey "^[[F"		end-of-line
-	bindkey "^[[1;5C" forward-word
-	bindkey "^[[1;5D" backward-word
+	bindkey "^[[1;5C"	forward-word
+	bindkey "^[[1;5D"	backward-word
+	bindkey "^[[3;5~"	kill-word
 
 
 # Style
