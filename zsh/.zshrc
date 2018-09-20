@@ -19,10 +19,13 @@ antigen bundle hlissner/zsh-autopair
 antigen bundle jreese/zsh-titles
 antigen bundle zdharma/fast-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
-
 #antigen bundle RobSis/zsh-completion-generator
+#
 antigen apply
 
+if [ -f /usr/local/opt/fzf/shell/key-bindings.zsh ]; then
+	source /usr/local/opt/fzf/shell/key-bindings.zsh
+fi
 
 # Settings
 	setopt APPEND_HISTORY
@@ -178,3 +181,7 @@ for f in /usr/share/*/*.zsh; do source $f; done 2>/dev/null
 
 	# Rebuild $PATH on each execution (may be performance intensive)
 	zstyle ":completion:*:commands" rehash 1
+
+# tabtab source for electron-forge package
+# uninstall by removing these lines or running `tabtab uninstall electron-forge`
+[[ -f /home/dzervas/Lab/ember-invoice-manager/node_modules/tabtab/.completions/electron-forge.zsh ]] && . /home/dzervas/Lab/ember-invoice-manager/node_modules/tabtab/.completions/electron-forge.zsh

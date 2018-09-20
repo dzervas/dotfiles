@@ -16,10 +16,12 @@ brew update
 brew upgrade
 brew tap caskroom/cask caskroom/fonts caskroom/drivers
 brew cask install firefox gpg-suite font-iosevka iterm2 karabiner-elements
-brew install neovim stow pass wget exa ripgrep git python3 npm pyenv pyenv-virtualenv antigen jq coreutils mtr ag xonsh
+brew install neovim stow pass wget exa ripgrep git python3 npm \
+	pyenv pyenv-virtualenv antigen jq coreutils mtr ag xonsh htop zsh \
+	colordiff
 # For Arduino: brew cask install arduino ftdi-vcp-driver wch-ch34x-usb-serial-driver
 
-chsh -s $(which zsh)
+sudo sh -c "echo /usr/local/bin/zsh >> /etc/shells" && chsh -s $(which zsh)
 
 wget https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py
 sudo python /get-pip.py

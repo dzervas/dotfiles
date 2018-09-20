@@ -292,12 +292,24 @@
 (require-package 'arduino-mode)
 (require-package 'platformio-mode)
 
+;; CoffeeScript
+(require-package 'coffee-mode)
+
+;; Markdown
+(require-package 'markdown-mode)
+
+;; ObjC
+(require-package 'objc-mode)
+
 ;; Python
 (require-package 'virtualenvwrapper)
 ;; (add-hook 'python-mode-hook #'auto-virtualenvwrapper-activate)
 
 ;; (require-package 'elpy)
 ;; (elpy-enable)
+
+;; Swift
+(require-package 'swift-mode)
 
 
 (custom-set-variables
@@ -416,7 +428,7 @@
  '(linum-relative-current-symbol "")
  '(package-selected-packages
    (quote
-	(projectile evil-escape powerline molokai-theme linum-relative imenu-list git-gutter-fringe+ flycheck fill-column-indicator evil-surround evil-smartparens evil-mc evil-matchit evil-leader elscreen dtrt-indent company-tern company-quickhelp company-jedi company-irony company-go)))
+	(coffee-mode projectile evil-escape powerline molokai-theme linum-relative imenu-list git-gutter-fringe+ flycheck fill-column-indicator evil-surround evil-smartparens evil-mc evil-matchit evil-leader elscreen dtrt-indent company-tern company-quickhelp company-jedi company-irony company-go)))
  '(plstore-select-keys nil)
  '(prog-mode-hook
    (quote
