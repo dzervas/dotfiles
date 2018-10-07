@@ -257,7 +257,6 @@
 
 (require-package 'company-web)
 (require-package 'ac-html-angular)
-(require-package 'ac-html-bootstrap)
 (require-package 'ac-html-csswatcher)
 (require 'company-web-html) ; HTML
 (add-to-list 'company-backends 'company-web-html)
@@ -297,9 +296,6 @@
 
 ;; Markdown
 (require-package 'markdown-mode)
-
-;; ObjC
-(require-package 'objc-mode)
 
 ;; Python
 (require-package 'virtualenvwrapper)
