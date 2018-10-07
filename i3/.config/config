@@ -1,22 +1,10 @@
-# Read `man 5 sway` for a complete reference.
-
 ### Variables
 set $mod Mod4
 set $term termite
-set $menu rofi -show run
-set $lock swaylock-civilized
+set $menu rofi -show drun
+set $lock i3lock -i ~/Pictures/windows_10.png
 
-### Output configuration
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
-
-### Input configuration
-input "1739:30383:DLL075B:01_06CB:76AF_To" {
-   accel_profile flat
-   dwt enabled
-   tap enabled
-   natural_scroll enabled
-   middle_emulation enabled
-}
+font pango:Iosevka 10
 
 ### Key bendings
 # Basics:
@@ -38,12 +26,13 @@ bindsym $mod+Tab workspace prev_on_output
 # Move focus to the parent container
 bindsym $mod+a focus parent
 
-# Sway specifics:
+# i3 specifics
 bindsym $mod+Shift+c reload
-bindsym $mod+Shift+e exit
+bindsym $mod+Shift+r restart
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 bindsym $mod+Shift+f floating toggle
-floating_modifier $mod normal
+floating_modifier $mod
 default_border none
 
 # Moving around:
@@ -88,24 +77,11 @@ bindsym XF86AudioMute exec pactl set-sink-mute $(pacmd list-sinks |awk '/* index
 bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 
-# Swap focus between the tiling area and the floating area
-#bindsym $mod+space focus mode_toggle
-
-# Scratchpad:
-# Sway has a "scratchpad", which is a bag of holding for windows.
-# You can send windows there and get them back later.
-
-# Move the currently focused window to the scratchpad
-#bindsym $mod+minus move scratchpad
-
-# Show the next scratchpad window or hide the focused scratchpad window.
-# If there are multiple scratchpad windows, this command cycles through them.
-#bindsym $mod+equal scratchpad show
-
-for_window [title="rofi"] floating enable, focus;
+# Floating windows
+#for_window [title="rofi"] floating enable, focus;
 for_window [class="[Pp]inentry-.*"] floating enable, focus;
 
-# Resizing containers:
+# resize window (you can also use the mouse for that)
 mode "resize" {
 	bindsym Left resize grow width 5 px or 5 ppt
 	bindsym Down resize shrink height 5 px or 5 ppt
@@ -116,14 +92,15 @@ mode "resize" {
 	bindsym Return mode "default"
 	bindsym Escape mode "default"
 }
+
 bindsym $mod+p mode "resize"
 
-# Status Bar:
-# Read `man 5 sway-bar` for more information about this section.
+# Start i3bar to display a workspace bar (plus the system information i3status
+# finds out, if available)
 bar {
 	position top
 	status_command i3status
-	font Iosevka 10
+	font pango:Iosevka 10
 	colors {
 		statusline #ffffff
 		background #323232
@@ -131,4 +108,10 @@ bar {
 	}
 }
 
-include /etc/sway/config.d/*
+# Keyboard/TouchPad hacks
+exec --no-startup-id "setxkbmap -layout us,gr -option grp:win_space_toggle,caps:escape"
+exec --no-startup-id "xinput set-prop 'AlpsPS/2 ALPS DualPoint TouchPad' 'libinput Natural Scrolling Enabled' 1"
+exec --no-startup-id "xinput set-prop 'AlpsPS/2 ALPS DualPoint TouchPad' 'libinput Tapping Enabled' 1"
+
+# Auto lock
+exec --no-startup-id xautolock -time 5 -locker 'i3lock -i ~/Pictures/windows_10.png' &
