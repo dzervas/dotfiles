@@ -234,3 +234,6 @@ EOF
 	elif [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
 		source /usr/local/bin/virtualenvwrapper.sh
 	fi
+eval SSH_AUTH_SOCK=/tmp/ssh-cbV5iAQFs2w2/agent.23189; export SSH_AUTH_SOCK;
+SSH_AGENT_PID=23190; export SSH_AGENT_PID;
+echo Agent pid 23190;

@@ -1,0 +1,6 @@
+[options]
+font = Iosevka 12
+
+[colors]
+foreground = #ffffff
+background = #1d1d1d
