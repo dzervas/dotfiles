@@ -109,9 +109,9 @@ bar {
 }
 
 # Keyboard/TouchPad hacks
-exec --no-startup-id "setxkbmap -layout us,gr -option grp:win_space_toggle,caps:escape"
-exec --no-startup-id "xinput set-prop 'AlpsPS/2 ALPS DualPoint TouchPad' 'libinput Natural Scrolling Enabled' 1"
-exec --no-startup-id "xinput set-prop 'AlpsPS/2 ALPS DualPoint TouchPad' 'libinput Tapping Enabled' 1"
+exec_always --no-startup-id "setxkbmap -layout us,gr -option grp:win_space_toggle,caps:escape"
+exec_always --no-startup-id "xinput set-prop 'AlpsPS/2 ALPS DualPoint TouchPad' 'libinput Natural Scrolling Enabled' 1"
+exec_always --no-startup-id "xinput set-prop 'AlpsPS/2 ALPS DualPoint TouchPad' 'libinput Tapping Enabled' 1"
 
 # Auto lock
 exec --no-startup-id xautolock -time 5 -locker 'i3lock -i ~/Pictures/windows_10.png' &
