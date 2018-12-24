@@ -225,15 +225,19 @@ EOF
 	export GOPATH="$HOME/go"
 	export PATH="${PATH}:${GOPATH}/bin"
 
-	#eval "$(pyenv init -)"
-	#eval "$(pyenv virtualenv-init -)"
-	#eval "$(thefuck --alias)"
+	# GPG-Agent SSH key
+	unset SSH_AGENT_PID
+	if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
+		export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+	fi
 
 	if [ -f /usr/bin/virtualenvwrapper.sh ]; then
 		source /usr/bin/virtualenvwrapper.sh
 	elif [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
 		source /usr/local/bin/virtualenvwrapper.sh
 	fi
-eval SSH_AUTH_SOCK=/tmp/ssh-cbV5iAQFs2w2/agent.23189; export SSH_AUTH_SOCK;
-SSH_AGENT_PID=23190; export SSH_AGENT_PID;
-echo Agent pid 23190;
+
+	if [ -s "$HOME/.local/share/marker/marker.sh" ]; then
+		export MARKER_KEY_NEXT_PLACEHOLDER="^N"
+		source "$HOME/.local/share/marker/marker.sh"
+	fi

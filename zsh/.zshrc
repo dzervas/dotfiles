@@ -19,12 +19,15 @@ antigen bundle hlissner/zsh-autopair
 antigen bundle jreese/zsh-titles
 antigen bundle zdharma/fast-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
-#antigen bundle RobSis/zsh-completion-generator
-#
+export GENCOMPL_PY="/usr/bin/env python3"
+antigen bundle RobSis/zsh-completion-generator
+
 antigen apply
 
 if [ -f /usr/local/opt/fzf/shell/key-bindings.zsh ]; then
 	source /usr/local/opt/fzf/shell/key-bindings.zsh
+	export FZF_CTRL_T_COMMAND="locate"
+	export FZF_CTRL_T_OPTS="$(pwd)"
 fi
 
 # Settings
@@ -115,8 +118,6 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 		eval B$color='%{$fg_bold[${(L)color}]%}'
 		eval $color='%{$fg[${(L)color}]%}'
 	done
-	eval "$(pyenv init -)"
-	eval "$(pyenv virtualenv-init -)"
 
 	# Git
 	GIT_PROMPT_SYMBOL="%{$fg[blue]%}±"
