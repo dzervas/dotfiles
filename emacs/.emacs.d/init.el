@@ -12,10 +12,8 @@
 (global-evil-leader-mode)
 (evil-leader/set-leader "<SPC>")
 
-;; RealGUD
-(require-package 'realgud)
-
 ;; Native settings
+(require-package 'realgud)
 
 ;; Functions
 (defun move-line-up ()
@@ -46,6 +44,51 @@
 	 (if new-mode
 	     (speedbar-change-initial-expansion-list new-mode)
 	   nil))))
+
+(defun realgud-populate-common-fn-keys-evil (&optional map)
+  (define-key map [f5]    'realgud:cmd-continue)
+  (define-key map [S-f5]  'realgud:cmd-quit)
+  ;; (define-key map [f9]    'realgud-toggle-source-breakpoint)
+  (define-key map [f9]    'realgud:cmd-break)
+  ;; (define-key map [C-f9]  'realgud-toggle-source-breakpoint-enabled)
+  (define-key map [f10]   'realgud:cmd-next)
+  (define-key map [f11]   'realgud:cmd-step)
+  (define-key map [S-f11] 'realgud:cmd-finish)
+  ;; (define-key map [M-down]    'realgud-track-hist-newer)
+  ;; (define-key map [A-down]    'realgud-track-hist-newer)
+  ;; (define-key map [M-kp-2]    'realgud-track-hist-newer)
+  ;; (define-key map [M-up]      'realgud-track-hist-older)
+  ;; (define-key map [A-up]      'realgud-track-hist-older)
+  ;; (define-key map [M-kp-8]    'realgud-track-hist-older)
+  ;; (define-key map [M-kp-up]   'realgud-track-hist-older)
+  ;; (define-key map [M-kp-down] 'realgud-track-hist-newer)
+  ;; (define-key map [M-print]   'realgud-track-hist-older)
+  ;; (define-key map [M-S-down]  'realgud-track-hist-newest)
+  ;; (define-key map [M-S-up]    'realgud-track-hist-oldest)
+  (define-key map "\C-c " 'realgud:cmd-break)
+  )
+
+(defun debug-enable ()
+  (interactive)
+  (tool-bar-mode 1)
+  (if realgud-debug-command
+	(funcall realgud-debug-command)
+	(print "No debug command is set!")
+	  ;; (
+	  ;;  (funcall realgud-debug-command)
+	  ;;  (tool-bar-mode 1)
+	  ;;  )
+	)
+  )
+
+(defun debug-disable ()
+  (interactive)
+  (realgud:cmd-quit)
+  (tool-bar-mode 0))
+
+(defun debug-toggle ()
+  (interactive)
+  (if realgud-cmdbuf-info (debug-disable) (debug-enable)))
 
 
 ;; Keybindings
@@ -119,6 +162,8 @@
 ;; Evil Mode
 (require-package 'evil)
 (evil-mode t)
+;; (require-package 'evil-collection)
+;; (evil-collection-init)
 
 ;; Molokai
 (require-package 'molokai-theme)
@@ -283,6 +328,33 @@
   (setq flycheck-standard-error-navigation nil)
   (flycheck-pos-tip-mode))
 (evil-leader/set-key "e" 'flycheck-list-errors)
+
+;; RealGUD
+(defvar-local realgud-debug-command nil "RealGUD debug commmand for current major mode")
+(add-hook 'prog-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:gdb)))
+
+(add-hook 'go-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:gub)))
+(add-hook 'java-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:jdb)))
+(add-hook 'javascript-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:trepanjs)))
+;; (add-hook 'javascript-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:node-debug)))
+(add-hook 'makefile-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:remake)))
+(add-hook 'perl-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:trepan.pl)))
+;; (add-hook 'perl-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:perldb)))
+(add-hook 'python-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:ipdb)))
+;; (add-hook 'python-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:pdb)))
+;; (add-hook 'python-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:pydb)))
+;; (add-hook 'python-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:trepan2)))
+;; (add-hook 'python-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:trepan3k)))
+(add-hook 'ruby-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:trepan)))
+;; (add-hook 'ruby-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:rdebug)))
+(add-hook 'sh-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:bashdb)))
+(add-hook 'sh-mode-hook (lambda nil (setq-local realgud-debug-command 'realgud:bashdb)))
+
+;; (evil-leader/set-key "g" 'debug-toggle)
+(evil-leader/set-key "g" 'debug-enable)
+(evil-leader/set-key "G" 'debug-disable)
+
+
 
 
 ;; Syntax
@@ -461,6 +533,8 @@
 	 ("lock" "")
 	 ("gpg" "")
 	 ("java" . "smali"))))
+ '(realgud-populate-common-fn-keys-function (quote realgud-populate-common-fn-keys-none))
+ '(realgud-safe-mode nil)
  '(replace-w-completion-flag t)
  '(scalable-fonts-allowed t)
  '(search-default-mode t)
