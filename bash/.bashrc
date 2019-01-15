@@ -159,7 +159,7 @@ EOF
 	alias busy='my_file=$(find /usr/include -type f | sort -R | head -n 1); my_len=$(wc -l $my_file | awk "{print $1}"); let "r = $RANDOM % $my_len" 2>/dev/null; nvim +$r $my_file'
 	alias docker_rm='docker rm $(docker ps --no-trunc -aqf status=exited)'
 	alias docker_rmi='docker rmi $(docker images --no-trunc -qf dangling=true)'
-	alias webserver='python2 -m SimpleHTTPServer'
+	alias webserver='python3 -m http.server'
 	alias open='xdg-open'
 	alias passgen='gpg --gen-random --armor 1 '
 
