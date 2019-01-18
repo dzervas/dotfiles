@@ -290,8 +290,10 @@
 (require-package 'company-irony)    ; C/C++/ObjC/ObjC++
 (add-to-list 'company-backends 'company-irony)
 
-(require-package 'company-tern)     ; JS
+(require-package 'company-tern)     ; Javascript. Needs nodejs-tern
 (add-to-list 'company-backends 'company-tern)
+(add-hook 'js2-mode-hook (lambda () (tern-mode) (company-mode)))
+(add-hook 'rjsx-mode-hook (lambda () (tern-mode) (company-mode)))
 ;; Enable JavaScript completion between <script>...</script> etc.
 (advice-add 'company-tern :before
             #'(lambda (&rest _)
