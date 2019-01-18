@@ -15,7 +15,7 @@ echo "Installing shit..."
 brew update
 brew upgrade
 brew tap caskroom/cask caskroom/fonts caskroom/drivers
-brew cask install firefox gpg-suite font-iosevka iterm2 karabiner-elements
+brew cask install firefox gpg-suite font-iosevka iterm2 karabiner-elements emacs
 brew install neovim stow pass wget exa ripgrep git python3 npm \
 	pyenv pyenv-virtualenv antigen jq coreutils mtr ag xonsh htop zsh \
 	colordiff
@@ -24,17 +24,20 @@ brew install neovim stow pass wget exa ripgrep git python3 npm \
 sudo sh -c "echo /usr/local/bin/zsh >> /etc/shells" && chsh -s $(which zsh)
 
 wget https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py
-sudo python /get-pip.py
+sudo python2 /tmp/get-pip.py
+sudo python3 /tmp/get-pip.py
 
 
 echo "Installing dotfiles"
 
 mkdir Lab
 git clone https://github.com/dzervas/dotfiles Lab/dotfiles
-stow -d Lab/dotfiles -t . -S bash git vim zsh
+stow -d Lab/dotfiles -t . -S bash git vim zsh emacs
 ln -s $HOME/.vimrc $HOME/.vim/init.vim
 ln -s $HOME/Lab/dotfiles/vim/.vim $HOME/.config/nvim
 
+echo "Setting up Emacs"
+sudo pip install rope jedi flake8 autopep8 yapf
 
 echo "Setting up NeoVim"
 
@@ -64,18 +67,6 @@ sed "s|%%replace%%|$HOME/go/bin/browserpass|g" /tmp/firefox-host.json > $HOME/Li
 
 
 echo "Installing l33t haxxor fonts"
-
-
-echo "Installing gonvim"
-
-brew install qt5
-
-export QT_HOMEBREW=true
-export QT_DIR=$HOME/.qt5
-mkdir $QT_DIR
-github_latest_release "https://github.com/dzhou121/gonvim/releases/latest"
-wget "$URL/gonvim-macos.zip" -O /tmp/gonvim.zip
-unzip /tmp/gonvim.zip -d /Applications/
 
 
 echo "Setting up mac keycodes"

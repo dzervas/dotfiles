@@ -123,7 +123,8 @@
 ;; (global-set-key '[(M-mouse-1)] 'semantic-ia-fast-mouse-jump)
 (global-set-key (kbd "C-l") 'evil-ex-nohighlight)
 (global-set-key (kbd "M-/") 'comment-line)
-(global-set-key (kbd "C-]") 'semantic-ia-fast-jump)
+;; (global-set-key (kbd "C-]") 'semantic-ia-fast-jump)
+(global-set-key (kbd "C-]") 'dumb-jump-go)
 (global-set-key (kbd "C-<down>") 'move-line-down)
 (global-set-key (kbd "C-<up>") 'move-line-up)
 
@@ -162,8 +163,6 @@
 ;; Evil Mode
 (require-package 'evil)
 (evil-mode t)
-;; (require-package 'evil-collection)
-;; (evil-collection-init)
 
 ;; Molokai
 (require-package 'molokai-theme)
@@ -230,6 +229,10 @@
 ;; Indentation
 (require-package 'dtrt-indent)
 (dtrt-indent-mode t)
+
+;; Jump to definition
+(require-package 'dumb-jump)
+(add-hook 'prog-mode-hook 'dumb-jump-mode)
 
 ;; Evil Escape everything
 (require-package 'evil-escape)
@@ -370,6 +373,10 @@
 (require-package 'docker-compose-mode)
 (require-package 'dockerfile-mode)
 
+;; Javascript & JSX
+(require-package 'rjsx-mode)
+(add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode))
+
 ;; Jinja2
 (require-package 'jinja2-mode)
 
@@ -377,11 +384,17 @@
 (require-package 'markdown-mode)
 
 ;; Python
-(require-package 'virtualenvwrapper)
-;; (add-hook 'python-mode-hook #'auto-virtualenvwrapper-activate)
+;; (require-package 'virtualenvwrapper)
 
-;; (require-package 'elpy)
-;; (elpy-enable)
+;; (require-package 'auto-virtualenvwrapper)
+;; (add-hook 'python-mode-hook #'auto-virtualenvwrapper-activate)
+;; Activate on changing buffers
+;; (add-hook 'window-configuration-change-hook #'auto-virtualenvwrapper-activate)
+;; Activate on focus in
+;; (add-hook 'focus-in-hook #'auto-virtualenvwrapper-activate)
+
+(require-package 'elpy)
+(elpy-enable)
 
 ;; Swift
 (require-package 'swift-mode)
@@ -443,6 +456,7 @@
  '(dtrt-indent-ignore-single-chars-flag t)
  '(dtrt-indent-mode t nil (dtrt-indent))
  '(ede-auto-add-method (quote multi-ask))
+ '(eldoc-show-in-mode-line-delay 0)
  '(electric-pair-inhibit-predicate (quote electric-pair-conservative-inhibit))
  '(electric-pair-mode t)
  '(erc-autojoin-channels-alist (quote (("token.census" "#census"))))
@@ -503,7 +517,7 @@
  '(linum-relative-current-symbol "")
  '(package-selected-packages
    (quote
-	(docker-compose-mode dockerfile-mode jinja2-mode coffee-mode projectile evil-escape powerline molokai-theme linum-relative imenu-list git-gutter-fringe+ flycheck fill-column-indicator evil-surround evil-smartparens evil-mc evil-matchit evil-leader elscreen dtrt-indent company-tern company-quickhelp company-jedi company-irony company-go)))
+	(company-web-html docker-compose-mode dockerfile-mode jinja2-mode coffee-mode projectile evil-escape powerline molokai-theme linum-relative imenu-list git-gutter-fringe+ flycheck fill-column-indicator evil-surround evil-smartparens evil-mc evil-matchit evil-leader elscreen dtrt-indent company-tern company-quickhelp company-jedi company-irony company-go)))
  '(plstore-select-keys nil)
  '(prog-mode-hook
    (quote
@@ -583,4 +597,5 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :stipple nil :background "#1B1D1E" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "CYEL" :family "Iosevka"))))
  '(hc-tab ((t (:underline (:color "dim gray" :style wave)))))
- '(hc-trailing-whitespace ((t (:strike-through "dim gray")))))
+ '(hc-trailing-whitespace ((t (:strike-through "dim gray"))))
+ '(tooltip ((t (:inherit variable-pitch :background "dim gray" :foreground "black")))))
