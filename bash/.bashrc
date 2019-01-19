@@ -32,8 +32,8 @@ fi
 
 # Variable definitions
 	# No duplicates in history
-	export ALTERNATE_EDITOR="vim"
-	export EDITOR="nvr --remote-wait-silent"
+	export ALTERNATE_EDITOR="emacs -nw"
+	export EDITOR="emacsclient -nw"
 	export HISTCONTROL="ignoredups"
 	export HOSTNAME=$(hostname)
 	export MANPATH="$MANPATH:$NPM_PACKAGES/share/man"

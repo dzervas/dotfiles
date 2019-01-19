@@ -396,7 +396,8 @@
 ;; (add-hook 'focus-in-hook #'auto-virtualenvwrapper-activate)
 
 (require-package 'elpy)
-(elpy-enable)
+(fset 'elpy-shell-map nil)
+(add-hook 'python-mode-hook 'elpy-enable)
 
 ;; Swift
 (require-package 'swift-mode)
