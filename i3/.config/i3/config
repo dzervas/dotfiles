@@ -5,6 +5,7 @@ set $menu rofi -show drun
 set $lock i3lock -i ~/Pictures/windows_10.png
 
 font pango:Iosevka 10
+hide_edge_borders both
 
 ### Key bendings
 # Basics:
@@ -96,19 +97,6 @@ mode "resize" {
 
 bindsym $mod+p mode "resize"
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-bar {
-	position top
-	status_command i3status
-	font pango:Iosevka 10
-	colors {
-		statusline #ffffff
-		background #323232
-		inactive_workspace #32323200 #32323200 #5c5c5c
-	}
-}
-
 # Keyboard/TouchPad hacks
 exec_always --no-startup-id "setxkbmap -layout us,gr -option grp:win_space_toggle,caps:escape"
 exec_always --no-startup-id "xinput set-prop 'AlpsPS/2 ALPS DualPoint TouchPad' 'libinput Natural Scrolling Enabled' 1"
@@ -116,5 +104,8 @@ exec_always --no-startup-id "xinput set-prop 'AlpsPS/2 ALPS DualPoint TouchPad' 
 exec_always --no-startup-id "xinput set-prop 'DLL075B:01 06CB:76AF Touchpad' 'libinput Natural Scrolling Enabled' 1"
 exec_always --no-startup-id "xinput set-prop 'DLL075B:01 06CB:76AF Touchpad' 'libinput Tapping Enabled' 1"
 
+# PolyBar
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+
 # Auto lock
-exec --no-startup-id xautolock -time 5 -locker 'i3lock -i ~/Pictures/windows_10.png' &
+exec --no-startup-id xautolock -time 5 -locker 'i3lock -i ~/Pictures/lockscreen.png' &
