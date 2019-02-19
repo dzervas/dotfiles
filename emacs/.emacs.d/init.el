@@ -398,6 +398,10 @@
 (require-package 'elpy)
 (fset 'elpy-shell-map nil)
 (add-hook 'python-mode-hook 'elpy-enable)
+(define-key elpy-mode-map (kbd "<M-up>") nil)
+(define-key elpy-mode-map (kbd "<M-down>") nil)
+(define-key elpy-mode-map (kbd "<M-left>") nil)
+(define-key elpy-mode-map (kbd "<M-right>") nil)
 
 ;; Swift
 (require-package 'swift-mode)
