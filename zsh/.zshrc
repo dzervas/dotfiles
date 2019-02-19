@@ -103,6 +103,20 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 		zle -U "sudo "
 	}
 
+	get_tldr() {
+		cmd=${(z)BUFFER}
+
+		if [[ $cmd = *" "* ]]; then
+			cmd=${${(z)BUFFER}[1]}
+			if [[ $cmd = "sudo" ]]; then
+				cmd=${${(z)BUFFER}[2]}
+			fi
+		fi
+
+		tldr -s "${cmd}" 2>/dev/null
+		zle reset-prompt
+	}
+
 	# Stupid ZLE hack
 	goto_bg() { fg > /dev/null 2>&1 }
 
@@ -110,6 +124,7 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	zle -N exec-sudo exec_sudo
 	zle -N fg goto_bg
 	zle -N insert-sudo insert_sudo
+	zle -N get-tldr get_tldr
 
 # Variables
 	# Colors
@@ -152,6 +167,7 @@ for f in /usr/share/*/*.zsh; do source $f; done 2>/dev/null
 	bindkey "^r"		fzf-history-widget
 	bindkey "^f"		fzf-file-widget
 	bindkey "^g"		fzf-cd-widget
+	bindkey "^h"		get-tldr
 	bindkey "^z"		fg
 	bindkey "\e\e"		insert-sudo
 	bindkey "\e\`"		exec-sudo
