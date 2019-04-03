@@ -13,3 +13,4 @@ gpg --keyserver {{hkps://pgp.mit.edi}} --search-keys {{user}}##Search gpg public
 for tool in `ls`; do echo "$tool"; cd "$tool"; git pull; cd ..; done##Update all git directories
 xrandr --output HDMI-2 --auto --same-as eDP-1##Mirror to HDMI display
 xfreerdp /d: /u:dzervas /v:{{legit.vm}} /p:{{1234}} /app:"C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"##Run Microsoft Excel on legit.vm
+idevicebackup2 backup --full -i {{dir}}##iPhone backup

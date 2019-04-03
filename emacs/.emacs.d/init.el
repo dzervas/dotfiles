@@ -124,6 +124,8 @@
 (global-set-key (kbd "C-l") 'evil-ex-nohighlight)
 (global-set-key (kbd "M-/") 'comment-line)
 ;; (global-set-key (kbd "C-]") 'semantic-ia-fast-jump)
+;; TODO: Find references
+(global-set-key (kbd "M-]") 'xref-find-references)
 (global-set-key (kbd "C-]") 'dumb-jump-go)
 (global-set-key (kbd "C-<down>") 'move-line-down)
 (global-set-key (kbd "C-<up>") 'move-line-up)
@@ -171,6 +173,9 @@
 (load-theme 'molokai-overrides t)
 (setq font-lock-maximum-decoration t)
 (setq custom-safe-themes t)
+
+(require-package 'dimmer)
+(dimmer-mode)
 
 ;; Git Helpers
 
@@ -225,6 +230,7 @@
 
 
 ;; Editing Helpers
+(add-hook 'prog-mode-hook 'eldoc-mode)
 
 ;; Indentation
 (require-package 'dtrt-indent)
@@ -283,6 +289,9 @@
 (setq company-go-gocode-command "~/go/bin/gocode")
 (add-to-list 'company-backends 'company-go)
 
+(require-package 'cython-mode)
+(require-package 'flycheck-cython)
+(add-hook 'cython-mode-hook 'flycheck-mode)
 (require-package 'jedi-core)
 (require-package 'company-jedi)     ; Python. Needs M-x jedi:install-server
 (add-to-list 'company-backends 'company-jedi)
@@ -333,6 +342,10 @@
   (setq flycheck-standard-error-navigation nil)
   (flycheck-pos-tip-mode))
 (evil-leader/set-key "e" 'flycheck-list-errors)
+;; Patch go-vet
+(let ((govet (flycheck-checker-get 'go-vet 'command)))
+  (when (equal (cadr govet) "tool")
+    (setf (cdr govet) (cddr govet))))
 
 ;; RealGUD
 (defvar-local realgud-debug-command nil "RealGUD debug commmand for current major mode")
@@ -402,6 +415,15 @@
 (define-key elpy-mode-map (kbd "<M-down>") nil)
 (define-key elpy-mode-map (kbd "<M-left>") nil)
 (define-key elpy-mode-map (kbd "<M-right>") nil)
+
+;; Rust
+;; $ rustup toolchain add nightly
+;; $ rustup component add rust-src
+;; $ cargo +nightly install racer
+(require-package 'rust-mode)
+(require-package 'flycheck-rust)
+(require-package 'racer)
+(add-hook 'rust-mode-hook #'racer-mode)
 
 ;; Swift
 (require-package 'swift-mode)
@@ -524,7 +546,7 @@
  '(linum-relative-current-symbol "")
  '(package-selected-packages
    (quote
-	(company-web-html docker-compose-mode dockerfile-mode jinja2-mode coffee-mode projectile evil-escape powerline molokai-theme linum-relative imenu-list git-gutter-fringe+ flycheck fill-column-indicator evil-surround evil-smartparens evil-mc evil-matchit evil-leader elscreen dtrt-indent company-tern company-quickhelp company-jedi company-irony company-go)))
+	(flycheck-cython cython-mode racer flycheck-rust rust-mode company-web-html docker-compose-mode dockerfile-mode jinja2-mode coffee-mode projectile evil-escape powerline molokai-theme linum-relative imenu-list git-gutter-fringe+ flycheck fill-column-indicator evil-surround evil-smartparens evil-mc evil-matchit evil-leader elscreen dtrt-indent company-tern company-quickhelp company-jedi company-irony company-go)))
  '(plstore-select-keys nil)
  '(prog-mode-hook
    (quote
@@ -595,7 +617,8 @@
  '(tooltip-mode t)
  '(tramp-adb-connect-if-not-connected t nil (tramp))
  '(word-wrap t)
- '(words-include-escapes t))
+ '(words-include-escapes t)
+ '(xref-prompt-for-identifier nil))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

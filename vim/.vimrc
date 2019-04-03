@@ -15,7 +15,9 @@ set hidden				" Hide instead of closing buffers
 set hlsearch
 set ignorecase
 set incsearch
-set inccommand=nosplit	" THAT's IT! It took them 37 years and 1 fork, but they did it...
+if exists('&inccommand')
+  set inccommand=nosplit
+endif
 set list
 set listchars=tab:>_,trail:•,extends:#,nbsp:¶
 set mouse=nvc			" By default mouse is for vim. F2 to cycle between
@@ -98,7 +100,14 @@ call plug#begin("~/.vim/bundle")
 	Plug 'mbbill/undotree'
 
 	" Autocompletion
-	Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+	if has('nvim')
+		Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+	else
+		Plug 'Shougo/deoplete.nvim'
+		Plug 'roxma/nvim-yarp'
+		Plug 'roxma/vim-hug-neovim-rpc'
+	endif
+
 		Plug 'Shougo/echodoc.vim'
 		Plug 'Shougo/neco-syntax'
 		Plug 'autozimu/LanguageClient-neovim', {

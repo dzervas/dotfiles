@@ -32,15 +32,15 @@ fi
 
 # Variable definitions
 	# No duplicates in history
-	export ALTERNATE_EDITOR="emacs -nw"
-	export EDITOR="emacsclient -nw"
+	export ALTERNATE_EDITOR="vim"
+	export EDITOR="nvim"
 	export HISTCONTROL="ignoredups"
 	export HOSTNAME=$(hostname)
 	export MANPATH="$MANPATH:$NPM_PACKAGES/share/man"
 	export NPM_PACKAGES="${HOME}/.npm-packages"
 	export PAGER="less"
 	#export PATH="$HOME/.pyenv/bin:$HOME/.bin:$PATH:$NPM_PACKAGES/bin:$PATH"
-	export PATH="$HOME/.bin:$PATH:$NPM_PACKAGES/bin"
+	export PATH="$HOME/.bin:$HOME/.local/bin:$PATH:$NPM_PACKAGES/bin"
 	export TZ="Europe/Athens"
 
 	# Check the window size after each command to update LINES and COLUMNS if necessary
@@ -162,12 +162,14 @@ EOF
 	alias webserver='python3 -m http.server'
 	alias open='xdg-open'
 	alias passgen='gpg --gen-random --armor 1 '
+	alias weather='curl wttr.in'
 
+	alias cat='bat -p --paging=never'
 	alias diff='colordiff -ub'
 	alias grep='rg'
-	alias less='less -R'
-	alias ll='exa -Fhalg --color=auto'
-	alias ls='exa -F --color=auto'
+	alias less='bat -p'
+	alias ll='lsd -Fal'
+	alias ls='lsd -F'
 	alias man='LC_ALL=C LANG=C man'
 	# Come on mutt, we're on 2015...
 	alias mutt='TERM=xterm-256color mutt'
@@ -183,14 +185,14 @@ EOF
 	alias g='git'
 	alias jc='curl -i -H "Content-Type: application/json"'
 	alias ipy='ipython'
-	alias l='exa --color=auto'
+	alias l='lsd -F'
 	alias mc='cm'
 	alias n='echo -e "\a"; mpg123 -q ~/Music/notification.mp3'
 	#alias mc='java -jar .minecraft/minecraft.jar'
 	alias py='python'
 	alias py2='python2.7'
 	alias py3='python3.6'
-	alias v='nvr --remote-silent'
+	alias v='nvr'
 	alias sv='sudoedit'
 
 	# Muscle memory...

@@ -2,7 +2,8 @@
 set $mod Mod4
 set $term termite
 set $menu rofi -show drun
-set $lock i3lock -i ~/Pictures/windows_10.png
+set $lock i3lock -i ~/Pictures/lockscreen.png
+set $screenshot gnome-screenshot --interactive
 
 font pango:Iosevka 10
 hide_edge_borders both
@@ -12,6 +13,7 @@ hide_edge_borders both
 bindsym $mod+Return exec $term
 bindsym $mod+l exec $lock
 bindsym $mod+r exec $menu
+bindsym Print exec $screenshot
 
 # Windows:
 bindsym $mod+f fullscreen
@@ -22,8 +24,7 @@ bindsym $mod+Up focus right
 bindsym $mod+Down focus left
 bindsym $mod+Right workspace next_on_output
 bindsym $mod+Left workspace prev_on_output
-# TODO: Fix this
-bindsym $mod+Tab workspace prev_on_output
+bindsym $mod+Tab workspace back_and_forth
 # Move focus to the parent container
 bindsym $mod+a focus parent
 
@@ -41,6 +42,7 @@ bindsym $mod+Shift+Up move right
 bindsym $mod+Shift+Down move left
 #bindsym $mod+Shift+Right move container to workspace right
 #bindsym $mod+Shift+Left move container to workspace left
+bindsym $mod+Shift+Tab move container to workspace back_and_forth
 
 # Workspaces:
 bindsym $mod+1 workspace 1
