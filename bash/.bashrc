@@ -153,6 +153,16 @@ EOF
 		tomb lock "${1}" -k "${1}.key" -gr "${3}"
 	}
 
+	function enable_nat() {
+		sudo iptables -t nat -A POSTROUTING -o net0 -j MASQUERADE
+		sudo sysctl -w net.ipv4.conf.all.bc_forwarding=1
+	}
+
+	function disable_nat() {
+		sudo iptables -t nat -D POSTROUTING -o net0 -j MASQUERADE
+		sudo sysctl -w net.ipv4.conf.all.bc_forwarding=0
+	}
+
 	eval "$(dircolors -b 2>/dev/null || gdircolors -b)"
 
 # Alias
@@ -192,7 +202,7 @@ EOF
 	alias py='python'
 	alias py2='python2.7'
 	alias py3='python3.6'
-	alias v='nvr'
+	alias v='nvim'
 	alias sv='sudoedit'
 
 	# Muscle memory...
