@@ -1,12 +1,20 @@
-if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "/etc/zprofile" ]]; then
-  source "/etc/zprofile"
-fi
+#if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "/etc/zprofile" ]]; then
+  #source "/etc/zprofile"
+#fi
 
 # Load .bashrc
 # Shopt not found workaround
 alias shopt="false"
 source ~/.bashrc
 unalias shopt
+
+# Modules
+	autoload -U colors && colors
+	autoload -U promptinit && promptinit
+	autoload -U compinit && compinit
+	autoload -U zmv
+
+	zmodload zsh/zpty
 
 # Plugins
 if [ -f /usr/share/zsh/share/antigen.zsh ]; then
@@ -19,10 +27,10 @@ antigen bundle hlissner/zsh-autopair
 antigen bundle jreese/zsh-titles
 antigen bundle zdharma/fast-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
-export GENCOMPL_PY="/usr/bin/env python3"
 antigen bundle RobSis/zsh-completion-generator
 
 antigen apply
+autopair-init
 
 if [ -f /usr/local/opt/fzf/shell/key-bindings.zsh ]; then
 	source /usr/local/opt/fzf/shell/key-bindings.zsh
@@ -37,14 +45,6 @@ fi
 	setopt autocd				# /etc instead of cd /etc
 	setopt prompt_subst			# Update PS1 every time
 	setopt transientrprompt		# Indicate insert/command mode
-
-# Modules
-	autoload -U colors && colors
-	autoload -U promptinit && promptinit
-	autoload -U compinit && compinit
-	autoload -U zmv
-
-	zmodload zsh/zpty
 
 # Functions
 	# Git prompt
@@ -80,15 +80,14 @@ fi
 			GIT_STATE=$GIT_STATE$GIT_PROMPT_STAGED
 		fi
 		if [[ -n $GIT_STATE ]]; then
-			echo "$GIT_PROMPT_PREFIX$GIT_STATE$GIT_PROMPT_SUFFIX"
+			echo -ne "$GIT_PROMPT_PREFIX$GIT_STATE$GIT_PROMPT_SUFFIX"
 		fi
 	}
  
 	# If inside a Git repository, print its branch and state
 	git_prompt_string() {
 		local git_where="$(parse_git_branch)"
-		[ -n "$git_where" ] && echo "$GIT_PROMPT_SYMBOL$(parse_git_state)\
-$GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUFFIX"
+		[ -n "$git_where" ] && echo -ne "$GIT_PROMPT_SYMBOL$(parse_git_state)$GIT_PROMPT_PREFIX%{$YELLOW%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUFFIX$NC"
 	}
 	
 	# Insert sudo at the beginning of the command
@@ -136,15 +135,15 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	done
 
 	# Git
-	GIT_PROMPT_SYMBOL="%{$fg[blue]%}±"
-	GIT_PROMPT_PREFIX="%{$fg[green]%}[%{$reset_color%}"
-	GIT_PROMPT_SUFFIX="%{$fg[green]%}]%{$reset_color%}"
-	GIT_PROMPT_AHEAD="%{$fg[red]%}ANUM%{$reset_color%}"
-	GIT_PROMPT_BEHIND="%{$fg[cyan]%}BNUM%{$reset_color%}"
-	GIT_PROMPT_MERGING="%{$fg_bold[magenta]%}/!\\%{$reset_color%}"
-	GIT_PROMPT_UNTRACKED="%{$fg_bold[red]%}•%{$reset_color%}"
-	GIT_PROMPT_MODIFIED="%{$fg_bold[yellow]%}•%{$reset_color%}"
-	GIT_PROMPT_STAGED="%{$fg_bold[green]%}•%{$reset_color%}"
+	GIT_PROMPT_SYMBOL="%{$BLUE%}±"
+	GIT_PROMPT_PREFIX="%{$GREEN%}["
+	GIT_PROMPT_SUFFIX="%{$GREEN%}]"
+	GIT_PROMPT_AHEAD="%{$RED%}ANUM"
+	GIT_PROMPT_BEHIND="%{$CYAN%}BNUM"
+	GIT_PROMPT_MERGING="%{$BMAGENTA%}/!\\$NC"
+	GIT_PROMPT_UNTRACKED="%{$BRED%}•$NC"
+	GIT_PROMPT_MODIFIED="%{$BYELLOW%}•$NC"
+	GIT_PROMPT_STAGED="%{$BGREEN%}•$NC"
 
 	HISTFILE=$HOME/.zhistory
 	HISTSIZE=1000
@@ -158,7 +157,7 @@ $GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUF
 	fi
 
 	PS1='$SSH_COLOR%n${SSH_INFO} $BCYAN%c$NC%(!.#.>) '
-	RPS1='$(git_prompt_string)$(statecnt)${NC}'
+	RPS1='$(git_prompt_string)$(statecnt)$NC'
 
 for f in /usr/share/*/*.zsh; do source $f; done 2>/dev/null
 
@@ -199,7 +198,3 @@ for f in /usr/share/*/*.zsh; do source $f; done 2>/dev/null
 
 	# Rebuild $PATH on each execution (may be performance intensive)
 	zstyle ":completion:*:commands" rehash 1
-
-# tabtab source for electron-forge package
-# uninstall by removing these lines or running `tabtab uninstall electron-forge`
-[[ -f /home/dzervas/Lab/ember-invoice-manager/node_modules/tabtab/.completions/electron-forge.zsh ]] && . /home/dzervas/Lab/ember-invoice-manager/node_modules/tabtab/.completions/electron-forge.zsh

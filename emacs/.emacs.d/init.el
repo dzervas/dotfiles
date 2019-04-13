@@ -248,9 +248,9 @@
 (global-evil-matchit-mode t)
 
 ;; Multiple cursors
-;; TODO: Escape this
 (require-package 'evil-mc)
 (global-evil-mc-mode t)
+(evil-define-key 'normal evil-mc-key-map (kbd "<escape>") 'evil-mc-undo-all-cursors)
 (global-set-key (kbd "C-n") 'evil-mc-make-and-goto-next-match)
 (global-set-key (kbd "C-p") 'evil-mc-make-and-goto-prev-match)
 (global-set-key (kbd "C-x") 'evil-mc-skip-and-goto-next-match)

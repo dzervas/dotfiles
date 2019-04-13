@@ -39,6 +39,7 @@ fi
 	export MANPATH="$MANPATH:$NPM_PACKAGES/share/man"
 	export NPM_PACKAGES="${HOME}/.npm-packages"
 	export PAGER="less"
+	export LC_CTYPE=en_US.UTF-8
 	#export PATH="$HOME/.pyenv/bin:$HOME/.bin:$PATH:$NPM_PACKAGES/bin:$PATH"
 	export PATH="$HOME/.bin:$HOME/.local/bin:$PATH:$NPM_PACKAGES/bin"
 	export TZ="Europe/Athens"
@@ -133,34 +134,14 @@ EOF
 		fi
 	}
 
-	function command_not_found_handler() {
-		# Looks like a vim command
-		[[ "$1" == :* ]] && {
-			return $(nvr -c "${1}")
-		}
-		# Otherwise, replicate the default error message
-		printf '(ba/z)sh: command not found: %s\n' "$1" >&2
-		return 127
-	}
-
-	function tombo() {
-		tomb open "${1}" -k "${1}.key" -gr "${2}"
-	}
-
-	function tombc() {
-		tomb dig -s "${2}" "${1}"
-		tomb forge "${1}.key" -gr "${3}"
-		tomb lock "${1}" -k "${1}.key" -gr "${3}"
-	}
-
 	function enable_nat() {
 		sudo iptables -t nat -A POSTROUTING -o net0 -j MASQUERADE
-		sudo sysctl -w net.ipv4.conf.all.bc_forwarding=1
+		sudo sysctl -w net.ipv4.conf.all.forwarding=1
 	}
 
 	function disable_nat() {
 		sudo iptables -t nat -D POSTROUTING -o net0 -j MASQUERADE
-		sudo sysctl -w net.ipv4.conf.all.bc_forwarding=0
+		sudo sysctl -w net.ipv4.conf.all.forwarding=0
 	}
 
 	eval "$(dircolors -b 2>/dev/null || gdircolors -b)"
@@ -225,7 +206,7 @@ EOF
 		SSH_COLOR=$GREEN
 	fi
 
-	export PS1="${SSH_COLOR}\u${SSH_INFO} \$(statecnt && echo -n ' ')${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${RED}\$ ${NC}"
+	export PS1="${SSH_COLOR}\u${SSH_INFO}\$(statecnt && echo -n ' ')${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${RED}\$ ${NC}"
 
 	# Android env vars
 	export ANT_ROOT=/usr/bin/

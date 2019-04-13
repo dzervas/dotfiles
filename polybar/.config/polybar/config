@@ -258,7 +258,7 @@ type = internal/memory
 format = <label> <bar-used>
 label = RAM
 
-bar-used-width = 5
+bar-used-width = 10
 bar-used-foreground-0 = #aaff77
 bar-used-foreground-1 = #aaff77
 bar-used-foreground-2 = #fba922
@@ -308,6 +308,7 @@ type = internal/pulseaudio
 speaker-mixer = Speaker
 headphone-mixer = Headphone
 headphone-id = 9
+use-ui-max = false
 
 format-volume = <ramp-volume>
 label-muted = 
