@@ -43,6 +43,8 @@ bindsym $mod+Shift+Down move left
 #bindsym $mod+Shift+Right move container to workspace right
 #bindsym $mod+Shift+Left move container to workspace left
 bindsym $mod+Shift+Tab move container to workspace back_and_forth
+bindsym $mod+Shift+greater move workspace to output right; move workspace to output up
+bindsym $mod+Shift+less move workspace to output left; move workspace to output down
 
 # Workspaces:
 bindsym $mod+1 workspace 1
@@ -82,7 +84,6 @@ bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 
 # Floating windows
-#for_window [title="rofi"] floating enable, focus;
 for_window [class="[Pp]inentry-.*"] floating enable, focus;
 for_window [class="sun-awt-X11-XFramePeer" title=" "] floating enable, focus;
 

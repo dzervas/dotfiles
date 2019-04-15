@@ -134,12 +134,12 @@ EOF
 		fi
 	}
 
-	function enable_nat() {
+	function nat_enable() {
 		sudo iptables -t nat -A POSTROUTING -o net0 -j MASQUERADE
 		sudo sysctl -w net.ipv4.conf.all.forwarding=1
 	}
 
-	function disable_nat() {
+	function nat_disable() {
 		sudo iptables -t nat -D POSTROUTING -o net0 -j MASQUERADE
 		sudo sysctl -w net.ipv4.conf.all.forwarding=0
 	}

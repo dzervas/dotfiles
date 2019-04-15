@@ -616,7 +616,7 @@
  '(text-mode-hook (quote (turn-on-flyspell text-mode-hook-identify)))
  '(tooltip-mode t)
  '(tramp-adb-connect-if-not-connected t nil (tramp))
- '(word-wrap t)
+ '(truncate-lines t)
  '(words-include-escapes t)
  '(xref-prompt-for-identifier nil))
 

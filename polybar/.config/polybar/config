@@ -1,5 +1,4 @@
-; Arch Linux fonts: trizen -S noto-fonts{,-{cjk,emoji,extra}} ttf-font-awesome ttf-material-icons termsyn-font ttf-unifont ttf-anonymous-pro
-
+; Arch Linux fonts: trizen -S noto-fonts{,-{cjk,emoji,extra}} ttf-font-awesome ttf-material-icons-git termsyn-font ttf-unifont ttf-anonymous-pro
 [bar/top]
 monitor = ${env:MONITOR:}
 width = 100%
@@ -13,7 +12,7 @@ tray-foreground = #ccffffff
 line-color = ${bar/bottom.background}
 line-size = 16
 
-spacing = 2
+spacing = 2screenchange-reload = true
 padding-right = 5
 module-margin = 4
 
@@ -54,7 +53,7 @@ font-3 = NotoSans-Regular:size=8;-1
 font-4 = MaterialIcons:size=10;-1
 font-5 = Termsynu:size=8:antialias=false;0
 
-modules-left = bspwm
+;modules-left = bspwm
 ;modules-right = cpu memory
 
 [module/backlight]
