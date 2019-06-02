@@ -1,9 +1,10 @@
-from datetime import datetime
-from prompt_toolkit.keys import Keys
-#from xonsh.base_shell import print_color
-from xonsh.prompt.gitstatus import gitstatus_prompt
 import builtins
 import re
+
+from datetime import datetime
+from prompt_toolkit.keys import Keys
+from xonsh.prompt.gitstatus import gitstatus_prompt
+
 
 def gitprompt():
 	if gitstatus_prompt():
@@ -14,11 +15,40 @@ def jobsprompt():
 	jobs = len(jobs) - 1
 
 	if jobs > 0:
-		return "{{BOLD_GREEN}}[{{INTENSE_CYAN}}J{}{{BOLD_GREEN}}]".format(jobs)
+		return "{BOLD_GREEN}[{INTENSE_CYAN}J" + jobs + "{BOLD_GREEN}]"
 
 def mkcd(args, stdin=None):
 	mkdir @(args[0])
 	cd @(args[0])
+
+def notification(args, stdin=None):
+	print("\a")
+
+@events.on_ptk_create
+def custom_keybindings(bindings, **kw):
+	handler = bindings.add
+
+	@handler(Keys.Escape, Keys.Escape)
+	def prepend_sudo(event):
+		event.current_buffer.text = "sudo " + event.current_buffer.text
+
+	@handler(Keys.Escape, "a")
+	def up_sudo(event):
+		event.current_buffer.history_backward()
+		prepend_sudo(event)
+
+# Environmental variables
+$ALTERNATE_EDITOR = "vim"
+$AUTO_CD = True
+$CASE_SENSITIVE_COMPLETIONS = False
+$EDITOR = "nvim"
+$PAGER = "bat"
+$PROJECT_DIRS = "~/Lab"
+$PROMPT = "{vte_new_tab_cwd}{GREEN}{user} {BOLD_CYAN}{short_cwd}{NO_COLOR}> "
+$RIGHT_PROMPT = "{git}{jobs}"
+$TITLE = "{current_job}{user}@{hostname}: {cwd}"
+$TZ = "Europe/Athens",
+$XONSH_COLOR_STYLE = "monokai"
 
 $PROMPT_FIELDS["git"] = gitprompt
 $PROMPT_FIELDS["jobs"] = jobsprompt
@@ -33,30 +63,53 @@ $LESS_TERMCAP_us = "\033[00;36m"     # begin underline
 $LESS_TERMCAP_ue = "\033[0m"         # end underline
 
 $FZF_HISTORY_BINDING = Keys.ControlR
+$FZF_SSH_BINDING = Keys.ControlS
 
-aliases["1ping"]="ping 1.1.1.1"
-aliases["cdt"]="cd $(mktemp -d)"
-aliases["d"]="docker"
-aliases["dc"]="docker-compose"
-aliases["diff"]="colordiff -ub"
-aliases["docker_rm"]="docker rm $(docker ps --no-trunc -aqf status=exited)"
-aliases["docker_rmi"]="docker rmi $(docker images --no-trunc -qf dangling=true)"
-aliases["e"]="${EDITOR}"
-aliases["g"]="git"
-aliases["grep"]="rg"
-aliases["less"]="less -R"
-aliases["l"]="exa --color=auto"
-aliases["ll"]="ls -Fhalg --color=auto"
-aliases["ls"]="exa -F --color=auto"
-aliases["mc"]=mkcd
-aliases["pgrep"]="pgrep -af"
-aliases["passgen"]="gpg --gen-random --armor 1 "
-aliases["pgrep"]="pgrep -a"
-aliases["py"]="python"
-aliases["py2"]="python2"
-aliases["py3"]="python3"
-aliases["sv"]="sudoedit"
-aliases["v"]="nvr --remote-silent"
-aliases["webserver"]="python2 -m SimpleHTTPServer"
-aliases[":q"]="exit"
-aliases[";q"]="exit"
+# Aliases
+aliases["1ping"] = "ping 1.1.1.1"
+aliases["cat"] = "bat -p --paging=never"
+aliases["cdt"] = "cd $(mktemp -d)"
+aliases["d"] = "docker"
+aliases["dc"] = "docker-compose"
+aliases["diff"] = "colordiff -ub"
+aliases["docker_rm"] = "docker rm $(docker ps --no-trunc -aqf status=exited)"
+aliases["docker_rmi"] = "docker rmi $(docker images --no-trunc -qf dangling=true)"
+aliases["e"] = "${EDITOR}"
+aliases["find"] = "fd"
+aliases["g"] = "git"
+aliases["grep"] = "rg"
+aliases["ipy"] = "ipython"
+aliases["jc"] = "curl -i -H 'Content-Type: application/json'"
+aliases["less"] = "less -R"
+aliases["l"] = "lsd -F"
+aliases["ll"] = "lsd -Fal"
+aliases["ls"] = "lsd -F"
+aliases["mc"] = mkcd
+aliases["n"] = notification
+aliases["open"] = "xdg-open"
+aliases["pgrep"] = "pgrep -af"
+aliases["passgen"] = "gpg --gen-random --armor 1 "
+aliases["pgrep"] = "pgrep -a"
+aliases["py"] = "python"
+aliases["py2"] = "python2"
+aliases["py3"] = "python3"
+aliases["sv"] = "sudoedit"
+aliases["ssh"] = "TERM=xterm-256color ssh"
+aliases["v"] = "nvim"
+aliases["webserver"] = "python3 -m http.server"
+aliases["wather"] = "curl wttr.in"
+aliases[":e"] = "v"
+aliases[":q"] = "exit"
+aliases[";q"] = "exit"
+
+# Xontribs
+xontrib load avox
+xontrib load bashisms
+#xontrib load click_tabcomplete
+xontrib load coreutils
+xontrib load docker_tabcomplete
+xontrib load fzf-widgets
+xontrib load jedi
+#xontrib load powerline
+xontrib load prompt_ret_code
+xontrib load whole_word_jumping

@@ -4,6 +4,7 @@
 		"AUTO_CD": true,
 		"CASE_SENSITIVE_COMPLETIONS": false,
 		"EDITOR": "nvim",
+		"ALTERNATE_EDITOR": "vim",
 		"IGNOREEOF": false,
 		"PAGER": "less",
 		"PATH": [
@@ -25,14 +26,5 @@
 		"TITLE": "{current_job}{user}@{hostname}: {cwd}",
 		"TZ": "Europe/Athens",
 		"XONSH_COLOR_STYLE": "monokai"
-	},
-	"xontribs": [
-		"avox",
-		"bashisms",
-		"docker_tabcomplete",
-		"fzf-widgets",
-		"jedi",
-		"vox",
-		"vox_tabcomplete"
-	]
+	}
 }

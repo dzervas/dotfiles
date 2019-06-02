@@ -167,6 +167,7 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 
 " Auto-update ctags
 au BufReadPost,BufWritePost *.py,*.c,*.cpp,*.h,*.java silent! !eval 'ctags --fields=afmikKlnsStz --extra=fq -R -o tags 2>/dev/null' &
+au BufNewFile,BufRead .xonshrc set syntax=python
 
 " Terminal mode config
 if has("nvim")

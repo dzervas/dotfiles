@@ -120,6 +120,17 @@ fi
 	# Stupid ZLE hack
 	goto_bg() { fg > /dev/null 2>&1 }
 
+	# Setup:
+	faraday-start() {
+		tmux new -s faraday-server -d "~/.virtualenvs/faraday/bin/python ~/Tools/faraday/faraday-server.py"
+		tmux new -s faraday-client -d "~/.virtualenvs/faraday/bin/python ~/Tools/faraday/faraday.py --gui no-gui"
+	}
+
+	faraday-stop() {
+		tmux kill-session -t faraday-client
+		tmux kill-session -t faraday-server
+	}
+
 # ZLE definitions
 	zle -N exec-sudo exec_sudo
 	zle -N fg goto_bg
@@ -146,8 +157,8 @@ fi
 	GIT_PROMPT_STAGED="%{$BGREEN%}•$NC"
 
 	HISTFILE=$HOME/.zhistory
-	HISTSIZE=1000
-	SAVEHIST=1000
+	HISTSIZE=100000
+	SAVEHIST=100000
 
 	if [ -n "$SSH_CLIENT" ]; then
 		SSH_COLOR=$RED

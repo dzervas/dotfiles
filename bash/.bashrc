@@ -121,9 +121,9 @@ EOF
 		fi
 	}
 
-	# Change prompt of remote machine (removes bashrc!)
+	# Change prompt of remote machine
 	function ssh-fix-prompt() {
-		command="rm -f ~/.bashrc; sudo sed -i 's/^PS1=.*/PS1=\"\\\e\[${2}m\\\u\@\\\h\\\e\[0m:\\\w\\\$ \"/g' /etc/bash.bashrc"
+		command="mv ~/.bashrc{,.b}; sudo sed 's/^PS1=.*/PS1=\"\\\e\[${2}m\\\u\@\\\h\\\e\[0m:\\\w\\\$ \"/g' /etc/bash.bashrc > ~/.bashrc"
 		if [[ ${3} == "forsure" ]]; then
 			ssh -t "${1}" "$command"
 		else
@@ -134,20 +134,39 @@ EOF
 		fi
 	}
 
-	function nat_enable() {
-		sudo iptables -t nat -A POSTROUTING -o net0 -j MASQUERADE
-		sudo sysctl -w net.ipv4.conf.all.forwarding=1
-	}
+	function nat_iface() {
+		iface=$1
 
-	function nat_disable() {
-		sudo iptables -t nat -D POSTROUTING -o net0 -j MASQUERADE
-		sudo sysctl -w net.ipv4.conf.all.forwarding=0
+		if [ "$#" -lt 1 ]; then
+			ip addr
+			echo "Choose interface for DHCP to listen:"
+			read iface
+			echo "Choose interface to forward traffic to (can be empty):"
+			read oface
+		else
+			oface=$2
+		fi
+
+		if [ ! -z $oface ]; then
+			sudo iptables -t nat -A POSTROUTING -o $oface -j MASQUERADE
+			sudo sysctl -w net.ipv4.conf.all.forwarding=1
+		fi
+
+		nmcli dev set $iface managed no
+		sudo ip addr add 172.16.16.1/24 dev $iface
+		sudo dnsmasq -d -i $iface -F 172.16.16.100,172.16.16.120
+		sudo ip addr del 172.16.16.1/24 dev $iface
+		nmcli dev set $iface managed yes
+
+		if [ ! -z $oface ]; then
+			sudo iptables -t nat -D POSTROUTING -o $oface -j MASQUERADE
+			sudo sysctl -w net.ipv4.conf.all.forwarding=0
+		fi
 	}
 
 	eval "$(dircolors -b 2>/dev/null || gdircolors -b)"
 
 # Alias
-	alias busy='my_file=$(find /usr/include -type f | sort -R | head -n 1); my_len=$(wc -l $my_file | awk "{print $1}"); let "r = $RANDOM % $my_len" 2>/dev/null; nvim +$r $my_file'
 	alias docker_rm='docker rm $(docker ps --no-trunc -aqf status=exited)'
 	alias docker_rmi='docker rmi $(docker images --no-trunc -qf dangling=true)'
 	alias webserver='python3 -m http.server'
@@ -161,9 +180,8 @@ EOF
 	alias less='bat -p'
 	alias ll='lsd -Fal'
 	alias ls='lsd -F'
+	alias find='fd'
 	alias man='LC_ALL=C LANG=C man'
-	# Come on mutt, we're on 2015...
-	alias mutt='TERM=xterm-256color mutt'
 	alias pgrep='pgrep -af'
 	alias ssh='TERM=xterm-256color ssh'
 
@@ -230,7 +248,7 @@ EOF
 		source /usr/local/bin/virtualenvwrapper.sh
 	fi
 
-	if [ -s "$HOME/.local/share/marker/marker.sh" ]; then
+	if [ -s $HOME/.local/share/marker/marker.sh ]; then
 		export MARKER_KEY_NEXT_PLACEHOLDER="^N"
-		source "$HOME/.local/share/marker/marker.sh"
+		source $HOME/.local/share/marker/marker.sh
 	fi

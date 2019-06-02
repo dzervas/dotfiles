@@ -43,8 +43,6 @@ bindsym $mod+Shift+Down move left
 #bindsym $mod+Shift+Right move container to workspace right
 #bindsym $mod+Shift+Left move container to workspace left
 bindsym $mod+Shift+Tab move container to workspace back_and_forth
-bindsym $mod+Shift+greater move workspace to output right; move workspace to output up
-bindsym $mod+Shift+less move workspace to output left; move workspace to output down
 
 # Workspaces:
 bindsym $mod+1 workspace 1
@@ -56,6 +54,8 @@ bindsym $mod+6 workspace 6
 bindsym $mod+7 workspace 7
 bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
+bindsym $mod+greater focus output right; focus output up
+bindsym $mod+less focus output left; focus output down
 
 bindsym $mod+Shift+1 move container to workspace 1
 bindsym $mod+Shift+2 move container to workspace 2
@@ -66,6 +66,8 @@ bindsym $mod+Shift+6 move container to workspace 6
 bindsym $mod+Shift+7 move container to workspace 7
 bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+greater move workspace to output right; move workspace to output up
+bindsym $mod+Shift+less move workspace to output left; move workspace to output down
 
 # Layout stuff:
 bindsym $mod+b splith
@@ -111,3 +113,9 @@ exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
 # Auto lock
 exec --no-startup-id xautolock -time 5 -locker 'i3lock -i ~/Pictures/lockscreen.png' &
+
+exec --no-startup-id termite --name dropdown &
+
+bindsym $mod+i [instance="dropdown"] scratchpad show, move position center
+
+for_window [instance="dropdown"] floating enable, resize set 800 600, move scratchpad

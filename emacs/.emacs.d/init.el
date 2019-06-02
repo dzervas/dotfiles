@@ -111,7 +111,8 @@
 (evil-leader/set-key "b" 'sr-speedbar-toggle)
 
 ;; Windows
-(global-set-key (kbd "M-RET") 'split-window-right)
+(global-set-key (kbd "M-<return>") 'split-window-right)
+(global-set-key (kbd "C-M-<return>") 'split-window-below)
 (global-set-key (kbd "M-<backspace>") 'delete-window)
 (global-set-key (kbd "M-f") 'delete-other-windows)
 (global-set-key (kbd "M-C") 'delete-window)
