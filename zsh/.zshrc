@@ -32,10 +32,13 @@ antigen bundle RobSis/zsh-completion-generator
 antigen apply
 autopair-init
 
+export FZF_CTRL_T_COMMAND="locate"
+export FZF_CTRL_T_OPTS="$(pwd)"
+
 if [ -f /usr/local/opt/fzf/shell/key-bindings.zsh ]; then
 	source /usr/local/opt/fzf/shell/key-bindings.zsh
-	export FZF_CTRL_T_COMMAND="locate"
-	export FZF_CTRL_T_OPTS="$(pwd)"
+elif [ -f /usr/share/fzf/key-bindings.zsh ]; then
+	source /usr/share/fzf/key-bindings.zsh
 fi
 
 # Settings
@@ -170,7 +173,7 @@ fi
 	PS1='$SSH_COLOR%n${SSH_INFO} $BCYAN%c$NC%(!.#.>) '
 	RPS1='$(git_prompt_string)$(statecnt)$NC'
 
-for f in /usr/share/*/*.zsh; do source $f; done 2>/dev/null
+#for f in /usr/share/*/*.zsh; do source $f; done 2>/dev/null
 
 # Key bindings
 	export KEYTIMEOUT=1

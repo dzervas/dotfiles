@@ -1,6 +1,6 @@
 ### Variables
 set $mod Mod4
-set $term termite
+set $term kitty
 set $menu rofi -show drun
 set $lock i3lock -i ~/Pictures/lockscreen.png
 set $screenshot gnome-screenshot --interactive
@@ -11,8 +11,8 @@ hide_edge_borders both
 ### Key bendings
 # Basics:
 bindsym $mod+Return exec $term
-bindsym $mod+l exec $lock
-bindsym $mod+r exec $menu
+#bindsym $mod+l exec $lock
+#bindsym $mod+r exec $menu
 bindsym Print exec $screenshot
 
 # Windows:
@@ -104,18 +104,34 @@ mode "resize" {
 bindsym $mod+p mode "resize"
 
 # Keyboard/TouchPad hacks
-exec_always --no-startup-id "setxkbmap -layout us,gr -option grp:win_space_toggle,caps:escape"
-exec_always --no-startup-id "xinput list --name-only | grep -i touchpad | xargs -I {} xinput set-prop '{}' 'libinput Natural Scrolling Enabled' 1"
-exec_always --no-startup-id "xinput list --name-only | grep -i touchpad | xargs -I {} xinput set-prop '{}' 'libinput Tapping Enabled' 1"
+#exec_always --no-startup-id "setxkbmap -layout us,gr -option grp:win_space_toggle,caps:escape"
+#exec_always --no-startup-id "xinput list --name-only | grep -i touchpad | xargs -I {} xinput set-prop '{}' 'libinput Natural Scrolling Enabled' 1"
+#exec_always --no-startup-id "xinput list --name-only | grep -i touchpad | xargs -I {} xinput set-prop '{}' 'libinput Tapping Enabled' 1"
 
 # PolyBar
-exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+#exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
 # Auto lock
-exec --no-startup-id xautolock -time 5 -locker 'i3lock -i ~/Pictures/lockscreen.png' &
+#exec --no-startup-id xautolock -time 5 -locker 'i3lock -i ~/Pictures/lockscreen.png' &
 
-exec --no-startup-id termite --name dropdown &
+#exec --no-startup-id termite --name dropdown &
 
-bindsym $mod+i [instance="dropdown"] scratchpad show, move position center
+#bindsym $mod+i [instance="dropdown"] scratchpad show, move position center
 
-for_window [instance="dropdown"] floating enable, resize set 800 600, move scratchpad
+#for_window [instance="dropdown"] floating enable, resize set 800 600, move scratchpad
+
+## Plasma Integration
+# Try to kill the wallpaper set by Plasma (it takes up the entire workspace and hides everythiing)
+exec --no-startup-id wmctrl -c Plasma
+for_window [title="Desktop — Plasma"] kill; floating enable; border none
+
+## Avoid tiling popups, dropdown windows from plasma
+# for the first time, manually resize them, i3 will remember the setting for floating windows
+for_window [class="plasmashell"] floating enable;
+for_window [class="Plasma"] floating enable; border none
+for_window [title="plasma-desktop"] floating enable; border none
+for_window [title="win7"] floating enable; border none
+for_window [class="krunner"] floating enable; border none
+for_window [class="Kmix"] floating enable; border none
+for_window [class="Klipper"] floating enable; border none
+for_window [class="Plasmoidviewer"] floating enable; border none
