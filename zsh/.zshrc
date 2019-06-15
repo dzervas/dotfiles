@@ -19,6 +19,8 @@ unalias shopt
 # Plugins
 if [ -f /usr/share/zsh/share/antigen.zsh ]; then
 	source /usr/share/zsh/share/antigen.zsh
+elif [ -f /usr/share/zsh-antigen/antigen.zsh ]; then
+	source /usr/share/zsh-antigen/antigen.zsh
 elif [ -f /usr/local/share/antigen/antigen.zsh ]; then
 	source /usr/local/share/antigen/antigen.zsh
 fi

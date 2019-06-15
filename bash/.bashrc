@@ -41,7 +41,7 @@ fi
 	export PAGER="less"
 	export LC_CTYPE=en_US.UTF-8
 	#export PATH="$HOME/.pyenv/bin:$HOME/.bin:$PATH:$NPM_PACKAGES/bin:$PATH"
-	export PATH="$HOME/.bin:$HOME/.local/bin:$PATH:$NPM_PACKAGES/bin"
+	export PATH="$HOME/.bin:$HOME/.local/bin:$PATH:$NPM_PACKAGES/bin:$HOME/.cargo/bin"
 	export TZ="Europe/Athens"
 
 	# Check the window size after each command to update LINES and COLUMNS if necessary
@@ -164,6 +164,10 @@ EOF
 		fi
 	}
 
+	function nse_find() {
+		fd $1 /usr/share/nmap/scripts/
+	}
+
 	eval "$(dircolors -b 2>/dev/null || gdircolors -b)"
 
 # Alias
@@ -209,9 +213,9 @@ EOF
 	alias :q='exit'
 
 # Enable completions
-	if [ -f /etc/bash_completion ]; then
-		. /etc/bash_completion
-	fi
+	#if [ -f /etc/bash_completion ]; then
+		#. /etc/bash_completion
+	#fi
 
 # Other useful definitions
 	# "You are SSHing" reminder (shutdown the server maybe?)
