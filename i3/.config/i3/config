@@ -78,12 +78,12 @@ bindsym $mod+t layout tabbed
 bindsym $mod+e layout toggle split
 
 # Arcane:
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume $(pacmd list-sinks |awk '/* index:/{print $3}') +5%
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume $(pacmd list-sinks |awk '/* index:/{print $3}') -5%
-bindsym XF86AudioMute exec pactl set-sink-mute $(pacmd list-sinks |awk '/* index:/{print $3}') toggle
-bindsym XF86AudioMicMute exec pactl set-source-mute $(pacmd list-sources |awk '/* index:/{print $3}') toggle
-bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
-bindsym XF86MonBrightnessUp exec brightnessctl set +10%
+#bindsym XF86AudioRaiseVolume exec pactl set-sink-volume $(pacmd list-sinks |awk '/* index:/{print $3}') +5%
+#bindsym XF86AudioLowerVolume exec pactl set-sink-volume $(pacmd list-sinks |awk '/* index:/{print $3}') -5%
+#bindsym XF86AudioMute exec pactl set-sink-mute $(pacmd list-sinks |awk '/* index:/{print $3}') toggle
+#bindsym XF86AudioMicMute exec pactl set-source-mute $(pacmd list-sources |awk '/* index:/{print $3}') toggle
+#bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
+#bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 
 # Floating windows
 for_window [class="[Pp]inentry-.*"] floating enable, focus;
@@ -104,7 +104,7 @@ mode "resize" {
 bindsym $mod+p mode "resize"
 
 # Keyboard/TouchPad hacks
-#exec_always --no-startup-id "setxkbmap -layout us,gr -option grp:win_space_toggle,caps:escape"
+exec_always --no-startup-id "setxkbmap -layout us,gr -option caps:escape"
 #exec_always --no-startup-id "xinput list --name-only | grep -i touchpad | xargs -I {} xinput set-prop '{}' 'libinput Natural Scrolling Enabled' 1"
 #exec_always --no-startup-id "xinput list --name-only | grep -i touchpad | xargs -I {} xinput set-prop '{}' 'libinput Tapping Enabled' 1"
 

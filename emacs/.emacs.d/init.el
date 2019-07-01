@@ -332,6 +332,7 @@
 
 
 ;; Linting, debugging & building
+(require-package 'golint)
 
 ;; Flycheck syntax checker
 (require-package 'flycheck)
@@ -547,7 +548,7 @@
  '(linum-relative-current-symbol "")
  '(package-selected-packages
    (quote
-	(flycheck-cython cython-mode racer flycheck-rust rust-mode company-web-html docker-compose-mode dockerfile-mode jinja2-mode coffee-mode projectile evil-escape powerline molokai-theme linum-relative imenu-list git-gutter-fringe+ flycheck fill-column-indicator evil-surround evil-smartparens evil-mc evil-matchit evil-leader elscreen dtrt-indent company-tern company-quickhelp company-jedi company-irony company-go)))
+	(golint flycheck-cython cython-mode racer flycheck-rust rust-mode company-web-html docker-compose-mode dockerfile-mode jinja2-mode coffee-mode projectile evil-escape powerline molokai-theme linum-relative imenu-list git-gutter-fringe+ flycheck fill-column-indicator evil-surround evil-smartparens evil-mc evil-matchit evil-leader elscreen dtrt-indent company-tern company-quickhelp company-jedi company-irony company-go)))
  '(plstore-select-keys nil)
  '(prog-mode-hook
    (quote
