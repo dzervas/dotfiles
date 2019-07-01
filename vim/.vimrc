@@ -136,6 +136,7 @@ call plug#begin("~/.vim/bundle")
 	Plug 'lepture/vim-jinja', { 'for': 'jinja' }
 	Plug 'fatih/vim-go', { 'for': 'go' }
 	Plug 'rust-lang/rust.vim'
+	Plug 'dag/vim-fish'
 
 	" Text objects
 	Plug 'wellle/targets.vim'
