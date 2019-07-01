@@ -1,7 +1,0 @@
-[options]
-font = Iosevka 12
-scrollback_lines = -1
-
-[colors]
-foreground = #ffffff
-background = #1d1d1d
