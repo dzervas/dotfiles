@@ -32,7 +32,6 @@ antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle RobSis/zsh-completion-generator
 
 antigen apply
-autopair-init
 
 export FZF_CTRL_T_COMMAND="locate"
 export FZF_CTRL_T_OPTS="$(pwd)"
