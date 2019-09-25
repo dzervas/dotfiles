@@ -87,7 +87,8 @@ bindsym $mod+e layout toggle split
 
 # Floating windows
 for_window [class="[Pp]inentry-.*"] floating enable, focus;
-for_window [class="sun-awt-X11-XFramePeer" title=" "] floating enable, focus;
+for_window [class="com-install4j-runtime-launcher-UnixLauncher" title=" "] floating enable, focus;
+for_window [class="net-portswigger-burp-browser-BurpBrowserServer"] floating enable, focus;
 
 # resize window (you can also use the mouse for that)
 mode "resize" {

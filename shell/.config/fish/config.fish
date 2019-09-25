@@ -25,3 +25,5 @@ end
 bind \ch  "get_help"
 bind \e\e "prepend_sudo"
 bind \ea  "prepend_sudo_previous"
+
+source ~/.config/fish/aliases.fish

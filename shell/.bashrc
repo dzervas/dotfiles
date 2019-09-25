@@ -168,6 +168,10 @@ EOF
 		fd $1 /usr/share/nmap/scripts/
 	}
 
+	function openocd_find() {
+		fd $1 /usr/share/openocd/scripts/
+	}
+
 	eval "$(dircolors -b 2>/dev/null || gdircolors -b)"
 
 # Alias

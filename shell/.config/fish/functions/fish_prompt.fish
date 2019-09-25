@@ -28,7 +28,7 @@ function fish_right_prompt --description "Write out the right prompt"
 	# TODO: Remove (refs/heads/|tags/)
 	set -l git_branch (git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD)
 	set -l git_dir (git rev-parse --git-dir)
-	set -l git_untracked (git ls-files --other --exclude-standard 2> /dev/null)
+	set -l git_untracked (git ls-files --other --exclude-standard)
 	set -l git_modified (git diff --quiet)
 	set -l git_staged (git diff --quiet --cached)
 
@@ -50,16 +50,16 @@ function fish_right_prompt --description "Write out the right prompt"
 		set_color --bold red
 		echo -n '•'
 	end
-	if [ "$git_modified" ]
+	if [ ! $git_modified ]
 		set_color --bold yellow
 		echo -n '•'
 	end
-	if [ "$git_staged" ]
+	if [ ! $git_staged ]
 		set_color --bold green
 		echo -n '•'
 	end
 
-	echo -ns (set_color normal) "$git_branch" (set_color green) "]"
+	echo -ns (set_color green) "][" (set_color normal) $git_branch (set_color green) "]"
 
 	# Job prompt
 	set -l jobs (jobs | wc -l)
