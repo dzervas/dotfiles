@@ -40,8 +40,7 @@ fi
 	export NPM_PACKAGES="${HOME}/.npm-packages"
 	export PAGER="less"
 	export LC_CTYPE=en_US.UTF-8
-	#export PATH="$HOME/.pyenv/bin:$HOME/.bin:$PATH:$NPM_PACKAGES/bin:$PATH"
-	export PATH="$HOME/.bin:$HOME/.local/bin:$PATH:$NPM_PACKAGES/bin:$HOME/.cargo/bin"
+	export PATH="$HOME/.bin:$HOME/.local/bin:$PATH:$NPM_PACKAGES/bin:$HOME/.cargo/bin:$HOME/.STM32Cube/STM32CubeProgrammer/bin/"
 	export TZ="Europe/Athens"
 
 	# Check the window size after each command to update LINES and COLUMNS if necessary
@@ -179,7 +178,7 @@ EOF
 	alias docker_rmi='docker rmi $(docker images --no-trunc -qf dangling=true)'
 	alias webserver='python3 -m http.server'
 	alias open='xdg-open'
-	alias passgen='gpg --gen-random --armor 1 '
+	alias passgen='gpg --armor --gen-random 2 '
 	alias weather='curl wttr.in'
 
 	alias cat='bat -p --paging=never'
@@ -207,8 +206,8 @@ EOF
 	alias n='echo -e "\a"; mpg123 -q ~/Music/notification.mp3'
 	#alias mc='java -jar .minecraft/minecraft.jar'
 	alias py='python'
-	alias py2='python2.7'
-	alias py3='python3.6'
+	alias py2='python2'
+	alias py3='python3'
 	alias v='nvim'
 	alias sv='sudoedit'
 
@@ -252,6 +251,8 @@ EOF
 
 	if [ -f /usr/bin/virtualenvwrapper.sh ]; then
 		source /usr/bin/virtualenvwrapper.sh
+	elif [ -f /usr/share/virtualenvwrapper/virtualenvwrapper.sh ]; then
+		source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 	elif [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
 		source /usr/local/bin/virtualenvwrapper.sh
 	fi

@@ -40,6 +40,8 @@ if [ -f /usr/local/opt/fzf/shell/key-bindings.zsh ]; then
 	source /usr/local/opt/fzf/shell/key-bindings.zsh
 elif [ -f /usr/share/fzf/key-bindings.zsh ]; then
 	source /usr/share/fzf/key-bindings.zsh
+elif [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]; then
+	source /usr/share/doc/fzf/examples/key-bindings.zsh
 fi
 
 # Settings

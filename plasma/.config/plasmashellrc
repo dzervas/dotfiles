@@ -1,15 +1,18 @@
+[General]
+Number of Actions=0
+
 [PlasmaRunnerManager]
 LaunchCounts=1 services_libinput-gestures.desktop
 pluginWhiteList=desktopsessions,services,places,PowerDevil,shell,bookmarks,recentdocuments,locations,baloosearch
 
 [PlasmaTransientsConfig]
-PreloadWeight=26
+PreloadWeight[$d]
 
 [PlasmaViews][Panel 2][Horizontal1920]
 thickness=36
 
 [ScreenConnectors]
-0=DVI-I-1
+0=DVI-D-0
 1=DP-1
 2=eDP-1
 
