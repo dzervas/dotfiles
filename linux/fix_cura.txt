@@ -1,0 +1,5 @@
+Add the following int /usr/bin/cura after imports:
+
+os.unsetenv('DESKTOP_SESSION')
+os.unsetenv('KDE_FULL_SESSION')
+os.unsetenv('XDG_CURRENT_DESKTOP')
