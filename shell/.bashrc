@@ -96,7 +96,7 @@ EOF
 	# git branch for command prompt
 	function gitbranch() {
 		branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-		[ ! -z $branch ] && echo " $branch"
+		[ -n "$branch" ] && echo " $branch"
 	}
 
 	# update all git repos in current dir
@@ -139,36 +139,42 @@ EOF
 		if [ "$#" -lt 1 ]; then
 			ip addr
 			echo "Choose interface for DHCP to listen:"
-			read iface
+			read -r iface
 			echo "Choose interface to forward traffic to (can be empty):"
-			read oface
+			read -r oface
 		else
 			oface=$2
 		fi
 
-		if [ ! -z $oface ]; then
-			sudo iptables -t nat -A POSTROUTING -o $oface -j MASQUERADE
+		if [ -n "$oface" ]; then
+			sudo iptables -t nat -A POSTROUTING -o "$oface" -j MASQUERADE
 			sudo sysctl -w net.ipv4.conf.all.forwarding=1
 		fi
 
-		nmcli dev set $iface managed no
-		sudo ip addr add 172.16.16.1/24 dev $iface
-		sudo dnsmasq -d -i $iface -F 172.16.16.100,172.16.16.120
-		sudo ip addr del 172.16.16.1/24 dev $iface
-		nmcli dev set $iface managed yes
+		nmcli dev set "$iface" managed no
+		sudo ip addr add 172.16.16.1/24 dev "$iface"
+		sudo dnsmasq -d -i "$iface" -F 172.16.16.100,172.16.16.120
+		sudo ip addr del 172.16.16.1/24 dev "$iface"
+		nmcli dev set "$iface" managed yes
 
-		if [ ! -z $oface ]; then
-			sudo iptables -t nat -D POSTROUTING -o $oface -j MASQUERADE
+		if [ -n "$oface" ]; then
+			sudo iptables -t nat -D POSTROUTING -o "$oface" -j MASQUERADE
 			sudo sysctl -w net.ipv4.conf.all.forwarding=0
 		fi
 	}
 
 	function nse_find() {
-		fd $1 /usr/share/nmap/scripts/
+		fd "$1" /usr/share/nmap/scripts/
 	}
 
 	function openocd_find() {
-		fd $1 /usr/share/openocd/scripts/
+		fd "$1" /usr/share/openocd/scripts/
+	}
+
+	function dump_mem() {
+		grep rw-p "/proc/$1/maps" | sed -n 's/^\([0-9a-f]*\)-\([0-9a-f]*\) .*$/\1 \2/p' | while read -r start stop; do
+			gdb --batch --pid "$1" -ex "dump memory $1-$start-$stop.dump 0x$start 0x$stop"
+		done
 	}
 
 	eval "$(dircolors -b 2>/dev/null || gdircolors -b)"
@@ -197,7 +203,7 @@ EOF
 	alias cdt='cd $(mktemp -d)'
 	alias d='docker'
 	alias dc='docker-compose'
-	alias e=${EDITOR}
+	alias e=\$EDITOR
 	alias g='git'
 	alias jc='curl -i -H "Content-Type: application/json"'
 	alias ipy='ipython'
@@ -257,7 +263,7 @@ EOF
 		source /usr/local/bin/virtualenvwrapper.sh
 	fi
 
-	if [ -s $HOME/.local/share/marker/marker.sh ]; then
+	if [ -s "$HOME/.local/share/marker/marker.sh" ]; then
 		export MARKER_KEY_NEXT_PLACEHOLDER="^N"
-		source $HOME/.local/share/marker/marker.sh
+		source "$HOME/.local/share/marker/marker.sh"
 	fi
