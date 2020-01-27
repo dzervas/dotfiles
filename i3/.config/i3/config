@@ -5,6 +5,10 @@ font pango:Iosevka 10
 hide_edge_borders both
 
 ### Key bendings
+# Shortcuts
+bindsym $mod+r exec "rofi -modi window,drun,run -show drun -sidebar-mode -terminal kitty"
+bindsym $mod+Return exec "kitty"
+
 # Windows:
 bindsym $mod+f fullscreen
 bindsym $mod+c kill
@@ -71,6 +75,7 @@ bindsym $mod+e layout toggle split
 for_window [class="[Pp]inentry-.*"] floating enable, focus;
 for_window [class="com-install4j-runtime-launcher-UnixLauncher" title=" "] floating enable, focus;
 for_window [class="net-portswigger-burp-browser-BurpBrowserServer"] floating enable, focus;
+for_window [class="[Xx]fce4-appfinder"] floating enable, focus;
 
 # resize window (you can also use the mouse for that)
 mode "resize" {

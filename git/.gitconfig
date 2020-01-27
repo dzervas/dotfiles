@@ -21,6 +21,7 @@
 	excludesfile = ~/.gitignore
 [push]
 	default = simple
+	followTags = true
 [user]
 	name = Dimitris Zervas
 	email = dzervas@dzervas.gr
