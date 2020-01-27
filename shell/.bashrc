@@ -262,6 +262,12 @@ EOF
 		source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 	elif [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
 		source /usr/local/bin/virtualenvwrapper.sh
+	elif [ -f /usr/local/bin/pyenv-sh-virtualenvwrapper ]; then
+		source /usr/local/bin/pyenv-sh-virtualenvwrapper
+	fi
+
+	if [ -f /usr/local/etc/bash_completion ]; then
+		source /usr/local/etc/bash_completion
 	fi
 
 	if [ -s "$HOME/.local/share/marker/marker.sh" ]; then

@@ -137,6 +137,7 @@ call plug#begin("~/.vim/bundle")
 	Plug 'fatih/vim-go', { 'for': 'go' }
 	Plug 'rust-lang/rust.vim'
 	Plug 'dag/vim-fish'
+	Plug 'cespare/vim-toml'
 
 	" Text objects
 	Plug 'wellle/targets.vim'
@@ -162,6 +163,8 @@ filetype plugin indent on
 
 au BufRead,BufNewFile *.cshtml set filetype=html
 au BufRead,BufNewFile *.inc set filetype=php
+au BufNewFile,BufRead Jenkinsfile set filetype=groovy
+au BufNewFile,BufRead *.gdsl set filetype=groovy
 
 " Restore cursor position in files
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
