@@ -8,7 +8,7 @@ from xonsh.prompt.gitstatus import gitstatus_prompt
 
 def gitprompt():
 	if gitstatus_prompt():
-		return "±{BOLD_GREEN}[" + gitstatus_prompt() + "{BOLD_GREEN}]"
+		return "{BLUE}±{BOLD_GREEN}[" + gitstatus_prompt() + "{BOLD_GREEN}]"
 
 def jobsprompt():
 	jobs = $(jobs).splitlines()
