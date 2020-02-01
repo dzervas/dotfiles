@@ -32,7 +32,7 @@ def custom_keybindings(bindings, **kw):
 	@handler(Keys.Escape, Keys.Escape)
 	def prepend_sudo(event):
 		event.current_buffer.text = "sudo " + event.current_buffer.text
-		event.cli.current_buffer.cursor_right()
+		event.cli.current_buffer.cursor_right(count = 5)
 
 	@handler(Keys.Escape, "a")
 	def up_sudo(event):
@@ -55,6 +55,7 @@ $BASH_COMPLETIONS.append("/usr/local/share/bash-completion/bash_completion")
 $CASE_SENSITIVE_COMPLETIONS = False
 $EDITOR = "nvim"
 $ALTERNATE_EDITOR = "vim"
+$GOPATH = "~/go"
 $PATH = "~/.bin:~/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:~/go/bin:~/.cargo/bin"
 $PAGER = "bat -pn"
 $PROJECT_DIRS = "~/Lab"
@@ -71,6 +72,7 @@ $DOTGLOB = True
 $FOREIGN_ALIASES_SUPPRESS_SKIP_MESSAGE = True
 $XONSH_COLOR_STYLE = "monokai"
 $XONSH_AUTOPAIR = True
+$SSH_AUTH_SOCK = $(gpgconf --list-dirs agent-ssh-socket).strip()
 
 $PROMPT_FIELDS["git"] = gitprompt
 $PROMPT_FIELDS["jobs"] = jobsprompt
