@@ -4,6 +4,7 @@ import re
 from datetime import datetime
 from prompt_toolkit.keys import Keys
 from xonsh.prompt.gitstatus import gitstatus_prompt
+from xonsh.platform import ON_DARWIN
 
 
 def gitprompt():
@@ -49,6 +50,8 @@ def custom_keybindings(bindings, **kw):
 
 # Environmental variables
 $AUTO_CD = True
+$BASH_COMPLETIONS.append("/usr/local/etc/bash_completion.d/")
+$BASH_COMPLETIONS.append("/usr/local/share/bash-completion/bash_completion")
 $CASE_SENSITIVE_COMPLETIONS = False
 $EDITOR = "nvim"
 $ALTERNATE_EDITOR = "vim"
@@ -59,6 +62,13 @@ $PROMPT = "{vte_new_tab_cwd}{GREEN}{user} {BOLD_CYAN}{short_cwd}{NO_COLOR}> "
 $RIGHT_PROMPT = "{git}{jobs}"
 $TITLE = "{current_job}{user}@{hostname}: {cwd}"
 $TZ = "Europe/Athens",
+
+# Xonsh settings
+$AUTO_SUGGEST_IN_COMPLETIONS = True
+$CASE_SENSITIVE_COMPLETIONS = False
+$COMPLETION_IN_THREAD = True
+$DOTGLOB = True
+$FOREIGN_ALIASES_SUPPRESS_SKIP_MESSAGE = True
 $XONSH_COLOR_STYLE = "monokai"
 $XONSH_AUTOPAIR = True
 
@@ -76,6 +86,11 @@ $LESS_TERMCAP_ue = "\033[0m"         # end underline
 
 #$fzf_history_binding = Keys.ControlR
 #$fzf_ssh_binding = Keys.ControlS
+
+if ON_DARWIN:
+	# Needs brew install bash-completion2
+	source-bash $(/usr/libexec/path_helper -s)
+	source-bash --seterrprevcmd "" /etc/profile
 
 # Aliases
 aliases["1ping"] = "ping 1.1.1.1"
@@ -106,7 +121,7 @@ aliases["py"] = "python"
 aliases["py2"] = "python2"
 aliases["py3"] = "python3"
 aliases["sv"] = "sudoedit"
-aliases["ssh"] = "TERM=xterm-256color ssh"
+aliases["ssh"] = "ssh"
 aliases["v"] = "nvim"
 aliases["webserver"] = "python3 -m http.server"
 aliases["wather"] = "curl wttr.in"
@@ -117,11 +132,8 @@ aliases[";q"] = "exit"
 # Xontribs
 xontrib load autovox avox
 xontrib load bashisms
-#xontrib load click_tabcomplete
 xontrib load coreutils
 xontrib load docker_tabcomplete
-#xontrib load fzf-widgets
 xontrib load jedi
-#xontrib load powerline
 xontrib load prompt_ret_code
 xontrib load whole_word_jumping
