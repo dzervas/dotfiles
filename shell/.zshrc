@@ -33,8 +33,10 @@ antigen bundle RobSis/zsh-completion-generator
 
 antigen apply
 
-export FZF_CTRL_T_COMMAND="locate"
-export FZF_CTRL_T_OPTS="$(pwd)"
+export FZF_CTRL_T_COMMAND="fd -t f"
+export FZF_CTRL_T_OPTS="--preview 'bat --paging never -p -r 0:100 {}'"
+export FZF_ALT_C_COMMAND="fd -t d"
+export FZF_ALT_C_OPTS="--preview 'lsd -Fal {}'"
 
 if [ -f /usr/local/opt/fzf/shell/key-bindings.zsh ]; then
 	source /usr/local/opt/fzf/shell/key-bindings.zsh
