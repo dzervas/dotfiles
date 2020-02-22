@@ -110,15 +110,10 @@ call plug#begin("~/.vim/bundle")
 
 		Plug 'Shougo/echodoc.vim'
 		Plug 'Shougo/neco-syntax'
-		Plug 'autozimu/LanguageClient-neovim', {
-					\ 'branch': 'next',
-					\ 'do': 'bash install.sh',
-					\ }
 		Plug 'Shougo/neco-vim', { 'for': 'vim' }
 		Plug 'zchee/deoplete-clang', { 'for': ['c', 'c++'] }
 		Plug 'zchee/deoplete-go', { 'for': 'go', 'do': 'make'}
 		Plug 'zchee/deoplete-jedi', { 'for': 'python' }
-		Plug 'php-vim/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
 
 	" Snippets
 	Plug 'SirVer/ultisnips'
@@ -138,6 +133,8 @@ call plug#begin("~/.vim/bundle")
 	Plug 'rust-lang/rust.vim'
 	Plug 'dag/vim-fish'
 	Plug 'cespare/vim-toml'
+	Plug 'hashivim/vim-terraform'
+	Plug 'juliosueiras/vim-terraform-completion'
 
 	" Text objects
 	Plug 'wellle/targets.vim'
