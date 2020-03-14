@@ -177,6 +177,10 @@ EOF
 		done
 	}
 
+	function sshmux() {
+		ssh -t $@ "tmux attach || tmux new"
+	}
+
 	eval "$(dircolors -b 2>/dev/null || gdircolors -b)"
 
 # Alias
