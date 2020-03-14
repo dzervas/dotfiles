@@ -96,7 +96,7 @@ if ON_DARWIN:
 
 # Aliases
 aliases["1ping"] = "ping 1.1.1.1"
-aliases["cat"] = "bat -p --paging=never"
+aliases["cat"] = "bat --decorations never"
 aliases["cdt"] = "cd $(mktemp -d)"
 aliases["d"] = "docker"
 aliases["dc"] = "docker-compose"

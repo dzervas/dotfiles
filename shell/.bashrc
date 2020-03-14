@@ -270,6 +270,10 @@ EOF
 		source /usr/local/bin/pyenv-sh-virtualenvwrapper
 	fi
 
+	if which pyenv-virtualenv-init > /dev/null; then
+		eval "$(pyenv virtualenv-init -)"
+	fi
+
 	if [ -f /usr/local/etc/bash_completion ]; then
 		source /usr/local/etc/bash_completion
 	fi

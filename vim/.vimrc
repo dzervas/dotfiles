@@ -2,6 +2,7 @@
 set nocompatible		" This must be first, because it changes other options as side effect
 
 set autoindent
+set clipboard=unnamedplus
 set colorcolumn=80		" Where to put the vertical line
 set completeopt=menuone,noselect
 set copyindent
@@ -86,6 +87,7 @@ call plug#begin("~/.vim/bundle")
 	Plug 'vim-airline/vim-airline-themes'
 	Plug 'tpope/vim-vinegar'
 	Plug 'junegunn/fzf'
+	Plug 'RRethy/vim-illuminate'
 
 	" The one and the only...
 	Plug 'tomasr/molokai'
@@ -156,6 +158,7 @@ call plug#end()
 
 " Syntax highlighting
 syntax on
+syntax sync minlines=10000 maxlines=50000
 filetype plugin indent on
 
 au BufRead,BufNewFile *.cshtml set filetype=html
