@@ -179,6 +179,7 @@ fi
 	RPS1='$(git_prompt_string)$(statecnt)$NC'
 
 #for f in /usr/share/*/*.zsh; do source $f; done 2>/dev/null
+	hash navi && source <(navi widget zsh)
 
 # Key bindings
 	export KEYTIMEOUT=1
