@@ -219,4 +219,4 @@ fi
 		source /usr/local/etc/bash_completion
 	fi
 
-	hash navi && source <(navi widget bash)
+	#hash navi && source <(navi widget bash)

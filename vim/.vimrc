@@ -135,8 +135,7 @@ call plug#begin("~/.vim/bundle")
 	Plug 'rust-lang/rust.vim'
 	Plug 'dag/vim-fish'
 	Plug 'cespare/vim-toml'
-	Plug 'hashivim/vim-terraform'
-	Plug 'juliosueiras/vim-terraform-completion'
+	Plug 'jvirtanen/vim-hcl'
 
 	" Text objects
 	Plug 'wellle/targets.vim'
