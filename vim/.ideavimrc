@@ -22,8 +22,8 @@ inoremap <c-l> :nohlsearch<CR>
 inoremap <c-up> :action MoveLineUp<CR>
 inoremap <c-down> :action MoveLineDown<CR>
 inoremap <a-c> :close<CR>
-inoremap <a-left> :action Forward<CR>
-inoremap <a-right> :action Back<CR>
+inoremap <a-left> :action PreviousTab<CR>
+inoremap <a-right> :action NextTab<CR>
 inoremap <a-return> :vsp<CR>
 inoremap <a-s-return> :sp<CR>
 inoremap <a-tab> <C-W><C-W>
@@ -35,8 +35,8 @@ nnoremap <c-l> :nohlsearch<CR>
 nnoremap <c-up> :action MoveLineUp<CR>
 nnoremap <c-down> :action MoveLineDown<CR>
 nnoremap <a-c> :close<CR>
-nnoremap <a-left> :bp<CR>
-nnoremap <a-right> :bn<CR>
+nnoremap <a-left> :action PreviousTab<CR>
+nnoremap <a-right> :action NextTab<CR>
 nnoremap <a-return> :vsp<CR>
 nnoremap <a-s-return> :sp<CR>
 nnoremap <a-tab> <C-W><C-W>
@@ -52,8 +52,8 @@ vnoremap <c-l> :nohlsearch<CR>
 vnoremap <c-up> :action MoveLineUp<CR>
 vnoremap <c-down> :action MoveLineDown<CR>
 vnoremap <a-c> :close<CR>
-vnoremap <a-left> :bp<CR>
-vnoremap <a-right> :bn<CR>
+vnoremap <a-left> :action PreviousTab<CR>
+vnoremap <a-right> :action NextTab<CR>
 vnoremap <a-return> :vsp<CR>
 vnoremap <a-s-return> :sp<CR>
 vnoremap <a-tab> <C-W><C-W>
