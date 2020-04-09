@@ -1,22 +1,18 @@
-set surround
-set multiple-cursors
+set surround           " vim-surround emulation
+set multiple-cursors   " Support multiple cursors
 
-set noerrorbells
-set hlsearch        " Highlight search maches
-set smartcase       " Do not ignore case when pattern is uppercase
-set incsearch       " Show search matches as you type
-set number          " Show current line number in current line
-set relativenumber  " Show relative line numbers
+set clipboard+=unnamed " Yank buffer shared with system clipboard
+set hlsearch           " Highlight search maches
+set incsearch          " Show search matches as you type
+set noerrorbells       " I want nothing to annoy me
+set number             " Show current line number in current line
+set relativenumber     " Show relative line numbers
+set smartcase          " Do not ignore case when pattern is uppercase
 
 " IdeaVim only
-"set idearefactormode 'keep' " Keep current mode when refactoring
 set ideastatusicon gray " Do not show vim icon in IDEA statusbar
-set lookupkeys "<Tab>", "<Down>", "<Up>", "<Enter>", "<Left>", "<Right>", "<PageUp>", "<PageDown>"
 
 let mapleader=" "
-
-nnoremap gr :action RenameElement<CR>
-nnoremap gR :action Refactorings.QuickListPopupAction<CR>
 
 inoremap <c-l> :nohlsearch<CR>
 inoremap <c-up> :action MoveLineUp<CR>
@@ -43,10 +39,17 @@ nnoremap <a-tab> <C-W><C-W>
 nnoremap <a-up> <C-W>l
 nnoremap <a-down> <C-W>h
 nnoremap <a-f> <C-W>o
-nnoremap <leader>r :action Run<CR>
+
 nnoremap <leader>b :action BuildArtifact<CR>
-nnoremap <leader>b :action BuildArtifact<CR>
+nnoremap <leader>gb :action Vcs.Branches<CR>
+"nnoremap <leader>gc :action Vcs.<CR> " What actions is git commit?
+nnoremap <leader>gp :action Vcs.Push<CR>
+nnoremap <leader>gu :action Vcs.UpdateProject<CR>
 nnoremap <leader><esc> :action HideSideWindows<CR>
+nnoremap <leader>r :action Run<CR>
+
+nnoremap gr :action RenameElement<CR>
+nnoremap gR :action Refactorings.QuickListPopupAction<CR>
 
 vnoremap <c-l> :nohlsearch<CR>
 vnoremap <c-up> :action MoveLineUp<CR>
@@ -60,3 +63,13 @@ vnoremap <a-tab> <C-W><C-W>
 vnoremap <a-up> <C-W>l
 vnoremap <a-down> <C-W>h
 vnoremap <a-f> <C-W>o
+
+imap <c-n> <Plug>NextWholeOccurrence
+imap <c-p> <Plug>RemoveOccurrence
+imap <c-x> <Plug>SkipOccurrence
+nmap <c-n> <Plug>NextWholeOccurrence
+nmap <c-p> <Plug>RemoveOccurrence
+nmap <c-x> <Plug>SkipOccurrence
+vmap <c-n> <Plug>NextWholeOccurrence
+vmap <c-p> <Plug>RemoveOccurrence
+vmap <c-x> <Plug>SkipOccurrence
