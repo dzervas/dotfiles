@@ -166,6 +166,7 @@ fi
 	alias py3='python3'
 	alias v='nvim'
 	alias sv='sudoedit'
+	alias tf='terraform'
 
 	# Muscle memory...
 	alias :e='v'
