@@ -55,15 +55,28 @@ fi
 	setopt transientrprompt		# Indicate insert/command mode
 
 # Functions
+	# Advanced mv by a comment to premek by cameronsstone
+	function mv() {
+		if [ "$#" -ne 1 ] || [ ! -e "$1" ]; then
+			command mv "$@"
+			return
+		fi
+
+		echo -n "New filename: "
+		newfilename="$1"
+		vared newfilename
+		command mv -v -- "$1" "$newfilename"
+	}
+
 	# Git prompt
 	# Show Git branch/tag, or name-rev if on detached head
-	parse_git_branch() {
+	function parse_git_branch() {
 		(git symbolic-ref -q HEAD || \
 			git name-rev --name-only --no-undefined --always HEAD) 2> /dev/null
 	}
 
 	# Show different symbols as appropriate for various Git repository states
-	parse_git_state() {
+	function parse_git_state() {
 		# Compose this value via multiple conditional appends.
 		local GIT_STATE=""
 		local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
@@ -93,24 +106,24 @@ fi
 	}
  
 	# If inside a Git repository, print its branch and state
-	git_prompt_string() {
+	function git_prompt_string() {
 		local git_where="$(parse_git_branch)"
 		[ -n "$git_where" ] && echo -ne "$GIT_PROMPT_SYMBOL$(parse_git_state)$GIT_PROMPT_PREFIX%{$YELLOW%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUFFIX$NC"
 	}
 	
 	# Insert sudo at the beginning of the command
-	insert_sudo() {
+	function insert_sudo() {
 		zle beginning-of-line
 		zle -U "sudo "
 	}
 
-	exec_sudo() {
+	function exec_sudo() {
 		zle up-history
 		zle beginning-of-line
 		zle -U "sudo "
 	}
 
-	get_help() {
+	function get_help() {
 		cmd=${(z)BUFFER}
 
 		if [[ $cmd = *" "* ]]; then
@@ -126,15 +139,15 @@ fi
 	}
 
 	# Stupid ZLE hack
-	goto_bg() { fg > /dev/null 2>&1 }
+	function goto_bg() { fg > /dev/null 2>&1 }
 
 	# Setup:
-	faraday-start() {
+	function faraday-start() {
 		tmux new -s faraday-server -d "~/.virtualenvs/faraday/bin/python ~/Tools/faraday/faraday-server.py"
 		tmux new -s faraday-client -d "~/.virtualenvs/faraday/bin/python ~/Tools/faraday/faraday.py --gui no-gui"
 	}
 
-	faraday-stop() {
+	function faraday-stop() {
 		tmux kill-session -t faraday-client
 		tmux kill-session -t faraday-server
 	}
@@ -207,6 +220,8 @@ fi
 
 
 # Style
+	# Custom mv
+	compdef mv=ls
 	# Menu completion
 	zstyle ':completion:*:descriptions' format '%B%d%b'
 	zstyle ':completion:*' menu select

@@ -107,6 +107,18 @@ fi
 		cd "${1}" || return
 	}
 
+	# By premek
+	function mv() {
+		if [ "$#" -ne 1 ] || [ ! -e "$1" ]; then
+			command mv "$@"
+			return
+		fi
+
+		echo -n "New filename: "
+		read -ei "$1" newfilename
+		command mv -v -- "$1" "$newfilename"
+	}
+
 	function nse_find() {
 		fd "$1" /usr/share/nmap/scripts/
 	}
@@ -122,6 +134,27 @@ fi
 
 	function sshmux() {
 		ssh -t $@ "tmux attach || tmux new"
+	}
+
+	function adafruit-nrfutil-hex() {
+		port=${1}
+		file=${2}
+
+		if [ "$#" -ne 2 ]; then
+			echo "Usage: $0 <port> <hex_file>"
+			return 1
+		fi
+
+		if [ "$(file "${file}" | cut -d' ' -f 2)" = "ELF" ]; then
+			echo "[+] Converting ELF file to hex"
+			objcopy -O ihex "${file}" "${file}.hex"
+			file="${file}.hex"
+		fi
+
+		echo "[+] Generating package"
+		adafruit-nrfutil dfu genpkg --dev-type 0x0052 --application "${file}" "${file}.zip"
+		echo "[+] Flashing package over UART"
+		adafruit-nrfutil --verbose dfu serial --package "${file}.zip" --port "${port}" --baudrate 115200 --singlebank --touch 1200
 	}
 
 	eval "$(dircolors -b 2>/dev/null || gdircolors -b)"
