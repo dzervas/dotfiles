@@ -71,12 +71,6 @@ bindsym $mod+s layout stacking
 bindsym $mod+t layout tabbed
 bindsym $mod+e layout toggle split
 
-# Floating windows
-for_window [class="[Pp]inentry-.*"] floating enable, focus;
-for_window [class="com-install4j-runtime-launcher-UnixLauncher" title=" "] floating enable, focus;
-for_window [class="net-portswigger-burp-browser-BurpBrowserServer"] floating enable, focus;
-for_window [class="[Xx]fce4-appfinder"] floating enable, focus;
-
 # resize window (you can also use the mouse for that)
 mode "resize" {
 	bindsym Left resize grow width 5 px or 5 ppt
@@ -92,7 +86,13 @@ mode "resize" {
 bindsym $mod+p mode "resize"
 
 # Keyboard/TouchPad hacks
-exec_always --no-startup-id "setxkbmap -layout us,gr -option caps:escape"
+#exec_always --no-startup-id "setxkbmap -layout us,gr -option caps:escape"
+
+# Floating windows
+for_window [class="[Pp]inentry-.*"] floating enable, focus;
+for_window [class="com-install4j-runtime-launcher-UnixLauncher" title=" "] floating enable, focus;
+for_window [class="net-portswigger-burp-browser-BurpBrowserServer"] floating enable, focus;
+for_window [class="[Xx]fce4-appfinder"] floating enable, focus;
 
 ## Plasma Integration
 # Try to kill the wallpaper set by Plasma (it takes up the entire workspace and hides everythiing)
@@ -109,3 +109,6 @@ for_window [class="krunner"] floating enable; border none
 for_window [class="Kmix"] floating enable; border none
 for_window [class="Klipper"] floating enable; border none
 for_window [class="Plasmoidviewer"] floating enable; border none
+#for_window [class="plasmashell" window_type="notification"] floating enable, border none, move right 700px, move down 450px
+for_window [class="plasmashell" window_type="notification"] floating enable, border none, move position 1580px 35px
+no_focus [class="plasmashell" window_type="notification"]

@@ -17,7 +17,9 @@ unalias shopt
 	zmodload zsh/zpty
 
 # Plugins
-if [ -f /usr/share/zsh/share/antigen.zsh ]; then
+if [ -f .antigen.zsh ]; then
+	source .antigen.zsh
+elif [ -f /usr/share/zsh/share/antigen.zsh ]; then
 	source /usr/share/zsh/share/antigen.zsh
 elif [ -f /usr/share/zsh-antigen/antigen.zsh ]; then
 	source /usr/share/zsh-antigen/antigen.zsh
@@ -192,7 +194,6 @@ fi
 	RPS1='$(git_prompt_string)$(statecnt)$NC'
 
 #for f in /usr/share/*/*.zsh; do source $f; done 2>/dev/null
-	hash navi && source <(navi widget zsh)
 
 # Key bindings
 	export KEYTIMEOUT=1
