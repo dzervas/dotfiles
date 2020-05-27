@@ -6,7 +6,9 @@ hide_edge_borders both
 
 ### Key bendings
 # Shortcuts
-bindsym $mod+r exec "rofi -modi window,drun,run -show drun -sidebar-mode -terminal kitty"
+#set $menu "rofi -modi window,drun,run -show drun -sidebar-mode -terminal kitty"
+set $menu --no-startup-id qdbus org.kde.krunner /App display
+bindsym $mod+r exec $menu
 bindsym $mod+Return exec "kitty"
 
 # Windows:
@@ -112,3 +114,4 @@ for_window [class="Plasmoidviewer"] floating enable; border none
 #for_window [class="plasmashell" window_type="notification"] floating enable, border none, move right 700px, move down 450px
 for_window [class="plasmashell" window_type="notification"] floating enable, border none, move position 1580px 35px
 no_focus [class="plasmashell" window_type="notification"]
+for_window [class="yakuake"] floating enable; border none
