@@ -1,1 +1,3 @@
-stow -S -t /home/dzervas bash emacs git i3 i3status termite vim zsh
+stow -S -t ~ git i3 kitty vim shell
+
+For KDE setup click [here](https://wiki.archlinux.org/index.php/KDE#Use_a_different_window_manager)
