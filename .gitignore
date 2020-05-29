@@ -2,9 +2,6 @@
 tags
 *.swp
 *.old
-vim/.vim/.netrwhist
-vim/.vim/bundle
-vim/.vim/spell
 
 # Emacs temporary files
 emacs/.emacs.d/auto-save-list
@@ -27,3 +24,8 @@ emacs/.emacs.d/.python-environments
 
 # My SSH keys
 .ssh
+editor/.config/Code/User/globalStorage
+editor/.config/Code/User/workspaceStorage
+editor/.vim/.netrwhist
+editor/.vim/bundle
+editor/.vim/spell
