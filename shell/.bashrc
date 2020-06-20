@@ -181,6 +181,7 @@ fi
 	hash lsd && alias ll='lsd -Fal'
 	hash lsd && alias ls='lsd -F'
 	hash fd && alias find='fd'
+	hash sd && alias sed='sd'
 
 	# Yey! Saved 2 keystrokes! :)
 	alias 1ping='ping 1.1.1.1'

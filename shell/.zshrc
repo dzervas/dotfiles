@@ -49,9 +49,16 @@ elif [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]; then
 fi
 
 # Settings
-	setopt APPEND_HISTORY
+	setopt append_history
+	setopt bang_hist
+	setopt hist_expire_dups_first
 	setopt hist_ignore_all_dups	# Ignore duplicate commands from history
 	setopt hist_ignore_space	# Ignore commands starting with space from history
+	setopt hist_reduce_blanks
+	setopt hist_save_no_dups
+	setopt hist_verify
+	setopt share_history
+
 	setopt autocd				# /etc instead of cd /etc
 	setopt prompt_subst			# Update PS1 every time
 	setopt transientrprompt		# Indicate insert/command mode

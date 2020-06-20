@@ -106,11 +106,6 @@
 		"when": "inSearchEditor && searchInputBoxFocus"
 	},
 	{
-		"key": "alt+c",
-		"command": "workbench.action.closeWindow",
-		"when": "!editorIsOpen && !multipleEditorGroups"
-	},
-	{
 		"key": "ctrl+w",
 		"command": "-workbench.action.closeWindow",
 		"when": "!editorIsOpen && !multipleEditorGroups"
@@ -326,5 +321,51 @@
 		"key": "shift+alt+h",
 		"command": "-references-view.showCallHierarchy",
 		"when": "editorHasCallHierarchyProvider"
+	},
+	{
+		"key": "ctrl+shift+w",
+		"command": "-workbench.action.closeWindow"
+	},
+	{
+		"key": "shift+alt+c",
+		"command": "workbench.action.reopenClosedEditor"
+	},
+	{
+		"key": "ctrl+shift+t",
+		"command": "-workbench.action.reopenClosedEditor"
+	},
+	{
+		"key": "alt+c",
+		"command": "workbench.action.closeActiveEditor"
+	},
+	{
+		"key": "ctrl+w",
+		"command": "-workbench.action.closeActiveEditor"
+	},
+	{
+		"key": "shift+alt+left",
+		"command": "-editor.action.smartSelect.shrink",
+		"when": "editorTextFocus"
+	},
+	{
+		"key": "shift+alt+left",
+		"command": "workbench.action.moveEditorLeftInGroup"
+	},
+	{
+		"key": "ctrl+shift+pageup",
+		"command": "-workbench.action.moveEditorLeftInGroup"
+	},
+	{
+		"key": "shift+alt+right",
+		"command": "workbench.action.moveEditorRightInGroup"
+	},
+	{
+		"key": "ctrl+shift+pagedown",
+		"command": "-workbench.action.moveEditorRightInGroup"
+	},
+	{
+		"key": "shift+alt+right",
+		"command": "-editor.action.smartSelect.expand",
+		"when": "editorTextFocus"
 	}
 ]
