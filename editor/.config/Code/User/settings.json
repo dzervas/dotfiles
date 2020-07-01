@@ -31,7 +31,6 @@
     "workbench.list.openMode": "doubleClick",
     "workbench.startupEditor": "newUntitledFile",
     "workbench.editor.highlightModifiedTabs": true,
-    "workbench.editor.scrollToSwitchTabs": true,
     "window.menuBarVisibility": "toggle",
     "explorer.incrementalNaming": "smart",
     "search.quickOpen.includeSymbols": true,
@@ -79,7 +78,6 @@
     "vim.hlsearch": true,
     "vim.leader": " ",
     "vim.neovimPath": "/usr/bin/nvim",
-    "vim.statusBarColorControl": true,
     "vim.timeout": 500,
     "vim.useSystemClipboard": true,
     "vim.vimrc.enable": true,
@@ -108,4 +106,19 @@
     ],
     "json.format.enable": false,
     "workbench.editor.showTabs": true,
+    "[html]": {
+        "editor.quickSuggestions": true
+    },
+    "[markdown]": {
+        "editor.quickSuggestions": true
+    },
+    "keyboard.dispatch": "keyCode",
+    "python.languageServer": "Microsoft",
+    // "github.username": "dzervas",
+    "github.repositories": [
+        "dzervas/libmage",
+        "dzervas/platformio-arduino-rust",
+        "dzervas/plikter",
+        "dzervas/whynot.fail",
+    ],
 }

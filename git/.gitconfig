@@ -29,3 +29,5 @@
 	signingkey = FA83961650E6A087EAB6C5364F971BE33D5AC94C
 [web]
 	browser = firefox
+[pull]
+	rebase = false
