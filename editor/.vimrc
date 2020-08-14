@@ -85,7 +85,6 @@ call plug#begin("~/.vim/bundle")
 	Plug 'tpope/vim-repeat'
 	Plug 'vim-airline/vim-airline'
 	Plug 'vim-airline/vim-airline-themes'
-	Plug 'tpope/vim-vinegar'
 	Plug 'junegunn/fzf'
 	Plug 'RRethy/vim-illuminate'
 
@@ -94,12 +93,10 @@ call plug#begin("~/.vim/bundle")
 
 	" Editing helpers
 	Plug 'matze/vim-move'
-	Plug 'moll/vim-bbye'
 	Plug 'jiangmiao/auto-pairs'
 	Plug 'scrooloose/nerdcommenter'
 	Plug 'terryma/vim-multiple-cursors'
 	Plug 'tpope/vim-surround'
-	Plug 'mbbill/undotree'
 
 	" Autocompletion
 	if has('nvim')
@@ -117,14 +114,8 @@ call plug#begin("~/.vim/bundle")
 		Plug 'zchee/deoplete-go', { 'for': 'go', 'do': 'make'}
 		Plug 'zchee/deoplete-jedi', { 'for': 'python' }
 
-	" Snippets
-	Plug 'SirVer/ultisnips'
-		Plug 'honza/vim-snippets'
-
 	" Linting, debugging & building
-	Plug 'idanarye/vim-vebugger'
 	Plug 'neomake/neomake'
-	Plug 'mattboehm/vim-unstack'
 	Plug 'fidian/hexmode'
 
 	" Syntax
@@ -133,7 +124,7 @@ call plug#begin("~/.vim/bundle")
 	Plug 'lepture/vim-jinja', { 'for': 'jinja' }
 	Plug 'fatih/vim-go', { 'for': 'go' }
 	Plug 'rust-lang/rust.vim'
-	Plug 'dag/vim-fish'
+	Plug 'rodjek/vim-puppet'
 	Plug 'cespare/vim-toml'
 	Plug 'hashivim/vim-terraform'
 
@@ -143,10 +134,6 @@ call plug#begin("~/.vim/bundle")
 		Plug 'glts/vim-textobj-comment'
 		Plug 'kana/vim-textobj-function'
 		Plug 'kana/vim-textobj-indent'
-
-	" GUI plugins
-	Plug 'equalsraf/neovim-gui-shim'
-	Plug 'dzhou121/gonvim-fuzzy'
 
 	" Vim8 compatibility
 	if !has("nvim")
@@ -200,7 +187,7 @@ noremap <A-S-w>			:tabonly<CR>
 noremap <A-S-left>		:tabp<CR>
 noremap <A-S-right>		:tabn<CR>
 
-noremap <A-c>			:Bdelete<CR>
+noremap <A-c>			:bdelete<CR>
 noremap <A-left>		:bp<CR>
 noremap <A-right>		:bn<CR>
 
