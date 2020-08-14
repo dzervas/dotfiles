@@ -17,8 +17,8 @@ unalias shopt
 	zmodload zsh/zpty
 
 # Plugins
-if [ -f .antigen.zsh ]; then
-	source .antigen.zsh
+if [ -f ~/.antigen.zsh ]; then
+	source ~/.antigen.zsh
 elif [ -f /usr/share/zsh/share/antigen.zsh ]; then
 	source /usr/share/zsh/share/antigen.zsh
 elif [ -f /usr/share/zsh-antigen/antigen.zsh ]; then

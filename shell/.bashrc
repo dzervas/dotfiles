@@ -7,6 +7,8 @@ if [[ $(tty) == "/dev/tty1" ]]; then
 	exit 0
 fi
 
+set bell-style none
+
 # Colors
 	NC='\e[0m'       # Text Reset
 	
