@@ -183,7 +183,6 @@ set bell-style none
 	hash lsd && alias ll='lsd -Fal'
 	hash lsd && alias ls='lsd -F'
 	hash fd && alias find='fd'
-	hash sd && alias sed='sd'
 
 	# Yey! Saved 2 keystrokes! :)
 	alias 1ping='ping 1.1.1.1'
@@ -192,8 +191,9 @@ set bell-style none
 	alias dc='docker-compose'
 	alias e='$EDITOR'
 	alias g='git'
-	alias jc='curl -i -H "Content-Type: application/json"'
 	alias ipy='ipython'
+	alias jc='curl -i -H "Content-Type: application/json"'
+	alias k='kubectl'
 	alias l='locate -i'
 	alias lp='locate -i -A "$(pwd)"'
 	alias n='echo -e "\a"; mpg123 -q ~/Music/notification.mp3'
@@ -248,10 +248,16 @@ set bell-style none
 	fi
 
 	# Enable completions
-	#if [ -f /etc/bash_completion ]; then
-		#. /etc/bash_completion
-	#fi
+	if [ -f /etc/bash_completion ]; then
+		source /etc/bash_completion
+	fi
 
 	if [ -f /usr/local/etc/bash_completion ]; then
 		source /usr/local/etc/bash_completion
+	fi
+
+	if [ -s ~/.local/share/marker/marker.sh ]; then
+		source ~/.local/share/marker/marker.sh
+	else
+		echo "Marker is not installed! 'git submodule update --init' in the dotfiles and then '~/.marker/install.py'"
 	fi
