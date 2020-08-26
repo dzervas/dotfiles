@@ -194,6 +194,8 @@ set bell-style none
 	alias ipy='ipython'
 	alias jc='curl -i -H "Content-Type: application/json"'
 	alias k='kubectl'
+	alias kn='kubens'
+	alias kc='kubectx'
 	alias l='locate -i'
 	alias lp='locate -i -A "$(pwd)"'
 	alias n='echo -e "\a"; mpg123 -q ~/Music/notification.mp3'
