@@ -10,6 +10,7 @@ fi
 alias shopt="false"
 source ~/.bashrc
 unalias shopt
+bindkey -e
 
 # Modules
 autoload -U colors && colors
@@ -144,7 +145,6 @@ fi
 
 # Key bindings
 	export KEYTIMEOUT=1
-	bindkey -e
 	bindkey "^r"		fzf-history-widget
 	bindkey "^f"		fzf-file-widget
 	bindkey "^g"		fzf-cd-widget
