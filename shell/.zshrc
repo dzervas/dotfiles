@@ -36,6 +36,7 @@ antigen bundle hlissner/zsh-autopair
 antigen bundle jreese/zsh-titles
 antigen bundle zdharma/fast-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle dzervas/fzf-command-bookmarks
 # antigen bundle RobSis/zsh-completion-generator
 
 antigen apply

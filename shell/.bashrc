@@ -245,7 +245,7 @@ set bell-style none
 		source /usr/local/bin/pyenv-sh-virtualenvwrapper
 	fi
 
-	if which pyenv-virtualenv-init > /dev/null; then
+	if hash pyenv-virtualenv-init 2> /dev/null; then
 		eval "$(pyenv virtualenv-init -)"
 	fi
 
@@ -256,10 +256,4 @@ set bell-style none
 
 	if [ -f /usr/local/etc/bash_completion ]; then
 		source /usr/local/etc/bash_completion
-	fi
-
-	if [ -s ~/.local/share/marker/marker.sh ]; then
-		source ~/.local/share/marker/marker.sh
-	else
-		echo "Marker is not installed! 'git submodule update --init' in the dotfiles and then '~/.marker/install.py'"
 	fi
