@@ -191,6 +191,7 @@ set bell-style none
 	alias dc='docker-compose'
 	alias e='$EDITOR'
 	alias g='git'
+	alias h='helm'
 	alias ipy='ipython'
 	alias jc='curl -i -H "Content-Type: application/json"'
 	alias k='kubectl'
