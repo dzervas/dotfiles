@@ -10,6 +10,7 @@ fi
 alias shopt="false"
 source ~/.bashrc
 unalias shopt
+bindkey -e
 
 # Modules
 autoload -U colors && colors
@@ -37,6 +38,7 @@ antigen bundle hlissner/zsh-autopair
 antigen bundle jreese/zsh-titles
 antigen bundle zdharma/fast-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle dzervas/fzf-command-bookmarks
 # antigen bundle RobSis/zsh-completion-generator
 
 antigen apply
@@ -144,7 +146,6 @@ fi
 
 # Key bindings
 	export KEYTIMEOUT=1
-	bindkey -e
 	bindkey "^r"		fzf-history-widget
 	bindkey "^f"		fzf-file-widget
 	bindkey "^g"		fzf-cd-widget
