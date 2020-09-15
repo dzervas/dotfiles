@@ -95,6 +95,7 @@ for_window [class="[Pp]inentry-.*"] floating enable, focus;
 for_window [class="com-install4j-runtime-launcher-UnixLauncher" title=" "] floating enable, focus;
 for_window [class="net-portswigger-burp-browser-BurpBrowserServer"] floating enable, focus;
 for_window [class="[Xx]fce4-appfinder"] floating enable, focus;
+for_window [class="torbrowser-launcher"] floating enable, focus;
 
 ## Plasma Integration
 # Try to kill the wallpaper set by Plasma (it takes up the entire workspace and hides everythiing)

@@ -15,3 +15,4 @@ xrandr --output HDMI-2 --auto --same-as eDP-1##Mirror to HDMI display
 xfreerdp /d: /u:dzervas /v:{{legit.vm}} /p:{{1234}} /app:"C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"##Run Microsoft Excel on legit.vm
 idevicebackup2 backup --full -i {{dir}}##iPhone backup
 arc diff --verbatim master##Create arc diff against master
+ip -br -c a##Show network interface info nicely
