@@ -46,9 +46,9 @@ antigen apply
 autopair-init
 
 export FZF_CTRL_T_COMMAND="fd -t f"
-export FZF_CTRL_T_OPTS="--preview 'bat --paging never -p -r 0:100 {}'"
+export FZF_CTRL_T_OPTS="--preview 'bat -p --color always --paging never -r 0:20 {}'"
 export FZF_ALT_C_COMMAND="fd -t d"
-export FZF_ALT_C_OPTS="--preview 'lsd -Fal {}'"
+export FZF_ALT_C_OPTS="--preview 'lsd --color always -Fal {}'"
 
 if [ -f /usr/local/opt/fzf/shell/key-bindings.zsh ]; then
 	source /usr/local/opt/fzf/shell/key-bindings.zsh
