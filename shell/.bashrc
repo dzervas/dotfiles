@@ -70,12 +70,6 @@ set bell-style none
 		done
 	}
 
-	if [ -n "$SSH_CLIENT" ]; then
-		function hash() {
-			hash $@ 2>/dev/null
-		}
-	fi
-
 	function precmd() {
 		print -Pn "\e]0;%n@%m: %~\a"
 	}
