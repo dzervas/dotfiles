@@ -12,6 +12,70 @@ source ~/.bashrc
 unalias shopt
 bindkey -e
 
+# Bash overwrites
+export EDITOR="nvim"
+
+function nse_find() {
+	fd "$1" /usr/share/nmap/scripts/
+}
+
+function openocd_find() {
+	fd "$1" /usr/share/openocd/scripts/
+}
+
+function sshmux() {
+	ssh -t $@ "tmux attach || tmux new"
+}
+
+function adafruit-nrfutil-hex() {
+	port=${1}
+	file=${2}
+
+	if [ "$#" -ne 2 ]; then
+		echo "Usage: $0 <port> <hex_file>"
+		return 1
+	fi
+
+	if [ "$(file "${file}" | cut -d' ' -f 2)" = "ELF" ]; then
+		echo "[+] Converting ELF file to hex"
+		objcopy -O ihex "${file}" "${file}.hex"
+		file="${file}.hex"
+	fi
+
+	echo "[+] Generating package"
+	adafruit-nrfutil dfu genpkg --dev-type 0x0052 --application "${file}" "${file}.zip"
+	echo "[+] Flashing package over UART"
+	adafruit-nrfutil --verbose dfu serial --package "${file}.zip" --port "${port}" --baudrate 115200 --singlebank --touch 1200
+}
+
+# Change prompt of remote machine
+function ssh-copy-bashrc() {
+	cat ~/.bashrc | ssh $@ "cat > ~/.bashrc"
+}
+
+function dump_mem() {
+	grep rw-p "/proc/$1/maps" | sed -n 's/^\([0-9a-f]*\)-\([0-9a-f]*\) .*$/\1 \2/p' | while read -r start stop; do
+		gdb --batch --pid "$1" -ex "dump memory $1-$start-$stop.dump 0x$start 0x$stop"
+	done
+}
+
+alias docker_rm='docker rm $(docker ps --no-trunc -aqf status=exited)'
+alias docker_rmi='docker rmi $(docker images --no-trunc -qf dangling=true)'
+alias webserver='python3 -m http.server'
+hash xdg-open 2>/dev/null && alias open='xdg-open'
+alias passgen='gpg --armor --gen-random 2 '
+alias weather='curl wttr.in'
+
+# Hipster tools
+hash bat && alias cat='bat -p --paging=never'
+hash colordiff && alias diff='colordiff -ub'
+hash rg && alias grep='rg'
+hash bat && alias less='bat -p'
+hash lsd && alias ll='lsd -Fal'
+hash lsd && alias ls='lsd -F'
+hash fd && alias find='fd'
+hash nvim && alias v='nvim'
+
 # Modules
 autoload -U colors && colors
 autoload -U promptinit && promptinit

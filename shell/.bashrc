@@ -1,11 +1,5 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
-if [[ $(tty) == "/dev/tty1" ]]; then
-	export XKB_DEFAULT_LAYOUT=us,gr
-	export XKB_DEFAULT_OPTIONS=caps:escape,grp:win_space_toggle
-	sway
-	exit 0
-fi
 
 set bell-style none
 
@@ -35,14 +29,13 @@ set bell-style none
 # Variable definitions
 	# No duplicates in history
 	export ALTERNATE_EDITOR="vim"
-	export EDITOR="nvim"
+	export EDITOR="vim"
 	export HISTCONTROL="ignoredups"
 	export HOSTNAME=$(hostname)
-	export MANPATH="$MANPATH:$NPM_PACKAGES/share/man"
-	export NPM_PACKAGES="${HOME}/.npm-packages"
 	export PAGER="less"
 	export LC_CTYPE=en_US.UTF-8
-	export PATH="$HOME/.bin:$HOME/.local/bin:$PATH:$NPM_PACKAGES/bin:$HOME/.cargo/bin:$HOME/.STM32Cube/STM32CubeProgrammer/bin/"
+	export GOPATH="$HOME/go"
+	export PATH="$HOME/.bin:$HOME/.local/bin:$PATH:$HOME/.cargo/bin:${GOPATH}/bin"
 	export TZ="Europe/Athens"
 
 	# Check the window size after each command to update LINES and COLUMNS if necessary
@@ -87,23 +80,8 @@ set bell-style none
 		print -Pn "\e]0;%n@%m: %~\a"
 	}
 
-	# Some useful info for the prompt (background job count & task count)
-	function statecnt() {
-		job=$(jobs | wc -l)
-
-		if [[ $job -ne 0 ]]; then
-			echo -en "${GREEN}[${CYAN}J${job}${GREEN}]${NC}"
-		fi
-	}
-
 
 # Alias and function definitions.
-	function dump_mem() {
-		grep rw-p "/proc/$1/maps" | sed -n 's/^\([0-9a-f]*\)-\([0-9a-f]*\) .*$/\1 \2/p' | while read -r start stop; do
-			gdb --batch --pid "$1" -ex "dump memory $1-$start-$stop.dump 0x$start 0x$stop"
-		done
-	}
-
 	function mc() {
 		mkdir -p "${1}"
 		cd "${1}" || return
@@ -121,68 +99,14 @@ set bell-style none
 		command mv -v -- "$1" "$newfilename"
 	}
 
-	function nse_find() {
-		fd "$1" /usr/share/nmap/scripts/
-	}
-
-	function openocd_find() {
-		fd "$1" /usr/share/openocd/scripts/
-	}
-
-	# Change prompt of remote machine
-	function ssh-copy-bashrc() {
-		cat ~/.bashrc | ssh $@ "cat > ~/.bashrc"
-	}
-
-	function sshmux() {
-		ssh -t $@ "tmux attach || tmux new"
-	}
-
-	function adafruit-nrfutil-hex() {
-		port=${1}
-		file=${2}
-
-		if [ "$#" -ne 2 ]; then
-			echo "Usage: $0 <port> <hex_file>"
-			return 1
-		fi
-
-		if [ "$(file "${file}" | cut -d' ' -f 2)" = "ELF" ]; then
-			echo "[+] Converting ELF file to hex"
-			objcopy -O ihex "${file}" "${file}.hex"
-			file="${file}.hex"
-		fi
-
-		echo "[+] Generating package"
-		adafruit-nrfutil dfu genpkg --dev-type 0x0052 --application "${file}" "${file}.zip"
-		echo "[+] Flashing package over UART"
-		adafruit-nrfutil --verbose dfu serial --package "${file}.zip" --port "${port}" --baudrate 115200 --singlebank --touch 1200
-	}
-
 	eval "$(dircolors -b 2>/dev/null || gdircolors -b)"
 
 # Alias
-	# Bookmarks
-	alias docker_rm='docker rm $(docker ps --no-trunc -aqf status=exited)'
-	alias docker_rmi='docker rmi $(docker images --no-trunc -qf dangling=true)'
-	alias webserver='python3 -m http.server'
-	hash xdg-open 2>/dev/null && alias open='xdg-open'
-	alias passgen='gpg --armor --gen-random 2 '
-	alias weather='curl wttr.in'
-
 	# Sane defaults
 	alias man='LC_ALL=C LANG=C man'
 	alias pgrep='pgrep -af'
 	alias ssh='TERM=xterm-256color ssh'
 
-	# Hipster tools
-	hash bat && alias cat='bat -p --paging=never'
-	hash colordiff && alias diff='colordiff -ub'
-	hash rg && alias grep='rg'
-	hash bat && alias less='bat -p'
-	hash lsd && alias ll='lsd -Fal'
-	hash lsd && alias ls='lsd -F'
-	hash fd && alias find='fd'
 
 	# Yey! Saved 2 keystrokes! :)
 	alias 1ping='ping 1.1.1.1'
@@ -203,7 +127,7 @@ set bell-style none
 	alias py='python'
 	alias py2='python2'
 	alias py3='python3'
-	alias v='nvim'
+	alias v='vim'
 	alias sv='sudoedit'
 	alias tf='terraform'
 
@@ -213,21 +137,18 @@ set bell-style none
 
 # Other useful definitions
 	# "You are SSHing" reminder (shutdown the server maybe?)
-	if [ -n "$SSH_CLIENT" ]; then
-		if [ "$USER" == "root" ]; then
-			SSH_COLOR=$RED
-		else
-			SSH_COLOR=$BLUE
-		fi
+	if [[ "$USER" == "root" ]]; then
+		SSH_COLOR=$RED
+		PS1_HOST=$(hostname -f)
+	elif [ -n "$SSH_CLIENT" ]; then
+		SSH_COLOR=$BLUE
+		PS1_HOST=$(hostname -f)
 	else
 		SSH_COLOR=$GREEN
+		PS1_HOST=$(uname -n)
 	fi
 
-	export PS1="${SSH_COLOR}\u@${SSH_COLOR}$(uname -n)\$(statecnt && echo -n ' ')${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${NC}\$ "
-
-	# GoLang env vars
-	export GOPATH="$HOME/go"
-	export PATH="${PATH}:${GOPATH}/bin"
+	export PS1="${SSH_COLOR}\u@${SSH_COLOR}${PS1_HOST}${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${NC}\$ "
 
 	# GPG-Agent SSH key
 	unset SSH_AGENT_PID
@@ -246,9 +167,7 @@ set bell-style none
 		source /usr/local/bin/pyenv-sh-virtualenvwrapper
 	fi
 
-	if hash pyenv-virtualenv-init 2> /dev/null; then
-		eval "$(pyenv virtualenv-init -)"
-	fi
+	hash pyenv-virtualenv-init 2> /dev/null && eval "$(pyenv virtualenv-init -)"
 
 	# Enable completions
 	if [ -f /etc/bash_completion ]; then
