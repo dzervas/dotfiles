@@ -47,6 +47,7 @@ set tabstop=4
 set tags+=~/.vim/systags	" CTags
 set title
 set undolevels=1000		" Undo states to remember
+set viminfo='10,\"100,:20,%,n~/.viminfo " Store vim data (cursor, marks, etc.)
 set wildignore=*.swp,*.b,*.pyc,*.class,*.apk,*.jar,*.o
 set wildmenu			" Autocompletion menu for commands
 
@@ -64,9 +65,6 @@ endif
 if empty(glob(g:python_host_prog))
 	let g:python_host_prog = "/usr/local/bin/python2.7"
 endif
-
-" NetRW
-let g:netrw_ftp_options = "-N /home/dzervas/.netrc -i -p"
 
 let g:markdown_folding = 1
 
@@ -111,7 +109,6 @@ call plug#begin("~/.vim/bundle")
 		Plug 'Shougo/neco-syntax'
 		Plug 'Shougo/neco-vim', { 'for': 'vim' }
 		Plug 'zchee/deoplete-clang', { 'for': ['c', 'c++'] }
-		Plug 'zchee/deoplete-go', { 'for': 'go', 'do': 'make'}
 		Plug 'zchee/deoplete-jedi', { 'for': 'python' }
 
 	" Linting, debugging & building
@@ -120,11 +117,7 @@ call plug#begin("~/.vim/bundle")
 
 	" Syntax
 	Plug 'editorconfig/editorconfig-vim'
-	Plug 'leafgarland/typescript-vim'
 	Plug 'lepture/vim-jinja', { 'for': 'jinja' }
-	Plug 'fatih/vim-go', { 'for': 'go' }
-	Plug 'rust-lang/rust.vim'
-	Plug 'rodjek/vim-puppet'
 	Plug 'cespare/vim-toml'
 	Plug 'hashivim/vim-terraform'
 
@@ -151,21 +144,9 @@ au BufRead,BufNewFile *.cshtml set filetype=html
 au BufRead,BufNewFile *.inc set filetype=php
 au BufNewFile,BufRead Jenkinsfile set filetype=groovy
 au BufNewFile,BufRead *.gdsl set filetype=groovy
-au FileType yaml setlocal ts=2 sts=2 sw=2 expandtab indentkeys-=0# indentkeys-=<:> foldmethod=indent nofoldenable
 
 " Restore cursor position in files
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-
-" Auto-update ctags
-au BufReadPost,BufWritePost *.py,*.c,*.cpp,*.h,*.java silent! !eval 'ctags --fields=afmikKlnsStz --extra=fq -R -o tags 2>/dev/null' &
-au BufNewFile,BufRead .xonshrc set syntax=python
-
-" Terminal mode config
-if has("nvim")
-	autocmd TermOpen * setlocal statusline=%{b:term_title}
-	autocmd BufWinEnter,WinEnter term://* startinsert | nohlsearch
-	autocmd BufLeave term://* stopinsert
-endif
 
 " Basic mappings
 " Completion
@@ -188,7 +169,7 @@ noremap <A-S-w>			:tabonly<CR>
 noremap <A-S-left>		:tabp<CR>
 noremap <A-S-right>		:tabn<CR>
 
-noremap <A-c>			:bdelete<CR>
+noremap <A-c>			:Bdelete<CR>
 noremap <A-left>		:bp<CR>
 noremap <A-right>		:bn<CR>
 
@@ -206,9 +187,6 @@ nnoremap <A-Tab>		<<
 vnoremap <Tab>			==
 vnoremap <S-Tab>		>>
 vnoremap <A-Tab>		<<
-
-"noremap <A-S-c>			"+y
-"noremap <A-S-c>			"+p
 
 if has("nvim")
 	tmap <A-t>			<C-\><C-n><A-t>
@@ -271,9 +249,6 @@ let g:jedi#show_docstring = 1
 let g:jedi#show_call_signatures = 2
 let g:jedi#popup_select_first = 0
 
-let g:UltiSnipsExpandTrigger = "<c-j>"
-let g:UltiSnipsListSnippets = "<NUL>"
-
 " NeoMake
 autocmd! BufReadPost,BufWritePost * Neomake
 
@@ -283,25 +258,6 @@ nmap	<C-up>		<Plug>MoveLineUp
 nmap	<C-down>	<Plug>MoveLineDown
 vmap	<C-up>		<Plug>MoveBlockUp
 vmap	<C-down>	<Plug>MoveBlockDown
-
-" Vebugger
-" Mapped: b, B, c, e, E, i, o, O, r, R, t, x, X
-" See: help vebugger-keymaps
-let g:vebugger_leader = '<leader>d'
-
-function! VBGpyEnv()
-	if !empty(glob('~/.pyenv/versions/'.expand('%:p:h:t').'/bin/python'))
-		let g:vebugger_path_python = glob('~/.pyenv/versions/'.expand('%:p:h:t').'/bin/python')
-	endif
-endfunction
-
-autocmd BufEnter *.py call VBGpyEnv()
-
-" Unstack
-let g:unstack_showsigns = 0
-
-" UndoTree
-nnoremap	<leader>u :UndotreeToggle<CR>
 
 " HexMode
 let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
