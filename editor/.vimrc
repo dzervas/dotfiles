@@ -25,7 +25,6 @@ set mouse=nvc			" By default mouse is for vim. F2 to cycle between
 set nobackup
 set noerrorbells		" Don't beep
 set noexpandtab
-set nofsync				" Don't sync automatically to disk (FTPFS is a pain...)
 set noshowmode			" Do not show mode in cmdline
 set noswapfile			" Disable the fucking .swp files
 set nowritebackup
@@ -137,7 +136,7 @@ call plug#end()
 
 " Syntax highlighting
 syntax on
-syntax sync minlines=10000 maxlines=50000
+" syntax sync minlines=10000 maxlines=50000
 filetype plugin indent on
 
 au BufRead,BufNewFile *.cshtml set filetype=html
@@ -169,7 +168,7 @@ noremap <A-S-w>			:tabonly<CR>
 noremap <A-S-left>		:tabp<CR>
 noremap <A-S-right>		:tabn<CR>
 
-noremap <A-c>			:Bdelete<CR>
+noremap <A-c>			:bdelete<CR>
 noremap <A-left>		:bp<CR>
 noremap <A-right>		:bn<CR>
 
@@ -222,8 +221,10 @@ let g:airline#extensions#syntastic#enabled = 1
 let g:airline#extensions#hunks#non_zero_only = 0
 
 " Set 256 colors and the theme
+set t_Co=256
+set t_ut=""  " Disable background color erase
 colorscheme molokai
-let g:rehash256 = 1
+" let g:rehash256 = 1
 
 " Nerd Commenter
 let g:NERDSpaceDelims = 1

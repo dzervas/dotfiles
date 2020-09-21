@@ -29,3 +29,4 @@ editor/.config/Code/User/workspaceStorage
 editor/.vim/.netrwhist
 editor/.vim/bundle
 editor/.vim/spell
+editor/.vim/autoload/plug.vim.old
