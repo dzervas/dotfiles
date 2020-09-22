@@ -96,19 +96,21 @@ call plug#begin("~/.vim/bundle")
 	Plug 'tpope/vim-surround'
 
 	" Autocompletion
-	if has('nvim')
-		Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-	else
-		Plug 'Shougo/deoplete.nvim'
-		Plug 'roxma/nvim-yarp'
-		Plug 'roxma/vim-hug-neovim-rpc'
-	endif
+	if has('python3')
+		if has('nvim')
+			Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+		else
+			Plug 'Shougo/deoplete.nvim'
+			Plug 'roxma/nvim-yarp'
+			Plug 'roxma/vim-hug-neovim-rpc'
+		endif
 
-		Plug 'Shougo/echodoc.vim'
-		Plug 'Shougo/neco-syntax'
-		Plug 'Shougo/neco-vim', { 'for': 'vim' }
-		Plug 'zchee/deoplete-clang', { 'for': ['c', 'c++'] }
-		Plug 'zchee/deoplete-jedi', { 'for': 'python' }
+			Plug 'Shougo/echodoc.vim'
+			Plug 'Shougo/neco-syntax'
+			Plug 'Shougo/neco-vim', { 'for': 'vim' }
+			Plug 'zchee/deoplete-clang', { 'for': ['c', 'c++'] }
+			Plug 'zchee/deoplete-jedi', { 'for': 'python' }
+	endif
 
 	" Linting, debugging & building
 	Plug 'neomake/neomake'
@@ -237,18 +239,20 @@ vmap <C-_>   <Plug>NERDCommenterToggle<CR>gv
 nnoremap <leader>t :TagbarToggle<CR>
 
 " Deoplete
-let g:deoplete#enable_at_startup = 1
-let g:echodoc_enable_at_startup = 1
-autocmd InsertLeave * if !pumvisible() | pclose | endif
+if has('python3')
+	let g:deoplete#enable_at_startup = 1
+	let g:echodoc_enable_at_startup = 1
+	autocmd InsertLeave * if !pumvisible() | pclose | endif
 
-let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
-let g:deoplete#sources#clang#clang_header = '/usr/lib/clang'
-call deoplete#custom#source('_', 'converters',
-			\ ['converter_auto_paren', 'converter_auto_delimiter'])
+	let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
+	let g:deoplete#sources#clang#clang_header = '/usr/lib/clang'
+	call deoplete#custom#source('_', 'converters',
+				\ ['converter_auto_paren', 'converter_auto_delimiter'])
 
-let g:jedi#show_docstring = 1
-let g:jedi#show_call_signatures = 2
-let g:jedi#popup_select_first = 0
+	let g:jedi#show_docstring = 1
+	let g:jedi#show_call_signatures = 2
+	let g:jedi#popup_select_first = 0
+endif
 
 " NeoMake
 autocmd! BufReadPost,BufWritePost * Neomake
