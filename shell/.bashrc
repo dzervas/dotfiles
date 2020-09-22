@@ -4,27 +4,27 @@
 set bell-style none
 
 # Colors
-	NC='\e[0m'       # Text Reset
+	NC='\[\e[0m\]'       # Text Reset
 	
 	# Regular Colors
-	export BLACK='\e[30m'        # Black
-	export RED='\e[31m'          # Red
-	export GREEN='\e[32m'        # Green
-	export YELLOW='\e[33m'       # Yellow
-	export BLUE='\e[34m'         # Blue
-	export PURPLE='\e[35m'       # Purple
-	export CYAN='\e[36m'         # Cyan
-	export WHITE='\e[37m'        # White
+	export BLACK='\[\e[30m\]'        # Black
+	export RED='\[\e[31m\]'          # Red
+	export GREEN='\[\e[32m\]'        # Green
+	export YELLOW='\[\e[33m\]'       # Yellow
+	export BLUE='\[\e[34m\]'         # Blue
+	export PURPLE='\[\e[35m\]'       # Purple
+	export CYAN='\[\e[36m\]'         # Cyan
+	export WHITE='\[\e[37m\]'        # White
 	
 	# Bold
-	export BBLACK='\e[1;30m'       # Black
-	export BRED='\e[1;31m'         # Red
-	export BGREEN='\e[1;32m'       # Green
-	export BYELLOW='\e[1;33m'      # Yellow
-	export BBLUE='\e[1;34m'        # Blue
-	export BPURPLE='\e[1;35m'      # Purple
-	export BCYAN='\e[1;36m'        # Cyan
-	export BWHITE='\e[1;37m'       # White
+	export BBLACK='\[\e[1;30m\]'       # Black
+	export BRED='\[\e[1;31m\]'         # Red
+	export BGREEN='\[\e[1;32m\]'       # Green
+	export BYELLOW='\[\e[1;33m\]'      # Yellow
+	export BBLUE='\[\e[1;34m\]'        # Blue
+	export BPURPLE='\[\e[1;35m\]'      # Purple
+	export BCYAN='\[\e[1;36m\]'        # Cyan
+	export BWHITE='\[\e[1;37m\]'       # White
 
 # Variable definitions
 	# No duplicates in history
@@ -46,16 +46,16 @@ set bell-style none
 	function gitstat() {
 		if [[ $(git status 2> /dev/null | tail -n1) == \
 			'no changes added to commit (use "git add" and/or "git commit -a")' ]]; then
-			echo -e "${BWHITE}!"
+			echo -n "!"
 		elif [[ $(git status 2> /dev/null | grep ahead) != '' ]]; then
-			echo -e "${BYELLOW}>>"
+			echo -n ">>"
 		fi
 	}
 
 	# git branch for command prompt
 	function gitbranch() {
 		branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-		[ -n "$branch" ] && echo " $branch"
+		[ -n "$branch" ] && echo -n " $branch"
 	}
 
 	# update all git repos in current dir
@@ -100,7 +100,7 @@ set bell-style none
 	alias man='LC_ALL=C LANG=C man'
 	alias pgrep='pgrep -af'
 	alias ssh='TERM=xterm-256color ssh'
-
+	alias diff='diff --color=always'
 
 	# Yey! Saved 2 keystrokes! :)
 	alias 1ping='ping 1.1.1.1'
@@ -133,16 +133,20 @@ set bell-style none
 	# "You are SSHing" reminder (shutdown the server maybe?)
 	if [[ "$USER" == "root" ]]; then
 		SSH_COLOR=$RED
-		PS1_HOST=$(hostname -f)
+		PS1_HOST="\H"
 	elif [ -n "$SSH_CLIENT" ]; then
 		SSH_COLOR=$BLUE
-		PS1_HOST=$(hostname -f)
+		PS1_HOST="\H"
 	else
 		SSH_COLOR=$GREEN
-		PS1_HOST=$(uname -n)
+		PS1_HOST="\h"
 	fi
 
-	export PS1="${SSH_COLOR}\u@${SSH_COLOR}${PS1_HOST}${BCYAN}\W${GREEN}\$(gitbranch)\$(gitstat)${NC}\$ "
+	if [[ "$USER" != "root" ]] && [[ "$USER" != "dzervas" ]]; then
+		SSH_COLOR="${SSH_COLOR}\u@"
+	fi
+
+	export PS1="${SSH_COLOR}${SSH_COLOR}${PS1_HOST} ${BCYAN}\w${BYELLOW}\$(gitbranch)${PURPLE}\$(gitstat)${NC}\$ "
 
 	# GPG-Agent SSH key
 	unset SSH_AGENT_PID
