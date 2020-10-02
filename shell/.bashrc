@@ -103,6 +103,7 @@ set bell-style none
 	alias diff='diff --color=always'
 
 	# Yey! Saved 2 keystrokes! :)
+	function = { bc -l <<< "$@" }
 	alias 1ping='ping 1.1.1.1'
 	alias cdt='cd $(mktemp -d)'
 	alias d='docker'
@@ -111,6 +112,7 @@ set bell-style none
 	alias g='git'
 	alias h='helm'
 	alias ipy='ipython'
+	alias ipa='ip -c -br a'
 	alias jc='curl -i -H "Content-Type: application/json"'
 	alias k='kubectl'
 	alias kn='kubens'
