@@ -19,3 +19,4 @@ ip -br -c a##Show network interface info nicely
 puppet agent -t --noop --environment=koko --trace --debug##Debug puppet 500 error
 git submodule update --init --recursive##Synchronize git submodules
 curl -D- -H host:443:ip https://host##Curl HTTPS to a different IP than the actual host
+sudo dd bs=4M conv=fsync status=progress if= of=/dev/sdX##Flash raspberry sdcard

@@ -35,7 +35,7 @@ set bell-style none
 	export PAGER="less"
 	export LC_CTYPE=en_US.UTF-8
 	export GOPATH="$HOME/go"
-	export PATH="$HOME/.bin:$HOME/.local/bin:$PATH:$HOME/.cargo/bin:${GOPATH}/bin"
+	export PATH="$HOME/.bin:$HOME/.local/bin:$PATH:$HOME/.cargo/bin:${GOPATH}/bin:$HOME/.npm-global/bin"
 	export TZ="Europe/Athens"
 
 	# Check the window size after each command to update LINES and COLUMNS if necessary
