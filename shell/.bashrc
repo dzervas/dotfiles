@@ -103,7 +103,7 @@ set bell-style none
 	alias diff='diff --color=always'
 
 	# Yey! Saved 2 keystrokes! :)
-	function = { bc -l <<< "$@" }
+	function = { bc -l <<< "$@"; }  # '= 2+3' echoes '5'
 	alias 1ping='ping 1.1.1.1'
 	alias cdt='cd $(mktemp -d)'
 	alias d='docker'

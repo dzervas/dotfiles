@@ -82,8 +82,10 @@ call plug#begin("~/.vim/bundle")
 	Plug 'tpope/vim-repeat'
 	Plug 'vim-airline/vim-airline'
 	Plug 'vim-airline/vim-airline-themes'
-	Plug 'junegunn/fzf'
 	Plug 'RRethy/vim-illuminate'
+	if has('nvim')
+		Plug 'junegunn/fzf'
+	endif
 
 	" The one and the only...
 	Plug 'tomasr/molokai'
@@ -188,31 +190,6 @@ nnoremap <A-Tab>		<<
 vnoremap <Tab>			==
 vnoremap <S-Tab>		>>
 vnoremap <A-Tab>		<<
-
-if has("nvim")
-	tmap <A-t>			<C-\><C-n><A-t>
-	tmap <A-w>			<C-\><C-n><A-w>
-	tmap <A-S-w>		<C-\><C-n><A-S-w>
-	tmap <A-S-left>		<C-\><C-n><A-S-left>
-	tmap <A-S-right>	<C-\><C-n><A-S-right>
-
-	tmap <A-c>			<C-\><C-n><A-c>
-	tmap <A-left>		<C-\><C-n><A-left>
-	tmap <A-right>		<C-\><C-n><A-right>
-
-	tmap <A-S-c>		<C-\><C-n><A-S-c>
-	tmap <A-Tab>		<C-\><C-n><A-Tab>
-	tmap <A-up>			<C-\><C-n><A-up>
-	tmap <A-down>		<C-\><C-n><A-down>
-	tmap <A-f>			<C-\><C-n><A-f>
-	tmap <A-return>		<C-\><C-n><A-return>
-	tmap <A-S-return>	<C-\><C-n><A-S-return>
-
-	tmap <A-Esc>		<C-\><C-n>
-
-	"tmap <A-S-c>		<C-\><C-n><C-S-c>
-	"tmap <A-S-v>		<C-\><C-n><C-S-v>
-endif
 
 noremap <leader>f		:15Lexplore<CR>
 
