@@ -118,6 +118,7 @@ set bell-style none
 	alias kn='kubens'
 	alias kc='kubectx'
 	alias l='locate -i'
+	alias ll='ls -lah --color=always'
 	alias lp='locate -i -A "$(pwd)"'
 	alias n='echo -e "\a"; mpg123 -q ~/Music/notification.mp3'
 	alias py='python'
