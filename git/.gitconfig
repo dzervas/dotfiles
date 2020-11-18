@@ -31,3 +31,7 @@
 	browser = firefox
 [pull]
 	rebase = false
+[diff]
+	guitool = vscode
+[difftool "vscode"]
+	cmd = code --wait --diff $LOCAL $REMOTE
