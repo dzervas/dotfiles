@@ -6,10 +6,10 @@ hide_edge_borders both
 
 ### Key bendings
 # Shortcuts
-#set $menu "rofi -modi window,drun,run -show drun -sidebar-mode -terminal kitty"
+#set $menu "rofi -modi window,drun,run -show drun -sidebar-mode -terminal alacritty"
 set $menu --no-startup-id qdbus org.kde.krunner /App display
 bindsym $mod+r exec $menu
-bindsym $mod+Return exec "kitty"
+bindsym $mod+Return exec "alacritty"
 
 # Windows:
 bindsym $mod+f fullscreen
