@@ -15,6 +15,8 @@
 	oops = !echo "Going to amend and force push. You sure?" && read && git add -A && git commit --amend --no-edit && git push -f
 	s = status
 	undo = reset HEAD~
+[checkout]
+	defaultRemote=origin
 [color]
 	ui = auto
 [commit]
