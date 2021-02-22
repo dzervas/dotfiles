@@ -7,9 +7,11 @@ fi
 
 # Load .bashrc
 # Shopt not found workaround
+alias bind="false"
 alias shopt="false"
 source ~/.bashrc
 unalias shopt
+unalias bind
 bindkey -e
 
 # Modules

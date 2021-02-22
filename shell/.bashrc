@@ -1,6 +1,7 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
+bind 'set enable-bracketed-paste on'
 set bell-style none
 
 # Colors
