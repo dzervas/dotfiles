@@ -94,6 +94,41 @@ set bell-style none
 		command mv -v -- "$1" "$newfilename"
 	}
 
+	function kubesa() {
+		if [ $# -ne 1 ]; then
+			echo "Usage: $0 <service account name>"
+			exit 1
+		fi
+
+		server=$(kubectl config view --minify --flatten -o jsonpath='{.clusters[0].cluster.server}')
+		sa_name=$1
+
+		name=$(kubectl get secrets -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' | grep "${sa_name}-token")
+
+		ca=$(kubectl get secret/$name -o jsonpath='{.data.ca\.crt}')
+		token=$(kubectl get secret/$name -o jsonpath='{.data.token}' | base64 --decode)
+		namespace=$(kubectl get secret/$name -o jsonpath='{.data.namespace}' | base64 --decode)
+
+		echo "apiVersion: v1
+kind: Config
+clusters:
+- name: default-cluster
+  cluster:
+    certificate-authority-data: ${ca}
+    server: ${server}
+contexts:
+- name: default-context
+  context:
+    cluster: default-cluster
+    namespace: default
+    user: default-user
+current-context: default-context
+users:
+- name: default-user
+  user:
+    token: ${token}"
+	}
+
 	eval "$(dircolors -b 2>/dev/null || gdircolors -b)"
 
 # Alias
@@ -167,6 +202,10 @@ set bell-style none
 		source /usr/local/bin/virtualenvwrapper.sh
 	elif [ -f /usr/local/bin/pyenv-sh-virtualenvwrapper ]; then
 		source /usr/local/bin/pyenv-sh-virtualenvwrapper
+	fi
+
+	if [ -f /usr/share/nvm/init-nvm.sh ]; then
+		source /usr/share/nvm/init-nvm.sh
 	fi
 
 	hash pyenv-virtualenv-init 2> /dev/null && eval "$(pyenv virtualenv-init -)"
