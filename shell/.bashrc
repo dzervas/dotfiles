@@ -218,3 +218,7 @@ users:
 	if [ -f /usr/local/etc/bash_completion ]; then
 		source /usr/local/etc/bash_completion
 	fi
+
+	if [ -s "$XDG_RUNTIME_DIR/docker.sock" ]; then
+		export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+	fi
