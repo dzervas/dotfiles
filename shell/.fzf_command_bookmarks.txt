@@ -21,3 +21,4 @@ git submodule update --init --recursive##Synchronize git submodules
 curl -D- -H host:443:ip https://host##Curl HTTPS to a different IP than the actual host
 sudo dd bs=4M conv=fsync status=progress if= of=/dev/sdX##Flash raspberry sdcard
 convert -background transparent favicon.png -define icon:auto-resize=16,24,32,48,64,72,96,128,256 favicon.ico##PNG/JPG to favicon.ico
+k create secret -n firstreg generic -o yaml --from-env-file  --dry-run=client  | kubeseal -o yaml##Create sealed secret from env file

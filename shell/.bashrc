@@ -97,17 +97,44 @@ set bell-style none
 	function kubesa() {
 		if [ $# -ne 1 ]; then
 			echo "Usage: $0 <service account name>"
-			exit 1
+			return
 		fi
 
-		server=$(kubectl config view --minify --flatten -o jsonpath='{.clusters[0].cluster.server}')
 		sa_name=$1
+		server=$(kubectl config view --minify --flatten -o jsonpath='{.clusters[0].cluster.server}' || return)
 
-		name=$(kubectl get secrets -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' | grep "${sa_name}-token")
+		if [ -z "${server}" ]; then
+			echo "Could not find the server name"
+			return
+		fi
 
-		ca=$(kubectl get secret/$name -o jsonpath='{.data.ca\.crt}')
-		token=$(kubectl get secret/$name -o jsonpath='{.data.token}' | base64 --decode)
-		namespace=$(kubectl get secret/$name -o jsonpath='{.data.namespace}' | base64 --decode)
+		name=$(kubectl get secrets -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' | grep "^${sa_name}-token-\w+$" || return)
+
+		if [ -z "${name}" ]; then
+			echo "Could not find ServiceAccount"
+			return
+		fi
+
+		ca=$(kubectl get secret/$name -o jsonpath='{.data.ca\.crt}' || return)
+
+		if [ -z "${ca}" ]; then
+			echo "Could not find CA Certificate"
+			return
+		fi
+
+		token=$(kubectl get secret/$name -o jsonpath='{.data.token}' | base64 --decode || return)
+
+		if [ -z "${token}" ]; then
+			echo "Could not find Account Token"
+			return
+		fi
+
+		namespace=$(kubectl get secret/$name -o jsonpath='{.data.namespace}' | base64 --decode || return)
+
+		if [ -z "${namespace}" ]; then
+			echo "Could not find Namespace"
+			return
+		fi
 
 		echo "apiVersion: v1
 kind: Config
@@ -120,13 +147,32 @@ contexts:
 - name: default-context
   context:
     cluster: default-cluster
-    namespace: default
+    namespace: ${namespace}
     user: default-user
 current-context: default-context
 users:
 - name: default-user
   user:
     token: ${token}"
+	}
+
+	function kubeseal-env() {
+		if [ "$#" -lt "1" ] || [ "$#" -gt "2" ]; then
+			echo "Usage: $0 <env file> [namespace]"
+			return
+		fi
+
+		env_file="$1"
+		if [ ! -z "$2" ]; then
+			namespace="$2"
+		else
+			namespace="$(kubens -c)"
+		fi
+
+		echo "Env file $env_file will be sealed for $namespace/$(kubectx -c). You sure?"
+		read
+
+		kubectl create secret -n "$namespace" generic -o yaml --from-env-file "$env_file" --dry-run=client "$(basename $env_file)" | kubeseal -o yaml
 	}
 
 	eval "$(dircolors -b 2>/dev/null || gdircolors -b)"
