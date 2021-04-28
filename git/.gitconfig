@@ -26,7 +26,7 @@
 	excludesfile = ~/.gitignore
 	attributesfile = /home/dzervas/.gitattributes
 [push]
-	default = simple
+	default = current
 	followTags = true
 [user]
 	name = Dimitris Zervas
