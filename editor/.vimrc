@@ -46,7 +46,9 @@ set tabstop=4
 set tags+=~/.vim/systags	" CTags
 set title
 set undolevels=1000		" Undo states to remember
-set viminfo='10,\"100,:20,%,n~/.viminfo " Store vim data (cursor, marks, etc.)
+if !has('nvim')
+	set viminfo='10,\"100,:20,%,n~/.viminfo " Store vim data (cursor, marks, etc.)
+endif
 set wildignore=*.swp,*.b,*.pyc,*.class,*.apk,*.jar,*.o
 set wildmenu			" Autocompletion menu for commands
 

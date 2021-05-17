@@ -169,7 +169,7 @@ users:
 			namespace="$(kubens -c)"
 		fi
 
-		echo "Env file $env_file will be sealed for $namespace/$(kubectx -c). You sure?"
+		echo "Env file $env_file will be sealed for $namespace/$(kubectx -c). You sure?" >&2
 		read
 
 		kubectl create secret -n "$namespace" generic -o yaml --from-env-file "$env_file" --dry-run=client "$(basename $env_file)" | kubeseal -o yaml
