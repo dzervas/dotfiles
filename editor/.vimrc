@@ -52,7 +52,7 @@ endif
 set wildignore=*.swp,*.b,*.pyc,*.class,*.apk,*.jar,*.o
 set wildmenu			" Autocompletion menu for commands
 
-let mapleader=","
+let mapleader=" "
 let highlight_sedtabs = 1
 
 " Python
@@ -87,6 +87,10 @@ call plug#begin("~/.vim/bundle")
 	Plug 'RRethy/vim-illuminate'
 	if has('nvim')
 		Plug 'junegunn/fzf'
+
+		Plug 'nvim-lua/popup.nvim'
+		Plug 'nvim-lua/plenary.nvim'
+		Plug 'nvim-telescope/telescope.nvim'
 	endif
 
 	" The one and the only...
@@ -194,7 +198,9 @@ vnoremap <Tab>			==
 vnoremap <S-Tab>		>>
 vnoremap <A-Tab>		<<
 
-noremap <leader>f		:15Lexplore<CR>
+noremap <leader>f		<cmd>Telescope find_files<cr>
+noremap <leader>g		<cmd>Telescope live_grep<cr>
+noremap <leader>h		<cmd>Telescope help_tags<cr>
 
 " Airline
 let g:airline_powerline_fonts = 1
