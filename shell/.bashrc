@@ -175,6 +175,19 @@ users:
 		kubectl create secret -n "$namespace" generic -o yaml --from-env-file "$env_file" --dry-run=client "$(basename $env_file)" | kubeseal -o yaml
 	}
 
+	function backup {
+		for f in "$@"; do
+			local target="$f.backup-$(date +'%Y.%m.%d-%H.%M.%S')"
+
+			while [ -f "${target}" ]; do
+				target="$f.backup-$(date +'%Y.%m.%d-%H.%M.%S')"
+				sleep 1
+			done
+
+			cp -aRv "$f" "$target"
+		done
+	}
+
 	eval "$(dircolors -b 2>/dev/null || gdircolors -b)"
 
 # Alias
@@ -183,6 +196,7 @@ users:
 	alias pgrep='pgrep -af'
 	alias ssh='TERM=xterm-256color ssh'
 	alias diff='diff --color=always'
+	alias now='date +"%Y.%m.%d-%H.%M.%S"'
 
 	# Yey! Saved 2 keystrokes! :)
 	function = { bc -l <<< "$@"; }  # '= 2+3' echoes '5'
