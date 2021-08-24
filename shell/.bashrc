@@ -197,6 +197,8 @@ users:
 	alias ssh='TERM=xterm-256color ssh'
 	alias diff='diff --color=always'
 	alias now='date +"%Y.%m.%d-%H.%M.%S"'
+	# By https://unix.stackexchange.com/questions/25327/watch-command-alias-expansion
+	alias watch='watch -c '
 
 	# Yey! Saved 2 keystrokes! :)
 	function = { bc -l <<< "$@"; }  # '= 2+3' echoes '5'
