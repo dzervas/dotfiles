@@ -10,6 +10,7 @@ hide_edge_borders both
 set $menu --no-startup-id qdbus org.kde.krunner /App display
 bindsym $mod+r exec $menu
 bindsym $mod+Return exec "alacritty"
+bindsym $mod+p exec "1password --quick-access"
 
 # Windows:
 bindsym $mod+f fullscreen
@@ -85,7 +86,7 @@ mode "resize" {
 	bindsym Escape mode "default"
 }
 
-bindsym $mod+p mode "resize"
+# bindsym $mod+p mode "resize"
 
 # Keyboard/TouchPad hacks
 #exec_always --no-startup-id "setxkbmap -layout us,gr -option caps:escape"
@@ -117,3 +118,4 @@ for_window [class="Plasmoidviewer"] floating enable; border none
 # no_focus [class="plasmashell" window_type="notification"]
 for_window [class="yakuake"] floating enable; border none
 for_window [title="[Oo]rigin"] floating enable; border none
+for_window [title="^1[Pp]assword$"] floating enable; border none
