@@ -27,3 +27,4 @@ export PROJECT=${$(ls *.kicad_pcb)%.kicad_pcb} && kikit export gerber "${PROJECT
 openocd -f interface/cmsis-dap.cfg -f nrf52-particle.cfg -c "adapter_khz 1000" -c "init" -c "reset init" -c "halt" -c "program /home/dzervas/Lab/zmk-config/build/zephyr/zmk.hex 0x0 verify reset" -c "exit"##Flash nrf52840 (Particle Xenon) over CMSIS-DAP with OpenOCD
 ffmpeg -re -i 'http://cnc.lan:8080/?action=stream' -c copy -f v4l2 /dev/video0##HTTP stream to local virtual camera
 for d in $(upower -e | grep sony_controller); do upower -i "$d" | grep -e "native-path" -e "percentage"; done##Show Sony controller battery
+ssh -D 1337 -q -C -N router.lan##Router as socks proxy

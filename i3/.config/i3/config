@@ -114,7 +114,7 @@ for_window [class="Kmix"] floating enable; border none
 for_window [class="Klipper"] floating enable; border none
 for_window [class="Plasmoidviewer"] floating enable; border none
 # for_window [class="plasmashell" window_type="notification"] floating enable, border none, move right 590px, move up 650px
-# for_window [class="plasmashell" window_type="notification"] floating enable, border none, move position 1580px 35px
+for_window [class="plasmashell" window_type="notification"] floating enable, border none, move position 1580px 35px
 no_focus [class="plasmashell" window_type="notification"]
 for_window [class="yakuake"] floating enable; border none
 for_window [title="[Oo]rigin"] floating enable; border none
