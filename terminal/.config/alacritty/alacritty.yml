@@ -1,0 +1,7 @@
+font:
+  size: 8
+  normal:
+    family: Iosevka Term
+
+shell:
+  program: /bin/zsh
