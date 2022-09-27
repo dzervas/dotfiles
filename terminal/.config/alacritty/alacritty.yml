@@ -1,5 +1,8 @@
+env:
+  WINIT_X11_SCALE_FACTOR: "1"
+
 font:
-  size: 8
+  size: 14
   normal:
     family: Iosevka Term
 
