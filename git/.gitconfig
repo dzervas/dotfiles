@@ -30,8 +30,8 @@
 	followTags = true
 [user]
 	name = Dimitris Zervas
-	email = dzervas@dzervas.gr
-	signingkey = 869DE447D59B7E4A62AF5C3F5C27D7C9D1901A30
+	email = dimitris.zervas@tier.app
+	signingkey = 625D0F98EF5B4578154364A6FD6623DDF1AF0EB6
 [web]
 	browser = firefox
 [pull]
@@ -40,11 +40,6 @@
 	guitool = vscode
 [difftool "vscode"]
 	cmd = code --wait --diff $LOCAL $REMOTE
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
 [init]
 	defaultBranch = main
 [diff "zip"]

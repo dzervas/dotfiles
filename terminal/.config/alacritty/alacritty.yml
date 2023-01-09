@@ -1,0 +1,10 @@
+env:
+  WINIT_X11_SCALE_FACTOR: "1"
+
+font:
+  size: 14
+  normal:
+    family: Iosevka Term
+
+shell:
+  program: /bin/zsh
