@@ -201,6 +201,13 @@ vnoremap <A-Tab>		<<
 noremap <leader>f		<cmd>Telescope find_files<cr>
 noremap <leader>g		<cmd>Telescope live_grep<cr>
 noremap <leader>h		<cmd>Telescope help_tags<cr>
+noremap <leader>l		<cmd>Lexplore<cr>
+
+" NetRW
+let g:netrw_liststyle = 3
+let g:netrw_banner = 0
+let g:netrw_browse_split = 1
+let g:netrw_winsize = 10
 
 " Airline
 let g:airline_powerline_fonts = 1

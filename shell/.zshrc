@@ -38,12 +38,13 @@ antigen theme romkatv/powerlevel10k
 
 antigen bundle hlissner/zsh-autopair
 antigen bundle jreese/zsh-titles
-antigen bundle zdharma/fast-syntax-highlighting
+antigen bundle zdharma-continuum/fast-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle dzervas/fzf-command-bookmarks
-# antigen bundle RobSis/zsh-completion-generator
 
 antigen apply
+
+command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
 
 # FZF configuration
 	if [ -f /usr/local/opt/fzf/shell/key-bindings.zsh ]; then
@@ -243,9 +244,6 @@ antigen apply
 
 	# match uppercase from lowercase
 	zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-	# Rebuild $PATH on each execution (may be performance intensive)
-	# zstyle ":completion:*:commands" rehash 1
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

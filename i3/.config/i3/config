@@ -11,6 +11,8 @@ set $menu --no-startup-id qdbus org.kde.krunner /App display
 bindsym $mod+r exec $menu
 bindsym $mod+Return exec "alacritty"
 bindsym $mod+p exec "1password --quick-access"
+bindsym Print exec "flameshot screen -c"
+bindsym $mod+Print exec "flameshot gui"
 
 # Windows:
 bindsym $mod+f fullscreen
@@ -114,9 +116,19 @@ for_window [class="Kmix"] floating enable; border none
 for_window [class="Klipper"] floating enable; border none
 for_window [class="Plasmoidviewer"] floating enable; border none
 # for_window [class="plasmashell" window_type="notification"] floating enable, border none, move right 590px, move up 650px
-for_window [class="plasmashell" window_type="notification"] floating enable, border none, move position 1580px 35px
+# for_window [class="plasmashell" window_type="notification"] floating enable, border none, move position 1580px 35px
 no_focus [class="plasmashell" window_type="notification"]
+
+# Don’t spawn an empty window for the Plasma Desktop
+for_window [title="Desktop — Plasma"] kill, floating enable, border none
+
+# Don’t let notifications and non-interactive pop-up windows steal focus
+no_focus [class="plasmashell" window_type="notification"]
+# no_focus [class="plasmashell" window_type="on_screen_display"]
+
 for_window [class="yakuake"] floating enable; border none
 for_window [title="[Oo]rigin"] floating enable; border none
 for_window [title="^1[Pp]assword$"] floating enable; border none
 for_window [title="Fusion360"] floating enable; border none
+# for_window [class="sldworks.exe"] fullscreen enable; border none
+# for_window [class="sldworks.exe" title="[Mm]odify"] fullscreen disable; floating enable
