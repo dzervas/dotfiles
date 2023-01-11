@@ -44,6 +44,3 @@
 	defaultBranch = main
 [diff "zip"]
 	textconv = unzip -c -a
-[filter "zippey"]
-	smudge = ~/.zippey/zippey.py d
-	clean = ~/.zippey/zippey.py e
