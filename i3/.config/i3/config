@@ -3,12 +3,13 @@ set $mod Mod4
 
 font pango:Iosevka 10
 hide_edge_borders both
+show_marks yes
 
 ### Key bendings
 # Shortcuts
 #set $menu "rofi -modi window,drun,run -show drun -sidebar-mode -terminal alacritty"
-set $menu --no-startup-id qdbus org.kde.krunner /App display
-bindsym $mod+r exec $menu
+# set $menu --no-startup-id qdbus org.kde.krunner /App display
+# bindsym $mod+r exec $menu
 bindsym $mod+Return exec "alacritty"
 bindsym $mod+p exec "1password --quick-access"
 bindsym Print exec "flameshot screen -c"
@@ -130,5 +131,5 @@ for_window [class="yakuake"] floating enable; border none
 for_window [title="[Oo]rigin"] floating enable; border none
 for_window [title="^1[Pp]assword$"] floating enable; border none
 for_window [title="Fusion360"] floating enable; border none
-# for_window [class="sldworks.exe"] fullscreen enable; border none
+# for_window [class="sldworks.exe"] border pixel 1
 # for_window [class="sldworks.exe" title="[Mm]odify"] fullscreen disable; floating enable

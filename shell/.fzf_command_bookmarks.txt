@@ -28,3 +28,7 @@ openocd -f interface/cmsis-dap.cfg -f nrf52-particle.cfg -c "adapter_khz 1000" -
 ffmpeg -re -i 'http://cnc.lan:8080/?action=stream' -c copy -f v4l2 /dev/video0##HTTP stream to local virtual camera
 for d in $(upower -e | grep sony_controller); do upower -i "$d" | grep -e "native-path" -e "percentage"; done##Show Sony controller battery
 ssh -D 1337 -q -C -N router.lan##Router as socks proxy
+pdftoppm -jpeg -r 300##PDF to JPEG
+kubectl patch <type> <name>  -p '{"metadata":{"finalizers":[]}}' --type=merge##Force remove kubernetes resource (remove the finalizers)
+docker logs -n 5 <name> -f 2>&1 | xargs -d\\n -n1 telegram-send##Send docker logs to telegram
+gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=<out> <in...>##Merge multiple PDF documents together
