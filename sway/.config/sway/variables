@@ -1,0 +1,6 @@
+set $term alacritty
+set $browser MOZ_ENABLE_WAYLAND=1 firefox
+set $filemanager dolphin
+set $editor kate
+set $launcher nwg-drawer
+set $exit nwg-bar -p center -a middle -i 48

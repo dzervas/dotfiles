@@ -1,0 +1,9 @@
+exec rm /tmp/nwg-shell-check-update.lock
+exec swaync -s /home/dzervas/.config/swaync/style.css
+exec nm-applet --indicator
+exec blueman-applet
+exec_always nwg-drawer -r -c 8 -is 50 -fscol 2 -nofs -g Adwaita-dark -i Pop -term alacritty
+exec_always nwg-panel
+exec_always nwg-shell-check-updates
+exec swayidle timeout 1200 nwg-lock timeout 1800 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' 
+exec swaykbdd

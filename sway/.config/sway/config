@@ -1,0 +1,153 @@
+# The files we include below will be created / overwritten by nwg-shell tools
+#
+include variables
+include outputs
+include autostart
+include workspaces
+include keyboard
+include pointer
+include touchpad
+
+# border & title
+# for_window [title="^.*"] border pixel 1, title_format "<b> %class >> %title </b>"
+hide_edge_borders --i3 both
+default_border none
+
+font pango:Iosevka 10
+set $Mod Mod4
+
+###############     Autostart      ##################
+
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec hash dbus-update-activation-environment 2>/dev/null && \
+    dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec ~/.azotebg
+exec blueman-applet
+
+### Turn off screen on lid closed
+set $laptop eDP-1
+bindswitch lid:on output $laptop disable
+bindswitch lid:off output $laptop enable
+
+bindsym Alt+Space input type:keyboard xkb_switch_layout next
+
+#############         Bindings           ##################
+
+# kill focused window
+bindsym $Mod+c kill
+
+# core applications
+bindsym $Mod+Return       exec $term
+bindsym $Mod+r            exec "krunner"
+bindsym $Mod+p            exec "1password --quick-access"
+bindsym $Mod+l            exec nwg-lock
+
+# Exit menu
+bindsym $Mod+x exec $exit
+
+# Exit sway (default way to log you out of your Wayland session)
+bindsym $Mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
+
+# screenshot
+bindsym Print exec screenshot fullscreen
+bindsym Control+Print exec screenshot display
+bindsym Shift+Control+Print exec grim -g "$(slurp)" - | swappy -f -
+bindsym $Mod+Shift+Control+Print exec screenshot focused
+
+# audio
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioStop exec playerctl stop
+bindsym XF86AudioMute exec pamixer -t
+bindsym XF86AudioRaiseVolume exec pamixer -i 2
+bindsym XF86AudioLowerVolume exec pamixer -d 2
+
+# backlight
+bindsym XF86MonBrightnessUp exec light -A 5
+bindsym XF86MonBrightnessDown exec light -U 5
+
+# Reload the configuration file
+bindsym $Mod+Shift+r reload
+
+###########          Workspace Bindings          ###############
+
+# switch to workspace
+bindsym $Mod+1 workspace number 1
+bindsym $Mod+2 workspace number 2
+bindsym $Mod+3 workspace number 3
+bindsym $Mod+4 workspace number 4
+bindsym $Mod+5 workspace number 5
+bindsym $Mod+6 workspace number 6
+bindsym $Mod+7 workspace number 7
+bindsym $Mod+8 workspace number 8
+bindsym $Mod+comma focus output right
+bindsym $Mod+period focus output left
+
+# switch to next or previous workspace
+bindsym $Mod+Left workspace prev_on_output
+bindsym $Mod+Right workspace next_on_output
+bindsym $Mod+Tab workspace back_and_forth
+
+# move focused container to workspace
+bindsym $Mod+Shift+1 move container to workspace number 1
+bindsym $Mod+Shift+2 move container to workspace number 2
+bindsym $Mod+Shift+3 move container to workspace number 3
+bindsym $Mod+Shift+4 move container to workspace number 4
+bindsym $Mod+Shift+5 move container to workspace number 5
+bindsym $Mod+Shift+6 move container to workspace number 6
+bindsym $Mod+Shift+7 move container to workspace number 7
+bindsym $Mod+Shift+8 move container to workspace number 8
+bindsym $Mod+Shift+comma move workspace to output right
+bindsym $Mod+Shift+period move workspace to output left
+bindsym $Mod+Shift+Tab move container to workspace back_and_forth
+
+############      Container/Window control  ############
+
+# Fullscreen toggle
+bindsym $Mod+f            fullscreen
+
+# Scratchpad, Floating
+bindsym $Mod+Shift+f floating toggle
+floating_modifier $Mod normal
+
+# Move the currently focused window to the scratchpad
+bindsym $Mod+Shift+z move scratchpad
+
+# Show the next scratchpad window or hide the focused scratchpad window.
+# If there are multiple scratchpad windows, this command cycles through them.
+bindsym $Mod+z scratchpad show
+
+bindsym $Mod+Down   focus left
+bindsym $Mod+Up     focus right
+
+bindsym $Mod+Shift+Up    move right
+bindsym $Mod+Shift+Down  move left
+bindsym $Mod+Shift+Left  move container to workspace left
+bindsym $Mod+Shift+Right move container to workspace right
+
+# switch to workspace with urgent window
+for_window [urgent="latest"] focus
+focus_on_window_activation   focus
+
+# container layout
+bindsym $Mod+h split h
+bindsym $Mod+v split v
+bindsym $Mod+t layout tabbed
+bindsym $Mod+s layout stacking
+bindsym $Mod+e layout toggle split
+
+default_orientation horizontal
+
+############    application settings   ############
+
+# focus, floating, & sticky
+for_window [app_id="(?i)(?:blueman-manager|azote|gnome-disks)"] floating enable
+for_window [app_id="(?i)(?:pavucontrol|nm-connection-editor|gsimplecal|galculator)"] floating enable
+for_window [app_id="(?i)(?:firefox|chromium)"] border none
+for_window [title="(?i)(?:copying|deleting|moving)"] floating enable
+for_window [app_id="^org.kde.krunner$"] floating enable; move position 35ppt 0
+for_window [title="^Wine System Tray$"] floating enable; move scratchpad
+
+popup_during_fullscreen smart
