@@ -30,8 +30,6 @@ set $laptop eDP-1
 bindswitch lid:on output $laptop disable
 bindswitch lid:off output $laptop enable
 
-bindsym Alt+Space input type:keyboard xkb_switch_layout next
-
 #############         Bindings           ##################
 
 # kill focused window
