@@ -31,7 +31,7 @@
 [user]
 	name = Dimitris Zervas
 	email = dzervas@dzervas.gr
-	signingkey = 869DE447D59B7E4A62AF5C3F5C27D7C9D1901A30
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj
 [web]
 	browser = firefox
 [pull]
@@ -44,3 +44,8 @@
 	defaultBranch = main
 [diff "zip"]
 	textconv = unzip -c -a
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = "/opt/1Password/op-ssh-sign"
+	allowedSignersFile = "~/.gitconfig_allowed_signers"
