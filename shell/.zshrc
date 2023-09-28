@@ -9,16 +9,19 @@ fi
 # Shopt not found workaround
 alias bind="false"
 alias shopt="false"
+
+autoload -U promptinit && promptinit
+autoload -U bashcompinit && bashcompinit
+autoload -U compinit && compinit
+
 source ~/.bashrc
+
 unalias shopt
 unalias bind
 bindkey -e
 
 # Modules
 autoload -U colors && colors
-autoload -U promptinit && promptinit
-autoload -U bashcompinit && bashcompinit
-autoload -U compinit && compinit
 autoload -U zmv
 
 zmodload zsh/zpty
