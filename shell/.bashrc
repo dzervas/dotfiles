@@ -249,11 +249,9 @@ users:
 
 	export PS1="${SSH_COLOR}${SSH_COLOR}${PS1_HOST} ${BCYAN}\w${BYELLOW}\$(gitbranch)${PURPLE}\$(gitstat)${NC}\$ "
 
-	# GPG-Agent SSH key
-	unset SSH_AGENT_PID
-	if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
-		export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
-	fi
+	# 1password SSH agent
+	unset SSH_AUTH_SOCK
+	export SSH_AUTH_SOCK=~/.1password/agent.sock
 
 	# I love how virtualenv has crawled itself to every possible path
 	if [ -f /usr/bin/virtualenvwrapper.sh ]; then
@@ -270,7 +268,9 @@ users:
 		source /usr/share/nvm/init-nvm.sh
 	fi
 
-	hash pyenv-virtualenv-init 2> /dev/null && eval "$(pyenv virtualenv-init -)"
+	export PYENV_ROOT="$HOME/.pyenv"
+	command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+	eval "$(pyenv init -)"
 
 	# Enable completions
 	if [ -f /etc/bash_completion ]; then
@@ -284,3 +284,5 @@ users:
 	if [ -s "$XDG_RUNTIME_DIR/docker.sock" ]; then
 		export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 	fi
+
+	eval "$(register-python-argcomplete pipx)"

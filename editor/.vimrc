@@ -265,3 +265,6 @@ let g:hexmode_autodetect = 1
 if !has("nvim")
 	let g:gitgutter_async = 0
 endif
+
+" unmap <C-f>
+" unmap <C-F>
