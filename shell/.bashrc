@@ -203,6 +203,7 @@ users:
 	# Yey! Saved 2 keystrokes! :)
 	function = { bc -l <<< "$@"; }  # '= 2+3' echoes '5'
 	alias 1ping='ping 1.1.1.1'
+	alias c='cargo'
 	alias cdt='cd $(mktemp -d)'
 	alias d='docker'
 	alias dc='docker-compose'

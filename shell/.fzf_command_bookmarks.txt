@@ -32,3 +32,4 @@ pdftoppm -jpeg -r 300##PDF to JPEG
 kubectl patch <type> <name>  -p '{"metadata":{"finalizers":[]}}' --type=merge##Force remove kubernetes resource (remove the finalizers)
 docker logs -n 5 <name> -f 2>&1 | xargs -d\\n -n1 telegram-send##Send docker logs to telegram
 gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=<out> <in...>##Merge multiple PDF documents together
+fd . -H -t f -x sh -c 'strings -e l "{}" | rg -q "needle" && echo -e "{}"'##Find a string using low endian utf16 in all files
