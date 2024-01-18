@@ -220,6 +220,7 @@ users:
 	alias ll='ls -lah --color=always'
 	alias lp='locate -i -A "$(pwd)"'
 	alias n='echo -e "\a" && notify-send -a "Terminal" Notification!'
+	alias p='podman'
 	alias py='python'
 	alias py2='python2'
 	alias py3='python3'
