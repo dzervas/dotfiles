@@ -18,6 +18,7 @@ bindsym $mod+Print exec "flameshot gui"
 # Windows:
 bindsym $mod+f fullscreen
 bindsym $mod+c kill
+bindsym $mod+z exec "xprop -id $(xdotool getmouselocation --shell | grep WINDOW | awk -F '=' '{print $2}') > /tmp/i3-xprop-output"
 
 # Focus:
 bindsym $mod+Up focus right
@@ -131,5 +132,4 @@ for_window [class="yakuake"] floating enable; border none
 for_window [title="[Oo]rigin"] floating enable; border none
 for_window [title="^1[Pp]assword$"] floating enable; border none
 for_window [title="Fusion360"] floating enable; border none
-# for_window [class="sldworks.exe"] border pixel 1
-# for_window [class="sldworks.exe" title="[Mm]odify"] fullscreen disable; floating enable
+for_window [title="^Binary Ninja$"] floating enable; border none
