@@ -99,6 +99,7 @@ mode "resize" {
 for_window [class="[Pp]inentry-.*"] floating enable, focus;
 for_window [class="com-install4j-runtime-launcher-UnixLauncher" title=" "] floating enable, focus;
 for_window [class="net-portswigger-burp-browser-BurpBrowserServer"] floating enable, focus;
+for_window [class="burp-StartBurp" title="^Configure"] floating enable, focus;
 for_window [class="[Xx]fce4-appfinder"] floating enable, focus;
 for_window [class="torbrowser-launcher"] floating enable, focus;
 
