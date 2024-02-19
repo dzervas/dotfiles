@@ -19,8 +19,6 @@
 	defaultRemote=origin
 [color]
 	ui = auto
-[commit]
-	gpgsign = true
 [core]
 	autocrlf = input
 	excludesfile = ~/.gitignore
@@ -28,22 +26,25 @@
 [push]
 	default = current
 	followTags = true
-[user]
-	name = Dimitris Zervas
-	email = dzervas@dzervas.gr
-	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj
 [web]
 	browser = firefox
 [pull]
 	rebase = false
 [diff]
 	guitool = vscode
+	srcprefix = -h
 [difftool "vscode"]
 	cmd = code --wait --diff $LOCAL $REMOTE
 [init]
 	defaultBranch = main
 [diff "zip"]
 	textconv = unzip -c -a
+[commit]
+	gpgsign = true
+[user]
+	name = Dimitris Zervas
+	email = dzervas@dzervas.gr
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj
 [gpg]
 	format = ssh
 [gpg "ssh"]
