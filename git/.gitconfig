@@ -31,10 +31,18 @@
 [pull]
 	rebase = false
 [diff]
+	tool = difftastic
 	guitool = vscode
+	external = difft
 	srcprefix = -h
+[difftool]
+	prompt = false
 [difftool "vscode"]
-	cmd = code --wait --diff $LOCAL $REMOTE
+	cmd = code --wait --diff "$LOCAL" "$REMOTE"
+[difftool "difftastic"]
+	cmd = difft "$LOCAL" "$REMOTE"
+[pager]
+	difftool = true
 [init]
 	defaultBranch = main
 [diff "zip"]

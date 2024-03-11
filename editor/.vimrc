@@ -225,8 +225,8 @@ colorscheme molokai
 let g:NERDSpaceDelims = 1
 let g:NERDTrimTrailingWhitespace = 1
 " For some reason Ctrl-/ registers as Ctrl-_ in vim???
-nmap <C-_>   <Plug>NERDCommenterToggle
-vmap <C-_>   <Plug>NERDCommenterToggle<CR>gv
+nmap <C-/>   <Plug>NERDCommenterToggle
+vmap <C-/>   <Plug>NERDCommenterToggle<CR>gv
 
 " Tagbar
 nnoremap <leader>t :TagbarToggle<CR>
