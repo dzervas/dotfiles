@@ -65,9 +65,11 @@ command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
 	fi
 
 	export FZF_CTRL_T_COMMAND="fd -t f"
-	export FZF_CTRL_T_OPTS="--preview 'bat -p --color always --paging never -r 0:20 {}'"
+	export FZF_CTRL_T_OPTS="--preview 'bat -p -f --paging never -r 0:20 {}'"
 	export FZF_ALT_C_COMMAND="fd -t d"
 	export FZF_ALT_C_OPTS="--preview 'lsd --color always -Fal {}'"
+	export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+	export MANROFFOPT="-c"
 
 # ZSH Settings
 	setopt append_history
@@ -179,10 +181,10 @@ command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
 	alias webserver='python3 -m http.server'
 
 	# Hipster tools
-	hash bat && alias cat='bat -p --paging=never'
+	hash bat && alias cat='bat -p -f --paging=never'
 	hash colordiff && alias diff='colordiff -ub'
 	hash rg && alias grep='rg'
-	hash bat && alias less='bat -p'
+	hash bat && alias less='bat -p -f'
 	hash lsd && alias ll='lsd -Fal'
 	hash lsd && alias ls='lsd -F'
 	hash fd && alias find='fd'
@@ -222,7 +224,6 @@ command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
 	bindkey "^r"		fzf-history-widget
 	bindkey "^f"		fzf-file-widget
 	bindkey "^g"		fzf-cd-widget
-	bindkey "^h"		get-help
 	bindkey "^z"		fg
 	bindkey "^I"		expand-or-complete-prefix
 	bindkey "\e\e"		insert-sudo
