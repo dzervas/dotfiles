@@ -284,8 +284,8 @@ users:
 		source /usr/local/etc/bash_completion
 	fi
 
-	if [ -s "$XDG_RUNTIME_DIR/docker.sock" ]; then
-		export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+	if [ -S "$XDG_RUNTIME_DIR/podman/podman.sock" ]; then
+		export DOCKER_HOST="unix://$XDG_RUNTIME_DIR/podman/podman.sock"
 	fi
 
 	eval "$(register-python-argcomplete pipx)"
