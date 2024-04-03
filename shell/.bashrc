@@ -286,6 +286,7 @@ users:
 
 	if [ -S "$XDG_RUNTIME_DIR/podman/podman.sock" ]; then
 		export DOCKER_HOST="unix://$XDG_RUNTIME_DIR/podman/podman.sock"
+		export KIND_EXPERIMENTAL_PROVIDER="podman"
 	fi
 
 	eval "$(register-python-argcomplete pipx)"
