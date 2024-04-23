@@ -1,5 +1,6 @@
 #!/bin/bash --posix
 
+# Got from https://gist.github.com/Atrate/b08c5b67172abafa5e7286f4a952ca4d
 # ------------------------------------------------------------------------------
 # Copyright (C) 2024 Atrate
 #

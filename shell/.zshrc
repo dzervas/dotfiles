@@ -56,31 +56,31 @@ antigen apply
 command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
 
 # FZF configuration
-	if [ -f /usr/local/opt/fzf/shell/key-bindings.zsh ]; then
-		source /usr/local/opt/fzf/shell/key-bindings.zsh
-	elif [ -f /usr/share/fzf/key-bindings.zsh ]; then
-		source /usr/share/fzf/key-bindings.zsh
-	elif [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]; then
-		source /usr/share/doc/fzf/examples/key-bindings.zsh
-	fi
+if [ -f /usr/local/opt/fzf/shell/key-bindings.zsh ]; then
+	source /usr/local/opt/fzf/shell/key-bindings.zsh
+elif [ -f /usr/share/fzf/key-bindings.zsh ]; then
+	source /usr/share/fzf/key-bindings.zsh
+elif [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]; then
+	source /usr/share/doc/fzf/examples/key-bindings.zsh
+fi
 
-	export FZF_CTRL_T_COMMAND="fd -t f"
-	export FZF_CTRL_T_OPTS="--preview 'bat -p -f --paging never -r 0:20 {}'"
-	export FZF_ALT_C_COMMAND="fd -t d"
-	export FZF_ALT_C_OPTS="--preview 'lsd --color always -Fal {}'"
-	export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-	export MANROFFOPT="-c"
+export FZF_CTRL_T_COMMAND="fd -t f"
+export FZF_CTRL_T_OPTS="--preview 'bat -p -f --paging never -r 0:20 {}'"
+export FZF_ALT_C_COMMAND="fd -t d"
+export FZF_ALT_C_OPTS="--preview 'lsd --color always -Fal {}'"
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+export MANROFFOPT="-c"
 
 # ZSH Settings
-	setopt append_history
-	setopt bang_hist
-	setopt hist_expire_dups_first
-	setopt hist_ignore_all_dups	# Ignore duplicate commands from history
-	setopt hist_ignore_space	# Ignore commands starting with space from history
-	setopt hist_reduce_blanks
-	setopt hist_save_no_dups
-	setopt hist_verify
-	setopt share_history
+setopt append_history
+setopt bang_hist
+setopt hist_expire_dups_first
+setopt hist_ignore_all_dups	# Ignore duplicate commands from history
+setopt hist_ignore_space	# Ignore commands starting with space from history
+setopt hist_reduce_blanks
+setopt hist_save_no_dups
+setopt hist_verify
+setopt share_history
 
 # Internal Functions
 	# Advanced mv by a comment to premek by cameronsstone
@@ -170,25 +170,6 @@ command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
 	function ssh-copy-bashrc() {
 		cat ~/.bashrc | ssh $@ "cat > ~/.bashrc"
 	}
-
-# Aliases
-	# Regular bookmarks
-	alias docker_rm='docker rm $(docker ps --no-trunc -aqf status=exited)'
-	alias docker_rmi='docker rmi $(docker images --no-trunc -qf dangling=true)'
-	hash xdg-open 2>/dev/null && alias open='xdg-open'
-	alias passgen='gpg --armor --gen-random 2 '
-	alias weather='curl wttr.in'
-	alias webserver='python3 -m http.server'
-
-	# Hipster tools
-	hash bat && alias cat='bat -p -f --paging=never'
-	hash colordiff && alias diff='colordiff -ub'
-	hash rg && alias grep='rg'
-	hash bat && alias less='bat -p -f'
-	hash lsd && alias ll='lsd -Fal'
-	hash lsd && alias ls='lsd -F'
-	hash fd && alias find='fd'
-	hash nvim && alias v='nvim'
 
 # ZLE definitions
 	zle -N exec-sudo exec_sudo
