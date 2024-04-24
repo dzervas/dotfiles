@@ -30,3 +30,6 @@ editor/.vim/.netrwhist
 editor/.vim/bundle
 editor/.vim/spell
 editor/.vim/autoload/plug.vim.old
+shell/.config/fish/completions
+shell/.config/fish/functions
+shell/.config/fish/fish_variables
