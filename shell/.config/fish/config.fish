@@ -66,11 +66,51 @@ function smart-help
     end
 end
 
+function backup
+	for file in $argv
+		set -l target "$file.backup-$(date +'%Y.%m.%d-%H.%M.%S')"
+
+		while test -f "$target"
+			set -l target "$file.backup-$(date +'%Y.%m.%d-%H.%M.%S')"
+			sleep 1
+		end
+
+		cp -aRv "$file" "$target"
+	end
+end
+
+function kubeseal-env
+	if test (count $argv) -lt 1 -o (count $argv) -gt 2 -o "$argv[1]" = "-h" -o "$argv[1]" = "--help"
+		echo "Usage: kubeseal-env <env file> [namespace]"
+		return 1
+	end
+
+	set -f env_file $argv[1]
+	set -f namespace $argv[2]
+
+	if test -z $argv[2]
+		set -f namespace (kubens -c)
+	end
+
+	echo "Env file $env_file will be sealed for $namespace/$(kubectx -c). You sure?" >&2
+	read
+
+	kubectl create secret -n "$namespace" generic -o yaml --from-env-file "$env_file" --dry-run=client (basename $env_file) | kubeseal -o yaml
+end
+
 # Disable the greeting
 set -g fish_greeting
 
 # Configure the plugins
 fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
+direnv hook fish | source
+
+# Configure shell stuff
+set -x SSH_AUTH_SOCK ~/.1password/agent.sock
+if test -S $XDG_RUNTIME_DIR/podman/podman.sock
+	set -x DOCKER_HOST unix://$XDG_RUNTIME_DIR/podman/podman.sock
+	set -x KIND_EXPERIMENTAL_PROVIDER podman
+end
 
 # Key bindings
 bind \e\e "fish_commandline_prepend sudo"
