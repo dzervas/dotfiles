@@ -2,7 +2,7 @@
 set nocompatible		" This must be first, because it changes other options as side effect
 
 set autoindent
-set clipboard=unnamedplus
+set clipboard^=unnamed,unnamedplus
 set colorcolumn=80		" Where to put the vertical line
 set completeopt=menuone,noselect
 set copyindent
@@ -79,19 +79,10 @@ call plug#begin("~/.vim/bundle")
 	Plug 'airblade/vim-gitgutter'
 
 	" Buffer view helpers
-	Plug 'majutsushi/tagbar'
-	Plug 'milkypostman/vim-togglelist'
 	Plug 'tpope/vim-repeat'
 	Plug 'vim-airline/vim-airline'
 	Plug 'vim-airline/vim-airline-themes'
 	Plug 'RRethy/vim-illuminate'
-	if has('nvim')
-		Plug 'junegunn/fzf'
-
-		Plug 'nvim-lua/popup.nvim'
-		Plug 'nvim-lua/plenary.nvim'
-		Plug 'nvim-telescope/telescope.nvim'
-	endif
 
 	" The one and the only...
 	Plug 'tomasr/molokai'
@@ -113,22 +104,12 @@ call plug#begin("~/.vim/bundle")
 			Plug 'roxma/vim-hug-neovim-rpc'
 		endif
 
-			Plug 'Shougo/echodoc.vim'
-			Plug 'Shougo/neco-syntax'
-			Plug 'Shougo/neco-vim', { 'for': 'vim' }
-			Plug 'zchee/deoplete-clang', { 'for': ['c', 'c++'] }
-			Plug 'zchee/deoplete-jedi', { 'for': 'python' }
+		Plug 'Shougo/echodoc.vim'
+		Plug 'Shougo/neco-syntax'
+		Plug 'Shougo/neco-vim', { 'for': 'vim' }
+		Plug 'zchee/deoplete-clang', { 'for': ['c', 'c++'] }
+		Plug 'zchee/deoplete-jedi', { 'for': 'python' }
 	endif
-
-	" Linting, debugging & building
-	Plug 'neomake/neomake'
-	Plug 'fidian/hexmode'
-
-	" Syntax
-	Plug 'editorconfig/editorconfig-vim'
-	Plug 'lepture/vim-jinja', { 'for': 'jinja' }
-	Plug 'cespare/vim-toml'
-	Plug 'hashivim/vim-terraform'
 
 	" Text objects
 	Plug 'wellle/targets.vim'
@@ -173,12 +154,6 @@ cnoremap w!				w !sudo tee % >/dev/null
 noremap <A-s>			:set spell!<CR>
 
 " Tab, buffer and window manipulation
-noremap <A-t>			:tabnew<CR>
-noremap <A-w>			:tabclose<CR>
-noremap <A-S-w>			:tabonly<CR>
-noremap <A-S-left>		:tabp<CR>
-noremap <A-S-right>		:tabn<CR>
-
 noremap <A-c>			:bdelete<CR>
 noremap <A-left>		:bp<CR>
 noremap <A-right>		:bn<CR>
@@ -198,9 +173,6 @@ vnoremap <Tab>			==
 vnoremap <S-Tab>		>>
 vnoremap <A-Tab>		<<
 
-noremap <leader>f		<cmd>Telescope find_files<cr>
-noremap <leader>g		<cmd>Telescope live_grep<cr>
-noremap <leader>h		<cmd>Telescope help_tags<cr>
 noremap <leader>l		<cmd>Lexplore<cr>
 
 " NetRW
@@ -228,9 +200,6 @@ let g:NERDTrimTrailingWhitespace = 1
 nmap <C-/>   <Plug>NERDCommenterToggle
 vmap <C-/>   <Plug>NERDCommenterToggle<CR>gv
 
-" Tagbar
-nnoremap <leader>t :TagbarToggle<CR>
-
 " Deoplete
 if has('python3')
 	let g:deoplete#enable_at_startup = 1
@@ -246,9 +215,6 @@ if has('python3')
 	let g:jedi#show_call_signatures = 2
 	let g:jedi#popup_select_first = 0
 endif
-
-" NeoMake
-autocmd! BufReadPost,BufWritePost * Neomake
 
 " Move
 let g:move_map_keys = 0
