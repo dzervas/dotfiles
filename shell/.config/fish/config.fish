@@ -1,6 +1,4 @@
-if not status is-interactive
-    exit
-end
+status is-interactive || exit
 
 function smart-help
     # Argument: the command for which help is needed
@@ -103,6 +101,7 @@ set -g fish_greeting
 
 # Configure the plugins
 fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
+tide configure --auto --style=Classic --prompt_colors='True color' --classic_prompt_color=Dark --show_time='24-hour format' --classic_prompt_separators=Angled --powerline_prompt_heads=Sharp --powerline_prompt_tails=Slanted --powerline_prompt_style='Two lines, character and frame' --prompt_connection=Dotted --powerline_right_prompt_frame=Yes --prompt_connection_andor_frame_color=Dark --prompt_spacing=Compact --icons='Few icons' --transient=Yes
 direnv hook fish | source
 
 # Configure shell stuff
