@@ -66,13 +66,18 @@ function smart-help
     end
 end
 
-source ~/.bash_aliases
+# Disable the greeting
+set -g fish_greeting
+
+# Configure the plugins
+fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
+
+# Key bindings
 bind \e\e "fish_commandline_prepend sudo"
 bind \e\` "smart-help (commandline -p)"
 
-fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
-
 # Fix some aliases
+source ~/.bash_aliases
 function man --wraps=man
     LC_ALL=C LANG=C command man $argv
 end
