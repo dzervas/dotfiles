@@ -1,67 +1,68 @@
 status is-interactive || exit
+# tide configure --auto --style=Classic --prompt_colors='True color' --classic_prompt_color=Dark --show_time='24-hour format' --classic_prompt_separators=Angled --powerline_prompt_heads=Sharp --powerline_prompt_tails=Slanted --powerline_prompt_style='Two lines, character and frame' --prompt_connection=Dotted --powerline_right_prompt_frame=Yes --prompt_connection_andor_frame_color=Dark --prompt_spacing=Compact --icons='Few icons' --transient=Yes
 
 function smart-help
-    # Argument: the command for which help is needed
-    set -f pager bat --color always --style plain --paging=always
-    set -f argv (string trim $argv)
-    set -f command (echo $argv | cut -d ' ' -f 1)
+	# Argument: the command for which help is needed
+	set -f pager bat --color always --style plain --paging=always
+	set -f argv (string trim $argv)
+	set -f command (echo $argv | cut -d ' ' -f 1)
 
-    if test "$command" = "sudo"
-        set -f command (echo $argv | cut -d ' ' -f 2)
-    end
+	if test "$command" = "sudo"
+		set -f command (echo $argv | cut -d ' ' -f 2)
+	end
 
-    if test -z "$command"
-        echo "Usage: smart-help <command>a -- $(echo $argv | cut -d ' ' -f 2)"
-        return
-    end
+	if test -z "$command"
+		echo "Usage: smart-help <command>a -- $(echo $argv | cut -d ' ' -f 2)"
+		return
+	end
 
-    # Fish has just functions, not aliases and we need to resolve them to check
-    # for man pages
-    if test (type -t $command) = "function"
-        # If a function "wraps" a command (fish's way of carrying-over completion), it will be executed instead of the command
-        if set -l wrapped (functions $command | head -n 2 | tail -n 1 | command grep -oP '(?<=--wraps=)\w+')
-            set -f command $wrapped
-        # If a function has the same name with a command, it will be executed instead of the command
-        else if set -l same_exec (type -a $command | tail -n 1 | command grep "$command is ")
-            set -f command (echo $same_exec | cut -d ' ' -f 3)
-        end
-    end
+	# Fish has just functions, not aliases and we need to resolve them to check
+	# for man pages
+	if test (type -t $command) = "function"
+		# If a function "wraps" a command (fish's way of carrying-over completion), it will be executed instead of the command
+		if set -l wrapped (functions $command | head -n 2 | tail -n 1 | command grep -oP '(?<=--wraps=)\w+')
+			set -f command $wrapped
+		# If a function has the same name with a command, it will be executed instead of the command
+		else if set -l same_exec (type -a $command | tail -n 1 | command grep "$command is ")
+			set -f command (echo $same_exec | cut -d ' ' -f 3)
+		end
+	end
 
-    # Define overrides (map of commands to alternative help commands)
-    # Example: set overrides['git'] 'git help -a'
-    set -f overrides \
-        "git:git help -a" \
-        "npm:npm help 5"
+	# Define overrides (map of commands to alternative help commands)
+	# Example: set overrides['git'] 'git help -a'
+	set -f overrides \
+		"git:git help -a" \
+		"npm:npm help 5"
 
-    # Check for overrides and execute if present
-    for override in $overrides
-        set -l key (echo $override | cut -d ':' -f 1)
-        set -l value (echo $override | cut -d ':' -f 2-)
+	# Check for overrides and execute if present
+	for override in $overrides
+		set -l key (echo $override | cut -d ':' -f 1)
+		set -l value (echo $override | cut -d ':' -f 2-)
 
-        if test "$key" = "$command"
-            eval $value | $pager
-            return
-        end
-    end
+		if test "$key" = "$command"
+			eval $value | $pager
+			return
+		end
+	end
 
-    # Try to open the man page
-    if man $command >/dev/null 2>&1
-        man $command
-        return
-    end
+	# Try to open the man page
+	if man $command >/dev/null 2>&1
+		man $command
+		return
+	end
 
-    # If man page fails, try --help
-    if $command --help >/dev/null 2>&1
-        $command --help | $pager
-        return
-    end
+	# If man page fails, try --help
+	if $command --help >/dev/null 2>&1
+		$command --help | $pager
+		return
+	end
 
-    # Last resort: try -h
-    if $command -h >/dev/null 2>&1
-        $command -h | $pager
-    else
-        echo "No help found for '$command'"
-    end
+	# Last resort: try -h
+	if $command -h >/dev/null 2>&1
+		$command -h | $pager
+	else
+		echo "No help found for '$command'"
+	end
 end
 
 function backup
@@ -101,7 +102,6 @@ set -g fish_greeting
 
 # Configure the plugins
 fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
-tide configure --auto --style=Classic --prompt_colors='True color' --classic_prompt_color=Dark --show_time='24-hour format' --classic_prompt_separators=Angled --powerline_prompt_heads=Sharp --powerline_prompt_tails=Slanted --powerline_prompt_style='Two lines, character and frame' --prompt_connection=Dotted --powerline_right_prompt_frame=Yes --prompt_connection_andor_frame_color=Dark --prompt_spacing=Compact --icons='Few icons' --transient=Yes
 direnv hook fish | source
 
 # Configure shell stuff
@@ -111,28 +111,36 @@ if test -S $XDG_RUNTIME_DIR/podman/podman.sock
 	set -x KIND_EXPERIMENTAL_PROVIDER podman
 end
 
-# Key bindings
-bind \e\e "fish_commandline_prepend sudo"
-bind \e\` "smart-help (commandline -p)"
+fish_add_path ~/.cargo/bin
+fish_add_path ~/.local/bin
 
 # Fix some aliases
 source ~/.bash_aliases
 function man --wraps=man
-    LC_ALL=C LANG=C command man $argv
+	LC_ALL=C LANG=C command man $argv
 end
 
 function pgrep --wraps=pgrep
-    command pgrep -af $argv
+	command pgrep -af $argv
 end
 
 function ssh --wraps=ssh
-    TERM=xterm-256color command ssh $argv
+	TERM=xterm-256color command ssh $argv
 end
 
 function diff --wraps=diff
-    command diff --color=always $argv
+	command diff --color=always $argv
 end
 
 function watch --wraps=watch
-    command watch -c $argv
+	command watch -c $argv
 end
+
+function mc
+	mkdir -p "$argv[1]"
+	cd "$argv[1]"
+end
+
+# Key bindings
+bind \e\e "fish_commandline_prepend sudo"
+bind \e\` "smart-help (commandline -p)"
