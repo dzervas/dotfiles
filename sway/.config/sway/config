@@ -18,17 +18,23 @@ set $Mod Mod4
 
 ###############     Autostart      ##################
 
-exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
-exec hash dbus-update-activation-environment 2>/dev/null && \
-    dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK QT_QPA_PLATFORMTHEME=qt6ct XDG_CURRENT_DESKTOP=sway QT_QPA_PLATFORM=wayland,x11 XDG_SESSION_DESKTOP=sway
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP=sway
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec swayidle -w
 exec ~/.azotebg
 exec blueman-applet
+exec waybar
+exec swaykbdd
+exec vorta -d
 
 ### Turn off screen on lid closed
 set $laptop eDP-1
 bindswitch lid:on output $laptop disable
 bindswitch lid:off output $laptop enable
+
+output HDMI-A-1 pos 0 0
+output DP-2 pos 1920 0
 
 #############         Bindings           ##################
 
@@ -39,7 +45,7 @@ bindsym $Mod+c kill
 bindsym $Mod+Return       exec $term
 bindsym $Mod+r            exec "krunner"
 bindsym $Mod+p            exec "1password --quick-access"
-bindsym $Mod+l            exec nwg-lock
+bindsym $Mod+l            exec "swaylock -c 1e1e1e"
 
 # Exit menu
 bindsym $Mod+x exec $exit
@@ -58,9 +64,9 @@ bindsym XF86AudioPlay exec playerctl play-pause
 bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
 bindsym XF86AudioStop exec playerctl stop
-bindsym XF86AudioMute exec pamixer -t
-bindsym XF86AudioRaiseVolume exec pamixer -i 2
-bindsym XF86AudioLowerVolume exec pamixer -d 2
+bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
 
 # backlight
 bindsym XF86MonBrightnessUp exec light -A 5
@@ -145,6 +151,15 @@ for_window [app_id="(?i)(?:blueman-manager|azote|gnome-disks)"] floating enable
 for_window [app_id="(?i)(?:pavucontrol|nm-connection-editor|gsimplecal|galculator)"] floating enable
 for_window [app_id="(?i)(?:firefox|chromium)"] border none
 for_window [title="(?i)(?:copying|deleting|moving)"] floating enable
+
+for_window [app_id="^zenity$"] floating enable
+for_window [app_id="^[Pp]inentry-.*"] floating enable
+for_window [app_id="^com-install4j-runtime-launcher-UnixLauncher$"] floating enable
+for_window [app_id="^net-portswigger-burp-browser-BurpBrowserServer$"] floating enable
+for_window [app_id="^burp-StartBurp$"] floating enable
+for_window [app_id="^[Xx]fce4-appfinder$"] floating enable
+for_window [app_id="^torbrowser-launcher$"] floating enable
+for_window [app_id="^1[Pp]assword$"] floating enable
 for_window [app_id="^org.kde.krunner$"] floating enable; move position 35ppt 0
 for_window [title="^Wine System Tray$"] floating enable; move scratchpad
 

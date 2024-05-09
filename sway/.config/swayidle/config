@@ -1,0 +1,4 @@
+timeout 300 'swaylock -f -c 1e1e1e'
+timeout 900 'swaymsg "output * power off"'
+before-sleep 'swaylock -f -c 1e1e1e'
+resume 'swaymsg "output * power on"'
