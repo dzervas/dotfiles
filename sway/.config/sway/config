@@ -164,3 +164,4 @@ for_window [app_id="^org.kde.krunner$"] floating enable; move position 35ppt 0
 for_window [title="^Wine System Tray$"] floating enable; move scratchpad
 
 popup_during_fullscreen smart
+for_window [class=.*] inhibit_idle fullscreen
