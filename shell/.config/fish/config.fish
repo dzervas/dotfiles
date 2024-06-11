@@ -105,6 +105,8 @@ fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables
 direnv hook fish | source
 
 # Configure shell stuff
+set -x EDITOR nvim
+set -x ALTERNATE_EDITOR vim
 set -x SSH_AUTH_SOCK ~/.1password/agent.sock
 if test -S $XDG_RUNTIME_DIR/podman/podman.sock
 	set -x DOCKER_HOST unix://$XDG_RUNTIME_DIR/podman/podman.sock

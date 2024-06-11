@@ -10,3 +10,5 @@ waybar
 blueman
 polkit-kde-agent
 krunner5
+gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+gsettings set org.gnome.meld prefer-dark-theme true

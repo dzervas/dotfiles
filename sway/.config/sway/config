@@ -43,7 +43,8 @@ bindsym $Mod+c kill
 
 # core applications
 bindsym $Mod+Return       exec $term
-bindsym $Mod+r            exec "krunner"
+# bindsym $Mod+r            exec "krunner"
+bindsym $Mod+r            exec "fuzzel"
 bindsym $Mod+p            exec "1password --quick-access"
 bindsym $Mod+l            exec "swaylock -c 1e1e1e"
 
@@ -160,7 +161,7 @@ for_window [app_id="^burp-StartBurp$"] floating enable
 for_window [app_id="^[Xx]fce4-appfinder$"] floating enable
 for_window [app_id="^torbrowser-launcher$"] floating enable
 for_window [app_id="^1[Pp]assword$"] floating enable
-for_window [app_id="^org.kde.krunner$"] floating enable; move position 35ppt 0
+for_window [app_id="^org.kde.krunner$"] floating enable; move position 35ppt 0; focus
 for_window [title="^Wine System Tray$"] floating enable; move scratchpad
 
 popup_during_fullscreen smart

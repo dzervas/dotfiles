@@ -12,6 +12,7 @@ bindsym $mod+Return exec "alacritty"
 bindsym $mod+p exec "1password --quick-access"
 bindsym Print exec "flameshot screen -c"
 bindsym $mod+Print exec "flameshot gui"
+bindsym $mod+r exec "krunner"
 
 # Windows:
 bindsym $mod+f fullscreen
