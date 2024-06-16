@@ -1,65 +1,36 @@
 { config, pkgs, ... }:
 
 {
-  environment.systemPackages = with pkgs; [
-    sway
-    swaybg
-    swayidle
-    swaylock
-    i3status
-    dmenu
-    rofi
-    waybar
-    alacritty
-    thunar
-    firefox
-    networkmanager
-    blueman
-    pavucontrol
-    grim
-    slurp
-    mako
-    wl-clipboard
-    brightnessctl
-    playerctl
-  ];
+	# TODO: All these are user packages
+	environment.systemPackages = with pkgs; [
+		# swaybg
+		# swayidle
+		# swaylock
+		# i3status
+		# dmenu
+		# rofi
+		waybar
+		alacritty
+		firefox
+		networkmanager
+		blueman
+		pavucontrol
+		grim # screenshot functionality
+		slurp # screenshot functionality
+		mako # notification system developed by swaywm maintainer
+		wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
+		brightnessctl
+		playerctl
+	];
 
-  services = {
-    xserver = {
-      enable = true;
-      layout = "us";
-      xkbOptions = "eurosign:e";
-    };
+	services.gnome.gnome-keyring.enable = true;
 
-    sway = {
-      enable = true;
-      user = "your-username";
-      configFile = /home/your-username/.config/sway/config;
-    };
-  };
+	programs.sway = {
+		enable = true;
+		wrapperFeatures.gtk = true;
+	};
 
-  users.users.your-username = {
-    packages = with pkgs; [
-      sway
-      swaybg
-      swayidle
-      swaylock
-      i3status
-      dmenu
-      rofi
-      waybar
-      alacritty
-      thunar
-      firefox
-      networkmanager
-      blueman
-      pavucontrol
-      grim
-      slurp
-      mako
-      wl-clipboard
-      brightnessctl
-      playerctl
-    ];
-  };
+	# Brightness & volume control
+	users.users.dzervas.extraGroups = [ "video" ];
+	programs.light.enable = true;
 }

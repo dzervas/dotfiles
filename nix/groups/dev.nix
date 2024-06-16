@@ -1,14 +1,19 @@
 { pkgs, ... }:
 
 {
-  environment.systemPackages = with pkgs; [
-    visual-studio-code
-    rustup
-    golang
-    nvm
-    pnpm
-    python3
-    ipython
-    pipenv
-  ];
+	environment.systemPackages = with pkgs; [
+		vscode
+
+		# Languages
+		go
+		pipenv
+		python3
+		rustup
+
+		# Cloud stuff
+		kubectl
+		kubectx
+		oci-cli
+		terraform
+	];
 }

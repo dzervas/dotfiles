@@ -4,7 +4,7 @@ FROM nixos/nix
 RUN nix-channel --add https://nixos.org/channels/nixos-23.05 nixos && \
 	nix-channel --add https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz home-manager && \
 	nix-channel --update && \
-	nix-env -iA nixpkgs.nixos-generators nixpkgs.home-manager
+	nix-env -iA nixpkgs.nixos-generators nixpkgs.nixos-rebuild nixpkgs.home-manager
 
 # Copy the entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
