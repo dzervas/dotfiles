@@ -42,10 +42,10 @@ alias weather='curl wttr.in'
 alias webserver='python3 -m http.server'
 
 # Hipster tools
-alias cat='bat -p -f --paging=never'
+alias cat='bat -p --paging=never'
 alias diff='colordiff -ub'
 alias grep='rg'
-alias less='bat -p -f'
+alias less='bat -p'
 alias ll='lsd -Fal'
 alias ls='lsd -F'
 alias find='fd'
