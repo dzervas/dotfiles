@@ -6,6 +6,7 @@
 		./bluetooth.nix
 		./cli.nix
 		./display.nix
+		./fonts.nix
 		./network.nix
 	];
 
