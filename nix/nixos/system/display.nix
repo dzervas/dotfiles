@@ -13,6 +13,11 @@
 		wrapperFeatures.gtk = true;
 	};
 
+	xdg.portal = {
+		enable = true;
+		wlr.enable = true;
+	};
+
 	# faster sway maybe? https://nixos.wiki/wiki/Sway
 	security.pam.loginLimits = [{
 		domain = "@users";

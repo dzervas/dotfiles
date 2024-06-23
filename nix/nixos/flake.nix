@@ -10,6 +10,7 @@
 				modules = [
 					# (nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix")
 					(nixpkgs + "/nixos/modules/installer/virtualbox-demo.nix")
+					(nixpkgs + "/nixos/modules/virtualisation/virtualbox-guest.nix")
 					./configuration.nix
 					./hardware/virtualbox.nix
 				];
