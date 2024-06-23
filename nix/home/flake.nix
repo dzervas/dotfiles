@@ -2,7 +2,7 @@
 	description = "Home Manager configuration of dzervas";
 
 	inputs = {
-		# nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+		nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
 		home-manager = {
 			url = "github:nix-community/home-manager";
@@ -21,13 +21,16 @@
 		system = "x86_64-linux";
 		pkgs = nixpkgs.legacyPackages.${system};
 	in {
+		home-manager.backupFileExtension = "hm-backup";
 		homeConfigurations.dzervas = home-manager.lib.homeManagerConfiguration {
 			inherit pkgs;
 			modules = [
 				./home.nix
-				# ./config.nix
-				# ./packages.nix
-				# ./flatpak.nix
+				./dev.nix
+				./dotfiles.nix
+				./flatpak.nix
+				./desktop/sway.nix
+				# ./tools.nix
 
 				nix-flatpak.homeManagerModules.nix-flatpak
 			];

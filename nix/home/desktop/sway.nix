@@ -2,7 +2,7 @@
 
 {
 	# TODO: All these are user packages
-	environment.systemPackages = with pkgs; [
+	home.packages = with pkgs; [
 		# swaybg
 		# swayidle
 		# swaylock
@@ -23,14 +23,14 @@
 		playerctl
 	];
 
-	services.gnome.gnome-keyring.enable = true;
+	services.gnome-keyring.enable = true;
 
-	programs.sway = {
+	wayland.windowManager.sway = {
 		enable = true;
 		wrapperFeatures.gtk = true;
+		config = rec {
+			modifier = "Mod4";
+			terminal = "alacritty";
+		};
 	};
-
-	# Brightness & volume control
-	users.users.dzervas.extraGroups = [ "video" ];
-	programs.light.enable = true;
 }
