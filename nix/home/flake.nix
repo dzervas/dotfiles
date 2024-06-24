@@ -27,12 +27,12 @@
 			modules = [
 				./home.nix
 				./dev.nix
-				./dotfiles.nix
-				# ./flatpak.nix
+				./neovim.nix
+				./flatpak.nix
 				./desktop/sway.nix
 				# ./tools.nix
 
-				# nix-flatpak.homeManagerModules.nix-flatpak
+				nix-flatpak.homeManagerModules.nix-flatpak
 			];
 		};
 	};

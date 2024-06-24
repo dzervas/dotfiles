@@ -2,11 +2,11 @@
 	environment.systemPackages = with pkgs; [
 		bat
 		colordiff
-		ripgrep
 		fd
 		fzf
+		git
+		ripgrep
 		vim
-		fish
 	];
 
 	# Set fish as the default shell

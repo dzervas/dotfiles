@@ -6,22 +6,23 @@
 }: {
 	imports = [ ./components/waybar.nix ];
 
+	services.swaync.enable = true;
+
 	home.packages = with pkgs; [
 		# swaybg
 		# swayidle
-		# swaylock
+		swaylock
 		# i3status
 		# dmenu
 		# rofi
 		# alacritty
-		# kitty
 		# firefox
 		# networkmanager
 		# blueman
 		# pavucontrol
+		wofi
 		grim # screenshot functionality
 		slurp # screenshot functionality
-		mako # notification system developed by swaywm maintainer
 		wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
 		brightnessctl
 		playerctl
@@ -40,13 +41,24 @@
 				size = 0.5;
 			};
 			startup = [
-				# { command = "firefox"; }
-				{ command = "kitty"; }
+				{ command = "alacritty"; }
+				{ command = "blueman-applet"; }
 			];
 			bars = [{
 				position = "top";
 				command = "waybar";
 			}];
+			menu = "wofi --show drun";
+			input = {
+				"type:keyboard" = {
+					xkb_layout = "us,gr";
+					xkb_options = "grp:alt_space_toggle,caps:escape";
+					repeat_rate = "56";
+					repeat_delay = "200";
+					xkb_capslock = "disabled";
+					xkb_numlock = "disabled";
+				};
+      };
 
 			# Key bindings
 			modifier = "Mod4";
@@ -77,7 +89,7 @@
 				"${modifier}+Return" = "exec ${terminal}";
 				"${modifier}+l" = "exec swaylock";
 				"${modifier}+p" = "exec 1password --quick-access";
-				"${modifier}+r" = "exec fuzzel";
+				"${modifier}+r" = "exec ${menu}";
 
 				# Switch to workspace
 				"${modifier}+Left" = "workspace prev_on_output";

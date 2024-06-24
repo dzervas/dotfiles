@@ -1,7 +1,4 @@
 { pkgs, ... }: {
-  # home.packages = with pkgs; [
-  #   waybar
-  # ];
   programs.waybar = {
     enable = true;
 
@@ -21,7 +18,7 @@
         modules-center = [ "sway/window" ];
         modules-right = [
           "tray"
-          "pulseaudio"
+          # "pulseaudio"
           "keyboard-state"
           "sway/language"
           "clock"

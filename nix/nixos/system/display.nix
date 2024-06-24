@@ -1,4 +1,4 @@
-{ lib, ... }: {
+{ lib, pkgs, ... }: {
 	services.xserver.enable = true;
 	hardware.graphics.enable = true;
 	security.polkit.enable = true;
@@ -28,6 +28,9 @@
 
 	# Electron fix - https://nixos.wiki/wiki/Wayland#Electron_and_Chromium
 	environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
+	# Icon theme
+	environment.systemPackages = with pkgs; [ gnome3.adwaita-icon-theme ];
 
 	# Brightness control
 	programs.light.enable = true;
