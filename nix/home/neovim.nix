@@ -36,6 +36,7 @@
 			deoplete-fish
 			deoplete-go
 			deoplete-jedi
+			deoplete-nvim
 			deoplete-rust
 			echodoc-vim
 

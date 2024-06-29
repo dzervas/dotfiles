@@ -5,6 +5,7 @@
 		fd
 		fzf
 		git
+		lsd
 		ripgrep
 		vim
 	];

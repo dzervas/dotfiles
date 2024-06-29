@@ -28,6 +28,7 @@
 				./home.nix
 				./dev.nix
 				./neovim.nix
+				./fish.nix
 				./flatpak.nix
 				./desktop/sway.nix
 				# ./tools.nix

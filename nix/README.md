@@ -15,9 +15,11 @@ home-manager switch --flake <home>
 ```bash
 sudo nix flake update <nixos>
 sudo nix-store --gc
+sudo nixos-rebuild switch --flake <nixos>#<hostname>
 
 nix flake update <home>
 nix-store --gc
+home-manager switch --flake <home>
 ```
 
 ## Troubleshooting
