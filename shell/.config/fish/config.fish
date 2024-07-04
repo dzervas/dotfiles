@@ -103,6 +103,8 @@ set -g fish_greeting
 # Configure the plugins
 fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
 direnv hook fish | source
+# Configure krew
+set -q KREW_ROOT; and set -gx PATH $PATH $KREW_ROOT/.krew/bin; or set -gx PATH $PATH $HOME/.krew/bin
 
 # Configure shell stuff
 set -x EDITOR nvim

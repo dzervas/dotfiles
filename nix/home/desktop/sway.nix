@@ -58,7 +58,14 @@
 					xkb_capslock = "disabled";
 					xkb_numlock = "disabled";
 				};
-      };
+			};
+
+			output = {
+				"VGA-1" = { # VirtualBox
+					mode = "1920x1080";
+					scale = "1";
+				};
+			};
 
 			# Key bindings
 			modifier = "Mod4";
@@ -132,6 +139,8 @@
 
 			for_window [urgent="latest"] focus
 			for_window [class=.*] inhibit_idle fullscreen
+			for_window [title="^.*"] border pixel 1, title_format "<b> %class >> %title </b>"
+
 
 			for_window [app_id="(?i)(?:blueman-manager|azote|gnome-disks)"] floating enable
 			for_window [app_id="(?i)(?:pavucontrol|nm-connection-editor|gsimplecal|galculator)"] floating enable

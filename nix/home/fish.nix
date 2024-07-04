@@ -8,11 +8,11 @@
       watch = "watch -c";
     };
 
-    plugins = with pkgs.fishPlugins; [
-      tide
-      fzf-fish
-      puffer
-      autopair
-    ];
-  }
+    # plugins = with pkgs.fishPlugins; [
+    #   tide
+    #   fzf-fish
+    #   puffer
+    #   autopair
+    # ];
+  };
 }
