@@ -33,6 +33,7 @@
 				./dev.nix
 				./git.nix
 				./ssh.nix
+				#./vim.nix
 				./neovim.nix
 				./fish.nix
 				./flatpak.nix

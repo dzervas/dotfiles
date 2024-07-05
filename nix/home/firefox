@@ -1,0 +1,38 @@
+{ ... }: {
+	programs.firefox = {
+		enable = true;
+		preferences = {
+			"widget.use-xdg-desktop-portal.file-picker" = 1;
+		};
+		profiles.default = {
+			userChrome = ''
+#TabsToolbar {
+	visibility: collapse !important;
+	margin-bottom: 21px !important;
+}
+'';
+			settings = {
+				"svg.context-properties.content.enabled" = true;
+
+				"toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+
+				# Weird shit
+				"browser.discovery.enabled" = false;
+				"browser.newtabpage.activity-stream.feeds.telemetry" = false;
+				"browser.shopping.experience2023.enabled" = false;
+				"browser.urlbar.pocket.featureGate" = false;
+				"browser.urlbar.trending.featureGate" = false;
+				"extensions.getAddons.showPane" = false;
+				"extensions.htmlaboutaddons.recommendations.enabled" = false;
+				"extensions.pocket.enabled" = false;
+
+				# Some defaults
+				"browser.aboutConfig.showWarning" = false;
+				"browser.compactmode.show" = true;
+				"browser.newtabpage.activity-stream.showSponsored" = false;
+				"browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+				"browser.newtabpage.activity-stream.default.sites" = "";
+			};
+		};
+	};
+}

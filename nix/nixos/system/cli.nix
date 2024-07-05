@@ -8,7 +8,6 @@
 		git
 		lsd
 		ripgrep
-		vim
 		unzip
 	];
 

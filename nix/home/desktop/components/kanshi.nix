@@ -14,14 +14,14 @@
             status = "disable";
           }
           {
-            criteria = "DP-4";
-            status = "enable";
-            position = "1920,0";
-          }
-          {
-            criteria = "DP-5";
+            criteria = "Dell Inc. DELL P2419H 6P7BFZ2";
             status = "enable";
             position = "0,0";
+          }
+          {
+            criteria = "Dell Inc. DELL P2419H C49BFZ2";
+            status = "enable";
+            position = "1920,0";
           }
         ];
       }

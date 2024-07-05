@@ -15,6 +15,7 @@
 		# swaybg
 		# swayidle
 		swaylock
+		swaykbdd
 		# i3status
 		# dmenu
 		# rofi
@@ -46,6 +47,7 @@
 			startup = [
 				{ command = "alacritty"; }
 				{ command = "blueman-applet"; }
+				{ command = "swaykbdd"; }
 				{ command = "systemctl --user restart kanshi"; }
 			];
 			bars = [{
@@ -137,6 +139,16 @@
 				"${modifier}+Shift+6" = "move container to workspace number 6";
 				"${modifier}+Shift+7" = "move container to workspace number 7";
 				"${modifier}+Shift+8" = "move container to workspace number 8";
+
+				XF86AudioRaiseVolume = "exec 'wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+'";
+				XF86AudioLowerVolume = "exec 'wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-'";
+				XF86AudioMute = "exec 'wpctl set-mute'";
+				XF86AudioPlay = "exec 'playerctl play-pause'";
+				XF86AudioNext = "exec 'playerctl next'";
+				XF86AudioPrev = "exec 'playerctl previous'";
+
+				XF86MonBrightnessUp = "exec 'light -A 10'";
+				XF86MonBrightnessDown = "exec 'light -U 10'";
 			};
 		};
 		extraConfig = ''
