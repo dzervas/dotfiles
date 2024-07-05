@@ -11,11 +11,15 @@
 
 	users.users.dzervas = {
 		isNormalUser = true;
-		extraGroups = [ "wheel" "video" "uucp" "uinput" ];
+		extraGroups = [ "wheel" "audio" "video" "uucp" "uinput" ];
 		shell = pkgs.fish;
 	};
 
-	services.pipewire.enable = true;
+	services.pipewire = {
+		enable = true;
+		wireplumber.enable = true;
+		pulse.enable = true;
+	};
 	services.fwupd.enable = true;
 
 	# Enable flakes

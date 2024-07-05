@@ -20,8 +20,14 @@
 	# programs.jq.enable = true;
 	# programs.lsd.enable = true;
 	programs.direnv.enable = true;
+#	services.pipewire = {
+#		enable = true;
+#		audio.enable = true;
+#		pulse.enable = true;
+#	};
 	home.packages = with pkgs; [
 		kdePackages.filelight
+		pavucontrol
 	];
 
 	home.username = "dzervas";
