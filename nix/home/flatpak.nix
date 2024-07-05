@@ -13,4 +13,9 @@
 			"org.chromium.Chromium"
 		];
 	};
+
+	xdg.systemDirs.data = [
+    "/var/lib/flatpak/exports/share"
+    "/home/dzervas/.local/share/flatpak/exports/share"
+	];
 }

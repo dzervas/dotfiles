@@ -3,6 +3,7 @@
 
 	imports = [
 		# ./boot.nix
+		./1password.nix
 		./bluetooth.nix
 		./cli.nix
 		./display.nix

@@ -4,7 +4,10 @@
 	pkgs,
 	...
 }: {
-	imports = [ ./components/waybar.nix ];
+	imports = [
+		./components/waybar.nix
+		./components/kanshi.nix
+	];
 
 	services.swaync.enable = true;
 
@@ -43,6 +46,7 @@
 			startup = [
 				{ command = "alacritty"; }
 				{ command = "blueman-applet"; }
+				{ command = "systemctl --user restart kanshi"; }
 			];
 			bars = [{
 				position = "top";
@@ -57,6 +61,11 @@
 					repeat_delay = "200";
 					xkb_capslock = "disabled";
 					xkb_numlock = "disabled";
+				};
+				"type:touchpad" = {
+					tap = "enabled";
+					natural_scroll = "enabled";
+					dwt = "enabled";
 				};
 			};
 
@@ -116,8 +125,8 @@
 				"${modifier}+8" = "workspace number 8";
 
 				# Move focused container to workspace
-				"${modifier}+Shift+comma" = "move container to output left";
-				"${modifier}+Shift+period" = "move container to output right";
+				"${modifier}+Shift+comma" = "move workspace to output left";
+				"${modifier}+Shift+period" = "move workspace to output right";
 				"${modifier}+Shift+Tab" = "move container to workspace back_and_forth";
 
 				"${modifier}+Shift+1" = "move container to workspace number 1";

@@ -18,6 +18,7 @@
 			"laptop" = nixpkgs.lib.nixosSystem {
 				system = "x86_64-linux";
 				modules = [
+					{ networking.hostName = "laptop"; }
 					./configuration.nix
 					./hardware/laptop.nix
 				];
