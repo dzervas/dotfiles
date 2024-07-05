@@ -1,0 +1,118 @@
+﻿" Basic settings
+set nocompatible		" This must be first, because it changes other options as side effect
+
+set autoindent
+set clipboard^=unnamed,unnamedplus
+set colorcolumn=80		" Where to put the vertical line
+set completeopt=menuone,noselect
+set copyindent
+set cursorline			" Highlight the current line
+set encoding=utf-8		" Ability to use Alt in gvim
+set foldenable
+set foldlevelstart=10
+set foldmethod=syntax	" Code folding
+set history=100			" Number of commands to remember
+set hidden				" Hide instead of closing buffers
+set hlsearch
+set ignorecase
+set incsearch
+if exists('&inccommand')
+  set inccommand=nosplit
+endif
+set list
+set listchars=tab:>_,trail:•,extends:#,nbsp:¶
+set mouse=nvc			" By default mouse is for vim. F2 to cycle between
+set nobackup
+set noerrorbells		" Don't beep
+set noexpandtab
+set noshowmode			" Do not show mode in cmdline
+set noswapfile			" Disable the fucking .swp files
+set nowritebackup
+set nowrap
+set number				" Show line numbers
+set ruler				" Show where are you in the file
+set rnu					" Relative line numbers
+set scrolloff=3			" 3 Lines around cursor when scrolling
+set shortmess=atI		" Error messages are shorter
+set showcmd
+set showmatch			" Show matching parentheses
+set shiftwidth=4
+set sidescroll=2		" Only scroll horizontally little by little
+set smartcase			" Ignore case when lowercase used in search
+set smartindent
+set smarttab			" Helps with backspacing with space indent
+set spelllang=en_us,el_gr
+set tabstop=4
+set tags+=~/.vim/systags	" CTags
+set title
+set undolevels=1000		" Undo states to remember
+if !has('nvim')
+	set viminfo='10,\"100,:20,%,n~/.viminfo " Store vim data (cursor, marks, etc.)
+endif
+set wildignore=*.swp,*.b,*.pyc,*.class,*.apk,*.jar,*.o
+set wildmenu			" Autocompletion menu for commands
+
+let mapleader=" "
+let highlight_sedtabs = 1
+
+let g:markdown_folding = 1
+
+" Syntax highlighting
+syntax on
+" syntax sync minlines=10000 maxlines=50000
+filetype plugin indent on
+
+au FileType yaml,yml setlocal ts=2 sts=2 sw=2 expandtab
+au BufRead,BufNewFile *.cshtml set filetype=html
+au BufRead,BufNewFile *.inc set filetype=php
+au BufNewFile,BufRead Jenkinsfile set filetype=groovy
+au BufNewFile,BufRead *.gdsl set filetype=groovy
+
+" Restore cursor position in files
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+
+" NetRW
+let g:netrw_liststyle = 3
+let g:netrw_banner = 0
+let g:netrw_browse_split = 1
+let g:netrw_winsize = 10
+
+" Set 256 colors and the theme
+set t_Co=256
+set t_ut=""  " Disable background color erase
+
+" Basic mappings
+" Completion
+imap <silent><expr> <Tab> pumvisible() ? '<C-n>' : '<Tab>'
+inoremap <silent><expr> <C-Tab> pumvisible() ? '<C-p>' : '<Tab>'
+inoremap <silent><expr> <CR> pumvisible() ? '<C-y>' : '<CR>'
+
+" Unhighlight search
+noremap <C-l>			:nohlsearch<CR>
+
+" Don't forget sudo ever again!
+cnoremap w!				w !sudo tee % >/dev/null
+
+noremap <A-s>			:set spell!<CR>
+
+" Tab, buffer and window manipulation
+noremap <A-c>			:bdelete<CR>
+noremap <A-left>		:bp<CR>
+noremap <A-right>		:bn<CR>
+
+noremap <A-backspace>	:close<CR>
+noremap <A-Tab>			<C-W><C-W>
+noremap <A-up>			<C-W>l
+noremap <A-down>		<C-W>h
+noremap <A-f>			<C-W>o
+noremap <A-return>		:vsp<CR>
+noremap <A-S-return>	:sp<CR>
+
+nnoremap <Tab>			==
+nnoremap <S-Tab>		>>
+nnoremap <A-Tab>		<<
+vnoremap <Tab>			==
+vnoremap <S-Tab>		>>
+vnoremap <A-Tab>		<<
+
+noremap <leader>l		<cmd>Lexplore<cr>

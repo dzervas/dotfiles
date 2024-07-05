@@ -11,6 +11,10 @@
 
 		catppuccin.url = "github:catppuccin/nix";
 		nix-flatpak.url = "github:gmodena/nix-flatpak";
+		nixvim = {
+			url = "github:nix-community/nixvim";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
 	};
 
 	outputs = {
@@ -18,6 +22,7 @@
 		home-manager,
 		nix-flatpak,
 		catppuccin,
+		nixvim,
 		...
 	}: let
 		system = "x86_64-linux";
@@ -33,7 +38,6 @@
 				./dev.nix
 				./git.nix
 				./ssh.nix
-				#./vim.nix
 				./neovim.nix
 				./fish.nix
 				./flatpak.nix
@@ -43,6 +47,7 @@
 
 				nix-flatpak.homeManagerModules.nix-flatpak
 				catppuccin.homeManagerModules.catppuccin
+				nixvim.homeManagerModules.nixvim
 			];
 		};
 	};

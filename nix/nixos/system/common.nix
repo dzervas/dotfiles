@@ -9,6 +9,7 @@
 		./display.nix
 		./fonts.nix
 		./network.nix
+		./vim.nix
 	];
 
 	services.dbus.enable = true;
