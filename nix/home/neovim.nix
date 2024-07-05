@@ -48,4 +48,9 @@
 				# vim-textobj-indent # Doesn't exist
 		];
 	};
+
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    ALTERNATE_EDITOR = "vim";
+  };
 }

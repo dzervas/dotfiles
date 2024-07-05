@@ -19,6 +19,7 @@
 	# programs.fd.enable = true;
 	# programs.jq.enable = true;
 	# programs.lsd.enable = true;
+	programs.direnv.enable = true;
 	home.packages = with pkgs; [
 		kdePackages.filelight
 	];
@@ -26,5 +27,4 @@
 	home.username = "dzervas";
 	home.homeDirectory = "/home/dzervas";
 	home.stateVersion = "23.05";
-
 }

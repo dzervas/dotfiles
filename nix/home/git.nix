@@ -20,5 +20,27 @@
       s = "status";
       undo = "reset HEAD~";
     };
+    extraConfig = {
+      checkout.defaultRemote = "origin";
+      init.defaultBranch = "main";
+
+      color.ui = "auto";
+      core.autocrlf = "input";
+      push.default = "current";
+      push.followTags = true;
+      web.browser = "firefox";
+      pull.rebase = false;
+
+      diff.guitool = "vscode";
+      diff.srcprefix = "-h";
+      diff.zip.textconv = "unzip -c -a";
+      difftool.prompt = false;
+      difftool.vscode.cmd = "code --wait --diff \"$LOCAL\" \"$REMOTE\"";
+      pager.difftool = true;
+
+      diff.tool = "difftastic";
+      diff.external = "difft";
+      difftool.difftastic.cmd = "difft \"$LOCAL\" \"$REMOTE\"";
+    };
   };
 }

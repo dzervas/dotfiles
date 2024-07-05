@@ -1,5 +1,6 @@
 { pkgs, ... }: {
 	environment.systemPackages = with pkgs; [
+		_7zz
 		bat
 		colordiff
 		fd
@@ -8,6 +9,7 @@
 		lsd
 		ripgrep
 		vim
+		unzip
 	];
 
 	# Set fish as the default shell
