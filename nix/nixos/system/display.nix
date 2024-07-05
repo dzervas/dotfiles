@@ -16,6 +16,7 @@
 	xdg.portal = {
 		enable = true;
 		wlr.enable = true;
+		extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
 	};
 
 	# faster sway maybe? https://nixos.wiki/wiki/Sway
@@ -30,12 +31,16 @@
 	environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
 	# Icon theme
-	environment.systemPackages = with pkgs; [ gnome3.adwaita-icon-theme ];
+	environment.systemPackages = with pkgs; [
+		adwaita-icon-theme
+		qt5.qtwayland
+	];
 
 	# Brightness control
 	programs.light.enable = true;
 
 	services.flatpak.enable = true;
+	services.accounts-daemon.enable = true; # Flatpak needs this
 
 	qt = {
 		enable = true;

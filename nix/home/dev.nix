@@ -3,6 +3,7 @@
 {
 	home.packages = with pkgs; [
 		vscode
+		nixpkgs-fmt # Used by the Nix IDE extension
 
 		# Languages
 		go

@@ -5,8 +5,9 @@
 	...
 }: {
 	imports = [
-		./components/waybar.nix
 		./components/kanshi.nix
+		./components/swayidle.nix
+		./components/waybar.nix
 	];
 
 	services.swaync.enable = true;
@@ -78,6 +79,8 @@
 				};
 			};
 
+			window.titlebar = true;
+
 			# Key bindings
 			modifier = "Mod4";
 			floating.modifier = modifier;
@@ -88,6 +91,7 @@
 				"${modifier}+z" = "scratchpad show";
 				"${modifier}+Down" = "focus left";
 				"${modifier}+Up" = "focus right";
+				"${modifier}+Shift+e" = "exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'";
 				"${modifier}+Shift+f" = "floating toggle";
 				"${modifier}+Shift+r" = "reload";
 				"${modifier}+Shift+z" = "move scratchpad";
@@ -105,7 +109,7 @@
 
 				# Core applications
 				"${modifier}+Return" = "exec ${terminal}";
-				"${modifier}+l" = "exec swaylock";
+				"${modifier}+l" = "exec swaylock -c 1e1e1e";
 				"${modifier}+p" = "exec 1password --quick-access";
 				"${modifier}+r" = "exec ${menu}";
 
@@ -157,6 +161,11 @@
 			focus_on_window_activation focus
 			hide_edge_borders --i3 both
 			popup_during_fullscreen smart
+
+			set $laptop eDP-1
+			bindswitch lid:on output $laptop disable
+			bindswitch lid:off output $laptop enable
+
 
 			for_window [urgent="latest"] focus
 			for_window [class=.*] inhibit_idle fullscreen
