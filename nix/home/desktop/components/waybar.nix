@@ -40,11 +40,12 @@
           format = "{name}";
         };
         "sway/scratchpad" = {
-          format = "{icon} {count}";
+          format = "{icon}  {count}";
           format-icons = [ "" "" ];
           show-empty = false;
           tooltip = true;
           tooltip-format = "{app}: {title}";
+          on-click = "swaymsg scratchpad show";
         };
         "tray" = {
           spacing = 10;
