@@ -41,7 +41,6 @@ in {
 	];
 
 	gtk.enable = true;
-	services.gnome-keyring.enable = true;
 
 	wayland.windowManager.sway = {
 		enable = true;

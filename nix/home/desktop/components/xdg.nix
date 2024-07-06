@@ -8,13 +8,7 @@
       common.default = "wlr";
       pantheon = {
         default = [ "pantheon" "gtk" ];
-        "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
       };
     };
-  };
-
-  services.gnome-keyring = {
-    enable = true;
-    components = [ "secrets" ];
   };
 }

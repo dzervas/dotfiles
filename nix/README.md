@@ -3,23 +3,23 @@
 ## Rebuilding
 
 ```bash
-sudo nixos-rebuild switch --flake <nixos>#<hostname>
+sudo nixos-rebuild switch --flake ./nixos#<hostname>
 # First build
-nix run home-manager -- switch --flake <home>
+nix run home-manager -- switch --flake ./home
 # Normal rebuild
-home-manager switch --flake <home>
+home-manager switch --flake ./home
 ```
 
 ## Updating
 
 ```bash
-sudo nix flake update <nixos>
+sudo nix flake update ./nixos
 sudo nix-store --gc
-sudo nixos-rebuild switch --flake <nixos>#<hostname>
+sudo nixos-rebuild switch --flake ./nixos
 
-nix flake update <home>
+nix flake update ./home
 nix-store --gc
-home-manager switch --flake <home>
+home-manager switch --flake ./home
 ```
 
 ## Troubleshooting
@@ -41,3 +41,7 @@ nix-store --verify --check-contents --repair
 A `.nix` file was empty and I had to `sudo nix-store --query --roots <path>`
 to find the softlink under the home, remove it and re-run the initial home-manager
 rebuild.
+
+## Quirks
+
+- VSCode needs `"password-store": "gnome-libsecret"` to `~/.vscode/argv.json` to see gnome-keyring

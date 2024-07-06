@@ -27,6 +27,9 @@
     value = 1;
   }];
 
+  security.pam.services.login.enableGnomeKeyring = true;
+  services.gnome.gnome-keyring.enable = true;
+
   # Electron fix - https://nixos.wiki/wiki/Wayland#Electron_and_Chromium
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
@@ -34,6 +37,7 @@
   environment.systemPackages = with pkgs; [
     adwaita-icon-theme
     qt5.qtwayland
+    libsecret
   ];
 
   # Brightness control
@@ -41,6 +45,11 @@
 
   services.flatpak.enable = true;
   services.accounts-daemon.enable = true; # Flatpak needs this
+
+  programs.nm-applet = {
+    enable = true;
+    indicator = true;
+  };
 
   qt = {
     enable = true;
