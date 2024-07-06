@@ -55,7 +55,7 @@ in {
 				{ command = "alacritty"; }
 				{ command = "blueman-applet"; }
 				{ command = "swaykbdd"; }
-				{ command = "systemctl --user restart kanshi"; }
+				{ command = "systemctl --user restart kanshi"; always = true; }
 			];
 			bars = [{
 				position = "top";
@@ -95,12 +95,14 @@ in {
 				"${modifier}+c" = "kill";
 				"${modifier}+f" = "fullscreen";
 				"${modifier}+z" = "scratchpad show";
+				"${modifier}+Grave" = "scratchpad show";
 				"${modifier}+Down" = "focus left";
 				"${modifier}+Up" = "focus right";
 				"${modifier}+Shift+e" = "exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'";
 				"${modifier}+Shift+f" = "floating toggle";
 				"${modifier}+Shift+r" = "reload";
 				"${modifier}+Shift+z" = "move scratchpad";
+				"${modifier}+Shift+Grave" = "move scratchpad";
 				"${modifier}+Shift+Up" = "move right";
 				"${modifier}+Shift+Down" = "move left";
 				"${modifier}+Shift+Left" = "move container to workspace left";
