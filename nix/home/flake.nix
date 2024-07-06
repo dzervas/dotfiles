@@ -39,6 +39,7 @@
 				./git.nix
 				./ssh.nix
 				./neovim.nix
+				./firefox.nix
 				./fish.nix
 				./flatpak.nix
 				./desktop/sway.nix

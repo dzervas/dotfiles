@@ -3,16 +3,9 @@
   # tide configure --auto --style=Classic --prompt_colors='True color' --classic_prompt_color=Dark --show_time='24-hour format' --classic_prompt_separators=Angled --powerline_prompt_heads=Sharp --powerline_prompt_tails=Slanted --powerline_prompt_style='Two lines, character and frame' --prompt_connection=Dotted --powerline_right_prompt_frame=Yes --prompt_connection_andor_frame_color=Dark --prompt_spacing=Compact --icons='Few icons' --transient=Yes
   programs.fish = {
     enable = true;
-    shellAliases = {
-      diff = "diff --color=always";
-      man = "LC_ALL=C LANG=C man";
-      pgrep = "pgrep -af";
-      watch = "watch -c";
-    };
     interactiveShellInit = ''
 set fish_greeting
 fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
-source /etc/bash_aliases
 '';
     plugins = [
       { name = "autopair"; src = pkgs.fishPlugins.autopair.src; }

@@ -10,6 +10,7 @@ in {
 		./components/kanshi.nix
 		./components/swayidle.nix
 		./components/waybar.nix
+		./components/xdg.nix
 	];
 
 	services.swaync.enable = true;
