@@ -3,7 +3,9 @@
 	lib,
 	pkgs,
 	...
-}: {
+}: let
+	grimshot = "";
+in {
 	imports = [
 		./components/kanshi.nix
 		./components/swayidle.nix
@@ -26,8 +28,12 @@
 		# blueman
 		# pavucontrol
 		wofi
-		grim # screenshot functionality
-		slurp # screenshot functionality
+
+		# screenshot functionality
+		grim
+		slurp
+		swappy
+
 		wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
 		brightnessctl
 		playerctl
@@ -143,6 +149,10 @@
 				"${modifier}+Shift+6" = "move container to workspace number 6";
 				"${modifier}+Shift+7" = "move container to workspace number 7";
 				"${modifier}+Shift+8" = "move container to workspace number 8";
+
+				# Screenshots
+				"Print" = "exec 'grim -g \"$(slurp)\" - | swappy -f -'";
+				"Shift+Print" = "exec 'grim -g \"$(slurp -r)\" - | swappy -f -'";
 
 				XF86AudioRaiseVolume = "exec 'wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+'";
 				XF86AudioLowerVolume = "exec 'wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-'";
