@@ -12,6 +12,7 @@
     interactiveShellInit = ''
 set fish_greeting
 fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
+source /etc/bash_aliases
 '';
     plugins = [
       { name = "autopair"; src = pkgs.fishPlugins.autopair.src; }
