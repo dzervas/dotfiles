@@ -5,7 +5,7 @@
 		update.auto.enable = true;
 		uninstallUnmanaged = true;
 		packages = [
-			# "com.spotify.Client"
+			"com.spotify.Client"
 			# "com.slack.Slack"
 			# "com.discordapp.Discord"
 			"com.prusa3d.PrusaSlicer"

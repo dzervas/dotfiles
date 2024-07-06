@@ -52,8 +52,10 @@ in {
 				size = 0.5;
 			};
 			startup = [
+				{ command = "1password --silent"; }
 				{ command = "alacritty"; }
 				{ command = "blueman-applet"; }
+				{ command = "firefox"; }
 				{ command = "swaykbdd"; }
 				{ command = "systemctl --user restart kanshi"; always = true; }
 			];

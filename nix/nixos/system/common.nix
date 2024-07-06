@@ -9,6 +9,7 @@
 		./display.nix
 		./fonts.nix
 		./network.nix
+		./theme.nix
 		./vim.nix
 	];
 
