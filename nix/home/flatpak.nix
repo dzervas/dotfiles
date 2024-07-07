@@ -18,4 +18,7 @@
 		"/var/lib/flatpak/exports/share"
 		"/home/dzervas/.local/share/flatpak/exports/share"
 	];
+
+	# hardware.pulseaudio.support32Bit = true;
+	# hardware.opengl.driSupport32Bit = true;
 }

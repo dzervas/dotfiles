@@ -13,8 +13,9 @@ in {
     # - darkmoss
     base16Scheme = base16Scheme { name = "snazzy"; };
     image = pkgs.fetchurl {
-      url = "https://unsplash.com/photos/WeYamle9fDM/download?ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzIwMzAwOTk3fA&force=true";
-      sha256 = "sha256-ZPJL1O+80s8tylvQwd9ZrZMJbLgmj0teDjEkqUCZMVU=";
+      # Photo by Dave Hoefler on Unsplash: https://unsplash.com/photos/sunlight-through-trees-hQNY2WP-qY4
+      url = "https://unsplash.com/photos/hQNY2WP-qY4/download?ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzIwMzUyNTA4fA&force=true";
+      sha256 = "sha256-gw+BkfVkuzMEI8ktiLoHiBMupiUS9AoiB+acFTCt36g=";
     };
 
     fonts = {

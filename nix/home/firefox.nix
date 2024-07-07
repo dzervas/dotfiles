@@ -12,7 +12,7 @@
       path = "8prfdmmp.default"; # Generated once so let's use it
       userChrome = ''
 /* Remove close button */
-.titlebar-buttonbox-container { display:none }
+.titlebar-buttonbox-container { display:none !important }
 
 ${builtins.readFile
   (builtins.fetchurl {

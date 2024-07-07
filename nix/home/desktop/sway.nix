@@ -2,12 +2,12 @@
 	config,
 	lib,
 	pkgs,
+	stylix,
 	...
-}: let
-	grimshot = "";
-in {
+}: {
 	imports = [
 		./components/kanshi.nix
+		./components/pasystray.nix
 		./components/swayidle.nix
 		./components/waybar.nix
 		./components/xdg.nix
@@ -41,6 +41,18 @@ in {
 	];
 
 	gtk.enable = true;
+	# qt.enable = true;
+	# qt.platformTheme.name = "qtct";
+	# qt.style.name = "kvantum";
+	# stylix.targets.kde.enable = true;
+	qt = {
+		enable = true;
+		platformTheme.name = "qtct"; # or "qt5ct" if using NixOS module
+		style = {
+			package = pkgs.colloid-kde;
+			name = "kvantum";
+		};
+	};
 
 	wayland.windowManager.sway = {
 		enable = true;

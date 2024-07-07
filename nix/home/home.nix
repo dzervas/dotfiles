@@ -7,6 +7,7 @@
 }: {
 	imports = [
 		./1password.nix
+		./burp.nix
 		./dev.nix
 		./git.nix
 		./ssh.nix

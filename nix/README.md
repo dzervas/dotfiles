@@ -3,23 +3,15 @@
 ## Rebuilding
 
 ```bash
-sudo nixos-rebuild switch --flake ./nixos#<hostname>
-# First build
-nix run home-manager -- switch --flake ./home
-# Normal rebuild
-home-manager switch --flake ./home
+sudo nixos-rebuild switch --flake .#<hostname>
 ```
 
 ## Updating
 
 ```bash
-sudo nix flake update ./nixos
+sudo nix flake update .
 sudo nix-store --gc
-sudo nixos-rebuild switch --flake ./nixos
-
-nix flake update ./home
-nix-store --gc
-home-manager switch --flake ./home
+sudo nixos-rebuild switch --flake .
 ```
 
 ## Troubleshooting

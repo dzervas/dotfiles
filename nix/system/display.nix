@@ -35,8 +35,10 @@
 
   # Icon theme
   environment.systemPackages = with pkgs; [
-    adwaita-icon-theme
-    qt5.qtwayland
+    # adwaita-icon-theme
+    # qt5.qtwayland
+    # libsForQt5.qt5ct
+    # kdePackages.qt6ct
     libsecret
   ];
 
@@ -51,9 +53,8 @@
     indicator = true;
   };
 
-  qt = {
-    enable = true;
-    platformTheme = "gnome";
-    style = "adwaita-dark";
-  };
+  # qt = {
+  #   enable = true;
+  #   platformTheme = "qt5ct";
+  # };
 }
