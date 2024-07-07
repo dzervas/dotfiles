@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, stylix, ... }:
 
 {
 	home.packages = with pkgs; [

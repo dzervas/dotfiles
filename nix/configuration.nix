@@ -13,7 +13,7 @@
 	home-manager = {
 		useGlobalPkgs = true;
 		useUserPackages = true;
-		users.dzervas = import ../home/home.nix;
+		users.dzervas = import ./home/home.nix;
 	};
 
 	services.pipewire = {
