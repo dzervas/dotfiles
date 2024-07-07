@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }:
 
 {
+	system.stateVersion = "23.05";
+
 	powerManagement.enable = true;
 
 	boot = {

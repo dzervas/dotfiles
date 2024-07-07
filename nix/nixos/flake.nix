@@ -3,31 +3,36 @@
 
 	inputs = {
 		nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+
 		stylix.url = "github:danth/stylix";
+
+		# Home Manager
+		home-manager.url = "github:nix-community/home-manager";
+		home-manager.inputs.nixpkgs.follows = "nixpkgs";
+		nix-flatpak.url = "github:gmodena/nix-flatpak";
 	};
 
-	outputs = { nixpkgs, stylix, ... }: {
-		nixosConfigurations = {
-			"virtualbox" = nixpkgs.lib.nixosSystem {
-				system = "x86_64-linux";
+	outputs = inputs@{ self, nixpkgs, stylix, home-manager, ... }: let
+		lib = nixpkgs.lib;
+		mkMachine = { hostName, arch ? "x86_64-linux" }: {
+			nixosConfigurations.${hostName} = lib.nixosSystem {
+				system = arch;
 				modules = [
-					# (nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix")
-					# (nixpkgs + "/nixos/modules/installer/virtualbox-demo.nix")
-					# (nixpkgs + "/nixos/modules/virtualisation/virtualbox-guest.nix")
+					{ networking.hostName = hostName; }
 					stylix.nixosModules.stylix
 					./configuration.nix
-					./hardware/virtualbox.nix
-				];
-			};
-			"laptop" = nixpkgs.lib.nixosSystem {
-				system = "x86_64-linux";
-				modules = [
-					{ networking.hostName = "laptop"; }
-					stylix.nixosModules.stylix
-					./configuration.nix
-					./hardware/laptop.nix
+					./hardware/${hostName}.nix
+
+					home-manager.nixosModules.home-manager
+					# Allow home-manager to have access to nix-flatpak
+					{ home-manager.extraSpecialArgs.flake-inputs = inputs; }
+					# nix-flatpak.homeManagerModules.nix-flatpak
 				];
 			};
 		};
-	};
+	in
+		lib.foldr lib.recursiveUpdate {} (map mkMachine [
+			{ hostName = "laptop"; }
+			{ hostName = "virtualbox"; }
+		]);
 }

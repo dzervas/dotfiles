@@ -2,11 +2,6 @@
 {
 	imports = [ ./system/common.nix ];
 
-	# Bootloader
-	# boot.loader.systemd-boot.enable = true;
-	# boot.loader.efi.canTouchEfiVariables = true;
-
-	system.stateVersion = "23.05";
 	system.copySystemConfiguration = false;
 
 	users.users.dzervas = {
@@ -15,10 +10,16 @@
 		shell = pkgs.fish;
 	};
 
+	home-manager = {
+		useGlobalPkgs = true;
+		useUserPackages = true;
+		users.dzervas = import ../home/home.nix;
+	};
+
 	services.pipewire = {
 		enable = true;
-		wireplumber.enable = true;
 		pulse.enable = true;
+		wireplumber.enable = true;
 	};
 	services.fwupd.enable = true;
 

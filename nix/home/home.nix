@@ -2,8 +2,22 @@
 	config,
 	lib,
 	pkgs,
+	flake-inputs,
 	...
 }: {
+	imports = [
+		./1password.nix
+		./dev.nix
+		./git.nix
+		./ssh.nix
+		./neovim.nix
+		./firefox.nix
+		./fish.nix
+		./flatpak.nix
+		./desktop/sway.nix
+
+		flake-inputs.nix-flatpak.homeManagerModules.nix-flatpak
+	];
 
 	programs.home-manager.enable = true;
 	programs.firefox.enable = true;
@@ -11,7 +25,7 @@
 		enable = true;
 		settings = {
 			font.size = 12;
-			font.normal.family = "Iosevka NFM";
+			# font.normal.family = "Iosevka NFM";
 		};
 	};
 

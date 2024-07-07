@@ -7,6 +7,9 @@
 
 	keys_lines = lib.strings.splitString "\n" keys_str;
 in {
+# (nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix")
+# (nixpkgs + "/nixos/modules/installer/virtualbox-demo.nix")
+# (nixpkgs + "/nixos/modules/virtualisation/virtualbox-guest.nix")
 	# Needs VboxSVGA video controller
 	virtualisation.virtualbox.guest.enable = true;
 

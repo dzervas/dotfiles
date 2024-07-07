@@ -166,6 +166,26 @@
     "home-manager": {
       "inputs": {
         "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1720289319,
+        "narHash": "sha256-E3CjSsXNDWYqoNjrKQLPdEZDLR+mVI9HMa+jY//FjBY=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "10486e6b311b3c5ae1c3477fee058704cea7cb4a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "home-manager_2": {
+      "inputs": {
+        "nixpkgs": [
           "stylix",
           "nixpkgs"
         ]
@@ -181,6 +201,21 @@
       "original": {
         "owner": "nix-community",
         "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "nix-flatpak": {
+      "locked": {
+        "lastModified": 1711997375,
+        "narHash": "sha256-KvU4gOtuFMS9Il67glRGtdNfguAINT9pCaXtvCL8uI8=",
+        "owner": "gmodena",
+        "repo": "nix-flatpak",
+        "rev": "45bf66f7068db79b552da864c0e87452be624d6c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "gmodena",
+        "repo": "nix-flatpak",
         "type": "github"
       }
     },
@@ -218,6 +253,8 @@
     },
     "root": {
       "inputs": {
+        "home-manager": "home-manager",
+        "nix-flatpak": "nix-flatpak",
         "nixpkgs": "nixpkgs",
         "stylix": "stylix"
       }
@@ -233,7 +270,7 @@
         "base16-vim": "base16-vim",
         "flake-compat": "flake-compat",
         "gnome-shell": "gnome-shell",
-        "home-manager": "home-manager",
+        "home-manager": "home-manager_2",
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
