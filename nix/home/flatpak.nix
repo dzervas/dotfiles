@@ -10,7 +10,7 @@
 			# "com.discordapp.Discord"
 			"com.prusa3d.PrusaSlicer"
 			"org.chromium.Chromium"
-			"com.valvesoftware.Steam"
+			# "com.valvesoftware.Steam"
 		];
 	};
 

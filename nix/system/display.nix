@@ -53,6 +53,9 @@
     indicator = true;
   };
 
+  programs.steam.enable = true;
+  programs.steam.localNetworkGameTransfers.openFirewall = true;
+
   # qt = {
   #   enable = true;
   #   platformTheme = "qt5ct";

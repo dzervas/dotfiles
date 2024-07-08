@@ -10,6 +10,8 @@
 		pipenv
 		python3
 		rustup
+		pnpm
+		nodejs
 
 		# Cloud stuff
 		kubectl

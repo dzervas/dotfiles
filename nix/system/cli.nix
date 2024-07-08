@@ -7,6 +7,8 @@
 		fd
 		fzf
 		git
+		jq
+		killall
 		libnotify # For notify-send
 		lsd
 		ripgrep
@@ -57,12 +59,12 @@
 		tf = "terraform";
 
 		# Nicer output
-		man = "LC_ALL=C LANG=C man";
-		pgrep = "pgrep -af";
-		ssh = "TERM=xterm-256color ssh";
+		man = "LC_ALL=C LANG=C command man";
+		pgrep = "command pgrep -af";
+		ssh = "TERM=xterm-256color command ssh";
 		now = "date +\"%Y.%m.%d-%H.%M.%S\"";
 		# By https://unix.stackexchange.com/questions/25327/watch-command-alias-expansion
-		watch = "watch -c ";
+		watch = "command watch -c ";
 
 		# Useful aliases
 		docker_rm = "docker rm $(docker ps --no-trunc -aqf status=exited)";
