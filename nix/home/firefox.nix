@@ -3,7 +3,7 @@
     enable = true;
     policies = {
       DisablePocket = true;
-      DisableTelemetry = true;
+      # DisableTelemetry = true;
       HardwareAcceleration = true;
       OfferToSaveLogins = false;
       PasswordManagerEnabled = false;
@@ -13,13 +13,12 @@
       userChrome = ''
 /* Remove close button */
 .titlebar-buttonbox-container { display:none !important }
-
-${builtins.readFile
-  (builtins.fetchurl {
-    url = "https://github.com/MrOtherGuy/firefox-csshacks/raw/master/chrome/tabs_below_content.css";
-    sha256 = "sha256:00rcsvmy2gjsssv096qhnqcrxczcjsmdgqy75d32bdhmq737h3z4";
-  })}
 '';
+# ${builtins.readFile
+  # (builtins.fetchurl {
+    # url = "https://github.com/MrOtherGuy/firefox-csshacks/raw/master/chrome/tabs_below_content.css";
+    # sha256 = "sha256:00rcsvmy2gjsssv096qhnqcrxczcjsmdgqy75d32bdhmq737h3z4";
+  # })}
       settings = {
         "svg.context-properties.content.enabled" = true;
 
@@ -42,7 +41,7 @@ ${builtins.readFile
         "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
         "browser.newtabpage.activity-stream.default.sites" = "";
 
-        "widget.use-xdg-desktop-portal.file-picker" = 1;
+		"widget.use-xdg-desktop-portal.file-picker" = 0;
       };
     };
   };

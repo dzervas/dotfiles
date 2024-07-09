@@ -40,6 +40,7 @@
     # libsForQt5.qt5ct
     # kdePackages.qt6ct
     libsecret
+    steam-run
   ];
 
   # Brightness control

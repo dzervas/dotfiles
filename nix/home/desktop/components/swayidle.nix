@@ -8,7 +8,7 @@ in {
     ];
     timeouts = [
       { timeout = 300; command = swaylock_cmd; }
-      { timeout = 600; command = "${pkgs.sway}/bin/swaymsg \"output * dpms off\""; resumeCommand = "${pkgs.sway}/bin/swaymsg \"output * dpms off\""; }
+      { timeout = 600; command = "swaymsg 'output * dpms off'"; resumeCommand = "swaymsg 'output * dpms on'"; }
     ];
   };
 }

@@ -7,7 +7,7 @@
 		packages = [
 			"com.spotify.Client"
 			# "com.slack.Slack"
-			# "com.discordapp.Discord"
+			"com.discordapp.Discord"
 			"com.prusa3d.PrusaSlicer"
 			"org.chromium.Chromium"
 			# "com.valvesoftware.Steam"

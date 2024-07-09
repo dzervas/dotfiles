@@ -9,6 +9,7 @@ sudo nixos-rebuild switch --flake .#<hostname>
 ## Updating
 
 ```bash
+sudo nix-channel --update
 sudo nix flake update .
 sudo nix-store --gc
 sudo nixos-rebuild switch --flake .
