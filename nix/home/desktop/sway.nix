@@ -7,7 +7,7 @@
 }: {
 	imports = [
 		./components/kanshi.nix
-		./components/pasystray.nix
+		./components/trays.nix
 		./components/swayidle.nix
 		./components/waybar.nix
 		./components/xdg.nix
@@ -16,18 +16,8 @@
 	services.swaync.enable = true;
 
 	home.packages = with pkgs; [
-		# swaybg
-		# swayidle
 		swaylock
 		swaykbdd
-		# i3status
-		# dmenu
-		# rofi
-		# alacritty
-		# firefox
-		# networkmanager
-		# blueman
-		# pavucontrol
 		wofi
 
 		# screenshot functionality

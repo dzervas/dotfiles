@@ -1,3 +1,0 @@
-{ ... }: {
-  services.pasystray.enable = true;
-}

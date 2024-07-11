@@ -4,13 +4,17 @@
 		bat
 		colordiff
 		difftastic
+		dig
 		fd
 		fzf
 		git
+		htop
 		jq
 		killall
 		libnotify # For notify-send
 		lsd
+		ngrok
+		(python3Packages.python.withPackages (p: [ p.ipython ]))
 		ripgrep
 		unzip
 	];

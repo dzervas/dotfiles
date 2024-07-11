@@ -14,11 +14,16 @@
 
 	outputs = inputs@{ self, nixpkgs, stylix, home-manager, ... }: let
 		lib = nixpkgs.lib;
-		mkMachine = { hostName, arch ? "x86_64-linux" }: {
+		mkMachine = { hostName, stateVersion, arch ? "x86_64-linux" }: {
 			nixosConfigurations.${hostName} = lib.nixosSystem {
 				system = arch;
 				modules = [
-					{ networking.hostName = hostName; }
+					# Set some basic options
+					{
+						networking.hostName = hostName;
+						system.stateVersion = stateVersion;
+						home-manager.users.dzervas.home.stateVersion = stateVersion;
+					}
 					stylix.nixosModules.stylix
 					./configuration.nix
 					./hardware/${hostName}.nix
@@ -26,13 +31,12 @@
 					home-manager.nixosModules.home-manager
 					# Allow home-manager to have access to nix-flatpak
 					{ home-manager.extraSpecialArgs.flake-inputs = inputs; }
-					# nix-flatpak.homeManagerModules.nix-flatpak
 				];
 			};
 		};
 	in
 		lib.foldr lib.recursiveUpdate {} (map mkMachine [
-			{ hostName = "laptop"; }
-			{ hostName = "virtualbox"; }
+			{ hostName = "laptop"; stateVersion = "23.05"; }
+			{ hostName = "virtualbox"; stateVersion = "23.05"; }
 		]);
 }

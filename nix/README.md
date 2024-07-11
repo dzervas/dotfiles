@@ -35,6 +35,12 @@ A `.nix` file was empty and I had to `sudo nix-store --query --roots <path>`
 to find the softlink under the home, remove it and re-run the initial home-manager
 rebuild.
 
+### To update to a specific nixpkgs commit
+
+```bash
+nix flake update --override-input nixpkgs github:NixOS/nixpkgs/7252b96d60dc2ccf3971e436811cfce42b258669
+```
+
 ## Quirks
 
 - VSCode needs `"password-store": "gnome-libsecret"` to `~/.vscode/argv.json` to see gnome-keyring

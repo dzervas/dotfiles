@@ -34,7 +34,7 @@
 			# Auto completion
 			deoplete-clang
 			deoplete-fish
-			deoplete-go
+			# deoplete-go
 			deoplete-jedi
 			deoplete-nvim
 			deoplete-rust

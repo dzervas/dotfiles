@@ -9,6 +9,8 @@
 		go
 		pipenv
 		python3
+		# python311Packages.ipython
+		pyenv
 		rustup
 		pnpm
 		nodejs
