@@ -20,6 +20,18 @@
 		swaykbdd
 		wofi
 
+		# For Qt
+		kdePackages.dolphin
+		# breeze-icons
+		# qadwaitadecorations
+		# qadwaitadecorations-qt6
+		# kdePackages.breeze-gtk
+		# kdePackages.breeze-icons
+		# kdePackages.breeze.qt5
+		# kdePackages.breeze
+		# qt5ct
+		# libsForQt5.breeze-qt5
+
 		# screenshot functionality
 		grim
 		slurp
@@ -31,21 +43,32 @@
 	];
 
 	gtk.enable = true;
-	# qt.enable = true;
-	# qt.platformTheme.name = "qtct";
-	# qt.style.name = "kvantum";
-	# stylix.targets.kde.enable = true;
 	qt = {
 		enable = true;
-		platformTheme.name = "qtct"; # or "qt5ct" if using NixOS module
-		style = {
-			package = pkgs.colloid-kde;
-			name = "kvantum";
-		};
+		# style.name = "breeze-dark";
+		# style.package = pkgs.libsForQt5.breeze-qt5;
+		# platformTheme.name = "kde";
+	};
+
+	# home.sessionVariables.QT_WAYLAND_DECORATION = "adwaita";
+	# home.sessionVariables.QT_QPA_PLATFORMTHEME = "qt5ct";
+	# xdg.configFile.kdeglobals.text = "${formatConfig colorscheme}";
+
+	home.sessionVariables = {
+		WLR_DRM_NO_MODIFIERS = "1";
+		MOZ_ENABLE_WAYLAND = "1";
+		MOZ_USE_XINPUT2 = "1";
+		SDL_VIDEODRIVER = "wayland";
+		QT_QPA_PLATFORM = "wayland";
+		QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+		_JAVA_AWT_WM_NONREPARENTING = "1";
+		XDG_SESSION_TYPE = "wayland";
+		XDG_CURRENT_DESKTOP = "sway";
 	};
 
 	wayland.windowManager.sway = {
 		enable = true;
+		# systemd.enable = true;
 		wrapperFeatures.gtk = true;
 		config = rec {
 			terminal = "alacritty";
@@ -204,5 +227,6 @@
 			for_window [app_id="^org.kde.krunner$"] floating enable; move position 35ppt 0; focus
 			for_window [title="^Wine System Tray$"] floating enable; move scratchpad
 		'';
+		extraOptions = [ "--unsupported-gpu" ];
 	};
 }
