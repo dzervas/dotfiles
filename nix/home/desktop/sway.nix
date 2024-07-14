@@ -9,6 +9,7 @@
 		./components/kanshi.nix
 		./components/trays.nix
 		./components/swayidle.nix
+		./components/swaylock.nix
 		./components/waybar.nix
 		./components/xdg.nix
 	];
@@ -16,7 +17,6 @@
 	services.swaync.enable = true;
 
 	home.packages = with pkgs; [
-		swaylock
 		swaykbdd
 		wofi
 
@@ -132,7 +132,7 @@
 
 				# Core applications
 				"${modifier}+Return" = "exec ${terminal}";
-				"${modifier}+l" = "exec swaylock -c 1e1e1e";
+				"${modifier}+l" = "exec swaylock";
 				"${modifier}+p" = "exec 1password --quick-access";
 				"${modifier}+r" = "exec ${menu}";
 

@@ -1,15 +1,23 @@
-{ pkgs, ... }: let
-	swaylock_cmd = "${pkgs.swaylock}/bin/swaylock -fF -c 1e1e1e";
-	swaymsg_cmd = "${pkgs.sway}/bin/swaymsg";
+{ config, lib, pkgs, ... }: let
+	swaylock = "${pkgs.swaylock}/bin/swaylock -f";
+	swaymsg = "${pkgs.sway}/bin/swaymsg";
+	wpctl = "${pkgs.wireplumber}/bin/wpctl";
 in {
-  services.swayidle = {
-    enable = true;
-    events = [
-      { event = "before-sleep"; command = swaylock_cmd; }
-    ];
-    timeouts = [
-      { timeout = 300; command = swaylock_cmd; }
-      { timeout = 600; command = "${swaymsg_cmd} output * dpms off"; resumeCommand = "${swaymsg_cmd} output * dpms on"; }
-    ];
-  };
+	services.swayidle = {
+		enable = true;
+		events = [
+		{ event = "before-sleep"; command = swaylock; }
+		];
+		timeouts = [
+			{ timeout = 300; command = swaylock; }
+			# Mute mic
+			{ timeout = 330; command = "${wpctl} set-mute @DEFAULT_SOURCE@ 1"; resumeCommand = "${wpctl} set-mute @DEFAULT_SOURCE@ 0"; }
+			# Turn off displays (sway)
+			(lib.optionals config.wayland.windowManager.sway.enable ({
+				timeout = 600;
+				command = "${swaymsg} 'output * dpms off'";
+				resumeCommand = "${swaymsg} 'output * dpms on'";
+			}))
+		];
+	};
 }
