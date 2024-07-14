@@ -22,15 +22,6 @@
 
 		# For Qt
 		kdePackages.dolphin
-		# breeze-icons
-		# qadwaitadecorations
-		# qadwaitadecorations-qt6
-		# kdePackages.breeze-gtk
-		# kdePackages.breeze-icons
-		# kdePackages.breeze.qt5
-		# kdePackages.breeze
-		# qt5ct
-		# libsForQt5.breeze-qt5
 
 		# screenshot functionality
 		grim
@@ -43,16 +34,12 @@
 	];
 
 	gtk.enable = true;
-	qt = {
-		enable = true;
-		# style.name = "breeze-dark";
-		# style.package = pkgs.libsForQt5.breeze-qt5;
-		# platformTheme.name = "kde";
-	};
+	qt.enable = true;
 
-	# home.sessionVariables.QT_WAYLAND_DECORATION = "adwaita";
-	# home.sessionVariables.QT_QPA_PLATFORMTHEME = "qt5ct";
-	# xdg.configFile.kdeglobals.text = "${formatConfig colorscheme}";
+	services.flatpak.overrides.global = {
+		Context.sockets = ["wayland" "!x11" "fallback-x11"];
+		Environment.GDK_BACKEND = "wayland";
+	};
 
 	home.sessionVariables = {
 		WLR_DRM_NO_MODIFIERS = "1";
@@ -83,6 +70,7 @@
 				{ command = "firefox"; }
 				{ command = "swaykbdd"; }
 				{ command = "systemctl --user restart kanshi"; always = true; }
+				{ command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway"; }
 			];
 			bars = [{
 				position = "top";
@@ -181,7 +169,8 @@
 
 				# Screenshots
 				"Print" = "exec 'grim -g \"$(slurp)\" - | swappy -f -'";
-				"Shift+Print" = "exec 'grim -g \"$(slurp -r)\" - | swappy -f -'";
+				"Shift+Print" = "exec 'grim -g \"$(swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \\\"\\(.x),\\(.y) \\(.width)x\\(.height)\\\"')\" - | swappy -f -'";
+				"Ctrl+Print" = "exec 'grim -g \"$(slurp -or)\" - | swappy -f -'";
 
 				XF86AudioRaiseVolume = "exec 'wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+'";
 				XF86AudioLowerVolume = "exec 'wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-'";

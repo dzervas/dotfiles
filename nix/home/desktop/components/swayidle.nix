@@ -1,5 +1,6 @@
-{ pkgs, ... }:
-let swaylock_cmd = "${pkgs.swaylock}/bin/swaylock -fF -c 1e1e1e";
+{ pkgs, ... }: let
+	swaylock_cmd = "${pkgs.swaylock}/bin/swaylock -fF -c 1e1e1e";
+	swaymsg_cmd = "${pkgs.sway}/bin/swaymsg";
 in {
   services.swayidle = {
     enable = true;
@@ -8,7 +9,7 @@ in {
     ];
     timeouts = [
       { timeout = 300; command = swaylock_cmd; }
-      { timeout = 600; command = "swaymsg 'output * dpms off'"; resumeCommand = "swaymsg 'output * dpms on'"; }
+      { timeout = 600; command = "${swaymsg_cmd} output * dpms off"; resumeCommand = "${swaymsg_cmd} output * dpms on"; }
     ];
   };
 }

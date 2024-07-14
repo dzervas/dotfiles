@@ -16,6 +16,9 @@
 		users.dzervas = import ./home/home.nix;
 	};
 
+	# Fix home-manager xdg desktop portal support
+	environment.pathsToLink = [ "/share/xdg-desktop-portal" "/share/applications" ];
+
 	services.pipewire = {
 		enable = true;
 		pulse.enable = true;

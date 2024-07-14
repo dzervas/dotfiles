@@ -13,13 +13,7 @@
 		wrapperFeatures.gtk = true;
 	};
 
-	xdg.portal = {
-		enable = true;
-		wlr.enable = true;
-		extraPortals = with pkgs; [ xdg-desktop-portal-gtk xdg-desktop-portal-kde xdg-desktop-portal-wlr ];
-	};
-
-# faster sway maybe? https://nixos.wiki/wiki/Sway
+	# faster sway maybe? https://nixos.wiki/wiki/Sway
 	security.pam.loginLimits = [{
 		domain = "@users";
 		item = "rtprio";
@@ -30,30 +24,22 @@
 	security.pam.services.login.enableGnomeKeyring = true;
 	services.gnome.gnome-keyring.enable = true;
 
-# Electron fix - https://nixos.wiki/wiki/Wayland#Electron_and_Chromium
+	# Electron fix - https://nixos.wiki/wiki/Wayland#Electron_and_Chromium
 	environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
-# Icon theme
-	environment.systemPackages = with pkgs; [
-# adwaita-icon-theme
-# qt5.qtwayland
-# libsForQt5.qt5ct
-# kdePackages.qt6ct
-		libsecret
-# steam-run
-	];
+	environment.systemPackages = with pkgs; [ libsecret ];
 
-# Brightness control
+	# Brightness control
 	programs.light.enable = true;
 
 	services.flatpak.enable = true;
 	services.accounts-daemon.enable = true; # Flatpak needs this
 
-		programs.steam.enable = true;
+	programs.steam.enable = true;
 	programs.steam.localNetworkGameTransfers.openFirewall = true;
 
-# qt = {
-#   enable = true;
-#   platformTheme = "qt5ct";
-# };
-					}
+	xdg.portal = {
+		enable = true;
+		wlr.enable = true;
+	};
+}

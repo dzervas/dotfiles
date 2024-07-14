@@ -11,14 +11,12 @@
 			"com.prusa3d.PrusaSlicer"
 			"org.chromium.Chromium"
 			# "com.valvesoftware.Steam"
+			"md.obsidian.Obsidian"
 		];
+
+		overrides = {
+			global.Environment.GTK_THEME = "Adwaita:dark";
+			"com.prusa3d.PrusaSlicer".Context.sockets = ["x11"];
+		};
 	};
-
-	xdg.systemDirs.data = [
-		"/var/lib/flatpak/exports/share"
-		"/home/dzervas/.local/share/flatpak/exports/share"
-	];
-
-	# hardware.pulseaudio.support32Bit = true;
-	# hardware.opengl.driSupport32Bit = true;
 }
