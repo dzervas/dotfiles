@@ -7,9 +7,10 @@
 }: {
 	imports = [
 		./components/kanshi.nix
-		./components/trays.nix
+		./components/rofi.nix
 		./components/swayidle.nix
 		./components/swaylock.nix
+		./components/trays.nix
 		./components/waybar.nix
 		./components/xdg.nix
 	];
@@ -18,7 +19,6 @@
 
 	home.packages = with pkgs; [
 		swaykbdd
-		wofi
 
 		# For Qt
 		kdePackages.dolphin
@@ -76,7 +76,7 @@
 				position = "top";
 				command = "waybar";
 			}];
-			menu = "wofi --show drun";
+			menu = "rofi -show combi -modi calc";
 			input = {
 				"type:keyboard" = {
 					xkb_layout = "us,gr";

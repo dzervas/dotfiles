@@ -17,6 +17,8 @@ in {
 				package = pkgs.iosevka-bin;
 				name = "Iosevka";
 			};
+			sizes.desktop = 12;
+			sizes.popups = 14;
 		};
 	};
 }

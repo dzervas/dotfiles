@@ -47,4 +47,8 @@
 
 	home.username = "dzervas";
 	home.homeDirectory = "/home/dzervas";
+
+	home.sessionVariables = {
+		TERMINAL = "alacritty";
+	};
 }

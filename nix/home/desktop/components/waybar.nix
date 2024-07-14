@@ -8,6 +8,7 @@
         layer = "top";
         position = "top";
         spacing = 4;
+        height = 30;
 
         # Module positioning
         modules-left = [
