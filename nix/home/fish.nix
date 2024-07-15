@@ -6,6 +6,7 @@
     interactiveShellInit = ''
       set fish_greeting
       fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
+      bind \e\` "smart-help (commandline -p)"
     '';
     plugins = [
       { name = "autopair"; src = pkgs.fishPlugins.autopair.src; }
