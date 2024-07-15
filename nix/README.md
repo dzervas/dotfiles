@@ -52,3 +52,9 @@ nix flake update --override-input nixpkgs github:NixOS/nixpkgs/7252b96d60dc2ccf3
 ## Quirks
 
 - VSCode needs `"password-store": "gnome-libsecret"` to `~/.vscode/argv.json` to see gnome-keyring
+
+## Live CD build
+
+```bash
+nix build .#iso
+```
