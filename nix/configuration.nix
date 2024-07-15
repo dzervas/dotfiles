@@ -1,34 +1,34 @@
 { config, pkgs, lib, ... }:
 {
-	imports = [ ./system/common.nix ];
+  imports = [ ./system/common.nix ];
 
-	system.copySystemConfiguration = false;
+  system.copySystemConfiguration = false;
 
-	users.users.dzervas = {
-		isNormalUser = true;
-		extraGroups = [ "wheel" "audio" "video" "uucp" "uinput" ];
-		shell = pkgs.fish;
-	};
+  users.users.dzervas = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "audio" "video" "uucp" "uinput" ];
+    shell = pkgs.fish;
+  };
 
-	home-manager = {
-		useGlobalPkgs = true;
-		useUserPackages = true;
-		users.dzervas = import ./home/home.nix;
-	};
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    users.dzervas = import ./home/home.nix;
+  };
 
-	# Fix home-manager xdg desktop portal support
-	environment.pathsToLink = [ "/share/xdg-desktop-portal" "/share/applications" ];
+  # Fix home-manager xdg desktop portal support
+  environment.pathsToLink = [ "/share/xdg-desktop-portal" "/share/applications" ];
 
-	services.pipewire = {
-		enable = true;
-		pulse.enable = true;
-		wireplumber.enable = true;
-	};
-	services.fwupd.enable = true;
+  services.pipewire = {
+    enable = true;
+    pulse.enable = true;
+    wireplumber.enable = true;
+  };
+  services.fwupd.enable = true;
 
-	# Enable flakes
-	nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  # Enable flakes
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-	# Fix flatpak default browser
-	systemd.user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
+  # Fix flatpak default browser
+  systemd.user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
 }

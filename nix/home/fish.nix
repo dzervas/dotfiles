@@ -4,14 +4,20 @@
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
-set fish_greeting
-fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
-'';
+      set fish_greeting
+      fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
+    '';
     plugins = [
       { name = "autopair"; src = pkgs.fishPlugins.autopair.src; }
       { name = "fzf-fish"; src = pkgs.fishPlugins.fzf-fish.src; }
       { name = "puffer"; src = pkgs.fishPlugins.puffer.src; }
       { name = "tide"; src = pkgs.fishPlugins.tide.src; }
     ];
+
+    functions = {
+      backup = builtins.readFile ./fish-functions/backup.fish;
+      kubeseal-env = builtins.readFile ./fish-functions/kubeseal-env.fish;
+      smart-help = builtins.readFile ./fish-functions/smart-help.fish;
+    };
   };
 }

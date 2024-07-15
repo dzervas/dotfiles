@@ -1,10 +1,10 @@
 { ... }: {
-	networking.networkmanager.enable = true;
-	# networking.wireless.enable = false; # Can't use with networkmanager???
+  networking.networkmanager.enable = true;
+  # networking.wireless.enable = false; # Can't use with networkmanager???
 
-	# Firewall
-	networking.firewall.enable = true;
-	networking.firewall.allowedTCPPorts = [ 8181 ];
+  # Firewall
+  networking.firewall.enable = true;
+  networking.firewall.allowedTCPPorts = [ 8181 ];
 
-	time.timeZone = "Europe/Athens";
+  time.timeZone = "Europe/Athens";
 }

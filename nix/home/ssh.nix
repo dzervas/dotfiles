@@ -1,5 +1,5 @@
 { lib, ... }: {
-	programs.ssh = {
+  programs.ssh = {
     enable = true;
     matchBlocks = {
       "github.com" = {

@@ -1,5 +1,5 @@
 { ... }: {
-	programs.git = {
+  programs.git = {
     enable = true;
     userName = "Dimitris Zervas";
     userEmail = "dzervas@dzervas.gr";
