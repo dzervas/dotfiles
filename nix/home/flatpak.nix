@@ -16,7 +16,7 @@
 
 		overrides = {
 			global.Environment.GTK_THEME = "Adwaita:dark";
-			"com.prusa3d.PrusaSlicer".Context.sockets = ["x11"];
+			"com.prusa3d.PrusaSlicer".Context.sockets = ["x11" "fallback-x11"];
 		};
 	};
 }

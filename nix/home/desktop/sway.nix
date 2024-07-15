@@ -37,7 +37,7 @@
 	qt.enable = true;
 
 	services.flatpak.overrides.global = {
-		Context.sockets = ["wayland" "!x11" "fallback-x11"];
+		# Context.sockets = ["wayland" "!x11" "fallback-x11"];
 		Environment.GDK_BACKEND = "wayland";
 	};
 
@@ -76,7 +76,7 @@
 				position = "top";
 				command = "waybar";
 			}];
-			menu = "rofi -show combi -modi calc";
+			menu = "rofi -show combi";
 			input = {
 				"type:keyboard" = {
 					xkb_layout = "us,gr";
