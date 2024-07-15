@@ -102,6 +102,7 @@
       };
 
       window.titlebar = true;
+      floating.titlebar = true;
 
       # Key bindings
       modifier = "Mod4";
@@ -198,7 +199,7 @@
 
       			for_window [urgent="latest"] focus
       			for_window [class=.*] inhibit_idle fullscreen
-      			for_window [title="^.*"] border pixel 1, title_format "<b> %class >> %title </b>"
+      			for_window [title="."] title_format "<b> %title </b> (%app_id)"
 
 
       			for_window [app_id="(?i)(?:blueman-manager|azote|gnome-disks)"] floating enable

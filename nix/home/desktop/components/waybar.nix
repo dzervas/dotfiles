@@ -20,7 +20,7 @@
         modules-center = [ "sway/window" ];
         modules-right = [
           "tray"
-          "pulseaudio"
+          # "pulseaudio"
           "keyboard-state"
           "sway/language"
           "clock"
@@ -32,7 +32,7 @@
           format-icons = "󰐥";
         };
         "sway/workspaces" = {
-          format = "{icon}";
+          format = "{icon} ";
           # TODO: Show the name with format-activated
           format-icons = {
             "1" = "";
