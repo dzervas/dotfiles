@@ -42,4 +42,20 @@
     enable = true;
     wlr.enable = true;
   };
+
+  # File manager
+  programs.thunar = {
+    enable = true;
+    plugins = with pkgs.xfce; [
+      thunar-volman
+      thunar-archive-plugin
+      thunar-media-tags-plugin
+    ];
+  };
+  # Mount, trash and more
+  services.gvfs.enable = true;
+  # Thumbnail support
+  services.tumbler.enable = true;
+  # Save xfce settings
+  programs.xfconf.enable = true;
 }

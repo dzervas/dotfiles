@@ -1,9 +1,10 @@
-{ pkgs, stylix, ... }:
+{ pkgs, ... }:
 
 {
   home.packages = with pkgs; [
     vscode
     nixpkgs-fmt # Used by the Nix IDE extension
+    nil # Nix language server
 
     # Languages
     go

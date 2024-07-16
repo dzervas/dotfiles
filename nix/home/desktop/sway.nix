@@ -1,8 +1,4 @@
-{ config
-, lib
-, pkgs
-, stylix
-, ...
+{ lib, pkgs, ...
 }: {
   imports = [
     ./components/kanshi.nix
@@ -19,9 +15,6 @@
   home.packages = with pkgs; [
     swaykbdd
 
-    # For Qt
-    kdePackages.dolphin
-
     # screenshot functionality
     grim
     slurp
@@ -32,7 +25,13 @@
     playerctl
   ];
 
-  gtk.enable = true;
+  gtk = {
+    enable = true;
+    iconTheme = {
+      package = pkgs.adwaita-icon-theme;
+      name = "Adwaita";
+    };
+  };
   qt.enable = true;
 
   services.flatpak.overrides.global = {

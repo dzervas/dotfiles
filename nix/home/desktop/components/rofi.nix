@@ -3,15 +3,15 @@
     enable = true;
     location = "top";
     package = pkgs.rofi-wayland;
-    # plugins = with pkgs; [
-    # rofi-calc
-    # ];
+    plugins = with pkgs; [
+      (rofi-calc.override { rofi-unwrapped = rofi-wayland-unwrapped; })
+    #   rofi-calc
+    ];
 
     extraConfig = rec {
-      # TODO: Fix calc
-      modes = "drun,filebrowser,power-menu,run";
+      modes = "drun,filebrowser,power-menu,run,calc";
       combi-modes = modes;
-      modi = "combi";
+      modi = "combi,calc";
       show-icons = true;
       hover-select = true;
     };
