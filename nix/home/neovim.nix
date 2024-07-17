@@ -48,6 +48,7 @@
       # vim-textobj-indent # Doesn't exist
     ];
 
+    extraPython3Packages = p: with p; [ jedi ];
     extraConfig = ''
       			source /etc/vimrc
       			set viminfo&

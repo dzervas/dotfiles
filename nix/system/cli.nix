@@ -15,6 +15,7 @@
     lsd
     ngrok
     (python3Packages.python.withPackages (p: [ p.ipython ]))
+    readline
     ripgrep
     unzip
   ];

@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  swaylock = "${pkgs.swaylock}/bin/swaylock -f";
+  swaylock = "${config.programs.swaylock.package}/bin/swaylock -f";
   swaymsg = "${pkgs.sway}/bin/swaymsg";
   wpctl = "${pkgs.wireplumber}/bin/wpctl";
 in
@@ -17,8 +17,8 @@ in
       # Turn off displays (sway)
       (lib.optionals config.wayland.windowManager.sway.enable ({
         timeout = 600;
-        command = "${swaymsg} 'output * dpms off'";
-        resumeCommand = "${swaymsg} 'output * dpms on'";
+        command = "${swaymsg} \"output * dpms off\"";
+        resumeCommand = "${swaymsg} \"output * dpms on\"";
       }))
     ];
   };
