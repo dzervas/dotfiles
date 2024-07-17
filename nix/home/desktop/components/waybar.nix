@@ -17,8 +17,7 @@
           "sway/scratchpad"
           # "custom/media"
         ];
-        # modules-center = [ "sway/window" ];
-        modules-center = [ "wlr/taskbar" ];
+        modules-center = [ "sway/window" ];
         modules-right = [
           "tray"
           # "pulseaudio"
@@ -32,11 +31,8 @@
           format = " {icon} ";
           format-icons = "󰐥";
         };
-        "wlr/taskbar" = {
-          active-first = true;
-          format = "{icon} {title}";
-          on-click = "activate";
-          on-click-middle = "close";
+        "sway/window" = {
+          icon = true;
         };
         "sway/workspaces" = {
           format = "{icon} ";

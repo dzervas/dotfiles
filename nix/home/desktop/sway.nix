@@ -58,10 +58,7 @@
     wrapperFeatures.gtk = true;
     config = rec {
       terminal = "alacritty";
-      fonts = lib.mkForce {
-        names = [ "Iosevka" ];
-        size = 0.5;
-      };
+      fonts.size = lib.mkForce 10.0;
       startup = [
         { command = "1password --silent"; }
         { command = "alacritty"; }
@@ -188,6 +185,7 @@
     };
     extraConfig = ''
       			default_border none
+            default_floating_border none
       			default_orientation horizontal
       			focus_on_window_activation focus
       			hide_edge_borders --i3 both
