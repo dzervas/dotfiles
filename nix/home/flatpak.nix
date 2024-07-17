@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ ... }: {
   # To update shortcuts: nix-shell -p desktop-file-utils --run "update-desktop-database -v"
   services.flatpak = {
     enable = true;

@@ -69,6 +69,8 @@
         { command = "firefox"; }
         { command = "swaykbdd"; }
         { command = "systemctl --user restart kanshi"; always = true; }
+        # Fix firefox as default browser
+        { command = "systemctl --user import-environment PATH && systemctl --user restart xdg-desktop-portal.service"; always = true; }
         { command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway"; }
       ];
       bars = [{
@@ -100,8 +102,8 @@
         };
       };
 
-      window.titlebar = true;
-      floating.titlebar = true;
+      window.titlebar = false;
+      floating.titlebar = false;
 
       # Key bindings
       modifier = "Mod4";
@@ -198,7 +200,7 @@
 
       			for_window [urgent="latest"] focus
       			for_window [class=.*] inhibit_idle fullscreen
-      			for_window [title="."] title_format "<b> %title </b> (%app_id)"
+      			for_window [title="."] title_format %title
 
 
       			for_window [app_id="(?i)(?:blueman-manager|azote|gnome-disks)"] floating enable
@@ -214,8 +216,8 @@
       			for_window [app_id="^[Xx]fce4-appfinder$"] floating enable
       			for_window [app_id="^torbrowser-launcher$"] floating enable
       			for_window [app_id="^1[Pp]assword$"] floating enable
-      			for_window [app_id="^org.kde.krunner$"] floating enable; move position 35ppt 0; focus
-      			for_window [title="^Wine System Tray$"] floating enable; move scratchpad
+      			for_window [app_id="^org.kde.krunner$"] floating enable, move position 35ppt 0, focus
+      			for_window [title="^Wine System Tray$"] floating enable, move scratchpad
       		'';
     extraOptions = [ "--unsupported-gpu" ];
   };

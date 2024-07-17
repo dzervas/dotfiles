@@ -3,32 +3,24 @@
 ## Rebuilding
 
 ```bash
-  sudo
-  nixos-rebuild
-  switch - -flake.#<hostname>
+sudo nixos-rebuild switch --flake .#<hostname>
 ```
 
 ## Updating
 
 ```bash
-  sudo
-  nix-channel - -update
-  sudo
-  nix
-  flake
-  update.sudo
-  nix-store - -gc
-  sudo
-  nixos-rebuild
-  switch - -flake.```
+sudo nix-channel --update
+nix flake update
+sudo nix-store --gc
+sudo nixos-rebuild switch --flake .
+```
 
 ## Troubleshooting
 
-To repair
-  the store:
+To repair the store:
 
-  ```bash
-  nix-store - -verify - -check-contents - -repair
+```bash
+nix-store --verify --check-contents --repair
 ```
 
 if a file is empty due to corruption and can't be fixed:

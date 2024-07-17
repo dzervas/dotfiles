@@ -1,11 +1,11 @@
-{ pkgs, ... }: {
+{ ... }: {
   programs.waybar = {
     enable = true;
 
     settings = {
       mainBar = {
         # Base
-        layer = "top";
+        layer = "bottom";
         position = "top";
         spacing = 4;
         height = 30;
@@ -17,7 +17,8 @@
           "sway/scratchpad"
           # "custom/media"
         ];
-        modules-center = [ "sway/window" ];
+        # modules-center = [ "sway/window" ];
+        modules-center = [ "wlr/taskbar" ];
         modules-right = [
           "tray"
           # "pulseaudio"
@@ -30,6 +31,12 @@
         "custom/power" = {
           format = " {icon} ";
           format-icons = "󰐥";
+        };
+        "wlr/taskbar" = {
+          active-first = true;
+          format = "{icon} {title}";
+          on-click = "activate";
+          on-click-middle = "close";
         };
         "sway/workspaces" = {
           format = "{icon} ";
