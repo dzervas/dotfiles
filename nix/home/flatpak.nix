@@ -12,10 +12,12 @@
       "org.chromium.Chromium"
       # "com.valvesoftware.Steam"
       "md.obsidian.Obsidian"
+      "org.onlyoffice.desktopeditors"
     ];
 
     overrides = {
       global.Environment.GTK_THEME = "Adwaita:dark";
+      global.Context.filesystems = ["xdg-config/gtk-3.0"];
       "com.prusa3d.PrusaSlicer".Context.sockets = [ "x11" "fallback-x11" ];
     };
   };
