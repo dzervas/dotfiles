@@ -11,8 +11,9 @@ sudo nixos-rebuild switch --flake .#<hostname>
 ```bash
 sudo nix-channel --update
 nix flake update
-sudo nix-store --gc
 sudo nixos-rebuild switch --flake .
+sudo nix store gc
+sudo nix store optimize
 ```
 
 ## Troubleshooting

@@ -14,7 +14,8 @@
     libnotify # For notify-send
     lsd
     ngrok
-    (python3Packages.python.withPackages (p: [ p.ipython ]))
+    podman-compose
+    python3Packages.python
     readline
     ripgrep
     unzip

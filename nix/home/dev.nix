@@ -9,7 +9,7 @@
     # Languages
     go
     pipenv
-    python3
+    (python3Packages.python.withPackages (p: [ p.ipython ]))
     # python311Packages.ipython
     pyenv
     rustup
