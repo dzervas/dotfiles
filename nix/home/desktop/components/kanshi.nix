@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ ... }: {
   services.kanshi = {
     enable = true;
     settings = [

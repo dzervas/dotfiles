@@ -1,4 +1,5 @@
 { ... }: {
+  setup.browser = "firefox";
   programs.firefox = {
     enable = true;
     policies = {
@@ -39,24 +40,5 @@
         "widget.use-xdg-desktop-portal.file-picker" = 0;
       };
     };
-  };
-
-  xdg.mimeApps.defaultApplications = {
-    "x-scheme-handler/http" = "firefox.desktop";
-    "x-scheme-handler/https" = "firefox.desktop";
-    "x-scheme-handler/chrome" = "firefox.desktop";
-    "text/html" = "firefox.desktop";
-    "text/xml" = "firefox.desktop";
-    "application/pdf" = "firefox.desktop";
-    "application/x-extension-htm" = "firefox.desktop";
-    "application/x-extension-html" = "firefox.desktop";
-    "application/x-extension-shtml" = "firefox.desktop";
-    "application/x-extension-xhtml" = "firefox.desktop";
-    "application/x-extension-xht" = "firefox.desktop";
-    "application/rdf+xml" = "firefox.desktop";
-    "application/rss+xml" = "firefox.desktop";
-    "application/xhtml+xml" = "firefox.desktop";
-    "application/xhtml_xml" = "firefox.desktop";
-    "application/xml" = "firefox.desktop";
   };
 }

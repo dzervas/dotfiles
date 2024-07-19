@@ -1,5 +1,7 @@
-{ lib, pkgs, ...
-}: {
+{ config, lib, pkgs, ... }: let
+  cfg = config.setup;
+  modifier = "Mod4";
+in {
   imports = [
     ./components/kanshi.nix
     ./components/rofi.nix
@@ -49,21 +51,18 @@
     XDG_SESSION_TYPE = "wayland";
     XDG_CURRENT_DESKTOP = "sway";
     _JAVA_AWT_WM_NONREPARENTING = "1";
-    _JAVA_OPTIONS = "-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
   };
 
   wayland.windowManager.sway = {
     enable = true;
     # systemd.enable = true;
     wrapperFeatures.gtk = true;
-    config = rec {
-      terminal = "alacritty";
+    config = {
       fonts.size = lib.mkForce 10.0;
       startup = [
         { command = "1password --silent"; }
-        { command = "alacritty"; }
-        { command = "blueman-applet"; }
-        { command = "firefox"; }
+        { command = cfg.terminal; }
+        { command = cfg.browser; }
         { command = "swaykbdd"; }
         { command = "systemctl --user restart kanshi"; always = true; }
         # Fix firefox as default browser
@@ -72,9 +71,8 @@
       ];
       bars = [{
         position = "top";
-        command = "waybar";
+        command = cfg.bar;
       }];
-      menu = "rofi -show combi";
       input = {
         "type:keyboard" = {
           xkb_layout = "us,gr";
@@ -103,7 +101,6 @@
       floating.titlebar = false;
 
       # Key bindings
-      modifier = "Mod4";
       floating.modifier = modifier;
       keybindings = {
         # Basic actions
@@ -131,10 +128,10 @@
         "${modifier}+t" = "layout tabbed";
 
         # Core applications
-        "${modifier}+Return" = "exec ${terminal}";
+        "${modifier}+Return" = "exec ${cfg.terminal}";
         "${modifier}+l" = "exec swaylock";
         "${modifier}+p" = "exec 1password --quick-access";
-        "${modifier}+r" = "exec ${menu}";
+        "${modifier}+r" = "exec ${cfg.runner}";
 
         # Switch to workspace
         "${modifier}+Left" = "workspace prev_on_output";

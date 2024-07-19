@@ -1,4 +1,5 @@
 { ... }: {
+  setup.bar = "waybar";
   programs.waybar = {
     enable = true;
 

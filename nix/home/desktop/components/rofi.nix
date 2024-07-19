@@ -1,12 +1,10 @@
 { config, lib, pkgs, ... }: {
+  setup.runner = "rofi -show combi";
   programs.rofi = {
     enable = true;
     location = "top";
     package = pkgs.rofi-wayland;
-    plugins = with pkgs; [
-      (rofi-calc.override { rofi-unwrapped = rofi-wayland-unwrapped; })
-    #   rofi-calc
-    ];
+    plugins = with pkgs; [ (rofi-calc.override { rofi-unwrapped = rofi-wayland-unwrapped; }) ];
 
     extraConfig = rec {
       modes = "drun,filebrowser,power-menu,run,calc";
@@ -22,11 +20,6 @@
         config.programs.waybar.settings.mainBar.height + 5
       else 0;
   };
-
-  # TODO: Define the menu decleretively
-  # wayland.windowManager.sway.config = lib.mkIf (config.wayland.windowManager.sway.enable) rec {
-  # menu = "rofi";
-  # };
 
   home.packages = with pkgs; [
     rofi-power-menu
