@@ -26,6 +26,8 @@
     homeDirectory = "/home/dzervas";
     packages = with pkgs; [
       kdePackages.filelight
+      kdePackages.kate
     ];
+    file.".config/katerc".source = ./katerc;
   };
 }
