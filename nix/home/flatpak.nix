@@ -5,20 +5,39 @@
     update.auto.enable = true;
     uninstallUnmanaged = true;
     packages = [
-      "com.spotify.Client"
-      # "com.slack.Slack"
       "com.discordapp.Discord"
       "com.prusa3d.PrusaSlicer"
-      "org.chromium.Chromium"
+      # "com.slack.Slack"
+      "com.spotify.Client"
       # "com.valvesoftware.Steam"
+      "com.github.tchx84.Flatseal"
       "md.obsidian.Obsidian"
+      "org.chromium.Chromium"
       "org.onlyoffice.desktopeditors"
     ];
 
     overrides = {
-      global.Environment.GTK_THEME = "Adwaita:dark";
-      global.Context.filesystems = ["xdg-config/gtk-3.0"];
-      "com.prusa3d.PrusaSlicer".Context.sockets = [ "x11" "fallback-x11" ];
+      # global.Environment.GTK_THEME = "Adwaita:dark";
+      global.Context = {
+        filesystems = [
+          "xdg-config/gtk-3.0:ro"
+          "xdg-config/gtk-4.0:ro"
+          "xdg-download"
+          "/run/dbus/system_bus_socket"
+          "!host:reset"
+          "!host-os:reset"
+          "!host-etc:reset"
+          "!home:reset"
+        ];
+        devices = [ "!all:reset" ];
+      };
+
+      "com.prusa3d.PrusaSlicer" = {
+        Context.sockets = [ "x11" ];
+        Environment.PRUSA_SLICER_DARK_THEME = "true";
+      };
+      "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
+      # "com.github.tchx84.Flatseal".Context.filesystems = [ "host" ];
     };
   };
 }

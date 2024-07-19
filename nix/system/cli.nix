@@ -18,6 +18,7 @@
     python3Packages.python
     readline
     ripgrep
+    socat
     unzip
   ];
 
