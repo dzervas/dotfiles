@@ -16,6 +16,45 @@ sudo nix store gc
 sudo nix store optimize
 ```
 
+## Live CD
+
+There's also a live CD configuration in `nix/hardware/iso`.
+
+### Download
+
+In NixOS:
+
+```bash
+# Once per system
+nix shell nixpkgs#oras nixpkgs#gh -c "gh auth token | oras login ghcr.io --password-stdin -u github"
+
+nix shell nixpkgs#oras -c oras pull ghcr.io/dzervas/dotfiles/nixos-iso:latest
+```
+
+In other systems, install oras and github cli:
+
+```bash
+# Once per system
+gh auth token | oras login ghcr.io --password-stdin -u github
+
+oras pull ghcr.io/dzervas/dotfiles/nixos-iso:latest
+```
+
+### Writing to USB
+
+```bash
+# Find the USB device
+lsblk
+# Replace /dev/sdX with the USB device
+sudo dd bs=4M status=progress oflag=sync if=$(ls nixos-*-linux.iso) of=/dev/sdX
+```
+
+### Building manually
+
+```bash
+nix build .#iso
+```
+
 ## Troubleshooting
 
 To repair the store:
@@ -45,9 +84,3 @@ nix flake update --override-input nixpkgs github:NixOS/nixpkgs/7252b96d60dc2ccf3
 ## Quirks
 
 - VSCode needs `"password-store": "gnome-libsecret"` to `~/.vscode/argv.json` to see gnome-keyring
-
-## Live CD build
-
-```bash
-nix build .#iso
-```
