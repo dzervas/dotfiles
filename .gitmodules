@@ -1,0 +1,3 @@
+[submodule "nix/home/private"]
+	path = nix/home/private
+	url = git@github.com:dzervas/nix-private

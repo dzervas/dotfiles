@@ -10,6 +10,7 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-flatpak.url = "github:gmodena/nix-flatpak";
+    # private.url = "./home/private";
 
     # ISO generation
     nixos-generators.url = "github:nix-community/nixos-generators";

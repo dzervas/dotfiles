@@ -18,11 +18,17 @@
     functions = {
       backup = builtins.readFile ./fish-functions/backup.fish;
       kubeseal-env = builtins.readFile ./fish-functions/kubeseal-env.fish;
+      nix-shell-use = builtins.readFile ./fish-functions/nix-shell-use.fish;
       smart-help = builtins.readFile ./fish-functions/smart-help.fish;
+
       mc = {
         description = "Create a directory and change to it";
         body = "mkdir -p $argv[1] && cd $argv[1]";
       };
+    };
+
+    shellAliases = {
+      use = "nix-shell-use";
     };
   };
 }

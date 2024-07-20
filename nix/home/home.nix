@@ -2,7 +2,7 @@
   imports = [
     ./1password.nix
     ./alacritty.nix
-    ./burp.nix
+    # ./private
     ./dev.nix
     ./firefox.nix
     ./fish.nix
@@ -15,6 +15,7 @@
     ./desktop/sway.nix
 
     flake-inputs.nix-flatpak.homeManagerModules.nix-flatpak
+    # flake-inputs.private.homeManagerModules
   ];
 
   # CLI tools
