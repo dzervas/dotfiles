@@ -1,5 +1,5 @@
 { lib, pkgs, ... }: {
-  # imports = [<nixpkgs/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix>];
+  isoImage.squashfsCompression = "gzip -Xcompression-level 1";
 
   users.users.dzervas.password = "nixos";
   networking.wireless.enable = lib.mkForce false;

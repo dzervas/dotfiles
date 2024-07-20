@@ -46,7 +46,7 @@ jobs:
       - run: |
           cd result/iso
           oras login ghcr.io -u github -p ${{ secrets.GITHUB_TOKEN }}
-          oras push ghcr.io/${{ github.repository }}/nixos-iso:${{ steps.tag.outputs.name }},latest *.iso nix/README.md:text/markdown
+          oras push ghcr.io/${{ github.repository }}/nixos-iso:${{ steps.tag.outputs.name }},latest *.iso ../../README.md:text/markdown
 
       # - name: Create GitHub Release
       #   id: create_release
