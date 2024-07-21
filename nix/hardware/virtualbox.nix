@@ -1,9 +1,8 @@
-{ config, pkgs, lib, ... }:
+{ lib, ... }:
 let
   keys_str = builtins.fetchurl {
     url = "https://github.com/dzervas.keys";
     sha256 = "sha256:1wpgdqrvjqy9lldc6wns3i31sm1ic9yf7354q2c9j5hsfl2pbynh";
-    # sha256 = lib.fakeSha256;
   };
 
   keys_lines = lib.strings.splitString "\n" keys_str;
