@@ -55,4 +55,7 @@
   services.tumbler.enable = true;
   # Save xfce settings
   programs.xfconf.enable = true;
+
+  # Steam udev rules
+  hardware.steam-hardware.enable = true;
 }

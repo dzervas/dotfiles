@@ -36,8 +36,11 @@
         Context.sockets = [ "x11" ];
         Environment.PRUSA_SLICER_DARK_THEME = "true";
       };
+      "com.valvesoftware.Steam".Context = {
+        sockets = ["x11"];
+        devices = [ "all" ];
+      };
       "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
-      "com.valvesoftware.Steam".Context.sockets = ["x11"];
       # "com.github.tchx84.Flatseal".Context.filesystems = [ "host" ];
     };
   };

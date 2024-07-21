@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 {
   imports = [ ./system/common.nix ];
 
@@ -6,7 +6,7 @@
 
   users.users.dzervas = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "audio" "video" "uucp" "uinput" ];
+    extraGroups = [ "wheel" "audio" "video" "uucp" "uinput" "vboxusers" ];
     shell = pkgs.fish;
   };
 
