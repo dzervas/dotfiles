@@ -5,11 +5,11 @@
     update.auto.enable = true;
     uninstallUnmanaged = true;
     packages = [
-      "com.discordapp.Discord"
+      # "com.discordapp.Discord"
       "com.prusa3d.PrusaSlicer"
       # "com.slack.Slack"
-      "com.spotify.Client"
-      # "com.valvesoftware.Steam"
+      # "com.spotify.Client"
+      "com.valvesoftware.Steam"
       "com.github.tchx84.Flatseal"
       "md.obsidian.Obsidian"
       "org.chromium.Chromium"
@@ -37,7 +37,12 @@
         Environment.PRUSA_SLICER_DARK_THEME = "true";
       };
       "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
+      "com.valvesoftware.Steam".Context.sockets = ["x11"];
       # "com.github.tchx84.Flatseal".Context.filesystems = [ "host" ];
     };
   };
+
+  home.file.".var/app/org.chromium.Chromium/config/chromium-flags.conf".text = ''
+    --ozone-platform=wayland
+  '';
 }

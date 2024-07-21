@@ -67,7 +67,6 @@ in {
         { command = "systemctl --user restart kanshi"; always = true; }
         # Fix firefox as default browser
         { command = "systemctl --user import-environment PATH && systemctl --user restart xdg-desktop-portal.service"; always = true; }
-        { command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway"; }
       ];
       bars = [{
         position = "top";
@@ -201,6 +200,7 @@ in {
       			for_window [app_id="(?i)(?:blueman-manager|azote|gnome-disks)"] floating enable
       			for_window [app_id="(?i)(?:pavucontrol|nm-connection-editor|gsimplecal|galculator)"] floating enable
       			for_window [app_id="(?i)(?:firefox|chromium)"] border none
+            for_window [app_id="^firefox$" title="^[Pp]icture-in-[Pp]icture$"] floating enable, resize set 1280 720, move position center
       			for_window [title="(?i)(?:copying|deleting|moving)"] floating enable
 
       			for_window [app_id="^zenity$"] floating enable
@@ -208,10 +208,8 @@ in {
       			for_window [app_id="^com-install4j-runtime-launcher-UnixLauncher$"] floating enable
       			for_window [app_id="^net-portswigger-burp-browser-BurpBrowserServer$"] floating enable
       			for_window [app_id="^burp-StartBurp$"] floating enable
-      			for_window [app_id="^[Xx]fce4-appfinder$"] floating enable
       			for_window [app_id="^torbrowser-launcher$"] floating enable
-      			for_window [app_id="^1[Pp]assword$"] floating enable
-      			for_window [app_id="^org.kde.krunner$"] floating enable, move position 35ppt 0, focus
+      			for_window [class="^1[Pp]assword$"] floating enable
       			for_window [title="^Wine System Tray$"] floating enable, move scratchpad
       		'';
     extraOptions = [ "--unsupported-gpu" ];

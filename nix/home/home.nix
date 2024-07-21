@@ -28,6 +28,8 @@
     packages = with pkgs; [
       kdePackages.filelight
       kdePackages.kate
+      kicad
+      vorta
     ];
     file.".config/katerc".source = ./katerc;
   };

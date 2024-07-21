@@ -35,9 +35,6 @@
   services.flatpak.enable = true;
   services.accounts-daemon.enable = true; # Flatpak needs this
 
-  programs.steam.enable = true;
-  programs.steam.localNetworkGameTransfers.openFirewall = true;
-
   xdg.portal = {
     enable = true;
     wlr.enable = true;
