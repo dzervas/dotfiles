@@ -24,7 +24,6 @@ in {
     MINSTOP=hwmon6/pwm1=0
   '';
 
-
   fileSystems = {
     "/" = {
       device = cryptroot_disk;
