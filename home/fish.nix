@@ -7,7 +7,7 @@
       set fish_greeting
       fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
       bind \e\` "smart-help (commandline -p)"
-      export FLAKE_URL="/home/dzervas/Lab/dotfiles/nix?submodules=1"
+      export FLAKE_URL="/home/dzervas/Lab/dotfiles?submodules=1"
     '';
     plugins = [
       { name = "autopair"; src = pkgs.fishPlugins.autopair.src; }

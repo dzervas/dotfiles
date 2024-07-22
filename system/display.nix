@@ -1,11 +1,19 @@
-{ lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   services.xserver.enable = true;
   hardware.graphics.enable = true;
   security.polkit.enable = true;
   services.displayManager = {
     autoLogin.enable = lib.mkForce false;
-    sddm.enable = true;
-    sddm.wayland.enable = true;
+    # sddm.enable = true;
+    # sddm.wayland.enable = true;
+  };
+
+  programs.regreet = {
+    enable = true;
+    settings.background = {
+      path = config.stylix.image;
+      fit = "Cover";
+    };
   };
 
   programs.sway = {

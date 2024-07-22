@@ -1,6 +1,5 @@
 { pkgs, ... }: {
   environment.systemPackages = with pkgs; [
-    _7zz
     bat
     colordiff
     difftastic
@@ -14,6 +13,7 @@
     libnotify # For notify-send
     lsd
     ngrok
+    p7zip
     podman-compose
     python3Packages.python
     readline

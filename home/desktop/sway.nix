@@ -51,6 +51,7 @@ in {
     XDG_SESSION_TYPE = "wayland";
     XDG_CURRENT_DESKTOP = "sway";
     _JAVA_AWT_WM_NONREPARENTING = "1";
+    _JAVA_OPTIONS = "-Dawt.useSystemAAFontSettings=lcd -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
   };
 
   wayland.windowManager.sway = {

@@ -6,5 +6,6 @@
         canTouchEfiVariables = true;
       };
     };
+    plymouth.enable = true;
   };
 }
