@@ -49,6 +49,7 @@
       thunar-media-tags-plugin
     ];
   };
+  programs.file-roller.enable = true;
   # Mount, trash and more
   services.gvfs.enable = true;
   # Thumbnail support

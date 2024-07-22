@@ -42,5 +42,5 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Fix flatpak default browser
-  systemd.user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
+  # systemd.user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
 }

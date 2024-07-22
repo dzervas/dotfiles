@@ -5,7 +5,6 @@
     update.auto.enable = true;
     uninstallUnmanaged = true;
     packages = [
-      # "com.discordapp.Discord"
       "com.prusa3d.PrusaSlicer"
       # "com.slack.Slack"
       # "com.spotify.Client"
@@ -41,7 +40,7 @@
         devices = [ "all" ];
       };
       "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
-      # "com.github.tchx84.Flatseal".Context.filesystems = [ "host" ];
+      "md.obsidian.Obsidian".Context.filesystems = [ "xdg-documents/Obsidian" ];
     };
   };
 

@@ -10,6 +10,7 @@
     ./git.nix
     ./neovim.nix
     ./options.nix
+    ./qutebrowser.nix
     ./ssh.nix
     ./tools.nix
     ./desktop/sway.nix
