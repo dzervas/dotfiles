@@ -19,6 +19,7 @@
     readline
     ripgrep
     socat
+    tree
     unzip
   ];
 
