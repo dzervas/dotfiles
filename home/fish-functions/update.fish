@@ -3,4 +3,4 @@ sudo nix-channel --update
 nix flake update $FLAKE_URL
 set -fe fish_trace
 
-rebuild "Update $(date)"
+rebuild
