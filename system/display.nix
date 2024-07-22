@@ -10,6 +10,7 @@
 
   programs.regreet = {
     enable = true;
+    cageArgs = [ "-s" "-m" "last" ];
     settings.background = {
       path = config.stylix.image;
       fit = "Cover";

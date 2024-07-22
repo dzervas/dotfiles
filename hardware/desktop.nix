@@ -5,7 +5,7 @@
 in {
   imports = [
     ./components/amd.nix
-    ./components/efi-luks.nix
+    ./components/boot.nix
     ./components/virtualbox.nix
   ];
 

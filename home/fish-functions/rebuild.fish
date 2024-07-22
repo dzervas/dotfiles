@@ -9,7 +9,8 @@ else
 		set NIXOS_LABEL (git -C $git_dir log -1 --pretty=%B | head -n 1)
 		echo "Using last commit message: $NIXOS_LABEL"
 	else
-		read -l -P "Enter generation message: " NIXOS_LABEL
+		read -l -P "Enter generation message: " msg
+		set NIXOS_LABEL $msg
 	end
 end
 

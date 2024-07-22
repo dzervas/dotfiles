@@ -64,7 +64,6 @@
       };
     } (map mkMachine [
       { hostName = "laptop"; stateVersion = "23.05"; }
-      { hostName = "virtualbox"; stateVersion = "23.05"; }
       { hostName = "desktop"; stateVersion = "24.11"; }
     ]);
 }

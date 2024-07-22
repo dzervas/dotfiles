@@ -4,10 +4,12 @@
       efi.canTouchEfiVariables = true;
       systemd-boot = {
         enable = true;
-        configurationLimit = 3;
+        configurationLimit = 5;
       };
     };
 
     initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "sd_mod" ];
+
+    plymouth.enable = true;
   };
 }
