@@ -2,7 +2,7 @@ name: Build and Release NixOS ISO
 
 on:
   push:
-    branches: master
+    branches: main
 
 concurrency:
   group: ${{ github.workflow }}
@@ -27,7 +27,6 @@ jobs:
         uses: cachix/install-nix-action@v27
         with:
           nix_path: nixpkgs=channel:nixos-unstable
-          # extra_nix_config: experimental-features = nix-command flakes
 
       - name: Set up cache for /nix/store
         uses: actions/cache@v4
@@ -47,13 +46,3 @@ jobs:
           cd result/iso
           oras login ghcr.io -u github -p ${{ secrets.GITHUB_TOKEN }}
           oras push ghcr.io/${{ github.repository }}/nixos-iso:${{ steps.tag.outputs.name }},latest *.iso ../../README.md:text/markdown
-
-      # - name: Create GitHub Release
-      #   id: create_release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     files: ./result/iso/*.iso
-      #     tag_name: ${{ steps.tag.outputs.name }}
-      #     make_latest: true
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
