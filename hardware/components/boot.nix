@@ -8,7 +8,10 @@
       };
     };
 
-    initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "sd_mod" ];
+    initrd = {
+      availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "sd_mod" ];
+      systemd.enable = true;
+    };
 
     plymouth.enable = true;
   };

@@ -38,6 +38,7 @@
       "com.valvesoftware.Steam".Context = {
         sockets = ["x11"];
         devices = [ "all" ];
+        filesystems = [ "home/CryptVMs" ];
       };
       "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
       "md.obsidian.Obsidian".Context.filesystems = [ "xdg-documents/Obsidian" ];
