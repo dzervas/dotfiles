@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
-  imports = [ ./system/common.nix ];
+  imports = [ ./system ];
 
   system.copySystemConfiguration = false;
 
@@ -13,7 +13,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    users.dzervas = import ./home/home.nix;
+    users.dzervas = import ./home;
   };
 
   # Fix home-manager xdg desktop portal support
