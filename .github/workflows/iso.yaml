@@ -35,7 +35,7 @@ jobs:
           key: ${{ runner.os }}-nix
 
       - name: Build the ISO image
-        run: nix build ./nix#iso
+        run: nix build .#iso
 
       - name: Generate tag name
         id: tag
@@ -45,4 +45,4 @@ jobs:
       - run: |
           cd result/iso
           oras login ghcr.io -u github -p ${{ secrets.GITHUB_TOKEN }}
-          oras push ghcr.io/${{ github.repository }}/nixos-iso:${{ steps.tag.outputs.name }},latest *.iso ../../README.md:text/markdown
+          oras push ghcr.io/${{ github.repository }}/nixos-iso:${{ steps.tag.outputs.name }},latest *.iso

@@ -1,6 +1,0 @@
-#!/bin/sh
-# Position: /usr/local/bin/sway-civilized
-
-export XKB_DEFAULT_LAYOUT=us,gr
-export XKB_DEFAULT_OPTIONS=caps:escape,grp:win_space_toggle,
-sway

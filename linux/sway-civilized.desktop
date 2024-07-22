@@ -1,6 +1,0 @@
-# Position: /usr/share/wayland-sessions/sway-civilized.desktop
-[Desktop Entry]
-Name=Sway Civilized (keyboard shit)
-Comment=SirCmpwn's Wayland window manager
-Exec=sway-civilized
-Type=Application
