@@ -56,7 +56,7 @@ in {
 
   wayland.windowManager.sway = {
     enable = true;
-    # systemd.enable = true;
+    systemd.enable = true;
     wrapperFeatures.gtk = true;
     config = {
       fonts.size = lib.mkForce 10.0;

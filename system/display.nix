@@ -65,6 +65,8 @@
   services.tumbler.enable = true;
   # Save xfce settings
   programs.xfconf.enable = true;
+  # Needed for home-manager's blueman
+  services.blueman.enable = true;
 
   # Steam udev rules
   hardware.steam-hardware.enable = true;
