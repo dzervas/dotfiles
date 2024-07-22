@@ -43,4 +43,17 @@
 
   # Fix flatpak default browser
   # systemd.user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
+
+  nix = {
+    extraOptions = "min-free = ${toString (50 * 1024 * 1024)}"; # Garbage collect when free space is less than 50MB
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 10d";
+    };
+    optimise = {
+      automatic = true;
+      dates = [ "weekly" ];
+    };
+  };
 }
