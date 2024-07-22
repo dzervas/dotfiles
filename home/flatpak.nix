@@ -13,6 +13,7 @@
       "md.obsidian.Obsidian"
       "org.chromium.Chromium"
       "org.onlyoffice.desktopeditors"
+      "org.ryujinx.Ryujinx"
     ];
 
     overrides = {
@@ -36,6 +37,11 @@
         Environment.PRUSA_SLICER_DARK_THEME = "true";
       };
       "com.valvesoftware.Steam".Context = {
+        sockets = ["x11"];
+        devices = [ "all" ];
+        filesystems = [ "home/CryptVMs" ];
+      };
+      "org.ryujinx.Ryujinx".Context = {
         sockets = ["x11"];
         devices = [ "all" ];
         filesystems = [ "home/CryptVMs" ];

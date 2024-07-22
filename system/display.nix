@@ -11,9 +11,13 @@
   programs.regreet = {
     enable = true;
     cageArgs = [ "-s" "-m" "last" ];
-    settings.background = {
-      path = config.stylix.image;
-      fit = "Cover";
+    settings = {
+      background = {
+        path = config.stylix.image;
+        fit = "Cover";
+      };
+      # appearance.greeting_msg = "Welcome to the Lab!";
+      GTK.application_prefer_dark_theme = true;
     };
   };
 
