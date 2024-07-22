@@ -39,7 +39,7 @@
   services.fwupd.enable = true;
 
   # Enable flakes
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
 
   # Fix flatpak default browser
   # systemd.user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
@@ -54,6 +54,10 @@
     optimise = {
       automatic = true;
       dates = [ "weekly" ];
+    };
+    settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+      warn-dirty = false;
     };
   };
 }

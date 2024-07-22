@@ -48,7 +48,6 @@
     in
     lib.foldr lib.recursiveUpdate {
       packages.x86_64-linux.iso = nixos-generators.nixosGenerate {
-      # packages.x86_64-linux.iso = lib.nixosSystem {
         system = "x86_64-linux";
         format = "install-iso";
         specialArgs = { inherit inputs; };
