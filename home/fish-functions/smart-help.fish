@@ -1,14 +1,13 @@
 # Argument: the command for which help is needed
-set - f pager bat - -color always - -style plain - -paging=always
-set -f argv (string trim $argv)
-set -f command (echo $argv | cut -d ' ' -f 1)
+set -f pager bat --color always --style plain --paging=always
+set -f command $argv[1]
 
 if test "$command" = "sudo"
-	set -f command (echo $argv | cut -d ' ' -f 2)
+	set -f command $argv[2]
 end
 
 if test -z "$command"
-	echo "Usage: smart-help <command>a -- $(echo $argv | cut -d ' ' -f 2)"
+	echo "Usage: smart-help <command> -- $argv[2]"
 	return
 end
 
@@ -28,6 +27,7 @@ end
 # Example: set overrides['git'] 'git help -a'
 set -f overrides \
 "git:git help -a" \
+"go:go help" \
 "npm:npm help 5"
 
 # Check for overrides and execute if present
@@ -42,20 +42,23 @@ for override in $overrides
 end
 
 # Try to open the man page
-if man $command >/dev/null 2>&1
+if man --where $command >/dev/null 2>&1
 	man $command
 	return
 end
 
 # If man page fails, try --help
-if $command --help >/dev/null 2>&1
-	$command --help | $pager
+set -f should_exit 0
+$command --help && set should_exit 1 | $pager
+if $should_exit
 	return
 end
 
 # Last resort: try -h
-if $command -h >/dev/null 2>&1
-	$command -h | $pager
-else
-	echo "No help found for '$command'"
+$command -h && set should_exit 1 | $pager
+if $should_exit
+	return
 end
+
+echo "No help found for '$command'"
+return 1
