@@ -20,14 +20,17 @@
       backup = builtins.readFile ./fish-functions/backup.fish;
       kubeseal-env = builtins.readFile ./fish-functions/kubeseal-env.fish;
       use = builtins.readFile ./fish-functions/use.fish;
-      rebuild = builtins.readFile ./fish-functions/rebuild.fish;
       smart-help = builtins.readFile ./fish-functions/smart-help.fish;
-      update = builtins.readFile ./fish-functions/update.fish;
 
       mc = {
         description = "Create a directory and change to it";
         body = "mkdir -p $argv[1] && cd $argv[1]";
       };
+    };
+
+    shellAliases = {
+      rebuild = "sudo nixos-rebuild switch --flake \"$FLAKE_URL\"";
+      update = "sudo nix-channel --update && nix flake update \"$FLAKE_URL\" && rebuild";
     };
   };
 }

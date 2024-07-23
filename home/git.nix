@@ -43,5 +43,10 @@
       diff.external = "difft";
       difftool.difftastic.cmd = "difft \"$LOCAL\" \"$REMOTE\"";
     };
+    ignores = [
+      "*~"
+      "*.swp"
+      ".envrc"
+    ];
   };
 }
