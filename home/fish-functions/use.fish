@@ -9,4 +9,4 @@ for arg in $argv
 end
 
 echo "Entering nix shell with packages: $packages"
-IN_NIX_SHELL=$argv nix shell $packages --command $SHELL
+NIXPKGS_ALLOW_UNFREE=1 IN_NIX_SHELL=$argv nix shell $packages --impure --command $SHELL
