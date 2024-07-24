@@ -39,7 +39,7 @@ jobs:
 
       - name: Generate tag name
         id: tag
-        run: echo "name=$(ls result/iso/ | sed -E 's/.*\.([[:alnum:]]+)-.*/iso-\1/')" >> $GITHUB_OUTPUT
+        run: echo "name=$(ls result/iso/ | sed -E 's/.*\.([[:alnum:]]+)\.iso$/iso-\1/')" >> $GITHUB_OUTPUT
 
       - uses: oras-project/setup-oras@v1
       - run: |
