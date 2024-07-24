@@ -5,6 +5,7 @@
     update.auto.enable = true;
     uninstallUnmanaged = true;
     packages = [
+      "com.discordapp.Discord"
       "com.prusa3d.PrusaSlicer"
       # "com.slack.Slack"
       # "com.spotify.Client"
@@ -38,13 +39,17 @@
       };
       "com.valvesoftware.Steam".Context = {
         sockets = ["x11"];
-        devices = [ "all" ];
+        devices = [ "dri" "input" ];
         filesystems = [ "home/CryptVMs" ];
       };
       "org.ryujinx.Ryujinx".Context = {
         sockets = ["x11"];
-        devices = [ "all" ];
+        devices = [ "dri" "input" ];
         filesystems = [ "home/CryptVMs" ];
+      };
+      "com.discordapp.Discord".Context = {
+        devices = [ "dri" "input" ];
+        sockets = [ "x11" "pulseaudio" ];
       };
       "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
       "md.obsidian.Obsidian".Context.filesystems = [ "xdg-documents/Obsidian" ];
