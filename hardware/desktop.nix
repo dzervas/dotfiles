@@ -43,13 +43,6 @@ in {
     "/home/dzervas/CryptVMs" = {
       device = "/dev/mapper/cryptvms";
       fsType = "ext4";
-
-      # encrypted = {
-      #   enable = true;
-      #   blkDev = cryptvms_part;
-      #   keyFile = "/etc/cryptsetup_cryptvms";
-      #   label = "cryptvms";
-      # };
     };
   };
 

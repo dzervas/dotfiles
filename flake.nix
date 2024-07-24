@@ -10,7 +10,6 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-flatpak.url = "github:gmodena/nix-flatpak";
-    # private.url = "./home/private";
 
     # ISO generation
     nixos-generators.url = "github:nix-community/nixos-generators";
@@ -28,21 +27,38 @@
           networking.hostName = hostName;
           system.stateVersion = stateVersion;
           home-manager.users.dzervas.home.stateVersion = stateVersion;
+
+          # Allow home-manager to have access to nix-flatpak
+          home-manager.extraSpecialArgs = {
+            inherit inputs;
+            # system = builtins.currentSystem;
+            isPrivate = builtins.pathExists ./home/private/default.nix;
+          };
         }
+
         stylix.nixosModules.stylix
         ./configuration.nix
         ./hardware/${hostName}.nix
 
         home-manager.nixosModules.home-manager
-        # Allow home-manager to have access to nix-flatpak
-        { home-manager.extraSpecialArgs.flake-inputs = inputs; }
       ];
 
       # Function to generate a machine configuration
       mkMachine = { hostName, stateVersion, arch ? "x86_64-linux" }: {
         nixosConfigurations.${hostName} = lib.nixosSystem {
           system = arch;
-          modules = mkConfigModules { hostName = hostName; stateVersion = stateVersion; };
+          modules = mkConfigModules {
+            hostName = hostName;
+            stateVersion = stateVersion;
+          };
+          # } ++ (if builtins.pathExists ./home/private/default.nix && hostName != "iso" then
+          #   [{
+          #     home-manager.extraSpecialArgs.isPrivate = true;
+          #     # specialArgs.isPrivate = true;
+          #   }]
+          # else
+          #   []
+          # );
         };
       };
     in

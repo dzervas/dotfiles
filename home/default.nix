@@ -1,8 +1,7 @@
-{ pkgs, flake-inputs, ... }: {
+{ pkgs, specialArgs, ... }: {
   imports = [
     ./1password.nix
     ./alacritty.nix
-    # ./private
     ./dev.nix
     ./firefox.nix
     ./fish.nix
@@ -15,8 +14,11 @@
     ./tools.nix
     ./desktop/sway.nix
 
-    flake-inputs.nix-flatpak.homeManagerModules.nix-flatpak
-    # flake-inputs.private.homeManagerModules
+    specialArgs.inputs.nix-flatpak.homeManagerModules.nix-flatpak
+    (if specialArgs.isPrivate or false then
+      builtins.trace "Private submodule build" ./private
+    else
+      {})
   ];
 
   # CLI tools

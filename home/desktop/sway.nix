@@ -180,38 +180,39 @@ in {
       };
     };
     extraConfig = ''
-      			default_border none
-            default_floating_border none
-      			default_orientation horizontal
-      			focus_on_window_activation focus
-      			hide_edge_borders --i3 both
-      			popup_during_fullscreen smart
+      default_border none
+      default_floating_border none
+      default_orientation horizontal
+      focus_on_window_activation focus
+      hide_edge_borders --i3 both
+      popup_during_fullscreen smart
 
-      			set $laptop eDP-1
-      			bindswitch lid:on output $laptop disable
-      			bindswitch lid:off output $laptop enable
-
-
-      			for_window [urgent="latest"] focus
-      			for_window [class=.*] inhibit_idle fullscreen
-      			for_window [title="."] title_format %title
+      set $laptop eDP-1
+      bindswitch lid:on output $laptop disable
+      bindswitch lid:off output $laptop enable
 
 
-      			for_window [app_id="(?i)(?:blueman-manager|azote|gnome-disks)"] floating enable
-      			for_window [app_id="(?i)(?:pavucontrol|nm-connection-editor|gsimplecal|galculator)"] floating enable
-      			for_window [app_id="(?i)(?:firefox|chromium)"] border none
-            for_window [app_id="^firefox$" title="^[Pp]icture-in-[Pp]icture$"] floating enable, resize set 1280 720, move position center
-      			for_window [title="(?i)(?:copying|deleting|moving)"] floating enable
+      for_window [urgent="latest"] focus
+      for_window [class=.*] inhibit_idle fullscreen
+      for_window [title="."] title_format %title
 
-      			for_window [app_id="^zenity$"] floating enable
-      			for_window [app_id="^[Pp]inentry-.*"] floating enable
-      			for_window [app_id="^com-install4j-runtime-launcher-UnixLauncher$"] floating enable
-      			for_window [app_id="^net-portswigger-burp-browser-BurpBrowserServer$"] floating enable
-      			for_window [app_id="^burp-StartBurp$"] floating enable
-      			for_window [app_id="^torbrowser-launcher$"] floating enable
-      			for_window [class="^1[Pp]assword$"] floating enable
-      			for_window [title="^Wine System Tray$"] floating enable, move scratchpad
-      		'';
+
+      for_window [app_id="(?i)(?:blueman-manager|azote|gnome-disks)"] floating enable
+      for_window [app_id="(?i)(?:pavucontrol|nm-connection-editor|gsimplecal|galculator)"] floating enable
+      for_window [app_id="(?i)(?:firefox|chromium)"] border none
+      for_window [app_id="^firefox$" title="^[Pp]icture-in-[Pp]icture$"] floating enable, resize set 1280 720, move position center
+      for_window [title="(?i)(?:copying|deleting|moving)"] floating enable
+
+      for_window [app_id="^zenity$"] floating enable
+      for_window [app_id="^[Pp]inentry-.*"] floating enable
+      for_window [app_id="^com-install4j-runtime-launcher-UnixLauncher$"] floating enable
+      for_window [app_id="^net-portswigger-burp-browser-BurpBrowserServer$"] floating enable
+      for_window [app_id="^burp-StartBurp$"] floating enable
+      for_window [app_id="^torbrowser-launcher$"] floating enable
+      for_window [class="^1[Pp]assword$"] floating enable
+      for_window [title="^Wine System Tray$"] floating enable, move scratchpad
+      for_window [title="^ContentDialogOverlayWindow$"] floating enable, focus
+    '';
     extraOptions = [ "--unsupported-gpu" ];
   };
 }
