@@ -31,6 +31,7 @@
           # Allow home-manager to have access to nix-flatpak
           home-manager.extraSpecialArgs = {
             inherit inputs;
+            inherit hostName;
             # system = builtins.currentSystem;
             isPrivate = builtins.pathExists ./home/private/default.nix;
           };
