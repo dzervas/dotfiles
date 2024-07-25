@@ -92,7 +92,25 @@
               "PersonalToolbar": [
                 "personal-bookmarks"
               ]
-            }
+            },
+            "seen": [
+              "gdpr_cavi_au_dk-browser-action",
+              "_testpilot-containers-browser-action",
+              "_ublacklist-browser-action",
+              "ublock0_raymondhill_net-browser-action",
+              "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action",
+              "sponsorblocker_ajay_app-browser-action",
+              "developer-button"
+            ],
+            "dirtyAreaCache": [
+              "unified-extensions-area",
+              "nav-bar",
+              "toolbar-menubar",
+              "TabsToolbar",
+              "PersonalToolbar"
+            ],
+            "currentVersion": 20,
+            "newElementCount": 5
           }
         '';
       };
