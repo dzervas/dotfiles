@@ -12,7 +12,7 @@
       co = "checkout";
       d = "diff";
       # get-ignore = "!"f(){ curl -L --silent --fail "https://github.com/github/gitignore/raw/main/$1.gitignore" >> .gitignore && echo "Appended to .gitignore" || echo -e "No gitignore found for $1 - check out https://github.com/github/gitignore"; }; f"";
-      get-ignore = "!gi(){ curl -fsL \"https://www.toptal.com/developers/gitignore/api/$1\" >> .gitignore && echo Appended to .gitignore || echo No gitignore found - check out gitignore.io }; gi";
+      get-ignore = "!gi(){ curl -fsL \"https://www.toptal.com/developers/gitignore/api/$1\" >> .gitignore && echo \"Appended to .gitignore\" || echo \"No gitignore found - check out gitignore.io\"; }; gi";
       ll = "log --graph --decorate --abbrev-commit --pretty='%C(auto)%h %d %s %Cgreen(%cr)%Creset [%C(bold blue)%an%Creset %G?]'";
       lla = "log --graph --decorate --abbrev-commit --pretty='%C(auto)%h %d %s %Cgreen(%cr)%Creset [%C(bold blue)%an%Creset  %G?]' --all";
       # Parse positional params
