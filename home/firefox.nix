@@ -76,10 +76,10 @@
                 "downloads-button",
                 "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action",
                 "fxa-toolbar-menu-button",
-                "unified-extensions-button",
+                "_testpilot-containers-browser-action",
                 "ublock0_raymondhill_net-browser-action",
                 "sponsorblocker_ajay_app-browser-action",
-                "_testpilot-containers-browser-action"
+                "unified-extensions-button"
               ],
               "toolbar-menubar": [
                 "menubar-items"
@@ -109,7 +109,7 @@
               "TabsToolbar",
               "PersonalToolbar"
             ],
-            "currentVersion": 20,
+            "currentVersion": 100,
             "newElementCount": 5
           }
         '';
