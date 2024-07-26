@@ -1,4 +1,4 @@
-{ pkgs, specialArgs, ... }: {
+{ pkgs, ... }: {
   imports = [
     ./1password.nix
     ./alacritty.nix
@@ -13,12 +13,6 @@
     ./ssh.nix
     ./tools.nix
     ./desktop/sway.nix
-
-    specialArgs.inputs.nix-flatpak.homeManagerModules.nix-flatpak
-    (if specialArgs.isPrivate or false then
-      ./private
-    else
-      {})
   ];
 
   # CLI tools

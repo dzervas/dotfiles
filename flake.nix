@@ -17,12 +17,12 @@
     nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nixpkgs, agenix, stylix, home-manager, nixos-generators, ... }:
+  outputs = inputs@{ self, nixpkgs, agenix, stylix, home-manager, nix-flatpak, nixos-generators, ... }:
     let
       lib = nixpkgs.lib;
 
       # Function to generate the configuration imports
-      mkConfigModules = { hostName, stateVersion, system, isPrivate }: [
+      mkConfigModules = { hostName, stateVersion, system, isPrivate ? false }: [
         # Set some basic options
         {
           networking.hostName = hostName;
@@ -31,8 +31,12 @@
 
           # Allow home-manager to have access to nix-flatpak
           home-manager.extraSpecialArgs = {
-            inherit inputs hostName isPrivate;
+            inherit hostName isPrivate inputs;
           };
+          home-manager.sharedModules = [
+            nix-flatpak.homeManagerModules.nix-flatpak
+            (if isPrivate then ./home/private else {})
+          ];
         }
         {
           options.isPrivate = lib.mkOption {
@@ -79,6 +83,7 @@
           # come from the flake inputs.nixpkgs.url.
           ({ ... }: { nix.registry.nixpkgs.flake = nixpkgs; })
         ] ++ mkConfigModules {
+          system = "x86_64-linux";
           hostName = "iso";
           stateVersion = "24.11";
         };

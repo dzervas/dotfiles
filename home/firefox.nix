@@ -40,6 +40,7 @@
         "browser.newtabpage.activity-stream.showSponsored" = false;
         "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
         "browser.newtabpage.activity-stream.default.sites" = "";
+        "browser.quitShortcut.disabled" = true;
         "browser.translations.neverTranslateLanguages" = "el";
         "findbar.highlightAll" = true;
         "reader.content_width" = 5;
