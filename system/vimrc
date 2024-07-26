@@ -62,7 +62,7 @@ syntax on
 " syntax sync minlines=10000 maxlines=50000
 filetype plugin indent on
 
-au FileType yaml,yml setlocal ts=2 sts=2 sw=2 expandtab
+au FileType yaml,yml,nix setlocal ts=2 sts=2 sw=2 expandtab
 au BufRead,BufNewFile *.cshtml set filetype=html
 au BufRead,BufNewFile *.inc set filetype=php
 au BufNewFile,BufRead Jenkinsfile set filetype=groovy

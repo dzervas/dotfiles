@@ -8,12 +8,22 @@
     nil # Nix language server
 
     # Languages
+    gcc
+    pkg-config
+    openssl.dev
+
     go
+
     pipenv
     (python3Packages.python.withPackages (p: [ p.ipython ]))
     # python311Packages.ipython
     pyenv
+
+    cargo-edit
+    cargo-expand
     rustup
+    probe-rs-tools
+
     pnpm
     nodejs
 
