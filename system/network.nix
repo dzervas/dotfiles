@@ -1,4 +1,4 @@
-{ config, ... }: {
+{ config, lib, pkgs, ... }: {
   networking.networkmanager.enable = true;
   # networking.wireless.enable = false; # Can't use with networkmanager???
 
@@ -11,4 +11,11 @@
   boot.extraModulePackages = with config.boot.kernelPackages; [
     rtl88xxau-aircrack
   ];
+
+  # services.zerotierone = lib.mkIf config.isPrivate {
+  #   enable = true;
+  #   joinNetworks = [
+  #     builtins.exec "${pkgs._1password}/bin/op read op://local/zerotier/network_id"
+  #   ];
+  # };
 }

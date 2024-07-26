@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    agenix.url = "github:ryantm/agenix";
     stylix.url = "github:danth/stylix";
 
     # Home Manager
@@ -16,12 +17,12 @@
     nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nixpkgs, stylix, home-manager, nixos-generators, ... }:
+  outputs = inputs@{ self, nixpkgs, agenix, stylix, home-manager, nixos-generators, ... }:
     let
       lib = nixpkgs.lib;
 
       # Function to generate the configuration imports
-      mkConfigModules = { hostName, stateVersion }: [
+      mkConfigModules = { hostName, stateVersion, system, isPrivate }: [
         # Set some basic options
         {
           networking.hostName = hostName;
@@ -30,10 +31,13 @@
 
           # Allow home-manager to have access to nix-flatpak
           home-manager.extraSpecialArgs = {
-            inherit inputs;
-            inherit hostName;
-            # system = builtins.currentSystem;
-            isPrivate = builtins.pathExists ./home/private/default.nix;
+            inherit inputs hostName isPrivate;
+          };
+        }
+        {
+          options.isPrivate = lib.mkOption {
+            type = lib.types.bool;
+            default = isPrivate;
           };
         }
 
@@ -45,21 +49,22 @@
       ];
 
       # Function to generate a machine configuration
-      mkMachine = { hostName, stateVersion, arch ? "x86_64-linux" }: {
+      mkMachine = { hostName, stateVersion, system ? "x86_64-linux" }: let
+        # "Private build" mode. If enabled the private nix files will be used.
+        # Disabled to be able to build the ISO and initial installation
+        isPrivate = if (builtins.pathExists ./home/private/default.nix && hostName != "iso") then
+          builtins.trace "🔐 Private submodule build" true
+        else
+          builtins.trace "📢 Public build" false;
+      in {
         nixosConfigurations.${hostName} = lib.nixosSystem {
-          system = arch;
+          inherit system;
           modules = mkConfigModules {
-            hostName = hostName;
-            stateVersion = stateVersion;
-          };
-          # } ++ (if builtins.pathExists ./home/private/default.nix && hostName != "iso" then
-          #   [{
-          #     home-manager.extraSpecialArgs.isPrivate = true;
-          #     # specialArgs.isPrivate = true;
-          #   }]
-          # else
-          #   []
-          # );
+            inherit hostName stateVersion system isPrivate;
+          } ++ (if isPrivate then [
+            (if isPrivate then agenix.nixosModules.default else {})
+            (if isPrivate then { environment.systemPackages = [ agenix.packages.x86_64-linux.default ]; } else {})
+          ] else []);
         };
       };
     in

@@ -1,8 +1,8 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   imports = [ ./system ];
 
   system.copySystemConfiguration = false;
+  # environment.systemPackages = [ agenix.packages.x86_64-linux.default ];
 
   users.users.dzervas = {
     isNormalUser = true;
@@ -38,11 +38,8 @@
   };
   services.fwupd.enable = true;
 
-  # Enable flakes
-
-
   # Fix flatpak default browser
-  # systemd.user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
+  systemd.user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
 
   nix = {
     extraOptions = "min-free = ${toString (50 * 1024 * 1024)}"; # Garbage collect when free space is less than 50MB

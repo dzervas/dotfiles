@@ -128,7 +128,7 @@ in {
 
         # Core applications
         "${modifier}+Return" = "exec ${cfg.terminal}";
-        "${modifier}+l" = "exec swaylock";
+        "${modifier}+l" = "exec '${cfg.locker}'";
         "${modifier}+p" = "exec 1password --quick-access";
         "${modifier}+r" = "exec ${cfg.runner}";
 

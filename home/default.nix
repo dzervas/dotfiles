@@ -16,7 +16,7 @@
 
     specialArgs.inputs.nix-flatpak.homeManagerModules.nix-flatpak
     (if specialArgs.isPrivate or false then
-      builtins.trace "Private submodule build" ./private
+      ./private
     else
       {})
   ];

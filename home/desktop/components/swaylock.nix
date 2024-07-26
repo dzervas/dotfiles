@@ -1,5 +1,5 @@
-{ pkgs, ... }: {
-  setup.locker = "swaylock -f";
+{ options, pkgs, ... }: {
+  setup.locker = "${options.setup.locker.default}; swaylock -f";
   programs.swaylock = {
     enable = true;
     package = pkgs.swaylock-effects;
