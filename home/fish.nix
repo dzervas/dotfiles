@@ -6,7 +6,9 @@
     interactiveShellInit = ''
       set fish_greeting
       fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
-      bind \e\` "smart-help (commandline -p)"
+      bind \e\` "__smart_help (commandline -p)"
+      # Maps to Ctrl-Shift-Delete
+      bind \e\[3\;6~ __forget
       export FLAKE_URL="/home/dzervas/Lab/dotfiles?submodules=1"
     '';
     plugins = [
@@ -17,15 +19,29 @@
     ];
 
     functions = {
-      backup = builtins.readFile ./fish-functions/backup.fish;
-      kubeseal-env = builtins.readFile ./fish-functions/kubeseal-env.fish;
-      use = builtins.readFile ./fish-functions/use.fish;
-      smart-help = builtins.readFile ./fish-functions/smart-help.fish;
-
-      mc = {
-        description = "Create a directory and change to it";
-        body = "mkdir -p $argv[1] && cd $argv[1]";
+      backup = {
+        body = builtins.readFile ./fish-functions/backup.fish;
+        description = "Backup a file or directory";
+        wraps = "cp";
       };
+      kubeseal-env = {
+        body = builtins.readFile ./fish-functions/kubeseal-env.fish;
+        description = "Create a kubeseal secret from an env file";
+      };
+      mc = {
+        body = "mkdir -p $argv[1] && cd $argv[1]";
+        description = "Create a directory and change to it";
+        wraps = "mkdir";
+      };
+      use = {
+        body = builtins.readFile ./fish-functions/use.fish;
+        description = "Use a nix shell";
+        wraps = "nix shell";
+      };
+
+      # Internal
+      __smart_help = builtins.readFile ./fish-functions/smart-help.fish;
+      __forget = builtins.readFile ./fish-functions/forget.fish;
     };
 
     shellAliases = {

@@ -18,7 +18,7 @@
     ];
 
     overrides = {
-      # global.Environment.GTK_THEME = "Adwaita:dark";
+      global.Environment.GTK_THEME = "stylix";
       global.Context = {
         filesystems = [
           "xdg-config/gtk-3.0:ro"
