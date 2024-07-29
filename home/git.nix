@@ -16,7 +16,7 @@
       ll = "log --graph --decorate --abbrev-commit --pretty='%C(auto)%h %d %s %Cgreen(%cr)%Creset [%C(bold blue)%an%Creset %G?]'";
       lla = "log --graph --decorate --abbrev-commit --pretty='%C(auto)%h %d %s %Cgreen(%cr)%Creset [%C(bold blue)%an%Creset  %G?]' --all";
       # Parse positional params
-      hub = "!f() { git clone git@github.com:$1; }; f";
+      hub = "!f() { grep -q '/' <<< $1 && git clone git@github.com:$1 || git clone git@github.com:dzervas/$1; }; f";
       oops = "!echo 'Going to amend and force push. You sure?' && read && git add -A && git commit --amend --no-edit && git push --force-with-lease";
       s = "status";
       undo = "reset HEAD~";

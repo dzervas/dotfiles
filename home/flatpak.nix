@@ -18,7 +18,7 @@
     ];
 
     overrides = {
-      global.Environment.GTK_THEME = "stylix";
+      # global.Environment.GTK_THEME = "stylix";
       global.Context = {
         filesystems = [
           "xdg-config/gtk-3.0:ro"
@@ -51,12 +51,14 @@
         devices = [ "dri" "input" ];
         sockets = [ "x11" "pulseaudio" ];
       };
+      "org.chromium.Chromium".Context.sockets = ["x11"];
       "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
       "md.obsidian.Obsidian".Context.filesystems = [ "xdg-documents/Obsidian" ];
     };
   };
 
-  home.file.".var/app/org.chromium.Chromium/config/chromium-flags.conf".text = ''
-    --ozone-platform=wayland
-  '';
+  # home.file.".var/app/org.chromium.Chromium/config/chromium-flags.conf".text = ''
+    # --enable-features=UseOzonePlatform
+    # --ozone-platform=wayland
+  # '';
 }
