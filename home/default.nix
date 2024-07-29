@@ -15,7 +15,6 @@
     ./desktop/sway.nix
   ];
 
-  # CLI tools
   programs.direnv.enable = true;
 
   programs.home-manager.enable = true;

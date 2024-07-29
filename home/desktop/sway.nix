@@ -52,14 +52,18 @@ in {
 
   wayland.windowManager.sway = {
     enable = true;
+
     systemd = {
       enable = true;
       xdgAutostart = true;
     };
+
     wrapperFeatures.gtk = true;
+
     config = {
       fonts.size = lib.mkForce 10.0;
       startup = [
+        { command = "systemd-notify --ready || true"; }
         { command = "1password --silent"; }
         { command = cfg.terminal; }
         { command = cfg.browser; }

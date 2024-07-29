@@ -37,6 +37,7 @@
     };
   };
   services.fwupd.enable = true;
+  programs.dconf.enable = true;
 
   # Fix flatpak default browser
   systemd.user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
