@@ -32,6 +32,7 @@
     autoPrune.enable = true;
     dockerSocket.enable = true;
   };
+  virtualisation.containers.registries.search = [ "docker.io" ];
 
   security = {
     pam.services.kwallet = {
