@@ -85,3 +85,8 @@ nix flake update --override-input nixpkgs github:NixOS/nixpkgs/7252b96d60dc2ccf3
 
 - VSCode needs `"password-store": "gnome-libsecret"` to `~/.vscode/argv.json` to see gnome-keyring
 - GParted needs `nix-shell -p xorg.xhost --run xhost si:localuser:root` to run
+- Although it shouldn't be needed, to change the M720 Triathlon buttons:
+
+```bash
+sudo nix shell nixpkgs#solaar --command solaar-cli config 1 persistent-remappable-keys "MultiPlatform Gesture Button" "F14"
+```
