@@ -9,7 +9,7 @@
     hashcat-utils
     hcxtools
     netdiscover
-    jadx
+    # jadx
     nmap
     nuclei
     nuclei-templates

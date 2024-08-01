@@ -7,8 +7,6 @@
     packages = [
       "com.discordapp.Discord"
       "com.prusa3d.PrusaSlicer"
-      # "com.slack.Slack"
-      # "com.spotify.Client"
       "com.valvesoftware.Steam"
       "com.github.tchx84.Flatseal"
       "md.obsidian.Obsidian"
