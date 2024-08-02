@@ -22,23 +22,27 @@
 
     mimeApps = {
       enable = true; # Auto-populate default apps
-      defaultApplications = {
-        "x-scheme-handler/http" = config.setup.browser;
-        "x-scheme-handler/https" = config.setup.browser;
-        "x-scheme-handler/chrome" = config.setup.browser;
-        "text/html" = config.setup.browser;
-        "text/xml" = config.setup.browser;
-        "application/pdf" = config.setup.browser;
-        "application/x-extension-htm" = config.setup.browser;
-        "application/x-extension-html" = config.setup.browser;
-        "application/x-extension-shtml" = config.setup.browser;
-        "application/x-extension-xhtml" = config.setup.browser;
-        "application/x-extension-xht" = config.setup.browser;
-        "application/rdf+xml" = config.setup.browser;
-        "application/rss+xml" = config.setup.browser;
-        "application/xhtml+xml" = config.setup.browser;
-        "application/xhtml_xml" = config.setup.browser;
-        "application/xml" = config.setup.browser;
+      defaultApplications = let
+        browser = "${config.setup.browser}.desktop";
+      in {
+        "text/plain" = "org.kde.kate.desktop";
+
+        "x-scheme-handler/http" = browser;
+        "x-scheme-handler/https" = browser;
+        "x-scheme-handler/chrome" = browser;
+        "text/html" = browser;
+        "text/xml" = browser;
+        "application/pdf" = browser;
+        "application/x-extension-htm" = browser;
+        "application/x-extension-html" = browser;
+        "application/x-extension-shtml" = browser;
+        "application/x-extension-xhtml" = browser;
+        "application/x-extension-xht" = browser;
+        "application/rdf+xml" = browser;
+        "application/rss+xml" = browser;
+        "application/xhtml+xml" = browser;
+        "application/xhtml_xml" = browser;
+        "application/xml" = browser;
       };
     };
   };

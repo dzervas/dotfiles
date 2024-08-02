@@ -5,7 +5,6 @@
     update.auto.enable = true;
     uninstallUnmanaged = true;
     packages = [
-      "com.discordapp.Discord"
       "com.prusa3d.PrusaSlicer"
       "com.valvesoftware.Steam"
       "com.github.tchx84.Flatseal"
