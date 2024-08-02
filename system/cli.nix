@@ -21,6 +21,7 @@
     socat
     tree
     unzip
+    usbutils
   ];
 
   # Set fish as the default shell

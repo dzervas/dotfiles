@@ -5,6 +5,7 @@ in {
   imports = [
     ./components/amd.nix
     ./components/boot.nix
+    ./components/peripherals.nix
     ./components/laptop.nix
   ];
 
@@ -44,6 +45,7 @@ in {
     "/boot" = {
       device = "/dev/disk/by-label/BOOT"; # replace with your actual EFI partition UUID
       fsType = "vfat";
+      options = [ "umask=077" ];
     };
   };
 

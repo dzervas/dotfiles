@@ -10,6 +10,7 @@ in {
   imports = [
     ./components/amd.nix
     ./components/boot.nix
+    ./components/peripherals.nix
     ./components/virtualbox.nix
   ];
 
@@ -38,6 +39,13 @@ in {
     "/boot" = {
       device = "/dev/disk/by-label/BOOT"; # replace with your actual EFI partition UUID
       fsType = "vfat";
+      options = [
+        "uid=0"
+        "gid=0"
+        "umask=077"
+        "fmask=077"
+        "dmask=077"
+      ];
     };
 
     "/home/dzervas/CryptVMs" = {
