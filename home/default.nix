@@ -6,6 +6,7 @@
     ./firefox.nix
     ./fish.nix
     ./flatpak.nix
+    ./gammastep.nix
     ./git.nix
     ./neovim.nix
     ./options.nix
