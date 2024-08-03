@@ -2,6 +2,7 @@
 
 {
   home.packages = with pkgs; [
+    aircrack-ng
     dirb
     frida-tools
     gobuster
