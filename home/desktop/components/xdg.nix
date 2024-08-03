@@ -27,6 +27,9 @@
       in {
         "text/plain" = "org.kde.kate.desktop";
 
+        "image/jpeg" = "org.gnome.gThumb.desktop";
+        "image/png" = "org.gnome.gThumb.desktop";
+
         "x-scheme-handler/http" = browser;
         "x-scheme-handler/https" = browser;
         "x-scheme-handler/chrome" = browser;

@@ -40,7 +40,10 @@
   # Electron fix - https://nixos.wiki/wiki/Wayland#Electron_and_Chromium
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
-  environment.systemPackages = with pkgs; [ libsecret ];
+  environment.systemPackages = with pkgs; [
+    gthumb
+    libsecret
+  ];
 
   # Brightness control
   programs.light.enable = true;
@@ -53,7 +56,7 @@
     wlr.enable = true;
   };
 
-  # File manager
+  # File manager - home-manager doesn't have it
   programs.thunar = {
     enable = true;
     plugins = with pkgs.xfce; [
