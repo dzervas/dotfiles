@@ -1,4 +1,4 @@
-{ config, ... }: let
+{ config, pkgs, ... }: let
   # Main directory for wrapped qutebrowser instances
   quteDir = "${config.xdg.dataHome}/quteWrap";
 
@@ -31,6 +31,7 @@
 in {
   programs.qutebrowser = {
     enable = true;
+    package = pkgs.qutebrowser.override { enableWideVine = true; };
     searchEngines = {
       DEFAULT = "https://www.google.com/search?hl=en&q={}";
       gh = "https://github.com/search?type=repositories&q={}";

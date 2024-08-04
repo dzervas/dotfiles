@@ -9,6 +9,7 @@
     hashcat
     hashcat-utils
     hcxtools
+    iw
     netdiscover
     # jadx
     nmap
@@ -18,6 +19,8 @@
     sqlmap
     subfinder
     wifite2
+    wirelesstools
+    wireshark
     wpscan
   ];
 }

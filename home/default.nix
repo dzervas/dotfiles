@@ -17,6 +17,7 @@
   ];
 
   programs.direnv.enable = true;
+  programs.mpv.enable = true;
 
   programs.home-manager.enable = true;
   home = {
@@ -26,6 +27,7 @@
       kdePackages.filelight
       kdePackages.kate
       kicad
+      orca-slicer
       vorta
     ];
     file.".config/katerc".source = ./katerc;
