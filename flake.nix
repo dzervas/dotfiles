@@ -23,6 +23,7 @@
       utils = import ./utils.nix { inherit inputs lib; };
     in
     lib.foldr lib.recursiveUpdate {
+      # The ISO generation module
       packages.x86_64-linux.iso = nixos-generators.nixosGenerate {
         system = "x86_64-linux";
         format = "install-iso";
@@ -38,6 +39,7 @@
         };
       };
     } (map utils.mkMachine [
+      # Normal machines
       { hostName = "laptop"; stateVersion = "23.05"; }
       { hostName = "desktop"; stateVersion = "24.11"; }
     ]);

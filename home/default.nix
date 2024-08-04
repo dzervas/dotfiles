@@ -13,6 +13,7 @@
     ./qutebrowser
     ./ssh.nix
     ./tools.nix
+    ./wine
     ./desktop/sway.nix
   ];
 
