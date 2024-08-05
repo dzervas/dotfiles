@@ -216,6 +216,7 @@ in {
       for_window [class="^1[Pp]assword$"] floating enable
       for_window [title="^Wine System Tray$"] floating enable, move scratchpad
       for_window [title="^ContentDialogOverlayWindow$"] floating enable, focus
+      for_window [title="^Steam Settings$"] floating enable, focus
     '';
     extraOptions = [ "--unsupported-gpu" ];
   };

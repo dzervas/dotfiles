@@ -35,7 +35,7 @@
         Environment.PRUSA_SLICER_DARK_THEME = "true";
       };
       "com.valvesoftware.Steam".Context = {
-        sockets = ["x11"];
+        sockets = ["x11" "pulseaudio"];
         devices = [ "dri" "input" ];
         filesystems = [ "home/CryptVMs" ];
       };

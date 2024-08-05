@@ -1,7 +1,8 @@
-c.tabs.show = "multiple"
+c.colors.webpage.preferred_color_scheme = "dark"
 c.statusbar.show = "always"
+c.tabs.show = "multiple"
 c.window.title_format = "{perc}{current_title}"
-config.set("colors.webpage.darkmode.enabled", True)
+
 config.set("content.notifications.enabled", True, "{{url}}")
 config.set("content.blocking.adblock.lists", [
 	# Default EasyList filters
