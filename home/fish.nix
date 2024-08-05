@@ -48,6 +48,7 @@
       rebuild = "sudo nixos-rebuild switch --flake \"$FLAKE_URL\"";
       update = "sudo nix-channel --update && nix flake update \"$FLAKE_URL\" && rebuild";
       pkill = "pkill -ef";
+      pwdname = "basename $(pwd)";
     };
   };
 }
