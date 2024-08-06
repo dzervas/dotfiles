@@ -4,7 +4,7 @@
 
   # Function that creates a desktop and the config for the target app
   # It returns a function that can be imported (hence the { ... } arguments)
-  quteDesktopWrap = { name, url, icon, iconSha256, categories ? [], greasemonkey ? [] }: let
+  quteDesktopWrap = { name, url, icon, iconSha256, emoji, categories ? [], greasemonkey ? [] }: let
     baseDir = "${quteDir}/${name}";
   in { ... }: {
     xdg.desktopEntries.${name} = {
@@ -24,7 +24,7 @@
       scriptName = baseNameOf (toString script); # Get the name of the script
     in prev // { "${baseDir}/config/greasemonkey/${scriptName}".source = script; }) acc greasemonkey // { # Return the previous accumulator + the new element
       # Append a non-generated file, the config that will be used
-      "${baseDir}/config.py".text = builtins.replaceStrings ["{{url}}"] [url] (builtins.readFile ./config.py);
+      "${baseDir}/config.py".text = builtins.replaceStrings ["{{url}}" "{{emoji}}"] [url emoji] (builtins.readFile ./config.py);
     };
   };
 
@@ -46,6 +46,7 @@ in {
       iconSha256 = "1y341vivhlqkdc0whnddfrllwcwdqgsmbmqa8wqdfg7r8m48iwhg";
       categories = [ "Network" "InstantMessaging" ];
       greasemonkey = [ ./scripts/discord.nitro.js ];
+      emoji = "🎃";
     })
     (quteDesktopWrap {
       name = "Element";
@@ -53,6 +54,7 @@ in {
       icon = "https://app.element.io/vector-icons/apple-touch-icon-180.a568820.png";
       iconSha256 = "15frj7ikc7ym77nm8ah9flc5ywgb6j0mk48jlmcwzzcixpcar1yx";
       categories = [ "Network" "InstantMessaging" ];
+      emoji = "♻️";
     })
     (quteDesktopWrap {
       name = "Spotify";
@@ -60,6 +62,7 @@ in {
       icon = "https://open.spotifycdn.com/cdn/images/favicon32.b64ecc03.png";
       iconSha256 = "0mvjmi73by3ljp3fa4khvjy8savzfi6v3i6njj7nhiyc1l1wqkmn";
       categories = [ "Network" "Audio" ];
+      emoji = "🎧";
     })
     (quteDesktopWrap {
       name = "Telegram";
@@ -67,6 +70,7 @@ in {
       icon = "https://web.telegram.org/a/icon-192x192.png";
       iconSha256 = "1y0bdflrvliddl8s8hh0h4v2xb81s4lypdas4qjpzafpr5i7ln3f";
       categories = [ "Network" "InstantMessaging" ];
+      emoji = "✈️";
     })
   ];
 }
