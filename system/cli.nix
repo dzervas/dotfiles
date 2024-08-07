@@ -8,6 +8,7 @@
     fzf
     git
     htop
+    ijq
     jq
     killall
     libnotify # For notify-send
@@ -85,10 +86,10 @@
     webserver = "python3 -m http.server";
 
     # Hipster tools
-    cat = "bat -p --paging=never";
+    cat = "bat -p --style=header-filename,header-filesize,snip --paging=never";
     diff = "colordiff -ub";
     grep = "rg";
-    less = "bat -p";
+    less = "bat -p --color=always";
     ll = "lsd -Fal";
     ls = "lsd -F";
     find = "fd";
