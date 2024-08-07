@@ -1,50 +1,37 @@
 // ==UserScript==
-// @name         Discord Free Nitro Features
-// @namespace    https://github.com/return-true-if-false/discord-free-nitro-features
-// @homepage     https://github.com/return-true-if-false/discord-free-nitro-features
+// @name         Disable Nitro nagging
 // @version      1.0
-// @description  Allows you to use nitro emojis, stickers, and splits large messages in two
-// @author       return-true-if-false
+// @description  Marks the user locally as premium to avoid all the nitro nagging (doesn't enable any feature in reality)
+// @author       me
 // @match        https://discord.com/channels*
 // @match        https://discord.com/app*
 // @grant        none
 // ==/UserScript==
-let z
 
 function loader() {
-    window.webpackChunkdiscord_app.push([
-        [Math.random()], {},
-        e => {
-            console.log("Loaded webpackChunkdiscord_app");
-            window.wpRequire = e
-        }
-    ]);
-    console.log("Loading webpackChunkdiscord_app");
+	let wpRequire;
+	console.log("Injecting to discord webpack")
+	webpackChunkdiscord_app.push([[Symbol()], {}, r => wpRequire = r.c]);
+	webpackChunkdiscord_app.pop();
 
-    let e = () => Object.keys(wpRequire.c).map((e => wpRequire.c[e].exports)).filter((e => e)),
-        t = t => {
-            for (const n of e()) {
-                if (n.default && t(n.default)) return n.default;
-                if (n.Z && t(n.Z)) return n.Z;
-                if (t(n)) return n
-            }
-        },
-        n = t => {
-            let n = [];
-            for (const s of e()) s.default && t(s.default) ? n.push(s.default) : t(s) && n.push(s);
-            return n
-        },
-        s = (...e) => t((t => e.every((e => void 0 !== t[e])))),
-        a = (...e) => n((t => e.every((e => void 0 !== t[e])))),
-        r = e => new Promise((t => setTimeout(t, e)));
-    if (!s("getCurrentUser").getCurrentUser()) {
-        return
-    } else {
-        clearInterval(z)
-    }
-    s("getCurrentUser").getCurrentUser().premiumType = 2;
-    console.log("UserScript loaded");
+	console.log("Searching for the getUsers module")
+	const getUsers = Object
+		.values(wpRequire)
+		.find(x => x?.exports?.default?.getUsers)
+		.exports.default;
 
-    console.log("Current user:", s("getCurrentUser").getCurrentUser());
+	window.wpRequire = wpRequire;
+	window.getUsers = getUsers;
+
+	getUsers.addChangeListener(() => {
+		// console.log("getUsers store changed:", this);
+		console.log("Activating premium", window.getUsers.getCurrentUser())
+		getUsers.getCurrentUser().premiumType = 2;
+	});
+	// let m = Object.values(u._dispatcher._actionHandlers._dependencyGraph.nodes);
 }
-z = setInterval(loader, 100)
+
+document.addEventListener("readystatechange", (event) => {
+	if (document.readyState === "complete")
+		loader();
+});

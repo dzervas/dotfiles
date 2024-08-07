@@ -66,7 +66,7 @@ in {
     })
     (quteDesktopWrap {
       name = "Telegram";
-      url = "https://web.telegram.org";
+      url = "https://web.telegram.org/a/";
       icon = "https://web.telegram.org/a/icon-192x192.png";
       iconSha256 = "1y0bdflrvliddl8s8hh0h4v2xb81s4lypdas4qjpzafpr5i7ln3f";
       categories = [ "Network" "InstantMessaging" ];
