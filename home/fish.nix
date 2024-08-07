@@ -33,6 +33,10 @@
         description = "Create a directory and change to it";
         wraps = "mkdir";
       };
+      needs-update = {
+        body = builtins.readFile ./fish-functions/needs-update.fish;
+        description = "Check if a newer nixpkgs version is available";
+      };
       use = {
         body = builtins.readFile ./fish-functions/use.fish;
         description = "Use a nix shell";
