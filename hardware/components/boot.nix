@@ -1,4 +1,4 @@
-{ ... }: {
+{ pkgs, ... }: {
   boot = {
     consoleLogLevel = 0;
     kernelParams = [ "quiet" "udev.log_level=3" ];
@@ -11,12 +11,11 @@
 
     loader = {
       efi.canTouchEfiVariables = true;
-      systemd-boot = {
-        enable = true;
-        configurationLimit = 5;
-      };
+      systemd-boot.configurationLimit = 5;
     };
 
     plymouth.enable = true;
   };
+
+  environment.systemPackages = with pkgs; [ sbctl ];
 }

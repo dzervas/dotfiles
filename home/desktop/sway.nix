@@ -63,6 +63,7 @@ in {
     config = {
       fonts.size = lib.mkForce 10.0;
       startup = [
+        { command = "systemctl --user unset-environment DISPLAY WAYLAND_DISPLAY && systemctl --user import-environment && systemctl --user restart xdg-desktop-portal.service"; always = true; }
         { command = "systemd-notify --ready || true"; }
         { command = "1password --silent"; }
         { command = cfg.terminal; }
@@ -70,7 +71,6 @@ in {
         { command = "swaykbdd"; }
         { command = "systemctl --user restart kanshi"; always = true; }
         # Fix firefox as default browser
-        { command = "systemctl --user import-environment PATH && systemctl --user restart xdg-desktop-portal.service"; always = true; }
       ];
       bars = [{
         position = "top";
@@ -219,5 +219,35 @@ in {
       for_window [title="^Steam Settings$"] floating enable, focus
     '';
     extraOptions = [ "--unsupported-gpu" ];
+  };
+
+  systemd.user.services.sway = {
+    Unit = {
+      Description = "Sway Wayland Compositor";
+      Documentation = [ "man:sway(5)" ];
+      BindsTo = [
+        "graphical-session.target"
+        # "graphical-session-pre.target"
+        "tray.target"
+        "sway-session.target"
+      ];
+      Wants = [ "graphical-session-pre.target" ];
+      After = [ "graphical-session-pre.target" ];
+    };
+    Service = {
+      # You may need an `Environment=` line to propagate environment variables to child processes
+      Type = "notify";
+      NotifyAccess = "all"; # Probably need this because a child process actually sends the notify signal
+      ExecStart = "${pkgs.sway}/bin/sway"; # Unforunately, this is IFD (import from derivation)
+      # PassEnvironment = lib.strings.concatStringsSep " " config.wayland.windowManager.sway.systemd.variables;
+      PassEnvironment = "PATH";
+      # We explicitly unset PATH here, as we want it to be set by
+      # systemctl --user import-environment in startsway
+      # Environment.PATH = lib.mkForce null;
+    };
+    Install = {
+      # This line causes systemd, by itself, to launch Sway at machine boot. Ignore this line if Sway should be started by a login manager or some other way.
+      WantedBy = [ "multi-user.target" ];
+    };
   };
 }

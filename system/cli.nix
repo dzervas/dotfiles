@@ -55,7 +55,7 @@
     h = "helm";
     ipy = "ipython";
     ipa = "ip -c -br a";
-    jc = "curl -H \"Content-Type: application/json\"";
+    jc = "curl -H \"Content-Type: application/json\" -H \"Accept: application/json\"";
     k = "kubectl";
     kn = "kubens";
     kc = "kubectx";

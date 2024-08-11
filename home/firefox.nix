@@ -59,6 +59,9 @@
 
         "widget.use-xdg-desktop-portal.file-picker" = 0;
 
+        # Make the .lan TLD whitelisted
+        "browser.fixup.domainsuffixwhitelist.lan" = true;
+
         # ToolBar state
         "browser.uiCustomization.state" = ''
           {
@@ -113,6 +116,52 @@
             "currentVersion": 100,
             "newElementCount": 5
           }
+        '';
+
+        # Net tab page
+        "browser.newtabpage.activity-stream.section.highlights.includePocket" = false;
+        "services.sync.prefs.sync.browser.newtabpage.activity-stream.section.highlights.includePocket" = false;
+        "services.sync.prefs.sync-seen.browser.newtabpage.activity-stream.section.highlights.includePocket" = false;
+        "services.sync.prefs.sync.browser.newtabpage.activity-stream.showSponsored" = false;
+        "services.sync.prefs.sync-seen.browser.newtabpage.activity-stream.showSponsored" = false;
+        "services.sync.prefs.sync.browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+        "services.sync.prefs.sync-seen.browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+        "browser.newtabpage.pinned" = ''
+          [
+            {
+              "url": "https://hass.dzerv.art/",
+              "label": "HASS"
+            },
+            {
+              "url": "https://search.nixos.org/packages?channel=unstable",
+              "label": "NixOS Search",
+              "customScreenshotURL": "https://search.nixos.org/images/nix-logo.png"
+            },
+            {
+              "url": "https://home-manager-options.extranix.com/?query=&release=master",
+              "label": "Home Manager Options"
+            },
+            {
+              "url": "https://hackaday.com/",
+              "label": "HackADay"
+            },
+            {
+              "url": "https://news.ycombinator.com/",
+              "label": "HackerNews"
+            },
+            {
+              "url": "https://lobste.rs",
+              "label": "Lobsters"
+            },
+            {
+              "url": "https://github.com/",
+              "label": "GitHub"
+            },
+            {
+              "url": "https://www.skroutz.gr/",
+              "label": "Skroutz"
+            }
+          ]
         '';
       };
     };

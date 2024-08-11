@@ -90,3 +90,14 @@ nix flake update --override-input nixpkgs github:NixOS/nixpkgs/7252b96d60dc2ccf3
 ```bash
 sudo nix shell nixpkgs#solaar --command solaar-cli config 1 persistent-remappable-keys "MultiPlatform Gesture Button" "F14"
 ```
+
+### Secure boot
+
+```fish
+# Crete the keys
+sudo sbctl create-keys
+# Check that everything is signed (apart from the kernel under nixos dir)
+sudo sbctl verify
+# Clear all secure boot keys and enter setup mode from the BIOS
+sudo sbctl enroll-keys
+```

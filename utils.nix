@@ -11,7 +11,9 @@
 
       modules = mkConfigModules {
         inherit hostName stateVersion system isPrivate;
-      } ++ (
+      } ++ [
+        inputs.lanzaboote.nixosModules.lanzaboote
+      ] ++ (
         if isPrivate then [
           inputs.agenix.nixosModules.default
           { environment.systemPackages = [ inputs.agenix.packages.x86_64-linux.default ]; }

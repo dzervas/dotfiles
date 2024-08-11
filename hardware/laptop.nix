@@ -9,6 +9,7 @@ in {
     ./components/laptop.nix
   ];
 
+  boot.loader.systemd-boot.enable = true;
   boot.initrd.luks.devices.cryptroot.device = root_part;
 
   # Generated using nix-shell -p lm_sensors --run pwmconfig

@@ -15,8 +15,7 @@
     go
 
     pipenv
-    (python3Packages.python.withPackages (p: [ p.ipython ]))
-    # python311Packages.ipython
+    (python3Packages.python.withPackages (p: [ p.ipython p.requests ]))
     pyenv
 
     cargo-edit

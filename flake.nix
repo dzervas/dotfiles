@@ -5,6 +5,8 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     agenix.url = "github:ryantm/agenix";
+    lanzaboote.url = "github:nix-community/lanzaboote/v0.4.1";
+    lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
     stylix.url = "github:danth/stylix";
 
     # Home Manager

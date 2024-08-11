@@ -8,19 +8,6 @@
     # sddm.wayland.enable = true;
   };
 
-  programs.regreet = {
-    enable = true;
-    cageArgs = [ "-s" "-m" "last" ];
-    settings = {
-      background = {
-        path = config.stylix.image;
-        fit = "Cover";
-      };
-      # appearance.greeting_msg = "Welcome to the Lab!";
-      GTK.application_prefer_dark_theme = true;
-    };
-  };
-
   programs.sway = {
     enable = true;
     wrapperFeatures.gtk = true;
@@ -77,4 +64,7 @@
 
   # Steam udev rules
   hardware.steam-hardware.enable = true;
+
+  # Disable lightdm (it's enabled by default)
+  services.xserver.displayManager.lightdm.enable = false;
 }
