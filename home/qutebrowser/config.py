@@ -20,3 +20,4 @@ config.set("content.blocking.adblock.lists", [
 ])
 
 config.bind("<Ctrl-r>", "reload", mode="passthrough")
+config.set("spellcheck.languages", ["en-US", "el-GR"])

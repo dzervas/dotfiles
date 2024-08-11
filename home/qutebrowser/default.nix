@@ -2,6 +2,15 @@
   # Main directory for wrapped qutebrowser instances
   quteDir = "${config.xdg.dataHome}/quteWrap";
 
+  english = builtins.fetchurl {
+    url = "https://chromium.googlesource.com/chromium/deps/hunspell_dictionaries.git/+/main/en-US-10-1.bdic?format=TEXT";
+    sha256 = "1bxn778sqd6q144hr4d6l18s34n1mjc6bp6dsjlp2sbhw4kh38h1";
+  };
+  greek = builtins.fetchurl {
+    url = "https://chromium.googlesource.com/chromium/deps/hunspell_dictionaries.git/+/main/el-GR-3-0.bdic?format=TEXT";
+    sha256 = "1cmv8v9kyimivhfqavlafb9131k3csv2r5s0w7v33g8qf4jva5v2";
+  };
+
   # Function that creates a desktop and the config for the target app
   # It returns a function that can be imported (hence the { ... } arguments)
   quteDesktopWrap = { name, url, icon, iconSha256, emoji, categories ? [], greasemonkey ? [], scheme ? null }: let
@@ -29,6 +38,8 @@
     in prev // { "${baseDir}/config/greasemonkey/${scriptName}".source = script; }) acc greasemonkey // { # Return the previous accumulator + the new element
       # Append a non-generated file, the config that will be used
       "${baseDir}/config.py".text = builtins.replaceStrings ["{{url}}" "{{emoji}}"] [url emoji] (builtins.readFile ./config.py);
+      "${baseDir}/data/qtwebengine_dictionaries/en-US-10-1.bdic".source = english;
+      "${baseDir}/data/qtwebengine_dictionaries/el-GR-3-0.bdic".source = greek;
     };
   };
 
@@ -39,6 +50,10 @@ in {
     searchEngines = {
       DEFAULT = "https://www.google.com/search?hl=en&q={}";
       gh = "https://github.com/search?type=repositories&q={}";
+    };
+    settings = {
+      spellcheck.languages = [ "en-US" "el-GR" ];
+      colors.webpage.preferred_color_scheme = "dark";
     };
   };
 
