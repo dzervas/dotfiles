@@ -13,7 +13,7 @@
         url = icon;
         sha256 = iconSha256;
       };
-      exec = "${config.programs.qutebrowser.package}/bin/qutebrowser --basedir ${baseDir} --config-py ${baseDir}/config.py --target window ${url}";
+      exec = "${config.programs.qutebrowser.package}/bin/qutebrowser --override-restore --basedir ${baseDir} --config-py ${baseDir}/config.py --target window ${url}";
     };
 
     # home.file."${baseDir}/config.py".text = builtins.replaceStrings ["{{url}}"] [url] (builtins.readFile ./config.py);
