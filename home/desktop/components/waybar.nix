@@ -14,6 +14,7 @@
         # Module positioning
         modules-left = [
           "custom/power"
+          "custom/launcher"
           "sway/workspaces"
           "sway/scratchpad"
           # "custom/media"
@@ -31,6 +32,10 @@
         "custom/power" = {
           format = " {icon} ";
           format-icons = "󰐥";
+        };
+        "custom/launcher" = {
+          format = " {icon} ";
+          format-icons = "🚀";
         };
         "sway/window" = {
           icon = true;

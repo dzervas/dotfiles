@@ -12,6 +12,7 @@
       modi = "combi,calc";
       show-icons = true;
       hover-select = true;
+      click-to-exit = true;
     };
 
     yoffset =
@@ -27,5 +28,6 @@
 
   programs.waybar.settings.mainBar = lib.mkIf config.programs.waybar.enable {
     "custom/power".on-click = "rofi -no-fixed-num-lines -location 1 -theme-str 'window {width: 10%;}' -show menu -modi 'menu:rofi-power-menu --choices=suspend/shutdown/reboot'";
+    "custom/launcher".on-click = "rofi -location 1 -theme-str 'window {width: 20%;}' -show drun";
   };
 }

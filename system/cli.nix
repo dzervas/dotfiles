@@ -88,6 +88,7 @@
     docker_rmi = "docker rmi $(docker images --no-trunc -qf dangling=true)";
     open = "xdg-open";
     passgen = "gpg --armor --gen-random 2 ";
+    reboot = "read -P 'Are you sure?' && systemctl reboot";
     weather = "curl wttr.in";
     webserver = "python3 -m http.server";
 
