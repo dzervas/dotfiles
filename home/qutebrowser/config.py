@@ -18,3 +18,5 @@ config.set("content.blocking.adblock.lists", [
 	"https://github.com/uBlockOrigin/uAssets/raw/master/filters/privacy.txt",
 	"https://github.com/uBlockOrigin/uAssets/raw/master/filters/quick-fixes.txt",
 ])
+
+config.bind("<Ctrl-r>", "reload", mode="passthrough")

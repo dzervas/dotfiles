@@ -59,6 +59,19 @@
 
         "widget.use-xdg-desktop-portal.file-picker" = 0;
 
+        # Privacy
+        "geo.enabled" = false;
+        "network.captive-portal-service.enabled" = false;
+        "network.http.sendRefererHeader" = 1; # 0 for no referer, 1 for only clicked links, 2 for everything
+        "privacy.resistFingerprinting" = true;
+        "privacy.trackingprotection.enabled" = true;
+        "privacy.donottrackheader.enabled" = true;
+        "services.sync.prefs.sync.privacy.donottrackheader.enabled" = true;
+        "browser.safebrowsing.malware.enabled" = false;
+        "services.sync.prefs.sync.browser.safebrowsing.malware.enabled" = false;
+        "browser.safebrowsing.phishing.enabled" = false;
+        "services.sync.prefs.sync.browser.safebrowsing.phishing.enabled" = false;
+
         # Make the .lan TLD whitelisted
         "browser.fixup.domainsuffixwhitelist.lan" = true;
 
