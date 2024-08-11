@@ -43,6 +43,7 @@
         "browser.quitShortcut.disabled" = true;
         "browser.translations.neverTranslateLanguages" = "el";
         "findbar.highlightAll" = true;
+        "layout.css.prefers-color-scheme.content-override" = 0; # force dark
         "reader.content_width" = 5;
 
         # Disable engagement pop-ups
@@ -63,7 +64,7 @@
         "geo.enabled" = false;
         "network.captive-portal-service.enabled" = false;
         "network.http.sendRefererHeader" = 1; # 0 for no referer, 1 for only clicked links, 2 for everything
-        "privacy.resistFingerprinting" = true;
+        "privacy.resistFingerprinting" = false; # Resets prefers-color-scheme to light :/
         "privacy.trackingprotection.enabled" = true;
         "privacy.donottrackheader.enabled" = true;
         "services.sync.prefs.sync.privacy.donottrackheader.enabled" = true;
