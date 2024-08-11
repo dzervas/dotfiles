@@ -100,4 +100,6 @@ sudo sbctl create-keys
 sudo sbctl verify
 # Enter setup mode from the BIOS
 sudo sbctl enroll-keys --microsoft
+# Check that secure boot is enabled
+sudo sbctl status
 ```

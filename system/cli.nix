@@ -28,6 +28,12 @@
   # Set fish as the default shell
   programs.fish.enable = true;
 
+  services.locate = {
+    enable = true;
+    localuser = null;
+    package = pkgs.plocate;
+  };
+
   virtualisation.podman = {
     enable = true;
     dockerCompat = true;

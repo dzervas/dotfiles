@@ -4,7 +4,7 @@
 
   # Function that creates a desktop and the config for the target app
   # It returns a function that can be imported (hence the { ... } arguments)
-  quteDesktopWrap = { name, url, icon, iconSha256, emoji, categories ? [], greasemonkey ? [] }: let
+  quteDesktopWrap = { name, url, icon, iconSha256, emoji, categories ? [], greasemonkey ? [], scheme ? null }: let
     baseDir = "${quteDir}/${name}";
   in { ... }: {
     xdg.desktopEntries.${name} = {
@@ -15,6 +15,10 @@
       };
       exec = "${config.programs.qutebrowser.package}/bin/qutebrowser --override-restore --basedir ${baseDir} --config-py ${baseDir}/config.py --target window ${url}";
     };
+
+    xdg.mimeApps.defaultApplications = if builtins.isString scheme then
+      { "x-scheme-handler/${scheme}" = "${name}.desktop"; }
+    else {};
 
     # home.file."${baseDir}/config.py".text = builtins.replaceStrings ["{{url}}"] [url] (builtins.readFile ./config.py);
     # Do a merge as `home.file` is already used above
@@ -47,6 +51,7 @@ in {
       categories = [ "Network" "InstantMessaging" ];
       greasemonkey = [ ./scripts/discord.nitro.js ];
       emoji = "🎃";
+      scheme = "discord";
     })
     (quteDesktopWrap {
       name = "Element";
@@ -71,6 +76,7 @@ in {
       iconSha256 = "1y0bdflrvliddl8s8hh0h4v2xb81s4lypdas4qjpzafpr5i7ln3f";
       categories = [ "Network" "InstantMessaging" ];
       emoji = "✈️";
+      scheme = "tg";
     })
   ];
 }
