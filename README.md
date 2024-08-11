@@ -98,6 +98,6 @@ sudo nix shell nixpkgs#solaar --command solaar-cli config 1 persistent-remappabl
 sudo sbctl create-keys
 # Check that everything is signed (apart from the kernel under nixos dir)
 sudo sbctl verify
-# Clear all secure boot keys and enter setup mode from the BIOS
-sudo sbctl enroll-keys
+# Enter setup mode from the BIOS
+sudo sbctl enroll-keys --microsoft
 ```

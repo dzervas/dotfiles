@@ -1,5 +1,5 @@
 { config, lib, pkgs, ... }: let
-  lock = "${pkgs._1password-gui}/bin/1password --lock";
+  lock = "${pkgs._1password-gui}/bin/1password --lock --silent";
 in {
   programs.ssh = {
     enable = true;
@@ -25,5 +25,23 @@ in {
     timeouts = [
       { timeout = 300; command = lock;}
     ];
+  };
+
+  systemd.user.services._1password-tray = {
+    Unit = {
+      Description = "1password Tray";
+      PartOf = [ "graphical-session.target" ];
+      Requires = [ "tray.target" ];
+      After = [
+        "graphical-session-pre.target"
+        "tray.target"
+      ];
+    };
+    Service = {
+      ExecStart = "${pkgs._1password-gui}/bin/1password --silent";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
   };
 }

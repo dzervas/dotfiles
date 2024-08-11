@@ -3,13 +3,13 @@
   modifier = "Mod4";
 in {
   imports = [
-    ./components/kanshi.nix
     ./components/rofi.nix
     ./components/swayidle.nix
     ./components/swaylock.nix
     ./components/trays.nix
     ./components/waybar.nix
     ./components/xdg.nix
+    ./components/kanshi.nix
   ];
 
   services.swaync.enable = true;
@@ -65,12 +65,9 @@ in {
       startup = [
         { command = "systemctl --user unset-environment DISPLAY WAYLAND_DISPLAY && systemctl --user import-environment && systemctl --user restart xdg-desktop-portal.service"; always = true; }
         { command = "systemd-notify --ready || true"; }
-        { command = "1password --silent"; }
-        { command = cfg.terminal; }
-        { command = cfg.browser; }
         { command = "swaykbdd"; }
-        { command = "systemctl --user restart kanshi"; always = true; }
-        # Fix firefox as default browser
+        { command = cfg.browser; }
+        { command = cfg.terminal; }
       ];
       bars = [{
         position = "top";
@@ -97,6 +94,12 @@ in {
           # VirtualBox
           mode = "1920x1080";
           scale = "1";
+        };
+        "Dell Inc. DELL P2419H 6P7BFZ2" = {
+          position = "0,0";
+        };
+        "Dell Inc. DELL P2419H C49BFZ2" = {
+          position = "1920,0";
         };
       };
 
@@ -221,33 +224,9 @@ in {
     extraOptions = [ "--unsupported-gpu" ];
   };
 
-  systemd.user.services.sway = {
-    Unit = {
-      Description = "Sway Wayland Compositor";
-      Documentation = [ "man:sway(5)" ];
-      BindsTo = [
-        "graphical-session.target"
-        # "graphical-session-pre.target"
-        "tray.target"
-        "sway-session.target"
-      ];
-      Wants = [ "graphical-session-pre.target" ];
-      After = [ "graphical-session-pre.target" ];
-    };
-    Service = {
-      # You may need an `Environment=` line to propagate environment variables to child processes
-      Type = "notify";
-      NotifyAccess = "all"; # Probably need this because a child process actually sends the notify signal
-      ExecStart = "${pkgs.sway}/bin/sway"; # Unforunately, this is IFD (import from derivation)
-      # PassEnvironment = lib.strings.concatStringsSep " " config.wayland.windowManager.sway.systemd.variables;
-      PassEnvironment = "PATH";
-      # We explicitly unset PATH here, as we want it to be set by
-      # systemctl --user import-environment in startsway
-      # Environment.PATH = lib.mkForce null;
-    };
-    Install = {
-      # This line causes systemd, by itself, to launch Sway at machine boot. Ignore this line if Sway should be started by a login manager or some other way.
-      WantedBy = [ "multi-user.target" ];
-    };
-  };
+  programs.fish.loginShellInit = if config.programs.fish.enable then ''
+    if test -z "$WAYLAND_DISPLAY" -a "$XDG_VTNR" -eq 1
+      exec sway
+    end
+  '' else throw "Fish shell is not enabled so sway can't be started";
 }

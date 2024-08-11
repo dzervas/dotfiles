@@ -24,4 +24,10 @@
     type = types.str;
     description = "The terminal emulator to use";
   };
+
+  options.setup.isLaptop = mkOption {
+    type = types.bool;
+    default = false;
+    description = "The current machine is a laptop";
+  };
 }

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: {
+{ lib, pkgs, ... }: {
   services.xserver.enable = true;
   hardware.graphics.enable = true;
   security.polkit.enable = true;

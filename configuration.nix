@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ config, pkgs, ... }: {
   imports = [ ./system ];
 
   system.copySystemConfiguration = false;
@@ -14,6 +14,11 @@
     useGlobalPkgs = true;
     useUserPackages = true;
     users.dzervas = import ./home;
+  };
+
+  systemd.services."getty@tty1" = {
+    overrideStrategy = "asDropin";
+    serviceConfig.ExecStart = ["" "@${pkgs.util-linux}/sbin/agetty agetty --login-program ${config.services.getty.loginProgram} --autologin dzervas --noclear --keep-baud %I 115200,38400,9600 $TERM"];
   };
 
   # Fix home-manager xdg desktop portal support
