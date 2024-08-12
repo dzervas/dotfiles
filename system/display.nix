@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   services.xserver.enable = true;
   hardware.graphics.enable = true;
   security.polkit.enable = true;
@@ -34,10 +34,15 @@
 
   # Brightness control
   programs.light.enable = true;
+  hardware.i2c.enable = true;
+  boot.extraModulePackages = [config.boot.kernelPackages.ddcci-driver];
+  boot.kernelModules = ["ddcci_backlight"];
 
+  # FlatPak
   services.flatpak.enable = true;
   services.accounts-daemon.enable = true; # Flatpak needs this
 
+  # XDG Shit
   xdg.portal = {
     enable = true;
     wlr.enable = true;
