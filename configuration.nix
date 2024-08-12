@@ -6,7 +6,7 @@
 
   users.users.dzervas = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "audio" "video" "uucp" "uinput" "vboxusers" ];
+    extraGroups = [ "wheel" "audio" "video" "uucp" "uinput" "vboxusers" "i2c" ];
     shell = pkgs.fish;
   };
 
@@ -43,6 +43,8 @@
   };
   services.fwupd.enable = true;
   programs.dconf.enable = true;
+
+  hardware.enableAllFirmware = true;
 
   # Fix flatpak default browser
   systemd.user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
