@@ -108,6 +108,7 @@ in {
 
       # Key bindings
       floating.modifier = modifier;
+      bindkeysToCode = true;
       keybindings = {
         # Basic actions
         "${modifier}+c" = "kill";

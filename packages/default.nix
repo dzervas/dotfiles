@@ -2,6 +2,6 @@
   p = path: pkgs.callPackage path {};
 in {
   packages = {
-    estlcam = p ./estlcam.nix;
+    # estlcam = p ./estlcam.nix;
   };
 }

@@ -9,6 +9,7 @@
     ./fonts.nix
     ./network.nix
     ./theme.nix
+    # ./usb-kvm.nix
     ./vim.nix
   ];
 
