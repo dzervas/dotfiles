@@ -6,10 +6,10 @@ in {
     ./components/amd.nix
     ./components/boot.nix
     ./components/peripherals.nix
+    ./components/secure-boot.nix
     ./components/laptop.nix
   ];
 
-  boot.loader.systemd-boot.enable = true;
   boot.initrd.luks.devices.cryptroot.device = root_part;
 
   # Generated using nix-shell -p lm_sensors --run pwmconfig
