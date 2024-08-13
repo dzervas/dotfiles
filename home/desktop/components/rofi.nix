@@ -7,10 +7,13 @@
     plugins = with pkgs; [ (rofi-calc.override { rofi-unwrapped = rofi-wayland-unwrapped; }) ];
 
     extraConfig = rec {
+      # Modes
       modes = "drun,filebrowser,power-menu,run,calc";
       combi-modes = modes;
       modi = "combi,calc";
+
       show-icons = true;
+      auto-select = true;
       hover-select = true;
       click-to-exit = true;
     };
