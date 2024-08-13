@@ -1,7 +1,7 @@
 { ... }: {
   programs.ssh = {
     enable = true;
-    includes = ["~/.ssh/config_local"];
+    includes = ["~/.ssh/local.ssh.cfg"];
     matchBlocks = rec {
       # Aliases
       gh = {

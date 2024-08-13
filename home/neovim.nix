@@ -50,39 +50,39 @@
 
     extraPython3Packages = p: with p; [ jedi ];
     extraConfig = ''
-      			source /etc/vimrc
-      			set viminfo&
-      			"colorscheme molokai
+      source /etc/vimrc
+      set viminfo&
+      "colorscheme molokai
 
-      			" Airline
-      			let g:airline_powerline_fonts = 1
-      			let g:airline_theme = "badwolf"
-      			let g:airline#extensions#syntastic#enabled = 1
-      			let g:airline#extensions#hunks#non_zero_only = 0
+      " Airline
+      let g:airline_powerline_fonts = 1
+      let g:airline_theme = "badwolf"
+      let g:airline#extensions#syntastic#enabled = 1
+      let g:airline#extensions#hunks#non_zero_only = 0
 
-      			" Nerd Commenter
-      			let g:NERDSpaceDelims = 1
-      			let g:NERDTrimTrailingWhitespace = 1
-      			nmap <C-/> <Plug>NERDCommenterToggle
-      			vmap <C-/> <Plug>NERDCommenterToggle<CR>gv
+      " Nerd Commenter
+      let g:NERDSpaceDelims = 1
+      let g:NERDTrimTrailingWhitespace = 1
+      nmap <C-/> <Plug>NERDCommenterToggle
+      vmap <C-/> <Plug>NERDCommenterToggle<CR>gv
 
-      			" Deoplete
-      			let g:deoplete#enable_at_startup = 1
-      			let g:echodoc_enable_at_startup = 1
-      			let g:jedi#show_docstring = 1
-      			let g:jedi#show_call_signatures = 2
-      			let g:jedi#popup_select_first = 0
-      			call deoplete#custom#option('smart_case', v:true)
-      			call deoplete#custom#source('_', 'converters', ['converter_auto_paren', 'converter_auto_delimiter'])
-      			autocmd InsertLeave * if !pumvisible() | pclose | endif
+      " Deoplete
+      let g:deoplete#enable_at_startup = 1
+      let g:echodoc_enable_at_startup = 1
+      let g:jedi#show_docstring = 1
+      let g:jedi#show_call_signatures = 2
+      let g:jedi#popup_select_first = 0
+      call deoplete#custom#option('smart_case', v:true)
+      call deoplete#custom#source('_', 'converters', ['converter_auto_paren', 'converter_auto_delimiter'])
+      autocmd InsertLeave * if !pumvisible() | pclose | endif
 
-      			" Move
-      			let g:move_map_keys = 0
-      			nmap <C-up>   <Plug>MoveLineUp
-      			nmap <C-down> <Plug>MoveLineDown
-      			vmap <C-up>   <Plug>MoveBlockUp
-      			vmap <C-down> <Plug>MoveBlockDown
-      		'';
+      " Move
+      let g:move_map_keys = 0
+      nmap <C-up>   <Plug>MoveLineUp
+      nmap <C-down> <Plug>MoveLineDown
+      vmap <C-up>   <Plug>MoveBlockUp
+      vmap <C-down> <Plug>MoveBlockDown
+    '';
   };
 
   home.sessionVariables = {

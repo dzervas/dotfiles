@@ -23,6 +23,7 @@
     tree
     unzip
     usbutils
+    wget
   ];
 
   # Set fish as the default shell
