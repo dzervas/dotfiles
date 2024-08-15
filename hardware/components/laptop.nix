@@ -1,4 +1,4 @@
-{ ... }: {
+_: {
   powerManagement.enable = true;
 
   services.libinput = {

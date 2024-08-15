@@ -26,14 +26,17 @@
   mkConfigModules = { hostName, stateVersion, system, isPrivate ? false }: [
     # Set some basic options
     {
-      config.networking.hostName = hostName;
-      config.system.stateVersion = stateVersion;
-      config.home-manager.users.dzervas.home.stateVersion = stateVersion;
+      config = {
+        networking.hostName = hostName;
+        system.stateVersion = stateVersion;
 
-      # Allow home-manager to have access to nix-flatpak
-      config.home-manager = {
-        extraSpecialArgs = { inherit hostName isPrivate inputs; };
-        sharedModules = [ inputs.flatpak.homeManagerModules.nix-flatpak ];
+        home-manager = {
+          users.dzervas.home.stateVersion = stateVersion;
+
+          # Allow home-manager to have access to nix-flatpak
+          extraSpecialArgs = { inherit hostName isPrivate inputs; };
+          sharedModules = [ inputs.flatpak.homeManagerModules.nix-flatpak ];
+        };
       };
 
       options.isPrivate = lib.mkOption {

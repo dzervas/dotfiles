@@ -1,10 +1,11 @@
-{ ... }: {
+_: {
   nixpkgs.config.allowUnfree = true;
 
   imports = [
     ./1password.nix
     ./bluetooth.nix
     ./cli.nix
+    ./ddc-ci.nix
     ./display.nix
     ./fonts.nix
     ./network.nix

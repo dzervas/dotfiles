@@ -1,4 +1,4 @@
-{ ... }: {
+_: {
   setup.terminal = "alacritty";
   programs.alacritty = {
     enable = true;

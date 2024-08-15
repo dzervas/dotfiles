@@ -15,7 +15,7 @@
   # It returns a function that can be imported (hence the { ... } arguments)
   quteDesktopWrap = { name, url, icon, iconSha256, emoji, categories ? [], greasemonkey ? [], scheme ? null }: let
     baseDir = "${quteDir}/${name}";
-  in { ... }: {
+  in _: {
     xdg.desktopEntries.${name} = {
       inherit name categories;
       icon = builtins.fetchurl {

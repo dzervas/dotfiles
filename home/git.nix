@@ -1,4 +1,4 @@
-{ ... }: {
+_: {
   programs.git = {
     enable = true;
     userName = "Dimitris Zervas";
@@ -27,21 +27,29 @@
 
       color.ui = "auto";
       core.autocrlf = "input";
-      push.default = "current";
-      push.followTags = true;
       web.browser = "firefox";
       pull.rebase = false;
 
-      diff.guitool = "vscode";
-      diff.srcprefix = "-h";
-      diff.zip.textconv = "unzip -c -a";
-      difftool.prompt = false;
-      difftool.vscode.cmd = "code --wait --diff \"$LOCAL\" \"$REMOTE\"";
-      pager.difftool = true;
+      push = {
+        default = "current";
+        followTags = true;
+      };
 
-      diff.tool = "difftastic";
-      diff.external = "difft";
-      difftool.difftastic.cmd = "difft \"$LOCAL\" \"$REMOTE\"";
+      diff = {
+        external = "difft";
+        guitool = "vscode";
+        srcprefix = "-h";
+        tool = "difftastic";
+        zip.textconv = "unzip -c -a";
+      };
+
+      difftool = {
+        prompt = false;
+        difftastic.cmd = "difft \"$LOCAL\" \"$REMOTE\"";
+        vscode.cmd = "code --wait --diff \"$LOCAL\" \"$REMOTE\"";
+      };
+
+      pager.difftool = true;
     };
     ignores = [
       "*~"

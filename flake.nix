@@ -33,7 +33,7 @@
 
         # Pin nixpkgs to the flake input, so that the packages installed
         # come from the flake inputs.nixpkgs.url.
-        modules = [({ ... }: { nix.registry.nixpkgs.flake = nixpkgs; })]
+        modules = [(_: { nix.registry.nixpkgs.flake = nixpkgs; })]
         ++ utils.mkConfigModules {
           system = "x86_64-linux";
           hostName = "iso";
