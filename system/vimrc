@@ -68,6 +68,7 @@ au BufRead,BufNewFile *.inc set filetype=php
 au BufNewFile,BufRead Jenkinsfile set filetype=groovy
 au BufNewFile,BufRead *.gdsl set filetype=groovy
 au BufNewFile,BufRead *.ssh.cfg set filetype=sshconfig
+au BufNewFile,BufRead .envrc set filetype=bash
 
 " Restore cursor position in files
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif

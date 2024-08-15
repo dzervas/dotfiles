@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -o errexit -o pipefail -o noclobber -o nounset
+
+# direnv: Load 1Password secrets
+# Usage: use op [-s|--section <section>] [-w|--wrap <command>]
+#   -s|--section: Load a section from a 1Password item.
+#   -w|--wrap: Create an alias for a command that uses 1Password secrets.
+#
+# Example:
+#   use op -s "Personal/Secrets/Scripts#MY_VARS_"
+#   It will load every field from the "Scripts" section of the "Secrets" item
+#   in the "Personal" vault and export them with the "MY_VARS_" prefix.
+#
+#   use op -w "my-command"
+#   It will create an alias for "my-command" that will load the 1Password secrets
+function use_op() {
+	local section=""
+	local wrap=""
+
+	echo "op: Loading 1Password secrets..."
+
+	while true; do
+		if test "$#" -eq 0; then
+			break
+		fi
+
+		case "$1" in
+			-s|--section)
+				if test -n "$section"; then
+					section="$section $2"
+				else
+					section="$2"
+				fi
+
+				shift 2
+				;;
+			-w|--wrap)
+				if test -n "$wrap"; then
+					wrap="$wrap $2"
+				else
+					wrap="$2"
+				fi
+
+				shift 2
+				;;
+		esac
+	done
+
+	if test -z "$section" -a -z "$wrap"; then
+		echo "op: Nothing to do - use '-s' or '-w'."
+		return
+	fi
+
+	for w in $wrap; do
+		eval "alias $w='op run -- $w'"
+	done
+
+	for s in $section; do
+		local vault=$(echo $s | cut -d/ -f1)
+		local item=$(echo $s | cut -d/ -f2)
+		local label=$(echo $s | cut -d/ -f3 | cut -d'#' -f1)
+		local prefix=$(echo $s | cut -d'#' -f2)
+		prefix=${prefix:-""}
+
+		local data=$(op item get $item --vault $vault --format json | jq -c)
+
+		eval "$(echo $data | jq -r '.fields[] | select(.section.label == "'$label'") | "export '$prefix'\(.label)=\"\(.value)\"; "')"
+	done
+}
