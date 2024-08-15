@@ -12,8 +12,6 @@ in {
     ./components/kanshi.nix
   ];
 
-  services.swaync.enable = true;
-
   home.packages = with pkgs; [
     swaykbdd
 
@@ -27,18 +25,14 @@ in {
     playerctl
   ];
 
-  gtk = {
-    enable = true;
-    iconTheme = {
-      package = pkgs.adwaita-icon-theme;
-      name = "Adwaita";
+  programs.waybar.systemd.target = "sway-session.target";
+  services = {
+    swaync.enable = true;
+    swayidle.systemdTarget = "sway-session.target";
+    flatpak.overrides.global = {
+      Context.sockets = ["wayland" "!x11" "!fallback-x11"];
+      Environment.GDK_BACKEND = "wayland";
     };
-  };
-  qt.enable = true;
-
-  services.flatpak.overrides.global = {
-    Context.sockets = ["wayland" "!x11" "!fallback-x11"];
-    Environment.GDK_BACKEND = "wayland";
   };
 
   home.sessionVariables = {
@@ -49,6 +43,15 @@ in {
 
     WLR_DRM_NO_MODIFIERS = "1";
   };
+
+  gtk = {
+    enable = true;
+    iconTheme = {
+      package = pkgs.adwaita-icon-theme;
+      name = "Adwaita";
+    };
+  };
+  qt.enable = true;
 
   wayland.windowManager.sway = {
     enable = true;
@@ -175,16 +178,6 @@ in {
         "Print" = "exec 'grim -g \"$(slurp)\" - | swappy -f -'";
         "Shift+Print" = "exec 'grim -g \"$(swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \\\"\\(.x),\\(.y) \\(.width)x\\(.height)\\\"')\" - | swappy -f -'";
         "Ctrl+Print" = "exec 'grim -g \"$(slurp -or)\" - | swappy -f -'";
-
-        XF86AudioRaiseVolume = "exec 'wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+'";
-        XF86AudioLowerVolume = "exec 'wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-'";
-        XF86AudioMute = "exec 'wpctl set-mute'";
-        XF86AudioPlay = "exec 'playerctl play-pause'";
-        XF86AudioNext = "exec 'playerctl next'";
-        XF86AudioPrev = "exec 'playerctl previous'";
-
-        XF86MonBrightnessUp = "exec 'light -A 10'";
-        XF86MonBrightnessDown = "exec 'light -U 10'";
       };
     };
     extraConfig = ''
@@ -221,6 +214,16 @@ in {
       for_window [title="^Wine System Tray$"] floating enable, move scratchpad
       for_window [title="^ContentDialogOverlayWindow$"] floating enable, focus
       for_window [title="^Steam Settings$"] floating enable, focus
+
+      bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+      bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+      bindsym --locked XF86AudioMute exec wpctl set-mute
+      bindsym --locked XF86AudioPlay exec playerctl play-pause
+      bindsym --locked XF86AudioNext exec playerctl next
+      bindsym --locked XF86AudioPrev exec playerctl previous
+
+      bindsym --locked XF86MonBrightnessUp exec light -A 10
+      bindsym --locked XF86MonBrightnessDown exec light -U 10
     '';
     extraOptions = [ "--unsupported-gpu" ];
   };

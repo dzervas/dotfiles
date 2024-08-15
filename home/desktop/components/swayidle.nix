@@ -7,9 +7,10 @@ in
 {
   services.swayidle = {
     enable = true;
-    systemdTarget = "sway-session.target";
     events = [
+      { event = "before-sleep"; command = "playerctl pause"; }
       { event = "before-sleep"; command = swaylock; }
+      { event = "lock"; command = swaylock; }
     ];
     timeouts = [
       { timeout = 300; command = swaylock; }

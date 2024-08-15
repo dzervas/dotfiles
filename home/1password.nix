@@ -37,11 +37,8 @@ in {
         "tray.target"
       ];
     };
-    Service = {
-      ExecStart = "${pkgs._1password-gui}/bin/1password --silent";
-    };
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
-    };
+
+    Service.ExecStart = "${pkgs._1password-gui}/bin/1password --silent";
+    Install.WantedBy = [ "graphical-session.target" ];
   };
 }

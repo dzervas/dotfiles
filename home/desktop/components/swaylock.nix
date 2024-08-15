@@ -20,6 +20,4 @@ in {
     # Why does this not work in config.startup?
     extraConfig = "exec ${locker} --grace 0";
   };
-
-
 }
