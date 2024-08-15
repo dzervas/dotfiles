@@ -48,6 +48,7 @@
       "*.swp"
       ".envrc"
       ".direnv"
+      ".shell.nix"
     ];
   };
 }

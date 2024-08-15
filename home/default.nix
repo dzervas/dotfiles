@@ -3,6 +3,7 @@
     ./1password.nix
     ./alacritty.nix
     ./dev.nix
+    ./direnv.nix
     ./firefox.nix
     ./fish.nix
     ./flatpak.nix
@@ -17,7 +18,6 @@
     ./desktop/sway.nix
   ];
 
-  programs.direnv.enable = true;
   programs.mpv.enable = true;
 
   programs.home-manager.enable = true;
