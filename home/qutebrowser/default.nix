@@ -71,8 +71,8 @@ in {
     (quteDesktopWrap {
       name = "Element";
       url = "https://app.element.io";
-      icon = "https://app.element.io/vector-icons/apple-touch-icon-180.a568820.png";
-      iconSha256 = "15frj7ikc7ym77nm8ah9flc5ywgb6j0mk48jlmcwzzcixpcar1yx";
+      icon = "https://app.element.io/vector-icons/apple-touch-icon-180.f6ddb43.png";
+      iconSha256 = "1qcpyq8gpp1xvsx3g7akl43wrbxz9bkjby3rjiz3gcvr5lav48lz";
       categories = [ "Network" "InstantMessaging" ];
       emoji = "♻️";
     })
