@@ -5,6 +5,7 @@
     difftastic
     dig
     fd
+    file
     fzf
     git
     htop

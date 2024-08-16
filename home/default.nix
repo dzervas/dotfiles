@@ -14,6 +14,7 @@
     ./qutebrowser
     ./ssh.nix
     ./tools.nix
+    ./thumbnailers.nix
     ./wine
     ./desktop/sway.nix
   ];
