@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }: let
   cfg = config.setup;
   modifier = "Mod4";
-  swayidle = config.systemd.user.services.swayidle.Service.ExecStart;
 in {
   imports = [
     ./components/rofi.nix

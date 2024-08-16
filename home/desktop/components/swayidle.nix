@@ -10,8 +10,11 @@ in
     enable = true;
     events = [
       { event = "before-sleep"; command = "playerctl pause"; }
-      { event = "before-sleep"; command = swaylock; }
       { event = "lock"; command = swaylock; }
+
+      # { event = "before-sleep"; command = swaylock; }
+      # Before-sleep lock is not triggered for some reason
+      { event = "after-resume"; command = swaylock; }
     ];
     timeouts = [
       { timeout = 300; command = swaylock; }
@@ -34,6 +37,7 @@ in
     ] else []);
   };
 
+  # Build the swayidle config
   home.file."${configFile}".text = let
     lines = map (e: ''${e.event} "${e.command}"'') config.services.swayidle.events ++
             map (t: if builtins.isNull t.resumeCommand then
@@ -43,9 +47,7 @@ in
             ) config.services.swayidle.timeouts;
   in builtins.concatStringsSep "\n" lines;
 
-  systemd.user.services.swayidle = lib.mkIf config.services.swayidle.enable {
-    Install = {};
-  };
-
+  # Execute swayidle manually if we're using sway
+  systemd.user.services.swayidle = lib.mkIf config.services.swayidle.enable { Install = {}; };
   wayland.windowManager.sway.config.startup = [{ command = "${pkgs.swayidle}/bin/swayidle -w -C ${configFile}"; }];
 }
