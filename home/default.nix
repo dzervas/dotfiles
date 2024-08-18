@@ -4,6 +4,7 @@
     ./alacritty.nix
     ./dev.nix
     ./direnv.nix
+    ./easyeffects
     ./firefox.nix
     ./fish.nix
     ./flatpak.nix
