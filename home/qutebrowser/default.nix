@@ -75,6 +75,12 @@ in {
     };
   };
 
+  home.packages = with pkgs; [
+    hunspell
+    hunspellDicts.el-gr
+    hunspellDicts.en-us
+  ];
+
   imports = [
     (quteDesktopWrap {
       name = "Discord";

@@ -28,7 +28,7 @@ config.set("content.blocking.adblock.lists", custom_adblock + [
 ])
 
 # Spell checking
-config.set("spellcheck.languages", ["en-US", "el-GR"])
+c.spellcheck.languages = ["en-US", "el-GR"]
 
 # Keybindings
 config.bind("<Ctrl-r>", "reload", mode="passthrough")
