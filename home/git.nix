@@ -1,4 +1,6 @@
 _: {
+  # TODO: Somehow integrate [includeIf "hasconfig:remote.*.url:git@github.com:<organisation>/**"] in a safe way
+
   programs.git = {
     enable = true;
     userName = "Dimitris Zervas";
@@ -29,6 +31,11 @@ _: {
       core.autocrlf = "input";
       web.browser = "firefox";
       pull.rebase = false;
+
+      # Output stuff
+      branch.sort = "-committerdate";
+      log.date = "local";
+      tag.sort = "version:refname";
 
       push = {
         default = "current";
