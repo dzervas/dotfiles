@@ -7,7 +7,7 @@ in {
     package = pkgs.swaylock-effects;
     settings = {
       clock = true;
-      grace = 5;
+      grace = 10;
       fade-in = 0.1;
       effect-blur = "20x3";
       disable-caps-lock-text = true;

@@ -74,13 +74,15 @@
     p = "podman";
     pc = "podman-compose";
     py = "python";
-    v = "nvim";
     sv = "sudoedit";
     tf = "terraform";
+    v = "vim";
 
     # Nicer output
     man = "LC_ALL=C LANG=C command man";
     pgrep = "command pgrep -af";
+    pkill = "pkill -ef";
+    pwdname = "basename $(pwd)";
     ssh = "TERM=xterm-256color command ssh";
     now = "date +\"%Y.%m.%d-%H.%M.%S\"";
     # By https://unix.stackexchange.com/questions/25327/watch-command-alias-expansion

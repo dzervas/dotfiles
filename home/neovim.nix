@@ -40,6 +40,9 @@
       deoplete-rust
       echodoc-vim
 
+      # Nix linter
+      statix
+
       # Text objects
       targets-vim
       vim-textobj-user
