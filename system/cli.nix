@@ -21,6 +21,7 @@
     readline
     ripgrep
     socat
+    statix # Lint nix files
     tree
     unzip
     usbutils

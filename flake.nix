@@ -21,7 +21,7 @@
 
   outputs = inputs@{ self, nixpkgs, nixos-generators, ... }:
     let
-      lib = nixpkgs.lib;
+      inherit (nixpkgs) lib;
       utils = import ./utils.nix { inherit inputs lib; };
     in
     lib.foldr lib.recursiveUpdate {

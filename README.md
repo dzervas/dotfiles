@@ -103,3 +103,23 @@ sudo sbctl enroll-keys --microsoft
 # Check that secure boot is enabled
 sudo sbctl status
 ```
+
+## Pre-commit hook linting
+
+`.git/hooks/pre-commit`:
+
+```bash
+#!/bin/sh
+
+# Navigate to the root of the Git repository
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+# Run statix check
+statix check
+
+# Check if statix check was successful
+if [ $? -ne 0 ]; then
+  echo "Statix check failed. Please fix the issues before committing."
+  exit 1
+fi
+```

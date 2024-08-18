@@ -12,10 +12,10 @@
       export FLAKE_URL="/home/dzervas/Lab/dotfiles?submodules=1"
     '';
     plugins = [
-      { name = "autopair"; src = pkgs.fishPlugins.autopair.src; }
-      { name = "fzf-fish"; src = pkgs.fishPlugins.fzf-fish.src; }
-      { name = "puffer"; src = pkgs.fishPlugins.puffer.src; }
-      { name = "tide"; src = pkgs.fishPlugins.tide.src; }
+      { name = "autopair"; inherit (pkgs.fishPlugins.autopair) src; }
+      { name = "fzf-fish"; inherit (pkgs.fishPlugins.fzf-fish) src; }
+      { name = "puffer"; inherit (pkgs.fishPlugins.puffer) src; }
+      { name = "tide"; inherit (pkgs.fishPlugins.tide) src; }
     ];
 
     functions = {
