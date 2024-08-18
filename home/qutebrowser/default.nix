@@ -13,7 +13,17 @@
 
   # Function that creates a desktop and the config for the target app
   # It returns a function that can be imported (hence the { ... } arguments)
-  quteDesktopWrap = { name, url, icon, iconSha256, emoji, categories ? [], greasemonkey ? [], scheme ? null }: let
+  quteDesktopWrap = {
+    name, # Name of the app
+    url, # URL to open
+    icon, # Icon URL (for the desktop entry)
+    iconSha256, # Icon SHA256 hash
+    emoji, # Emoji to use in the titlebar
+    categories ? [], # Categories for the desktop entry
+    greasemonkey ? [], # Greasemonkey scripts to load (paths)
+    scheme ? null, # Scheme to associate with the app
+    customAdblock ? false # Use the custom adblock rules in adblock/${name}.txt
+  }: let
     baseDir = "${quteDir}/${name}";
   in _: {
     xdg.desktopEntries.${name} = {
@@ -22,25 +32,33 @@
         url = icon;
         sha256 = iconSha256;
       };
-      exec = "${config.programs.qutebrowser.package}/bin/qutebrowser --override-restore --basedir ${baseDir} --config-py ${baseDir}/config.py --target window ${url}";
+      exec = ''${config.programs.qutebrowser.package}/bin/qutebrowser --override-restore --basedir ${baseDir} --config-py ${baseDir}/config.py --target window ":adblock-update" "${url}"'';
     };
 
     xdg.mimeApps.defaultApplications = if builtins.isString scheme then
       { "x-scheme-handler/${scheme}" = "${name}.desktop"; }
     else {};
 
-    # home.file."${baseDir}/config.py".text = builtins.replaceStrings ["{{url}}"] [url] (builtins.readFile ./config.py);
     # Do a merge as `home.file` is already used above
     home.file = let
       acc = {}; # Accumulator, passed on each foldl' iteration to append to it
-    in builtins.foldl' (prev: script: let # Call foldl', a reducer function, with the accumulator and the current element
-      scriptName = baseNameOf (toString script); # Get the name of the script
-    in prev // { "${baseDir}/config/greasemonkey/${scriptName}".source = script; }) acc greasemonkey // { # Return the previous accumulator + the new element
+      adblock = if customAdblock then builtins.readFile ./adblock/${name}.txt else "";
+      adblockPath = if customAdblock then "${baseDir}/${name}.adblock.txt" else "";
+    in builtins.foldl' (
+      prev: script: let # Call foldl', a reducer function, with the accumulator and the current element
+        scriptName = baseNameOf (toString script); # Get the name of the script
+      in prev // {
+        "${baseDir}/config/greasemonkey/${scriptName}".source = script;
+    }) acc greasemonkey // { # Return the previous accumulator + the new element
       # Append a non-generated file, the config that will be used
-      "${baseDir}/config.py".text = builtins.replaceStrings ["{{url}}" "{{emoji}}"] [url emoji] (builtins.readFile ./config.py);
+      "${baseDir}/config.py".text = builtins.replaceStrings ["{{url}}" "{{emoji}}" "{{adblock}}"] [url emoji adblockPath] (builtins.readFile ./config.py);
       "${baseDir}/data/qtwebengine_dictionaries/en-US-10-1.bdic".source = english;
       "${baseDir}/data/qtwebengine_dictionaries/el-GR-3-0.bdic".source = greek;
-    };
+    } // (
+      if customAdblock then {
+        ${adblockPath}.text = adblock;
+      } else {}
+    );
   };
 
 in {
@@ -83,6 +101,7 @@ in {
       iconSha256 = "0mvjmi73by3ljp3fa4khvjy8savzfi6v3i6njj7nhiyc1l1wqkmn";
       categories = [ "Network" "Audio" ];
       emoji = "🎧";
+      customAdblock = true;
     })
     (quteDesktopWrap {
       name = "Telegram";

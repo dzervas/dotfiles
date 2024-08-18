@@ -46,6 +46,8 @@
         "application/xhtml+xml" = browser;
         "application/xhtml_xml" = browser;
         "application/xml" = browser;
+
+        "model/stl" = "f3d-plugin-native.desktop";
       };
     };
   };

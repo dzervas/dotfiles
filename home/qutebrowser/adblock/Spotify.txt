@@ -1,0 +1,1 @@
+open.spotify.com##a[href="/download"]
