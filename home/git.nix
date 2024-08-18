@@ -3,8 +3,16 @@ _: {
 
   programs.git = {
     enable = true;
+
     userName = "Dimitris Zervas";
     userEmail = "dzervas@dzervas.gr";
+    signing.signByDefault = true;
+
+    difftastic = {
+      enable = true;
+      display = "side-by-side";
+    };
+
     aliases = {
       aa = "!git add -A && git status";
       ac = "!git aa && git commit";
@@ -23,6 +31,7 @@ _: {
       s = "status";
       undo = "reset HEAD~";
     };
+
     extraConfig = {
       checkout.defaultRemote = "origin";
       init.defaultBranch = "main";
@@ -43,21 +52,17 @@ _: {
       };
 
       diff = {
-        external = "difft";
         guitool = "vscode";
         srcprefix = "-h";
-        tool = "difftastic";
         zip.textconv = "unzip -c -a";
       };
 
       difftool = {
         prompt = false;
-        difftastic.cmd = "difft \"$LOCAL\" \"$REMOTE\"";
         vscode.cmd = "code --wait --diff \"$LOCAL\" \"$REMOTE\"";
       };
-
-      pager.difftool = true;
     };
+
     ignores = [
       "*~"
       "*.swp"
