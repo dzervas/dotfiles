@@ -5,11 +5,21 @@ in {
   programs.swaylock = {
     enable = true;
     package = pkgs.swaylock-effects;
+
     settings = {
+      ignore-empty-password = true;
+
+      # Appearance
       clock = true;
-      grace = 10;
-      fade-in = 0.1;
+      indicator-idle-visible = true;
+      indicator-radius = 100;
+
+      # Effects
+      grace = 5;
+      fade-in = 0.5;
       effect-blur = "20x3";
+
+      # Keyboard stuff
       disable-caps-lock-text = true;
       show-keyboard-layout = true;
       show-failed-attempts = true;
