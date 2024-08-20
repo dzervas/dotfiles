@@ -15,7 +15,7 @@
     go
 
     pipenv
-    (python3Packages.python.withPackages (p: [ p.ipython p.requests ]))
+    (python3Packages.python.withPackages (p: [ p.ipython p.requests p.pyserial ]))
     pyenv
 
     cargo-edit

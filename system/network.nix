@@ -5,7 +5,23 @@
 
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 8181 ];
+      allowedTCPPorts = [
+        # Generic ports
+        8181
+
+        # Steam remote-play
+        27036
+        # Steam local data transfers
+        27040
+      ];
+
+      allowedUDPPorts = [
+        # Steam peer discovery
+        27036
+      ];
+
+      # Steam remote-play
+      allowedUDPPortRanges = [ { from = 27031; to = 27035; } ];
     };
   };
 

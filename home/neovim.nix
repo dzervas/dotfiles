@@ -71,6 +71,7 @@
 
       " Deoplete
       let g:deoplete#enable_at_startup = 1
+      let g:deoplete#sources#clang#libclang_path = "${pkgs.libclang}/lib"
       let g:echodoc_enable_at_startup = 1
       let g:jedi#show_docstring = 1
       let g:jedi#show_call_signatures = 2
