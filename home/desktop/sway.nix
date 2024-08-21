@@ -102,7 +102,15 @@ in {
           position = "0,0";
         };
         "Dell Inc. DELL P2419H C49BFZ2" = {
-          position = "1920,0";
+          position = "0,0";
+          transform = "270";
+        };
+        "Dell Inc. DELL S3422DWG B3F7KK3" = {
+          position = "1080,492";
+          scale = "1.25";
+          resolution = "3440x1440@144Hz";
+# TODO: Fix adaptive_sync screen flickering
+          adaptive_sync = "off";
         };
       };
 
