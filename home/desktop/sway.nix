@@ -109,6 +109,9 @@ in {
           position = "1080,492";
           scale = "1.25";
           resolution = "3440x1440@144Hz";
+          subpixel = "rgb";
+          scale_filter = "linear";
+
 # TODO: Fix adaptive_sync screen flickering
           adaptive_sync = "off";
         };
