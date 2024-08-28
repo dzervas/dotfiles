@@ -19,14 +19,17 @@ in {
             status = "disable";
           }
           {
-            criteria = "Dell Inc. DELL P2419H 6P7BFZ2";
-            status = "enable";
-            position = "0,0";
-          }
-          {
             criteria = "Dell Inc. DELL P2419H C49BFZ2";
             status = "enable";
-            position = "1920,0";
+            position = "0,0";
+            transform = "90";
+          }
+          {
+            criteria = "Dell Inc. DELL S3422DWG B3F7KK3";
+            status = "enable";
+            position = "1080,492";
+            scale = 1.25;
+            mode = "3440x1440@60Hz";
           }
         ];
       }
