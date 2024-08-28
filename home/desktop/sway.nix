@@ -203,7 +203,7 @@ in {
 
       for_window [urgent="latest"] focus
       for_window [class=.*] inhibit_idle fullscreen
-      for_window [title="."] title_format %title
+      for_window [title=".*"] title_format %title
 
 
       for_window [app_id="(?i)(?:blueman-manager|azote|gnome-disks)"] floating enable
@@ -232,6 +232,9 @@ in {
 
       bindsym --locked XF86MonBrightnessUp exec light -A 10
       bindsym --locked XF86MonBrightnessDown exec light -U 10
+
+      # Change the screen scale for some games
+      for_window [class="^steam_app_[0-9]+$"] output DP-1 scale 1; fullscreen
     '';
     extraOptions = [ "--unsupported-gpu" ];
   };
