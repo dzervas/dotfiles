@@ -1,4 +1,4 @@
-_: {
+{ pkgs, ... }: {
   # To update shortcuts: nix-shell -p desktop-file-utils --run "update-desktop-database -v"
   services.flatpak = {
     enable = true;
@@ -12,6 +12,9 @@ _: {
       "org.chromium.Chromium"
       "org.onlyoffice.desktopeditors"
       "org.ryujinx.Ryujinx"
+
+      # Gamescope for Steam (deadlock isn't multi-monitor aware)
+      "org.freedesktop.Platform.VulkanLayer.gamescope"
     ];
 
     overrides = {

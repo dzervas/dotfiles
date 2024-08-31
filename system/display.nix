@@ -33,6 +33,10 @@
 
     # Backlight/brightness control
     light.enable = true;
+
+    # Gaming optimizations
+    gamemode.enable = true;
+    gamescope.enable = true;
   };
 
   services = {
