@@ -1,20 +1,17 @@
-{ pkgs, ... }: {
+_: {
   # To update shortcuts: nix-shell -p desktop-file-utils --run "update-desktop-database -v"
   services.flatpak = {
     enable = true;
     update.auto.enable = true;
     uninstallUnmanaged = true;
     packages = [
-      "com.prusa3d.PrusaSlicer"
-      "com.valvesoftware.Steam"
-      "com.github.tchx84.Flatseal"
       "md.obsidian.Obsidian"
       "org.chromium.Chromium"
       "org.onlyoffice.desktopeditors"
       "org.ryujinx.Ryujinx"
 
       # Gamescope for Steam (deadlock isn't multi-monitor aware)
-      "org.freedesktop.Platform.VulkanLayer.gamescope"
+      # "org.freedesktop.Platform.VulkanLayer.gamescope"
     ];
 
     overrides = {
@@ -33,23 +30,10 @@
         devices = [ "!all:reset" ];
       };
 
-      "com.prusa3d.PrusaSlicer" = {
-        Context.sockets = [ "x11" ];
-        Environment.PRUSA_SLICER_DARK_THEME = "true";
-      };
-      "com.valvesoftware.Steam".Context = {
-        sockets = ["x11" "pulseaudio"];
-        devices = [ "dri" "input" ];
-        filesystems = [ "home/CryptVMs" ];
-      };
       "org.ryujinx.Ryujinx".Context = {
         sockets = ["x11"];
         devices = [ "dri" "input" ];
         filesystems = [ "home/CryptVMs" ];
-      };
-      "com.discordapp.Discord".Context = {
-        devices = [ "dri" "input" ];
-        sockets = [ "x11" "pulseaudio" ];
       };
       "org.chromium.Chromium".Context.sockets = ["x11"];
       "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];

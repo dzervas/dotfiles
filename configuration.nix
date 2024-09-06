@@ -4,6 +4,8 @@
   system.copySystemConfiguration = false;
   # environment.systemPackages = [ agenix.packages.x86_64-linux.default ];
 
+  boot.kernel.sysctl."kernel.dmesg_restrict" = false;
+
   users.users.dzervas = {
     isNormalUser = true;
     extraGroups = [ "wheel" "audio" "video" "uucp" "uinput" "vboxusers" "gamemode" "dialout" ];

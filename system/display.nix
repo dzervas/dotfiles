@@ -1,10 +1,5 @@
 { lib, pkgs, ... }: {
-  hardware = {
-    graphics.enable = true;
-
-    # Steam udev rules
-    steam-hardware.enable = true;
-  };
+  hardware.graphics.enable = true;
 
   environment = {
     # Electron fix - https://nixos.wiki/wiki/Wayland#Electron_and_Chromium
@@ -33,10 +28,6 @@
 
     # Backlight/brightness control
     light.enable = true;
-
-    # Gaming optimizations
-    gamemode.enable = true;
-    gamescope.enable = true;
   };
 
   services = {

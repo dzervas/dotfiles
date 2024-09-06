@@ -58,9 +58,19 @@ in {
   environment.etc.crypttab.text = "cryptvms UUID=acf3064a-68a3-4b8a-897d-e1e717e56b12 /etc/cryptsetup_cryptvms luks,discard,nofail";
   swapDevices = [{ device = "/home/dzervas/CryptVMs/swapfile"; }];
 
-  services.btrfs.autoScrub = {
-    enable = true;
-    interval = "weekly";
+  services = {
+    btrfs.autoScrub = {
+      enable = true;
+      interval = "weekly";
+    };
+
+    beesd.filesystems = {
+      root = {
+        spec = "LABEL=linux-add";
+        hashTableSizeMB = 4096;
+        extraOptions = [ "--thread-count" "8" ];
+      };
+    };
   };
 
   stylix.image = pkgs.fetchurl {

@@ -9,6 +9,7 @@ _: {
     ./display.nix
     ./fonts.nix
     ./network.nix
+    ./steam.nix
     ./theme.nix
     ./usb-kvm.nix
     ./vim.nix
