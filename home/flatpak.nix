@@ -35,14 +35,19 @@ _: {
         devices = [ "dri" "input" ];
         filesystems = [ "home/CryptVMs" ];
       };
-      "org.chromium.Chromium".Context.sockets = ["x11"];
+      # "org.chromium.Chromium".Context.sockets = ["wayland"];
       "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
       "md.obsidian.Obsidian".Context.filesystems = [ "xdg-documents/Obsidian" ];
     };
   };
 
-  # home.file.".var/app/org.chromium.Chromium/config/chromium-flags.conf".text = ''
-    # --enable-features=UseOzonePlatform
-    # --ozone-platform=wayland
-  # '';
+  home.file.".var/app/org.chromium.Chromium/config/chromium-flags.conf".text = ''
+    # Use wayland
+    --enable-features=UseOzonePlatform
+    --ozone-platform-hint=auto
+    --ozone-platform=wayland
+    # Force GPU acceleration
+    --ignore-gpu-blocklist
+    --enable-zero-copy
+  '';
 }

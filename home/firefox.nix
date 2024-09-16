@@ -7,6 +7,7 @@
       DisableTelemetry = true;
       DontCheckDefaultBrowser = true;
       HardwareAcceleration = true;
+      NoDefaultBookmarks = true;
       OfferToSaveLogins = false;
       PasswordManagerEnabled = false;
     };
