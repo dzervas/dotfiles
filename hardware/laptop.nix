@@ -7,6 +7,7 @@ in {
     ./components/boot.nix
     ./components/peripherals.nix
     ./components/secure-boot.nix
+    ./components/virtualbox.nix
     ./components/laptop.nix
   ];
 
