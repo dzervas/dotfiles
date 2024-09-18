@@ -39,7 +39,7 @@ _: {
       color.ui = "auto";
       core.autocrlf = "input";
       web.browser = "firefox";
-      pull.rebase = false;
+      pull.rebase = true;
 
       # Output stuff
       branch.sort = "-committerdate";
