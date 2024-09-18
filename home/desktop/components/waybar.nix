@@ -24,6 +24,7 @@ _: {
           "tray"
           # "pulseaudio"
           "keyboard-state"
+          "battery"
           "sway/language"
           "clock"
         ];
@@ -68,6 +69,18 @@ _: {
         clock = {
           format = "{:%H:%M %d/%m}";
           tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+        };
+        battery = {
+          states = {
+            warning = 30;
+            critical = 15;
+          };
+          format = "{icon} {capacity}%";
+          format-charging = "⚡ {capacity}%";
+          format-plugged = "🔌 {capacity}%";
+          format-alt = "{time} {icon}";
+          format-full = "🔋 {capacity}%";
+          format-icons = ["💀" "🪫" "🔋"];
         };
         pulseaudio = {
           format = "{volume}% {icon} {format_source}";
