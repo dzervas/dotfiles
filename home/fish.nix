@@ -24,6 +24,11 @@
         description = "Backup a file or directory";
         wraps = "cp";
       };
+      crest = {
+        body = builtins.readFile ./fish-functions/crest.fish;
+        description = "A curl wrapper with enhanced features tailored for REST APIs";
+        wraps = "curl";
+      };
       kubeseal-env = {
         body = builtins.readFile ./fish-functions/kubeseal-env.fish;
         description = "Create a kubeseal secret from an env file";
