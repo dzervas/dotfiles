@@ -1,9 +1,3 @@
-functions -q argparse
-if test $status -ne 0
-	echo "Error: argparse not found. Please upgrade your fish shell."
-	return 1
-end
-
 argparse 'q=+' 'r' 'chrome' 'firefox' -- $argv
 or return 1
 
@@ -42,8 +36,13 @@ else if test (count $argv) -eq 1
 	set url $argv[1]
 end
 
+# If the URL has no schema, default to https://
+if not string match -qr '^https?://' -- $url
+	set url "https://$url"
+end
+
 # Build the curl command
-set -l curl_cmd curl
+set -l curl_cmd curl -L -H "Content-Type: application/json" -H "Accept: application/json"
 
 # Set method
 if test $http_verb != "GET"
@@ -93,7 +92,7 @@ end
 set curl_cmd $curl_cmd $url
 
 # Echo the actual executed curl command
-echo "Executing:" (string escape -- $curl_cmd)
+echo "+" (string escape -- $curl_cmd)
 
 # Execute the curl command and capture output and headers
 set -l response_file (mktemp)
@@ -109,6 +108,27 @@ set -l http_status (printf '%s\n' $headers | grep -m1 '^HTTP/' | awk '{print $2}
 
 # Get the Content-Type header
 set -l content_type (printf '%s\n' $headers | grep -i '^Content-Type:' | cut -d' ' -f2- | tr -d '\r')
+
+# Define colors
+set -l color_reset (set_color normal)
+set -l color_status (set_color brgreen)
+set -l color_url (set_color brcyan)
+set -l color_cookie (set_color yellow)
+
+# Output the status line
+echo $color_status$status_line$color_reset >&2
+
+# Output the URL
+echo $color_url"URL: $url"$color_reset >&2
+
+# Output the headers, coloring cookies
+for header_line in $header_lines[2..-1]
+	if string match -qr '^Set-Cookie:' -- $header_line
+		echo $color_cookie$header_line$color_reset >&2
+	else
+		echo $header_line >&2
+	end
+end
 
 # If content type is JSON or something that jq supports, beautify it
 if string match -qr 'application/(json|.*\+json)' -- $content_type
