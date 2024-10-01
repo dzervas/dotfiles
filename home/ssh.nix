@@ -18,7 +18,7 @@ _: {
 
       "*.dzerv.art" = {
         user = "root";
-        extraOptions.Tag = "sessioned";
+        # extraOptions.Tag = "sessioned";
       };
 
       # NOTE: To force order use lib.hm.dag.entryBefore ["entry"] { newstuff }

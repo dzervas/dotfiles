@@ -29,7 +29,10 @@
     # Cloud stuff
     kubectl
     kubectx
+    kubernetes-helm
     oci-cli
     terraform
+    ansible
+    # (python3Packages.python.withPackages (p: [ p.netaddr p.dnspython ])) # Ansible deps
   ];
 }

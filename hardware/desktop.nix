@@ -64,13 +64,13 @@ in {
       interval = "weekly";
     };
 
-    beesd.filesystems = {
-      root = {
-        spec = "LABEL=linux-add";
-        hashTableSizeMB = 4096;
-        extraOptions = [ "--thread-count" "8" ];
-      };
-    };
+    # beesd.filesystems = {
+      # root = {
+        # spec = "LABEL=linux-add";
+        # hashTableSizeMB = 4096;
+        # extraOptions = [ "--thread-count" "8" ];
+      # };
+    # };
   };
 
   stylix.image = pkgs.fetchurl {
