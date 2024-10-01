@@ -42,6 +42,11 @@
         body = builtins.readFile ./fish-functions/needs-update.fish;
         description = "Check if a newer nixpkgs version is available";
       };
+      rebuild = {
+        body = builtins.readFile ./fish-functions/rebuild.fish;
+        description = "Rebuild the system";
+        wraps = "nixos-rebuild switch";
+      };
       use = {
         body = builtins.readFile ./fish-functions/use.fish;
         description = "Use a nix shell";
@@ -54,7 +59,6 @@
     };
 
     shellAliases = {
-      rebuild = "sudo nixos-rebuild switch --flake \"$FLAKE_URL\"";
       update = "sudo nix-channel --update && nix flake update \"$FLAKE_URL\" && rebuild";
       miniterm = "python3 -m serial.tools.miniterm";
       v = "nvim";
