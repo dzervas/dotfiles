@@ -91,6 +91,14 @@ nix flake update --override-input nixpkgs github:NixOS/nixpkgs/7252b96d60dc2ccf3
 sudo nix shell nixpkgs#solaar --command solaar-cli config 1 persistent-remappable-keys "MultiPlatform Gesture Button" "F14"
 ```
 
+- For script compatibility:
+
+```bash
+echo -e "#!/bin/sh\nexec /usr/bin/env bash \$@" | sudo tee /usr/bin/bash
+echo -e "#!/bin/sh\nexec /usr/bin/env python \$@" | sudo tee /usr/bin/python
+echo -e "#!/bin/sh\nexec /usr/bin/env python3 \$@" | sudo tee /usr/bin/python3
+```
+
 ### Secure boot
 
 ```fish
