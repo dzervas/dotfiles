@@ -32,6 +32,9 @@
       kicad
       orca-slicer
       vorta
+
+      bubblewrap
+      prismlauncher
     ];
     file.".config/katerc".source = ./katerc;
   };
