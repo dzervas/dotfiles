@@ -15,6 +15,8 @@ let
         [ "--ro-bind${if mount.try or false then "-try" else ""}" mount.src mount.dest ]
       ) ro-bind;
       tmpfsArgs = builtins.concatMap (path: [ "--tmpfs" path ]) tmpfs;
+      setenvArgs = lib.attrsets.mapAttrsToList (name: value: "--setenv ${name} ${value}") setenv;
+      unsetenvArgs = builtins.concatMap (value: [ "--unsetenv" value ]) unsetenv;
       procArg = if proc != "" then [ "--proc" proc ] else [];
       devArg = if dev != "" then [ "--dev" dev ] else [];
       newSessionArg = if new-session then [ "--new-session" ] else [];
@@ -22,7 +24,7 @@ let
       unshareAllArg = if unshare-all then [ "--unshare-all" ] else [];
       shareNetArg = if share-net then [ "--share-net" ] else [];
     in
-      bindArgs ++ devBindArgs ++ roBindArgs ++ tmpfsArgs ++ procArg ++ devArg ++ newSessionArg ++ unshareAllArg ++ shareNetArg ++ dieWithParentArg;
+      newSessionArg ++ unshareAllArg ++ shareNetArg ++ dieWithParentArg ++ devArg ++ procArg ++ tmpfsArgs ++ setenvArgs ++ unsetenvArgs ++ devBindArgs ++ roBindArgs ++ bindArgs;
 
   wrapPackage = { name, package, pkgConfig }:
     pkgs.stdenv.mkDerivation {
@@ -91,6 +93,16 @@ in {
           type = types.listOf types.str;
           default = [];
           description = "List of tmpfs options for bwrap";
+        };
+        setenv = mkOption {
+          type = types.attrsOf types.str;
+          default = [];
+          description = "Set an environment variable";
+        };
+        unsetenv = mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Unset an environment variable";
         };
         new-session = mkOption {
           type = types.bool;

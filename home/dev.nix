@@ -15,7 +15,16 @@
     go
 
     pipenv
-    (python3Packages.python.withPackages (p: [ p.ipython p.requests p.pyserial ]))
+    (python3.withPackages (p: [
+      p.ipython
+      p.requests
+      p.pyserial
+
+      # Ansible deps
+      p.ansible-core
+      p.netaddr
+      p.dnspython
+    ]))
     pyenv
 
     cargo-edit
@@ -32,7 +41,6 @@
     kubernetes-helm
     oci-cli
     terraform
-    ansible
-    # (python3Packages.python.withPackages (p: [ p.netaddr p.dnspython ])) # Ansible deps
+    # ansible
   ];
 }

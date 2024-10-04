@@ -30,21 +30,30 @@
     proc = "/proc";
     dev-bind = [ { src = "/dev/dri"; dest = "/dev/dri"; } ];
 
+    setenv = {"XDG_RUNTIME_DIR" = "/tmp"; };
+    unsetenv = [ "DBUS_SESSION_BUS_ADDRESS" ];
+
     ro-bind = [
       { src = "/etc"; dest = "/etc"; }
       { src = "/nix"; dest = "/nix"; }
       { src = "/tmp/.X11-unix"; dest = "/tmp/.X11-unix"; }
       { src = "/tmp/.ICE-unix"; dest = "/tmp/.ICE-unix"; }
       { src = "/run/opengl-driver"; dest = "/run/opengl-driver"; }
-      # --ro-bind-try "$XDG_RUNTIME_DIR/pulse" /tmp/pulse \
-      # --ro-bind-try "$XDG_RUNTIME_DIR/pipewire-0" /tmp/pipewire-0 \
+
+      { src = "/sys/class"; dest = "/sys/class"; try = true; }
+      { src = "/sys/dev/char"; dest = "/sys/dev/char"; try = true; }
+      { src = "/sys/devices/pci0000:00"; dest = "/sys/devices/pci0000:00"; try = true; }
+      { src = "/sys/devices/system/cpu"; dest = "/sys/devices/system/cpu"; try = true; }
+
+      { src = "\\$XDG_RUNTIME_DIR/pulse"; dest = "/tmp/pulse"; try = true; }
+      { src = "\\$XDG_RUNTIME_DIR/pipewire-0"; dest = "/tmp/pipewire-0"; try = true; }
     ];
     bind = [
-      { src = "${config.home.homeDirectory}/.local/share/PrismLauncher"; dest = "${config.home.homeDirectory}/.local/share/PrismLauncher"; }
+      { src = "${config.xdg.dataHome}/PrismLauncher"; dest = "${config.xdg.dataHome}/PrismLauncher"; }
     ];
     tmpfs = [ "/tmp" ];
 
-    unshare-all = true;
+    unshare-all = false;
     share-net = true;
     die-with-parent = true;
   };
