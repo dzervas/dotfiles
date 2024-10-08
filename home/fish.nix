@@ -59,7 +59,7 @@
     };
 
     shellAliases = {
-      update = "sudo nix-channel --update && nix flake update \"$FLAKE_URL\" && rebuild";
+      update = "nix flake update \"$FLAKE_URL\" && rebuild";
       miniterm = "python3 -m serial.tools.miniterm";
       v = "nvim";
     };

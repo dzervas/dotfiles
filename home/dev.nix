@@ -1,9 +1,11 @@
-{ pkgs, ... }:
-
-{
+{ inputs, pkgs, ... }: let
+  pkgs-master = import inputs.nixpkgs-master {
+    inherit (pkgs) system;
+    config.allowUnfree = true;
+  };
+in {
   programs.poetry.enable = true;
   home.packages = with pkgs; [
-    vscode
     nixpkgs-fmt # Used by the Nix IDE extension
     nil # Nix language server
 
@@ -41,6 +43,7 @@
     kubernetes-helm
     oci-cli
     terraform
-    # ansible
+  ] ++ [
+    pkgs-master.vscode
   ];
 }

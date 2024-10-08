@@ -433,6 +433,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-master": {
+      "locked": {
+        "lastModified": 1728389963,
+        "narHash": "sha256-RscNMlZQ/0OHiq7VPB0YCPFhB26hbP/SW+NPnHnII2o=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "8885a1e21ad43f8031c738a08029cd1d4dcbc2f7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "master",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-stable": {
       "locked": {
         "lastModified": 1710695816,
@@ -451,11 +467,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1728018373,
-        "narHash": "sha256-NOiTvBbRLIOe5F6RbHaAh6++BNjsb149fGZd1T4+KBg=",
+        "lastModified": 1728241625,
+        "narHash": "sha256-yumd4fBc/hi8a9QgA9IT8vlQuLZ2oqhkJXHPKxH/tRw=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "bc947f541ae55e999ffdb4013441347d83b00feb",
+        "rev": "c31898adf5a8ed202ce5bea9f347b1c6871f32d1",
         "type": "github"
       },
       "original": {
@@ -516,6 +532,7 @@
         "lanzaboote": "lanzaboote",
         "nixos-generators": "nixos-generators",
         "nixpkgs": "nixpkgs_2",
+        "nixpkgs-master": "nixpkgs-master",
         "stylix": "stylix"
       }
     },
