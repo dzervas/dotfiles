@@ -230,8 +230,9 @@ in {
       bindsym --locked XF86MonBrightnessDown exec light -U 10
 
       # Change the screen scale for some games
-      for_window [class="^steam_app_[0-9]+$"] output DP-1 scale 1; fullscreen
-      for_window [title="^TheSpellBrigade$"] output DP-1 scale 1; fullscreen
+      for_window [class="^steam_app_[0-9]+$"] output DP-2 scale 1; fullscreen
+      for_window [title="^TheSpellBrigade$"] output DP-2 scale 1; fullscreen
+      for_window [class="^Minecraft"] output DP-2 scale 1; fullscreen
     '';
     extraOptions = [ "--unsupported-gpu" ];
   };
