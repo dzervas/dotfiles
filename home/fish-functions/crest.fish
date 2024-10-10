@@ -1,5 +1,5 @@
 argparse 'q=+' 'r' 'chrome' 'firefox' -- $argv
-or return 1
+# or return 1
 
 set -f http_verb "GET"
 set -f url ""
@@ -34,6 +34,7 @@ if test (count $argv) -ge 2
 	set extra_curl_args $argv[3..-1]
 else if test (count $argv) -eq 1
 	set url $argv[1]
+	set extra_curl_args $argv[2..-1]
 end
 
 # If the URL has no schema, default to https://
@@ -89,7 +90,7 @@ if test (count $extra_curl_args) -gt 0
 end
 
 # Finally, add the URL
-set curl_cmd $curl_cmd $url
+# set curl_cmd $curl_cmd $url
 
 # Echo the actual executed curl command
 echo "+" (string escape -- $curl_cmd)

@@ -68,6 +68,7 @@
         "network.http.sendRefererHeader" = 1; # 0 for no referer, 1 for only clicked links, 2 for everything
         "privacy.resistFingerprinting" = false; # Resets prefers-color-scheme to light :/
         "privacy.trackingprotection.enabled" = true;
+        "privacy.globalprivacycontrol.enabled" = true; # Tell websites not to sell or share my data (lol)
         "privacy.donottrackheader.enabled" = true;
         "services.sync.prefs.sync.privacy.donottrackheader.enabled" = true;
         "browser.safebrowsing.malware.enabled" = false;
