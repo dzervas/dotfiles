@@ -25,6 +25,8 @@
     };
   };
 
+  systemd.services.NetworkManager-wait-online.enable = false;
+
   time.timeZone = "Europe/Athens";
 
   boot.extraModulePackages = with config.boot.kernelPackages; [
