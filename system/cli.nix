@@ -2,6 +2,7 @@
   environment.systemPackages = with pkgs; [
     bat
     colordiff
+    cyme # Better lsusb!
     difftastic
     dig
     fd
@@ -104,6 +105,7 @@
     less = "bat -p --color=always";
     ll = "lsd -Fal";
     ls = "lsd -F";
+    lsusb = "cyme";
     find = "fd";
   };
 }
