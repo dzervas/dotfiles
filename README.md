@@ -94,9 +94,11 @@ sudo nix shell nixpkgs#solaar --command solaar-cli config 1 persistent-remappabl
 - For script compatibility:
 
 ```bash
+echo -e "#!/bin/sh\nexec /usr/bin/env bash \$@" | sudo tee /bin/bash
 echo -e "#!/bin/sh\nexec /usr/bin/env bash \$@" | sudo tee /usr/bin/bash
 echo -e "#!/bin/sh\nexec /usr/bin/env python \$@" | sudo tee /usr/bin/python
 echo -e "#!/bin/sh\nexec /usr/bin/env python3 \$@" | sudo tee /usr/bin/python3
+sudo chmod +x /bin/bash /usr/bin/bash /usr/bin/python /usr/bin/python3
 ```
 
 ### Secure boot
