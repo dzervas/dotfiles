@@ -17,7 +17,7 @@
             { src = "/etc"; dest = "/etc"; }
             { src = "/nix"; dest = "/nix"; }
             { src = "/tmp/.X11-unix"; dest = "/tmp/.X11-unix"; }
-            { src = "/tmp/.ICE-unix"; dest = "/tmp/.ICE-unix"; }
+            { src = "/tmp/.ICE-unix"; dest = "/tmp/.ICE-unix"; try = true; }
             { src = "/run/opengl-driver"; dest = "/run/opengl-driver"; }
 
             { src = "/sys/class"; dest = "/sys/class"; try = true; }
@@ -37,8 +37,9 @@
           share-net = true;
           die-with-parent = true;
         };
-};
+        };
       })
+      (self: super: { binaryninja = super.callPackage ./binaryninja.nix {}; })
     ];
   };
 in {
@@ -79,6 +80,8 @@ in {
 
       bubblewrap
       prismlauncher
+
+      binaryninja
     ];
     file.".config/katerc".source = ./katerc;
   };
