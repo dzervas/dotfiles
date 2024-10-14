@@ -67,6 +67,7 @@ in {
 
   programs.mpv.enable = true;
   programs.home-manager.enable = true;
+  services.keybase.enable = true;
 
   home = {
     username = "dzervas";
