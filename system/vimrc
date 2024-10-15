@@ -62,7 +62,7 @@ syntax on
 " syntax sync minlines=10000 maxlines=50000
 filetype plugin indent on
 
-au FileType yaml,yml,nix setlocal ts=2 sts=2 sw=2 expandtab
+au FileType yaml,yml,nix,tf,hcl,nomad setlocal ts=2 sts=2 sw=2 expandtab
 au BufRead,BufNewFile *.cshtml set filetype=html
 au BufRead,BufNewFile *.inc set filetype=php
 au BufNewFile,BufRead Jenkinsfile set filetype=groovy
@@ -84,6 +84,9 @@ set t_Co=256
 set t_ut=""  " Disable background color erase
 
 " Basic mappings
+" Don't move the comment at the start of the line (:help smartindent)
+inoremap # X#
+
 " Completion
 imap <silent><expr> <Tab> pumvisible() ? '<C-n>' : '<Tab>'
 inoremap <silent><expr> <C-Tab> pumvisible() ? '<C-p>' : '<Tab>'
