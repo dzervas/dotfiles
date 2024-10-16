@@ -59,8 +59,7 @@ in
     paths = [desktopItem program];
 
     meta = {
-      description = program.meta.description;
+      inherit (program.meta) description platforms;
       homepage = "https://binary.ninja/";
-      platforms = program.meta.platforms;
     };
   }
