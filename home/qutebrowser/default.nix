@@ -85,8 +85,9 @@ in {
     (quteDesktopWrap {
       name = "Discord";
       url = "https://discord.com/app";
-      icon = "https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/6266bc493fb42d4e27bb8393_847541504914fd33810e70a0ea73177e.ico";
-      iconSha256 = "1y341vivhlqkdc0whnddfrllwcwdqgsmbmqa8wqdfg7r8m48iwhg";
+      # gha-updater: nix-prefetch-url https://discord.com/assets/favicon.ico
+      icon = "https://discord.com/assets/favicon.ico";
+      iconSha256 = "1iw1dgpr38q13difx6dc5zvzjbqfw67xrl5r1i3xsrawn6rj13hj";
       categories = [ "Network" "InstantMessaging" ];
       greasemonkey = [ ./scripts/discord.nitro.js ];
       emoji = "🎃";
@@ -95,14 +96,16 @@ in {
     (quteDesktopWrap {
       name = "Element";
       url = "https://app.element.io";
-      icon = "https://app.element.io/vector-icons/apple-touch-icon-180.f6ddb43.png";
-      iconSha256 = "1qcpyq8gpp1xvsx3g7akl43wrbxz9bkjby3rjiz3gcvr5lav48lz";
+      # gha-updater: ICONURL="https://app.element.io/$(curl -s https://app.element.io | grep -oP 'vector-icons/apple-touch-icon-180\.[0-9a-f]+\.png')" && echo -n "$ICONURL $(nix-prefetch-url $ICONURL)"
+      icon = "https://app.element.io/vector-icons/apple-touch-icon-180.5d60475.png";
+      iconSha256 = "1mbc7r4x5rirp8fp7xj34vgigb21rdga6cs30rdhgdnx8pm48vsl";
       categories = [ "Network" "InstantMessaging" ];
       emoji = "♻️";
     })
     (quteDesktopWrap {
       name = "Spotify";
       url = "https://open.spotify.com/";
+      # gha-updater: ICONURL="$(curl -s https://open.spotify.com/ | grep -oP 'https://open\.spotifycdn\.com/cdn/images/favicon32\.[0-9a-f]+\.png')" && echo -n "$ICONURL $(nix-prefetch-url $ICONURL)"
       icon = "https://open.spotifycdn.com/cdn/images/favicon32.b64ecc03.png";
       iconSha256 = "0mvjmi73by3ljp3fa4khvjy8savzfi6v3i6njj7nhiyc1l1wqkmn";
       categories = [ "Network" "Audio" ];
@@ -112,6 +115,7 @@ in {
     (quteDesktopWrap {
       name = "Telegram";
       url = "https://web.telegram.org/a/";
+      # gha-updater: nix-prefetch-url https://web.telegram.org/a/icon-192x192.png
       icon = "https://web.telegram.org/a/icon-192x192.png";
       iconSha256 = "1y0bdflrvliddl8s8hh0h4v2xb81s4lypdas4qjpzafpr5i7ln3f";
       categories = [ "Network" "InstantMessaging" ];
