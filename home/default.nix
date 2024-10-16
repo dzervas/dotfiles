@@ -39,7 +39,6 @@
         };
         };
       })
-      (self: super: { binaryninja = super.callPackage ./binaryninja.nix {}; })
     ];
   };
 in {
@@ -72,18 +71,18 @@ in {
   home = {
     username = "dzervas";
     homeDirectory = "/home/dzervas";
-    packages = with pkgs-overlay; [
+    packages = with pkgs; [
       kdePackages.filelight
       kdePackages.kate
       kicad
       orca-slicer
       vorta
 
+      binaryninja
+    ] ++ (with pkgs-overlay; [
       bubblewrap
       prismlauncher
-
-      binaryninja
-    ];
+    ]);
     file.".config/katerc".source = ./katerc;
   };
 }

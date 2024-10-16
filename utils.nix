@@ -24,6 +24,8 @@
 
   # Function to generate the configuration imports
   mkConfigModules = { hostName, stateVersion, system, isPrivate ? false }: [
+    # Inject the overlays
+    ./overlays
     # Set some basic options
     {
       config = {

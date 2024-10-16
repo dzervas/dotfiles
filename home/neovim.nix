@@ -21,9 +21,6 @@
       vim-illuminate
       vim-repeat
 
-      # THE theme
-      molokai
-
       # Editing helpers
       auto-pairs
       nerdcommenter
@@ -56,7 +53,6 @@
     extraConfig = ''
       source /etc/vimrc
       set viminfo&
-      "colorscheme molokai
 
       " Airline
       let g:airline_powerline_fonts = 1
