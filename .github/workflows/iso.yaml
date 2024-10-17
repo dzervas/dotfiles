@@ -18,11 +18,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Free up some disk space
-        uses: jlumbroso/free-disk-space@main
-        with:
-          tool-cache: true
-
       - name: Install Nix
         uses: cachix/install-nix-action@v27
         with:
@@ -33,6 +28,27 @@ jobs:
         with:
           path: /nix/store
           key: ${{ runner.os }}-nix
+
+      - name: Free up some disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+
+      - name: Implement https://github.com/jlumbroso/free-disk-space/pull/24
+        run: |
+          df -h
+          echo "==================="
+          echo
+          sudo apt-get purge --auto-remove -y microsoft-edge-stable --fix-missing || echo "::debug::The command [sudo apt-get remove -y microsoft-edge-stable --fix-missing] failed to complete successfully. Proceeding..."
+          sudo apt-get purge --auto-remove -y snapd --fix-missing || echo "::debug::The command [sudo apt-get remove -y snapd --fix-missing] failed to complete successfully. Proceeding..."
+          sudo apt-get purge --auto-remove -y '^temurin-.*'
+          sudo apt-get purge --auto-remove -y '^.*jdk.*'
+          sudo apt-get purge --auto-remove -y '^.*jre.*'
+          sudo rm -rf /usr/local /usr/share
+          echo
+          echo "==================="
+          df -h
+          sudo du -xhd 1 /home
 
       - name: Build the ISO image
         run: nix build .#iso
