@@ -1,21 +1,25 @@
 {
   buildFHSEnv,
   makeDesktopItem,
+  python3,
   symlinkJoin,
   writeScript,
 }: let
-  installPath = "/home/dzervas/.local/binaryninja";
-  program = buildFHSEnv {
+  # TODO: Use the config.xdg.dataHome
+  installPath = "/home/dzervas/.local/share/binaryninja";
+  program = buildFHSEnv rec {
     name = "binaryninja";
 
+    python = python3.withPackages (p: with p; [ torch pip ]);
     targetPkgs = pkgs:
       with pkgs; [
         dbus
+        file # for libmagic.so
         fontconfig
         freetype
         libGL
         libxkbcommon
-        (python311.withPackages (p: with p; [ torch pip ]))
+        libxml2
         xorg.libX11
         xorg.libxcb
         xorg.xcbutilimage
@@ -24,6 +28,7 @@
         xorg.xcbutilwm
         wayland
         zlib
+        python
 
         # Installer deps
         gnome-shell
@@ -34,6 +39,8 @@
     runScript = writeScript "binaryninja.sh" ''
       set -e
       export QT_QPA_PLATFORM=wayland
+      export PATH="${python}/bin:$PATH"
+      export PYTHONPATH="${python}/lib/python3.12/site-packages:$PYTHONPATH"
       exec "${installPath}/binaryninja" "$@"
     '';
 
@@ -46,7 +53,7 @@
     name = "BinaryNinja";
     desktopName = "Binary Ninja";
     comment = "Binary Ninja: A Reverse Engineering Platform";
-    exec = "${installPath}/binaryninja";
+    exec = "${program}/bin/binaryninja";
     icon = "${installPath}/docs/img/logo.png";
     terminal = false;
     type = "Application";

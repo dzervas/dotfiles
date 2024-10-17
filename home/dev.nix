@@ -17,15 +17,17 @@ in {
     go
 
     pipenv
-    (python3.withPackages (p: [
-      p.ipython
-      p.requests
-      p.pyserial
+    (python3.withPackages (p: with p; [
+      ipython
+      requests
+      pyserial
 
       # Ansible deps
-      p.ansible-core
-      p.netaddr
-      p.dnspython
+      ansible-core
+      netaddr
+      dnspython
+
+      pip # BinaryNinja needs this
     ]))
     pyenv
 
