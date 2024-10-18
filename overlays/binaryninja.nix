@@ -6,6 +6,7 @@
   writeScript,
 }: let
   # TODO: Use the config.xdg.dataHome
+  # TODO: Build coolsigmaker & binja-msvc
   installPath = "/home/dzervas/.local/share/binaryninja";
   program = buildFHSEnv rec {
     name = "binaryninja";

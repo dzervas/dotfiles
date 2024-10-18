@@ -10,6 +10,13 @@
       # Maps to Ctrl-Shift-Delete
       bind \e\[3\;6~ __forget
       export FLAKE_URL="/home/dzervas/Lab/dotfiles?submodules=1"
+
+      # Watch command completions
+      complete -c watch -s n -l interval -d "Set update interval in seconds"
+      complete -c watch -s d -l differences -d "Highlight differences between updates"
+      complete -c watch -s g -l exit-diff -d "Exit when output differences occur"
+      complete -c watch -s e -l exit-error -d "Exit if the command returns a non-zero exit code"
+      complete -c watch -f -a "(__fish_complete_subcommand)"
     '';
     plugins = [
       { name = "autopair"; inherit (pkgs.fishPlugins.autopair) src; }
@@ -52,6 +59,11 @@
         description = "Use a nix shell";
         wraps = "nix shell";
       };
+      watchf = {
+        body = builtins.readFile ./fish-functions/watchf.fish;
+        description = "Watch command";
+        wraps = "nix shell";
+      };
 
       # Internal
       __smart_help = builtins.readFile ./fish-functions/smart-help.fish;
@@ -62,6 +74,7 @@
       update = "nix flake update \"$FLAKE_URL\" && rebuild";
       miniterm = "python3 -m serial.tools.miniterm";
       v = "nvim";
+      w = "watchf";
     };
   };
 }
