@@ -36,7 +36,7 @@ set -l prev_output
 while true
 	# Capture output and status
 	set -l output "$(fish --private --interactive --command "$cmd" 2>&1)"
-	set -l status $status
+	set -l retval $status
 
 	# Clear screen
 	clear
@@ -63,8 +63,8 @@ while true
 		printf '%s\n' "$output"
 	end
 
-	if test $exit_on_error -eq 1 -a $status -ne 0
-		return $status
+	if test $exit_on_error -eq 1 -a $retval -ne 0
+		return $retval
 	end
 
 	if test $exit_on_diff -eq 1 -a "$output" != "$prev_output"

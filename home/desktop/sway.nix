@@ -218,6 +218,7 @@ in {
       for_window [title="^Wine System Tray$"] floating enable, move scratchpad
       for_window [title="^ContentDialogOverlayWindow$"] floating enable, focus
       for_window [title="^Steam Settings$"] floating enable, focus
+      for_window [title="^Open$" app_id="^com.vector35.binaryninja$"] floating enable, focus
 
       bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
       bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-

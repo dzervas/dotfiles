@@ -21,6 +21,7 @@ in {
       ipython
       requests
       pyserial
+      frida-python
 
       # Ansible deps
       ansible-core
