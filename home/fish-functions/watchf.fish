@@ -38,8 +38,24 @@ while true
 	set -l output "$(fish --private --interactive --command "$cmd" 2>&1)"
 	set -l retval $status
 
-	# Clear screen
-	clear
+	# Calculate the number of lines in the output
+	set -l line_count (echo "$output" | wc -l)
+
+	if test -n "$prev_output"
+		# Move cursor up by prev_line_count lines
+		printf "\033[%dA" $prev_line_count
+
+		# Clear lines
+		for i in (seq $prev_line_count)
+			printf "\033[2K"  # Clear entire line
+			if test $i -lt $prev_line_count
+				printf "\033[1E"  # Move cursor down one line
+			end
+		end
+
+		# Move cursor back up to start position
+		printf "\033[%dF" (math $prev_line_count - 1)
+	end
 
 	if test $diff_highlight -eq 1 -a (set -q prev_output)
 		# Compare outputs and highlight differences
@@ -71,7 +87,13 @@ while true
 		return 0
 	end
 
+	# Update previous output and line count
 	set prev_output "$output"
+	set prev_line_count $line_count
+
+	set_color --bold cyan
+	echo -n (date) >&2
+	set_color normal
 
 	sleep $interval
 end
