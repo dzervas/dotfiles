@@ -50,6 +50,9 @@ jobs:
           df -h
           sudo du -xhd 1 /home
 
+      - name: Run Garbage Collector
+        run: nix-collect-garbage -d
+
       - name: Build the ISO image
         run: nix build .#iso
 

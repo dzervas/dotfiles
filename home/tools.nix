@@ -1,26 +1,13 @@
 { inputs, pkgs, ... }: let
-  # TODO: Fix this upstream
-  pkgs-overlay = import inputs.nixpkgs {
+  pkgs-master = import inputs.nixpkgs-master {
     inherit (pkgs) system;
-
-    overlays = [
-      (final: prev: {
-        frida-tools = prev.python3Packages.buildPythonApplication (prev.frida-tools // rec {
-          version = "13.6.0";
-          src = prev.fetchPypi {
-            inherit version;
-            pname = "frida-tools";
-            hash = "sha256-M0S8tZagToIP6Qyr9RWNAGGfWOcOtO0bYKC02IhCpvg=";
-          };
-        });
-      })
-    ];
+    config.allowUnfree = true;
   };
 in {
   home.packages = with pkgs; [
     aircrack-ng
     dirb
-    pkgs-overlay.frida-tools
+    pkgs-master.frida-tools
     gobuster
     hashcat
     hashcat-utils

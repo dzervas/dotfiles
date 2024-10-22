@@ -40,6 +40,9 @@ jobs:
           sudo apt-get remove -y snapd --fix-missing || echo "::debug::The command [sudo apt-get remove -y snapd --fix-missing] failed to complete successfully. Proceeding..."
           sudo apt-get remove -y '^temurin-.*'
 
+      - name: Run Garbage Collector
+        run: nix-collect-garbage -d
+
       - name: Build the ISO image
         # If there are dirty files, build the iso
         run: git diff-files --quiet || nix build .#iso

@@ -51,7 +51,7 @@ while true
 			echo "$prev_output" > $tmp1
 			echo "$output" > $tmp2
 
-			diff --color=always $tmp1 $tmp2
+			difft --color=always $tmp1 $tmp2
 
 			rm $tmp1 $tmp2
 		else
