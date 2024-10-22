@@ -33,7 +33,7 @@
     packages = with pkgs; [
       kdePackages.filelight
       kdePackages.kate
-      kicad
+      # kicad
       orca-slicer
       vorta
 

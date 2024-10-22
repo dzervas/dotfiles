@@ -48,7 +48,7 @@ jobs:
           echo
           echo "==================="
           df -h
-          sudo du -xhd 1 /home
+          sudo du -xhd 1 /
 
       - name: Run Garbage Collector
         run: nix-collect-garbage -d
