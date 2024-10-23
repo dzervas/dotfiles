@@ -27,7 +27,7 @@ jobs:
           key: ${{ runner.os }}-nix
 
       - name: Update the flake
-        run: nix flake update --flake . && ./github/scripts/gha-updater.sh
+        run: nix flake update --flake . && ./.github/scripts/gha-updater.sh
 
       - name: Free up some disk space
         uses: jlumbroso/free-disk-space@main
