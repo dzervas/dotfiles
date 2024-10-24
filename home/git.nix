@@ -1,4 +1,4 @@
-_: {
+{ config, ... }: {
   # TODO: Somehow integrate [includeIf "hasconfig:remote.*.url:git@github.com:<organisation>/**"] in a safe way
 
   programs.git = {
@@ -46,6 +46,8 @@ _: {
       log.date = "local";
       tag.sort = "version:refname";
 
+      gpg.ssh.allowedSignersFile = "~/.config/git/allowed-signers";
+
       push = {
         default = "current";
         followTags = true;
@@ -71,4 +73,6 @@ _: {
       ".shell.nix"
     ];
   };
+
+  home.file."${config.programs.git.extraConfig.gpg.ssh.allowedSignersFile}".text = "dzervas@dzervas.gr ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj Dimitris Zervas";
 }
