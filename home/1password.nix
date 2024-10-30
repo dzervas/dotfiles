@@ -43,7 +43,7 @@ in {
       ];
     };
 
-    Service.ExecStart = "${pkgs._1password-gui}/bin/1password --silent";
+    Service.ExecStart = "${pkgs._1password-gui}/bin/1password --silent --enable-features=UseOzonePlatform --ozone-platform-hint=auto --ozone-platform=wayland";
     Install.WantedBy = [ "graphical-session.target" ];
   };
 }
