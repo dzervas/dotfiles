@@ -64,7 +64,7 @@ in {
     sha256 = "sha256-gw+BkfVkuzMEI8ktiLoHiBMupiUS9AoiB+acFTCt36g=";
   };
 
-  # environment.systemPackages = with pkgs; [
-    # teleport
-  # ];
+  environment.systemPackages = with pkgs; [
+    teleport
+  ];
 }
