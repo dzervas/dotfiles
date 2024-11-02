@@ -12,12 +12,14 @@ in {
     hashcat
     hashcat-utils
     hcxtools
+    hexyl
     iw
     netdiscover
     jadx
     nmap
     nuclei
     nuclei-templates
+    rclone
     seclists
     sqlmap
     subfinder
