@@ -1,13 +1,8 @@
-{ inputs, pkgs, ... }: let
-  pkgs-master = import inputs.nixpkgs-master {
-    inherit (pkgs) system;
-    config.allowUnfree = true;
-  };
-in {
+{ pkgs, ... }: {
   home.packages = with pkgs; [
     aircrack-ng
     dirb
-    pkgs-master.frida-tools
+    frida-tools
     gobuster
     hashcat
     hashcat-utils

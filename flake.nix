@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-master.url = "github:dzervas/nixpkgs/master";
 
     agenix.url = "github:ryantm/agenix";
     lanzaboote.url = "github:nix-community/lanzaboote/v0.4.1";

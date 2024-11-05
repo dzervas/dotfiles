@@ -433,22 +433,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-master": {
-      "locked": {
-        "lastModified": 1729589804,
-        "narHash": "sha256-wAbtPvyXdsEDLe+2z28XkVSStXoF8z04DVfvhE0/xj8=",
-        "owner": "dzervas",
-        "repo": "nixpkgs",
-        "rev": "ee96528a72f9c15188a6df7d87c52aa2eb0eb5c1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "dzervas",
-        "ref": "master",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs-stable": {
       "locked": {
         "lastModified": 1710695816,
@@ -532,7 +516,6 @@
         "lanzaboote": "lanzaboote",
         "nixos-generators": "nixos-generators",
         "nixpkgs": "nixpkgs_2",
-        "nixpkgs-master": "nixpkgs-master",
         "stylix": "stylix"
       }
     },
