@@ -11,6 +11,7 @@
     iw
     netdiscover
     jadx
+    man-pages
     nmap
     nuclei
     nuclei-templates

@@ -46,7 +46,7 @@
       log.date = "local";
       tag.sort = "version:refname";
 
-      gpg.ssh.allowedSignersFile = "~/.config/git/allowed-signers";
+      gpg.ssh.allowedSignersFile = ".config/git/allowed-signers";
 
       push = {
         default = "current";
