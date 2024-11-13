@@ -64,7 +64,11 @@
 in {
   programs.qutebrowser = {
     enable = true;
-    package = pkgs.qutebrowser.override { enableWideVine = true; };
+    package = pkgs.qutebrowser.override {
+      enableWideVine = true;
+      withPdfReader = false;
+      enableVulkan = true;
+    };
     searchEngines = {
       DEFAULT = "https://www.google.com/search?hl=en&q={}";
       gh = "https://github.com/search?type=repositories&q={}";
