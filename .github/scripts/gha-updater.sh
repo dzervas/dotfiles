@@ -18,9 +18,9 @@ for file in $FILES; do
 		HASH_LINE=$(echo "$LINES" | tail -n1)
 
 		URL_NO=$(echo "$URL_LINE" | cut -d'-' -f1)
-		URL=$(echo "$URL_LINE" | cut -d'-' -f2- | grep -oE 'https?://[^ ";]+')
+		URL=$(echo "$URL_LINE" | cut -d'-' -f2- | grep -oE '(https?://[^ ";]+|v?[0-9]{1,3}\.[0-9]{1,3}(\.[0-9]+)?)')
 		HASH_NO=$(echo "$HASH_LINE" | cut -d'-' -f1)
-		HASH=$(echo "$HASH_LINE" | cut -d'-' -f2- | grep -oE '[a-z0-9]{52}')
+		HASH=$(echo "$HASH_LINE" | cut -d'-' -f2- | grep -oE '([a-z0-9]{52}|sha256-[a-zA-Z0-9/=]{44})')
 
 		echo "URL: '$URL' ($URL_NO) HASH: '$HASH' ($HASH_NO)"
 		echo "Running: $CMD"

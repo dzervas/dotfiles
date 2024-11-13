@@ -43,7 +43,5 @@
     oci-cli
     terraform
     vscode
-  # ] ++ [
-    # pkgs-master.vscode
   ];
 }
