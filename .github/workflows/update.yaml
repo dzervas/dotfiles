@@ -36,9 +36,8 @@ jobs:
 
       - name: Implement https://github.com/jlumbroso/free-disk-space/pull/24
         run: |
-          sudo apt-get remove -y microsoft-edge-stable --fix-missing || echo "::debug::The command [sudo apt-get remove -y microsoft-edge-stable --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get remove -y snapd --fix-missing || echo "::debug::The command [sudo apt-get remove -y snapd --fix-missing] failed to complete successfully. Proceeding..."
-          sudo apt-get remove -y '^temurin-.*'
+          sudo apt-get purge --auto-remove -y snapd microsoft-edge-stable '^temurin-.*' '^.*jdk.*' '^.*jre.*' --fix-missing
+          sudo rm -rf /usr/local /usr/share
 
       - name: Run Garbage Collector
         run: nix-collect-garbage -d
