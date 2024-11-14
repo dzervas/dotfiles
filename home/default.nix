@@ -2,6 +2,7 @@
   imports = [
     ./1password.nix
     ./alacritty.nix
+    ./atuin.nix
     ./dev.nix
     ./direnv.nix
     ./easyeffects
@@ -23,10 +24,6 @@
   ];
 
   programs = {
-    atuin = {
-      enable = true;
-      settings.sync_address = "https://sh.dzerv.art";
-    };
     mpv.enable = true;
     home-manager.enable = true;
   };
