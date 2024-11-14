@@ -22,9 +22,15 @@
     ../modules/bwrapper.nix
   ];
 
+  programs = {
+    atuin = {
+      enable = true;
+      settings.sync_address = "https://sh.dzerv.art";
+    };
+    mpv.enable = true;
+    home-manager.enable = true;
+  };
 
-  programs.mpv.enable = true;
-  programs.home-manager.enable = true;
   services.keybase.enable = true;
 
   home = {
