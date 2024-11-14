@@ -3,8 +3,10 @@
     enable = true;
     flags = [ "--disable-up-arrow" ];
     settings = {
-      sync_address = "http://127.0.0.1:55888";
       enter_accept = false;
+      sync_address = "http://127.0.0.1:55888";
+      sync.records = true;
+
       history_filter = [
         # Ignore space-prefixed commands
         "^\s+"
