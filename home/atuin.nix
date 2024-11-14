@@ -5,6 +5,7 @@
     settings = {
       enter_accept = false;
       sync_address = "http://127.0.0.1:55888";
+      sync_frequency = "5m";
       sync.records = true;
 
       history_filter = [
