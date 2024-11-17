@@ -14,21 +14,21 @@ config.set("input.mode_override", "passthrough")
 config.set("content.notifications.enabled", True, "{{url}}")
 
 # Custom adblock filters (if any)
-custom_adblock = ["file://{{adblock}}"] if len("{{adblock}}") > 0 else []
-c.content.blocking.method = "both"
-config.set("content.blocking.adblock.lists", custom_adblock + [
-	# Default EasyList filters
-	"https://easylist.to/easylist/easylist.txt",
-	"https://easylist.to/easylist/easyprivacy.txt",
+#  custom_adblock = ["file://{{adblock}}"] if len("{{adblock}}") > 0 else []
+#  c.content.blocking.method = "both"
+#  config.set("content.blocking.adblock.lists", custom_adblock + [
+	#  # Default EasyList filters
+	#  "https://easylist.to/easylist/easylist.txt",
+	#  "https://easylist.to/easylist/easyprivacy.txt",
 
-	# uBlock Origin filters
-	"https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters.txt",
-	"https://github.com/uBlockOrigin/uAssets/raw/master/filters/privacy.txt",
-	"https://github.com/uBlockOrigin/uAssets/raw/master/filters/quick-fixes.txt",
-])
+	#  # uBlock Origin filters
+	#  "https://github.com/uBlockOrigin/uAssets/raw/master/filters/filters.txt",
+	#  "https://github.com/uBlockOrigin/uAssets/raw/master/filters/privacy.txt",
+	#  "https://github.com/uBlockOrigin/uAssets/raw/master/filters/quick-fixes.txt",
+#  ])
 
 # Spell checking
-c.spellcheck.languages = ["en-US", "el-GR"]
+#  c.spellcheck.languages = ["en-US", "el-GR"]
 
 # Keybindings
 config.bind("<Ctrl-r>", "reload", mode="passthrough")

@@ -74,7 +74,7 @@ in {
       gh = "https://github.com/search?type=repositories&q={}";
     };
     settings = {
-      spellcheck.languages = [ "en-US" "el-GR" ];
+      # spellcheck.languages = [ "en-US" "el-GR" ];
       colors.webpage.preferred_color_scheme = "dark";
     };
   };

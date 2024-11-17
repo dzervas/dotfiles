@@ -1,10 +1,12 @@
-{ pkgs, ... }: {
+{ pkgs, ... }: let
+  atuin-port = "55888";
+in {
   programs.atuin = {
     enable = true;
     flags = [ "--disable-up-arrow" ];
     settings = {
       enter_accept = false;
-      sync_address = "http://127.0.0.1:55888";
+      sync_address = "http://127.0.0.1:${atuin-port}";
       sync_frequency = "5m";
       sync.records = true;
 
@@ -23,10 +25,13 @@
       WantedBy = [ "default.target" ];
     };
     Service = {
-      ExecStart = pkgs.writeShellScript "atuin-port-forward" ''
-        #!/run/current-system/sw/bin/bash
-        kubectl port-forward --context gr --namespace atuin --address 127.0.0.1 svc/atuin 55888:8888
-      '';
+      ExecStart = [
+        "${pkgs.kubectl}/bin/kubectl port-forward --context=gr --namespace=atuin --address=127.0.0.1 svc/atuin ${atuin-port}:8888"
+      ];
+      Restart = "always";
+      RestartSec = 60;
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
     };
   };
 }
