@@ -67,7 +67,7 @@ in {
     package = pkgs.qutebrowser.override {
       enableWideVine = true;
       withPdfReader = false;
-      enableVulkan = true;
+      # enableVulkan = true;
     };
     searchEngines = {
       DEFAULT = "https://www.google.com/search?hl=en&q={}";
