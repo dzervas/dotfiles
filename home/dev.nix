@@ -17,6 +17,7 @@
       ipython
       requests
       pyserial
+      python-dotenv
       frida-python
 
       # Ansible deps
