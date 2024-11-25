@@ -11,7 +11,7 @@ _: {
     ./network.nix
     ./steam.nix
     ./theme.nix
-    ./usb-kvm.nix
+    # ./usb-kvm.nix
     ./vim.nix
   ];
 
