@@ -40,22 +40,16 @@ while true
 
 	# Calculate the number of lines in the output
 	set -l line_count (echo "$output" | wc -l)
+	set -l buffer ""
 
 	if test -n "$prev_output"
 		# Move cursor up by prev_line_count lines
-		printf "\033[%dA" $prev_line_count
+		set buffer "$buffer"(tput cuu $prev_line_count)
 
-		# Clear lines
-		for i in (seq $prev_line_count)
-			printf "\033[2K"  # Clear entire line
-			if test $i -lt $prev_line_count
-				printf "\033[1E"  # Move cursor down one line
-			end
-		end
-
-		# Move cursor back up to start position
-		printf "\033[%dF" (math $prev_line_count - 1)
+		# Clear from cursor to end of screen
+		set buffer "$buffer"(tput ed)
 	end
+	printf '%s' "$buffer"
 
 	if test $diff_highlight -eq 1 -a (set -q prev_output)
 		# Compare outputs and highlight differences
@@ -89,7 +83,7 @@ while true
 
 	# Update previous output and line count
 	set prev_output "$output"
-	set prev_line_count $line_count
+	set prev_line_count (math $line_count + 1) # Account for the date line
 
 	set_color --bold cyan
 	echo -n (date) >&2
