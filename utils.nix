@@ -12,13 +12,9 @@
       modules = mkConfigModules {
         inherit hostName stateVersion system isPrivate;
       } ++ [
+        # Insert the secure boot module only here to avoid breaking the ISO
         inputs.lanzaboote.nixosModules.lanzaboote
-      ] ++ (
-        if isPrivate then [
-          inputs.agenix.nixosModules.default
-          { environment.systemPackages = [ inputs.agenix.packages.x86_64-linux.default ]; }
-        ] else []
-      );
+      ];
     };
   };
 
@@ -37,7 +33,10 @@
 
           # Allow home-manager to have access to nix-flatpak
           extraSpecialArgs = { inherit hostName isPrivate inputs; };
-          sharedModules = [ inputs.flatpak.homeManagerModules.nix-flatpak ];
+          sharedModules = [
+            inputs.opnix.homeManagerModules.default
+            inputs.flatpak.homeManagerModules.nix-flatpak
+          ];
         };
       };
 
@@ -46,6 +45,8 @@
         default = isPrivate;
       };
     }
+
+    # inputs.opnix.nixosModules.default
 
     inputs.stylix.nixosModules.stylix
     ./configuration.nix
