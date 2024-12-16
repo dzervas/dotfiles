@@ -4,7 +4,7 @@
   mkMachine = { hostName, stateVersion, system ? "x86_64-linux" }: let
     # "Private build" mode. If enabled the private nix files will be used.
     # Disabled to be able to build the ISO and initial installation
-    isPrivate = builtins.pathExists ./home/private/default.nix && hostName != "iso";
+    isPrivate = builtins.pathExists ./home/.private/default.nix && hostName != "iso";
   in {
     nixosConfigurations.${hostName} = lib.nixosSystem {
       inherit system;
@@ -54,7 +54,7 @@
     inputs.home-manager.nixosModules.home-manager
 
     (if isPrivate then
-      builtins.trace "🔐 Private submodule build" ./home/private
+      builtins.trace "🔐 Private submodule build" ./home/.private
     else
       builtins.trace "📢 Public build" {})
   ];
