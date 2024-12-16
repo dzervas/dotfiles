@@ -37,6 +37,7 @@
       deoplete-rust
       echodoc-vim
       vim-hcl
+      vim-vagrant
 
       # Nix linter
       statix
