@@ -42,7 +42,22 @@
 
       binaryninja
     ];
-    file.".config/katerc".source = ./katerc;
+    file = {
+      ".config/katerc".source = ./katerc;
+      # From: https://wiki.archlinux.org/title/Chromium#Vulkan
+      ".config/chromium-flags.conf".text = ''
+--enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE
+--enable-features=WaylandWindowDecorations
+--ozone-platform=wayland
+'';
+      # From: https://wiki.archlinux.org/title/Wayland#Electron
+      ".config/electron-flags.conf".text = ''
+--enable-features=WebRTCPipeWireCapturer
+--enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE
+--enable-features=WaylandWindowDecorations
+--ozone-platform=wayland
+'';
+    };
   };
 
   bwrapper.prismlauncher = {

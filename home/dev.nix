@@ -44,5 +44,7 @@
     oci-cli
     terraform
     vscode
+
+    # opennoodl
   ];
 }

@@ -2,6 +2,7 @@ _: {
   nixpkgs.overlays = [
     (final: prev: {
       binaryninja = prev.callPackage ./binaryninja.nix {};
+      opennoodl = prev.callPackage ./opennoodl.nix {};
 
       vscode = prev.vscode.overrideAttrs (oldAttrs: rec {
         plat = "linux-x64";
