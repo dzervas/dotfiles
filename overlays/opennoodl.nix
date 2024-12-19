@@ -12,7 +12,7 @@
 
     # TODO: Fix this
     # gha-updater: VERSION="$(curl https://api.github.com/repos/The-Low-Code-Foundation/OpenNoodl/tags | jq -r '. | first | .name')" && echo -n "$VERSION $(nix-prefetch-url --unpack https://github.com/noodlapp/noodl/archive/refs/tags/$VERSION.zip)"
-    rev = "v1.1.0";
+    rev = "release";
     hash = "sha256-vOfMZKg6KVHf1HzS/V7Qy0j9t99hY5Gd7Aua08O9t4M=";
   };
 
