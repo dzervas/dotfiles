@@ -45,6 +45,6 @@
     terraform
     vscode
 
-    # opennoodl
+    opennoodl
   ];
 }
