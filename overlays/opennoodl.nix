@@ -22,7 +22,7 @@ in stdenv.mkDerivation rec {
       local cmd="$2"
       local msg="$3"
 
-      if [ -d "$dir" ]; then ]
+      if [ -d "$dir" ]; then
         return 0
       fi
 
@@ -39,12 +39,12 @@ in stdenv.mkDerivation rec {
 
     check_dir ${source-dir} "${git}/bin/git clone https://github.com/The-Low-Code-Foundation/OpenNoodl ${source-dir}" "The OpenNoodl source folder couldn't be found"
     check_dir ${source-dir}/node_modules "${node}/bin/npm ci --prefix ${source-dir}" "The dependencies are not installed"
-    check_dir ${source-dir}/packages/noodl-editor "${node}/bin/npm run build:editor --prefix ${source-dir}" "The Noodl Editor is not built"
+    check_dir ${source-dir}/packages/noodl-editor/dist/linux-unpacked "BUILD_AS_DIR=1 ${node}/bin/npm run build:editor:_editor --prefix ${source-dir}" "The Noodl Editor is not built"
   '';
 
   editorScript = writeScript "opennoodl-editor" ''
     ${checkScript} && \
-    exec ${electron}/bin/electron ${source-dir}/packages/noodl-editor
+    exec ${electron}/bin/electron ${source-dir}/packages/noodl-editor/dist/linux-unpacked/resources/app.asar
   '';
 
   # Create desktop items using makeDesktopItem
