@@ -21,6 +21,18 @@ in {
         "home/*/.java/.userPrefs/*/.user.lock.*"
       ];
 
+      timerConfig = {
+        OnCalendar = "daily";
+        Persistent = true;
+      };
+      pruneOpts = [
+        "--keep-daily 7"
+        "--keep-weekly 5"
+        "--keep-monthly 12"
+        "--keep-yearly 75"
+      ];
+
+      runCheck = true;
       repository = "rclone:backup:/rclone/backups/desktop";
       passwordFile = config.opnix.secrets.restic.path;
       rcloneConfigFile = "${homedir}/.config/rclone/rclone.conf";
