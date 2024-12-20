@@ -1,6 +1,7 @@
 { pkgs, ... }: {
   home.packages = with pkgs; [
     aircrack-ng
+    binaryninja
     dirb
     frida-tools
     gobuster

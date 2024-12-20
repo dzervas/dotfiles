@@ -40,7 +40,8 @@
       orca-slicer
       vorta
 
-      binaryninja
+      # TODO: cameractrls nix defined presets
+      cameractrls-gtk4
     ];
     file = {
       ".config/katerc".source = ./katerc;
