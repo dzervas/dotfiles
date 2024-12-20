@@ -34,7 +34,6 @@
           # Allow home-manager to have access to nix-flatpak
           extraSpecialArgs = { inherit hostName isPrivate inputs; };
           sharedModules = [
-            inputs.opnix.homeManagerModules.default
             inputs.flatpak.homeManagerModules.nix-flatpak
           ];
         };
@@ -46,7 +45,7 @@
       };
     }
 
-    # inputs.opnix.nixosModules.default
+    inputs.opnix.nixosModules.default
 
     inputs.stylix.nixosModules.stylix
     ./configuration.nix

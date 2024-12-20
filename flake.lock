@@ -427,14 +427,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1733776023,
-        "narHash": "sha256-pxHywHl9C9oBKXg3o2IDnlNsWMVB9cNHNsZg1aaodEQ=",
-        "path": "/home/dzervas/Lab/opnix",
-        "type": "path"
+        "lastModified": 1732579351,
+        "narHash": "sha256-oPAtIlJACTUx40y6YcxdDO3i6Pch5WqM2u1R4Ppxp7c=",
+        "owner": "dzervas",
+        "repo": "opnix",
+        "rev": "fc3e5954ebf0d6fbf257167b4f4a814c601b91f5",
+        "type": "github"
       },
       "original": {
-        "path": "/home/dzervas/Lab/opnix",
-        "type": "path"
+        "owner": "dzervas",
+        "repo": "opnix",
+        "type": "github"
       }
     },
     "pre-commit-hooks-nix": {

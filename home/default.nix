@@ -14,7 +14,6 @@
     ./neovim.nix
     ./options.nix
     ./qutebrowser
-    ./restic.nix
     ./ssh.nix
     ./tools.nix
     ./thumbnailers.nix

@@ -5,9 +5,9 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     opnix = {
-      # url = "github:dzervas/opnix";
-      type = "path";
-      path = "/home/dzervas/Lab/opnix";
+      url = "github:dzervas/opnix";
+      # type = "path";
+      # path = "/home/dzervas/Lab/opnix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
