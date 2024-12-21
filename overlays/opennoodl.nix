@@ -43,6 +43,8 @@ in stdenv.mkDerivation rec {
   '';
 
   editorScript = writeScript "opennoodl-editor" ''
+    # Makes noodl search under this dir for bin/git and uses it instead of the downloaded git binary
+    export LOCAL_GIT_DIRECTORY="${git}"
     ${checkScript} && \
     exec ${electron}/bin/electron ${source-dir}/packages/noodl-editor/dist/linux-unpacked/resources/app.asar
   '';

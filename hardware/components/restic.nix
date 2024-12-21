@@ -22,7 +22,7 @@ in {
       ];
 
       timerConfig = {
-        OnCalendar = "*-*-* */6:00:00";
+        OnCalendar = "*:00:00/6";
         Persistent = true;
       };
       pruneOpts = [
