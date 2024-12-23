@@ -1,6 +1,7 @@
-{ config, ... }: {
+{ config, pkgs, ... }: {
   # TODO: Somehow integrate [includeIf "hasconfig:remote.*.url:git@github.com:<organisation>/**"] in a safe way
 
+  home.packages = with pkgs; [git-lfs];
   programs.git = {
     enable = true;
 

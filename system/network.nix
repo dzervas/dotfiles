@@ -1,4 +1,4 @@
-{ config, ... }: {
+{ config, pkgs, ... }: {
   networking = {
     networkmanager.enable = true;
     wireless.enable = false; # Can't use with networkmanager???

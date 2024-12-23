@@ -43,6 +43,8 @@ in {
 
     WLR_DRM_NO_MODIFIERS = "1";
     WLR_NO_HARDWARE_CURSORS = "1";
+
+    _JAVA_AWT_WM_NONREPARENTING = "1";
   };
 
   gtk = {

@@ -14,6 +14,8 @@
     netdiscover
     jadx
     man-pages
+    mullvad-vpn
+    mullvad-browser
     nmap
     nuclei
     nuclei-templates
