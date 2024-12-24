@@ -1,7 +1,9 @@
 { pkgs, ... }: {
   home.packages = with pkgs; [
     aircrack-ng
+    android-tools
     binaryninja
+    binwalk sleuthkit
     dirb
     frida-tools
     gobuster
