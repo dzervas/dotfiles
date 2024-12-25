@@ -10,6 +10,7 @@
     fzf
     git
     htop
+    inetutils
     ijq
     jq
     killall

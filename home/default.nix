@@ -37,7 +37,7 @@
       kdePackages.filelight
       kdePackages.kate
       # kicad
-      orca-slicer
+      orca-slicer libdecor
       vorta
 
       # TODO: cameractrls nix defined presets
