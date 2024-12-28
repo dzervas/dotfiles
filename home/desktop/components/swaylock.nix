@@ -4,20 +4,13 @@ in {
   setup.locker = "${options.setup.locker.default}; ${locker}";
   programs.swaylock = {
     enable = true;
-    package = pkgs.swaylock-effects;
 
     settings = {
       ignore-empty-password = true;
 
       # Appearance
-      clock = true;
       indicator-idle-visible = true;
       indicator-radius = 100;
-
-      # Effects
-      grace = 5;
-      fade-in = 0.5;
-      effect-blur = "20x3";
 
       # Keyboard stuff
       disable-caps-lock-text = true;
@@ -28,6 +21,6 @@ in {
 
   wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {
     # Why does this not work in config.startup?
-    extraConfig = "exec ${locker} --grace 0";
+    extraConfig = "exec ${locker}";
   };
 }

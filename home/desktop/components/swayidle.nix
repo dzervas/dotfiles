@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  swaylock = "${config.programs.swaylock.package}/bin/swaylock -f --grace 0";
+  swaylock = "${config.programs.swaylock.package}/bin/swaylock -f";
   swaymsg = "${pkgs.sway}/bin/swaymsg";
   wpctl = "${pkgs.wireplumber}/bin/wpctl";
   configFile = "${config.xdg.configHome}/swayidle/config";
