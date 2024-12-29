@@ -42,6 +42,8 @@
 
       # TODO: cameractrls nix defined presets
       cameractrls-gtk4
+
+      filezilla
     ];
     file = {
       ".config/katerc".source = ./katerc;
