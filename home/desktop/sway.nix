@@ -9,7 +9,7 @@ in {
     ./components/trays.nix
     ./components/waybar.nix
     ./components/xdg.nix
-    ./components/kanshi.nix
+    # ./components/kanshi.nix
   ];
 
   home.packages = with pkgs; [

@@ -67,4 +67,9 @@ in {
   environment.systemPackages = with pkgs; [
     teleport
   ];
+
+  powerManagement = {
+    enable = true;
+    powertop.enable = true;
+  };
 }
