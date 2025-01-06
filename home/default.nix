@@ -7,6 +7,7 @@
     ./direnv.nix
     ./easyeffects
     ./firefox.nix
+    ./firmware.nix
     ./fish.nix
     ./flatpak.nix
     ./gammastep.nix

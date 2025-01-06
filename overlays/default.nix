@@ -3,6 +3,7 @@
     (final: prev: {
       binaryninja = prev.callPackage ./binaryninja.nix {};
       opennoodl = prev.callPackage ./opennoodl.nix {};
+      buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
 
       vscode-extensions.vadimcn.vscode-lldb = prev.vscode-extensions.vadimcn.vscode-lldb.overrideAttrs (oldAttrs: rec {
           src = prev.fetchFromGitHub {

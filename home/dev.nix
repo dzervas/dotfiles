@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   programs.poetry.enable = true;
   home.packages = with pkgs; [
     nixpkgs-fmt # Used by the Nix IDE extension
