@@ -19,6 +19,12 @@
 
   programs.virt-manager.enable = true;
 
+  systemd.services = {
+    libvirtd.enable = false;
+    libvirt-guests.enable = false;
+    virtlogd.enable = false;
+  };
+
   # networking.networkmanager.dns = "systemd-resolved";
 
   # services.resolved = {
