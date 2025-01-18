@@ -9,6 +9,7 @@ _: {
       "org.chromium.Chromium"
       "org.onlyoffice.desktopeditors"
       "org.ryujinx.Ryujinx"
+      "org.signal.Signal"
 
       # Gamescope for Steam (deadlock isn't multi-monitor aware)
       # "org.freedesktop.Platform.VulkanLayer.gamescope"
@@ -36,6 +37,7 @@ _: {
         filesystems = [ "home/CryptVMs" ];
       };
       "org.chromium.Chromium".Context.sockets = ["wayland"];
+      "org.signal.Signal".Context.sockets = ["x11"];
       "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
       "md.obsidian.Obsidian".Context.filesystems = [ "xdg-documents/Obsidian" ];
     };
