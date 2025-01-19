@@ -1,10 +1,16 @@
 { config, pkgs, ... }: let
   homedir = "/home/dzervas";
 in {
-  environment.systemPackages = with pkgs; [
-    rclone
-    restic
-  ];
+  environment = {
+    sessionVariables = {
+      RESTIC_REPOSITORY = "rclone:backup:/rclone/backups/desktop";
+      RESTIC_PASSWORD_COMMAND = "op read op://Nix/restic/password";
+    };
+    systemPackages = with pkgs; [
+      rclone
+      restic
+    ];
+  };
 
   services.restic.backups = {
     documents = {
@@ -35,13 +41,12 @@ in {
       runCheck = true;
       repository = "rclone:backup:/rclone/backups/desktop";
       passwordFile = config.opnix.secrets.restic.path;
-      rcloneConfigFile = "${homedir}/.config/rclone/rclone.conf";
+      rcloneConfigFile = "/etc/rclone/rclone.conf";
     };
   };
 
   opnix = {
-    # OP_SERVICE_ACCOUNT_TOKEN="{your token here}"
-    environmentFile = "/etc/opnix.env";
+    environmentFile = "/etc/opnix.env"; # contents: OP_SERVICE_ACCOUNT_TOKEN="{your token here}"
     # Set the systemd services that will use 1Password secrets; this makes them wait until
     # secrets are deployed before attempting to start the service.
     systemdWantedBy = ["restic-backups-documents"];

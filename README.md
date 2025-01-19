@@ -101,6 +101,12 @@ echo -e "#!/bin/sh\nexec /usr/bin/env python3 \$@" | sudo tee /usr/bin/python3
 sudo chmod +x /bin/bash /usr/bin/bash /usr/bin/python /usr/bin/python3
 ```
 
+- If a machine that uses opnix is set up, `/etc/opnix.env` needs to be populated with:
+
+```bash
+OP_SERVICE_ACCOUNT_TOKEN="{your token here}"
+```
+
 ### Secure boot
 
 ```fish
