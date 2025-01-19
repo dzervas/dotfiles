@@ -3,12 +3,12 @@
   makeDesktopItem,
   writeScript,
   nodejs_18,
-  electron_31-bin,
+  electron-bin,
   zenity,
   git,
 }: let
   node = nodejs_18;
-  electron = electron_31-bin;
+  electron = electron-bin;
   source-dir = "~/.local/OpenNoodl";
 in stdenv.mkDerivation rec {
   pname = "opennoodl";

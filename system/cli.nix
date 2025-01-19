@@ -27,7 +27,7 @@
     tree
     unzip
     usbutils
-    # vagrant
+    vagrant
     wget
   ];
 
