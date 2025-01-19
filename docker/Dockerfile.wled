@@ -1,0 +1,23 @@
+FROM ubuntu:latest
+
+RUN apt-get update && apt-get install -y curl python3-pip pipenv git nodejs npm platformio
+
+ENV NVM_DIR /usr/local/nvm
+RUN mkdir -p ${NVM_DIR} && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+
+ARG WLED_VERSION=main
+RUN git clone --branch ${WLED_VERSION} --depth 1 https://github.com/Aircoookie/WLED /wled
+
+WORKDIR /wled
+
+# ARG NODE_VERSION=20
+# RUN bash -c "source $NVM_DIR/nvm.sh && nvm install ${NODE_VERSION} && nvm use --delete-prefix ${NODE_VERSION}"
+# RUN npm ci
+# RUN python3 -m venv /.venv && /.venv/bin/pip install -r requirements.txt
+RUN pipenv install --system -r requirements.txt
+
+ARG TARGET_BOARD=lolin_s2_mini
+RUN pipenv run pio ci -e ${TARGET_BOARD} -c platformio.ini .
+
+# pass --device=/dev/ttyUSB0 to docker run
+CMD pio run -e ${TARGET_BOARD} -t upload

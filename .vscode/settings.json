@@ -3,5 +3,8 @@
 	"files.associations": {
 		"vimrc": "Vimscript",
 		"direnvrc": "shellscript"
-	}
+	},
+	"cSpell.words": [
+		"pkgs"
+	]
 }
