@@ -1,6 +1,8 @@
 { pkgs, ... }: {
   services.xserver.videoDrivers = [ "modesetting" ];
 
+  # nixpkgs.config.rocmSupport = true;
+
   boot = {
     kernelModules = [ "kvm-amd" ];
     initrd.kernelModules = [ "amdgpu" ];

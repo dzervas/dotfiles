@@ -46,8 +46,11 @@ while true
 		# Move cursor up by prev_line_count lines
 		set buffer "$buffer"(tput cuu $prev_line_count)
 
+		# Move cursor to begginging of line
+		set buffer "$buffer"(printf "\r")
+
 		# Clear from cursor to end of screen
-		set buffer "$buffer"(tput ed)
+		# set buffer "$buffer"(tput ed)
 	end
 	printf '%s' "$buffer"
 
@@ -61,16 +64,15 @@ while true
 			echo "$prev_output" > $tmp1
 			echo "$output" > $tmp2
 
-			difft --color=always $tmp1 $tmp2
+			set output (difft --color=always $tmp1 $tmp2)
 
 			rm $tmp1 $tmp2
-		else
-			# If outputs are the same, display the output
-			printf '%s\n' "$output"
 		end
-	else
-		# Display the output
-		printf '%s\n' "$output"
+	end
+
+	set el (tput el)
+	for l in $output
+		printf "$l$el\n"
 	end
 
 	if test $exit_on_error -eq 1 -a $retval -ne 0
@@ -83,7 +85,8 @@ while true
 
 	# Update previous output and line count
 	set prev_output "$output"
-	set prev_line_count (math $line_count + 1) # Account for the date line
+	# set prev_line_count (math $line_count + 1) # Account for the date line
+	set prev_line_count "$line_count"
 
 	set_color --bold cyan
 	echo -n (date) >&2

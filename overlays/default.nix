@@ -46,8 +46,7 @@
         postInstall = oldAttrs.postInstall or "" + ''
           # Create a wrapper script for VSCode
           wrapProgram "$out/bin/code" \
-            --run ${patchCodeLLVM} \
-            --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath additionalLibs}"
+            --set LD_LIBRARY_PATH "${final.stdenv.cc.cc.lib}/lib/"
         '';
       });
     })
