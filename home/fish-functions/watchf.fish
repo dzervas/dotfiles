@@ -52,7 +52,6 @@ while true
 		# Clear from cursor to end of screen
 		# set buffer "$buffer"(tput ed)
 	end
-	printf '%s' "$buffer"
 
 	if test $diff_highlight -eq 1 -a (set -q prev_output)
 		# Compare outputs and highlight differences
@@ -70,10 +69,15 @@ while true
 		end
 	end
 
-	set el (tput el)
-	for l in $output
-		printf "$l$el\n"
+	set -l el (tput el)
+	set -l cols (tput cols)
+
+	tput civis # Hide the cursor
+	printf '%s' "$buffer"
+	for line in $output
+		printf "%s$el\n" (string shorten -m $cols $line)
 	end
+	tput cnorm # Show the cursor
 
 	if test $exit_on_error -eq 1 -a $retval -ne 0
 		return $retval
@@ -91,6 +95,7 @@ while true
 	set_color --bold cyan
 	echo -n (date) >&2
 	set_color normal
+	tput ed # Clear the rest of the screen - in case the output got smaller
 
 	sleep $interval
 end

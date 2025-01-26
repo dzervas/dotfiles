@@ -39,6 +39,7 @@
     # Cloud stuff
     kubectl
     kubectx
+    kubetail
     kubernetes-helm
     oci-cli
     terraform
