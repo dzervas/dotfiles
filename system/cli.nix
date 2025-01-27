@@ -37,7 +37,6 @@
   services.locate = {
     enable = true;
     package = pkgs.plocate;
-    localuser = null; # mlocate and plocate do not support the services.locate.localuser option
   };
 
   virtualisation.podman = {
