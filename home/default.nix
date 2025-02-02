@@ -61,6 +61,7 @@
 --enable-features=WaylandWindowDecorations
 --ozone-platform=wayland
 '';
+      ".config/nixpkgs/config.nix".text = "{ allowUnfree = true; }";
     };
   };
 
