@@ -7,7 +7,7 @@ in {
     ./components/boot.nix
     ./components/peripherals.nix
     ./components/secure-boot.nix
-    ./components/virtualbox.nix
+    # ./components/virtualbox.nix
     ./components/libvirt.nix
     ./components/laptop.nix
   ];
