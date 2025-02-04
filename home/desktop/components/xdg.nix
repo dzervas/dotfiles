@@ -48,6 +48,10 @@
         "application/xml" = browser;
 
         "model/stl" = "f3d-plugin-native.desktop";
+
+        "x-scheme-handler/orcaslicer" = "OrcaSlicer.desktop";
+        "x-scheme-handler/prusaslicer" = "OrcaSlicer.desktop";
+        "x-scheme-handler/bambustudio" = "OrcaSlicer.desktop";
       };
     };
   };
