@@ -66,6 +66,7 @@ in {
   };
 
   environment.systemPackages = with pkgs; [
+    powertop
     teleport
   ];
 

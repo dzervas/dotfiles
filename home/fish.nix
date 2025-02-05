@@ -6,6 +6,7 @@
     interactiveShellInit = ''
       set fish_greeting
       fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
+      bind \ew "echo; watchf (commandline); echo; echo; commandline -f repaint"
       bind \e\` "__smart_help (commandline -p)"
       # Maps to Ctrl-Shift-Delete
       bind \e\[3\;6~ __forget
