@@ -5,6 +5,9 @@
     policies = {
       DisablePocket = true;
       DisableTelemetry = true;
+      DisableDeveloperTools = false;
+      DisableFeedbackCommands = true;
+      DisableSetDesktopBackground = true;
       DontCheckDefaultBrowser = true;
       HardwareAcceleration = true;
       NoDefaultBookmarks = true;
@@ -75,6 +78,11 @@
         "services.sync.prefs.sync.browser.safebrowsing.malware.enabled" = false;
         "browser.safebrowsing.phishing.enabled" = false;
         "services.sync.prefs.sync.browser.safebrowsing.phishing.enabled" = false;
+
+        # Sync
+        "services.sync.declinedEngines" = "passwords,creditcards";
+        "services.sync.engine.passwords" = false;
+        "services.sync.engine.prefs" = false;
 
         # Make the .lan TLD whitelisted
         "browser.fixup.domainsuffixwhitelist.lan" = true;

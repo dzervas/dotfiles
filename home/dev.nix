@@ -8,6 +8,7 @@
     gcc
     pkg-config
     openssl.dev
+    sqlite-interactive
 
     go
 
