@@ -7,6 +7,8 @@ c.colors.statusbar.passthrough.fg = c.colors.statusbar.normal.fg
 c.statusbar.show = "always"
 c.tabs.show = "multiple"
 c.window.title_format = "{{emoji}} {perc}{current_title}"
+c.window.hide_decoration = True
+c.window.transparent = True
 
 # Defaults
 c.content.cookies.accept = "no-3rdparty"

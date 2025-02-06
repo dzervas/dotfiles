@@ -19,9 +19,11 @@
     # Cosmic Desktop
     nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
     nixos-cosmic.inputs.nixpkgs.follows = "nixpkgs";
-    cosmic-manager.url = "github:HeitorAugustoLN/cosmic-manager";
-    cosmic-manager.inputs.nixpkgs.follows = "nixpkgs";
-    cosmic-manager.inputs.home-manager.follows = "home-manager";
+    cosmic-manager = {
+      url = "github:HeitorAugustoLN/cosmic-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
 
     # ISO generation
     nixos-generators.url = "github:nix-community/nixos-generators";

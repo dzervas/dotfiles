@@ -11,10 +11,20 @@
     ];
   };
 
-  services.desktopManager.cosmic.enable = true;
-  services.displayManager.cosmic-greeter.enable = true;
-
   environment.sessionVariables.COSMIC_DATA_CONTROL_ENABLED = 1;
+
+  services = {
+    desktopManager.cosmic.enable = true;
+    displayManager.cosmic-greeter.enable = true;
+    logind = {
+      lidSwitchDocked = "lock";
+      lidSwitchExternalPower = "lock";
+      extraConfig = ''
+        IdleAction=lock
+        IdleActionSec=5m
+      '';
+    };
+  };
 
   # programs = {
   #   # File manager - home-manager doesn't have it
