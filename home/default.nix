@@ -20,6 +20,7 @@
     ./thumbnailers.nix
     ./wine
     # ./desktop/sway.nix
+    ./desktop/cosmic.nix
 
     ../modules/bwrapper.nix
   ];
