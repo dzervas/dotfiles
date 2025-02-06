@@ -4,12 +4,8 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    opnix = {
-      url = "github:dzervas/opnix";
-      # type = "path";
-      # path = "/home/dzervas/Lab/opnix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    opnix.url = "github:dzervas/opnix";
+    opnix.inputs.nixpkgs.follows = "nixpkgs";
 
     lanzaboote.url = "github:nix-community/lanzaboote";
     lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
@@ -19,6 +15,13 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     flatpak.url = "github:gmodena/nix-flatpak";
+
+    # Cosmic Desktop
+    nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
+    nixos-cosmic.inputs.nixpkgs.follows = "nixpkgs";
+    cosmic-manager.url = "github:HeitorAugustoLN/cosmic-manager";
+    cosmic-manager.inputs.nixpkgs.follows = "nixpkgs";
+    cosmic-manager.inputs.home-manager.follows = "home-manager";
 
     # ISO generation
     nixos-generators.url = "github:nix-community/nixos-generators";

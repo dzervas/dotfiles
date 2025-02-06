@@ -11,71 +11,76 @@
     ];
   };
 
-  programs = {
-    # File manager - home-manager doesn't have it
-    thunar = {
-      enable = true;
-      plugins = with pkgs.xfce; [
-        thunar-volman
-        thunar-archive-plugin
-        thunar-media-tags-plugin
-      ];
-    };
-    # Thunar archive manager
-    file-roller.enable = true;
-    # Save xfce settings
-    xfconf.enable = true;
+  services.desktopManager.cosmic.enable = true;
+  services.displayManager.cosmic-greeter.enable = true;
 
-    # Backlight/brightness control
-    light.enable = true;
-  };
+  environment.sessionVariables.COSMIC_DATA_CONTROL_ENABLED = 1;
 
-  services = {
-    xserver = {
-      enable = true;
+  # programs = {
+  #   # File manager - home-manager doesn't have it
+  #   thunar = {
+  #     enable = true;
+  #     plugins = with pkgs.xfce; [
+  #       thunar-volman
+  #       thunar-archive-plugin
+  #       thunar-media-tags-plugin
+  #     ];
+  #   };
+  #   # Thunar archive manager
+  #   file-roller.enable = true;
+  #   # Save xfce settings
+  #   xfconf.enable = true;
 
-      # Disable lightdm (it's enabled by default)
-      displayManager.lightdm.enable = false;
-    };
+  #   # Backlight/brightness control
+  #   light.enable = true;
+  # };
 
-    displayManager.autoLogin.enable = lib.mkForce false;
+  # services = {
+  #   xserver = {
+  #     enable = true;
 
-    # GNOME Keyring - used by VSCode mainly
-    gnome.gnome-keyring.enable = true;
+  #     # Disable lightdm (it's enabled by default)
+  #     displayManager.lightdm.enable = false;
+  #   };
 
-    # FlatPak
-    flatpak.enable = true;
-    accounts-daemon.enable = true; # Flatpak needs this
+  #   displayManager.autoLogin.enable = lib.mkForce false;
 
-    # XFCE File management
-    # Mount, trash and more
-    gvfs.enable = true;
-    # Thumbnail support
-    tumbler.enable = true;
-  };
+  #   # GNOME Keyring - used by VSCode mainly
+  #   gnome.gnome-keyring.enable = true;
 
-  security = {
-    polkit.enable = true;
-    pam = {
-      services = {
-        swaylock = {};
-        login.enableGnomeKeyring = true;
-      };
+  #   # FlatPak
+  #   flatpak.enable = true;
+  #   accounts-daemon.enable = true; # Flatpak needs this
 
-      # faster sway maybe? https://nixos.wiki/wiki/Sway
-      loginLimits = [{
-        domain = "@users";
-        item = "rtprio";
-        type = "-";
-        value = 1;
-      }];
-    };
-  };
+  #   # XFCE File management
+  #   # Mount, trash and more
+  #   gvfs.enable = true;
+  #   # Thumbnail support
+  #   tumbler.enable = true;
+  # };
 
-  # XDG Shit
-  xdg.portal = {
-    enable = true;
-    wlr.enable = true;
-    configPackages = [ pkgs.xdg-desktop-portal-wlr ];
-  };
+  # security = {
+  #   polkit.enable = true;
+  #   pam = {
+  #     services = {
+  #       swaylock = {};
+  #       login.enableGnomeKeyring = true;
+  #     };
+
+  #     # faster sway maybe? https://nixos.wiki/wiki/Sway
+  #     loginLimits = [{
+  #       domain = "@users";
+  #       item = "rtprio";
+  #       type = "-";
+  #       value = 1;
+  #     }];
+  #   };
+  # };
+
+  # # XDG Shit
+  # xdg.portal = {
+  #   enable = true;
+  #   wlr.enable = true;
+  #   configPackages = [ pkgs.xdg-desktop-portal-wlr ];
+  # };
 }

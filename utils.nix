@@ -35,6 +35,7 @@
           extraSpecialArgs = { inherit hostName isPrivate inputs; };
           sharedModules = [
             inputs.flatpak.homeManagerModules.nix-flatpak
+            inputs.cosmic-manager.homeManagerModules.cosmic-manager
           ];
         };
       };
@@ -48,6 +49,7 @@
     inputs.opnix.nixosModules.default
 
     inputs.stylix.nixosModules.stylix
+    inputs.nixos-cosmic.nixosModules.default
     ./configuration.nix
     ./hardware/${hostName}.nix
 

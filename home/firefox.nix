@@ -50,6 +50,7 @@
         "layout.css.prefers-color-scheme.content-override" = 0; # force dark
         "reader.content_width" = 5;
         "reader.font_size" = 5;
+        "browser.tabs.inTitlebar" = 1;
 
         # Disable engagement pop-ups
         "browser.engagement.ctrlTab.has-used" = true;

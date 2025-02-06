@@ -19,7 +19,7 @@
     ./tools.nix
     ./thumbnailers.nix
     ./wine
-    ./desktop/sway.nix
+    # ./desktop/sway.nix
 
     ../modules/bwrapper.nix
   ];
