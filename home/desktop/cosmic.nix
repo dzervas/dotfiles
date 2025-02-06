@@ -69,6 +69,7 @@ in {
     }];
     shortcuts = [
       { key = "Super+L"; action = mkRonVarVal "System" [(mkRonVariant "LockScreen")]; }
+      { key = "Super+P"; action = mkRonVarVal "Spawn" ["1password --quick-access"]; }
       { key = "Super+R"; action = mkRonVarVal "System" [(mkRonVariant "Launcher")]; }
       { key = "Super+Return"; action = mkRonVarVal "Spawn" ["alacritty"]; }
 
