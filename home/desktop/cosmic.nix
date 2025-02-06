@@ -1,9 +1,9 @@
 { config, lib, pkgs, ... }: let
   cfg = config.setup;
   modifier = "Mod4";
-  mkRonValue = (type: value: { inherit value; __type = type; });
-  mkRonVariant = (variant: { inherit variant; __type = "enum"; });
-  mkRonVarVal = (variant: value: { inherit variant value; __type = "enum"; });
+  mkRonValue = type: value: { inherit value; __type = type; };
+  mkRonVariant = variant: { inherit variant; __type = "enum"; };
+  mkRonVarVal = variant: value: { inherit variant value; __type = "enum"; };
 in {
   wayland.desktopManager.cosmic = {
     enable = true;
@@ -29,9 +29,9 @@ in {
       };
     };
     idle = {
-      screen_off_time = mkRonValue "optional" 60000;
+      screen_off_time = mkRonValue "optional" 300000;
       suspend_on_ac_time = null;
-      suspend_on_battery_time = mkRonValue "optional" 300000;
+      suspend_on_battery_time = mkRonValue "optional" 600000;
     };
     wallpapers = [{
       source = mkRonVarVal "Path" [config.stylix.image];
