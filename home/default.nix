@@ -19,7 +19,8 @@
     ./thumbnailers.nix
     ./wine
     # ./desktop/sway.nix
-    ./desktop/cosmic.nix
+    # ./desktop/cosmic.nix
+    ./desktop/hyprland.nix
 
     ../modules/bwrapper.nix
   ];

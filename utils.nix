@@ -9,6 +9,7 @@
     nixosConfigurations.${hostName} = lib.nixosSystem {
       inherit system;
 
+      specialArgs = { inherit inputs; };
       modules = mkConfigModules {
         inherit hostName stateVersion system isPrivate;
       } ++ [
@@ -35,7 +36,7 @@
           extraSpecialArgs = { inherit hostName isPrivate inputs; };
           sharedModules = [
             inputs.flatpak.homeManagerModules.nix-flatpak
-            inputs.cosmic-manager.homeManagerModules.cosmic-manager
+            # inputs.cosmic-manager.homeManagerModules.cosmic-manager
           ];
         };
       };
@@ -49,7 +50,7 @@
     inputs.opnix.nixosModules.default
 
     inputs.stylix.nixosModules.stylix
-    inputs.nixos-cosmic.nixosModules.default
+    # inputs.nixos-cosmic.nixosModules.default
     ./configuration.nix
     ./hardware/${hostName}.nix
 

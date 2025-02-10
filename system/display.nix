@@ -1,9 +1,10 @@
-{ lib, pkgs, ... }: {
+{ inputs, lib, pkgs, ... }: {
   hardware.graphics.enable = true;
 
   environment = {
     # Electron fix - https://nixos.wiki/wiki/Wayland#Electron_and_Chromium
     sessionVariables.NIXOS_OZONE_WL = "1";
+    # sessionVariables.COSMIC_DATA_CONTROL_ENABLED = 1;
 
     systemPackages = with pkgs; [
       gthumb
@@ -11,11 +12,7 @@
     ];
   };
 
-  environment.sessionVariables.COSMIC_DATA_CONTROL_ENABLED = 1;
-
   services = {
-    desktopManager.cosmic.enable = true;
-    displayManager.cosmic-greeter.enable = true;
     logind = {
       lidSwitchDocked = "lock";
       lidSwitchExternalPower = "lock";
@@ -24,9 +21,31 @@
         IdleActionSec=5m
       '';
     };
+
+    # desktopManager.cosmic.enable = true;
+    # displayManager.cosmic-greeter.enable = true;
+
+    hypridle.enable = true;
+    # https://wiki.hyprland.org/Useful-Utilities/Systemd-start/#installation
+    #dbus.implementation = lib.mkForce "dbus";
+
+    displayManager.sddm = {
+      enable = true;
+      wayland.enable = true;
+    };
   };
 
-  # programs = {
+  programs = {
+    uwsm.enable = true;
+
+    hyprland = {
+      enable = true;
+      package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+      portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+      withUWSM = true;
+    };
+    hyprlock.enable = true;
+
   #   # File manager - home-manager doesn't have it
   #   thunar = {
   #     enable = true;
@@ -43,7 +62,7 @@
 
   #   # Backlight/brightness control
   #   light.enable = true;
-  # };
+  };
 
   # services = {
   #   xserver = {
@@ -69,8 +88,8 @@
   #   tumbler.enable = true;
   # };
 
-  # security = {
-  #   polkit.enable = true;
+  security = {
+    polkit.enable = true;
   #   pam = {
   #     services = {
   #       swaylock = {};
@@ -85,7 +104,7 @@
   #       value = 1;
   #     }];
   #   };
-  # };
+  };
 
   # # XDG Shit
   # xdg.portal = {

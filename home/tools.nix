@@ -3,7 +3,7 @@
     aircrack-ng
     android-tools
     binaryninja
-    binwalk sleuthkit
+    # binwalk sleuthkit
     dirb
     frida-tools
     gobuster
@@ -14,10 +14,10 @@
     inkscape-with-extensions
     iw
     netdiscover
-    jadx
+    # jadx
     man-pages
     mullvad-vpn
-    mullvad-browser
+    # mullvad-browser
     nmap
     nuclei
     nuclei-templates
@@ -25,7 +25,7 @@
     seclists
     sqlmap
     subfinder
-    wifite2
+    # wifite2
     wirelesstools
     wireshark
     wpscan

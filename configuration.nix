@@ -59,7 +59,7 @@
   };
 
   nix = {
-    extraOptions = "min-free = ${toString (50 * 1024 * 1024)}"; # Garbage collect when free space is less than 50MB
+    extraOptions = "min-free = ${toString (512 * 1024 * 1024)}"; # Garbage collect when free space is less than 512MB
     gc = {
       automatic = true;
       dates = "weekly";
@@ -72,6 +72,8 @@
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
       warn-dirty = false;
+      substituters = ["https://hyprland.cachix.org"];
+      trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
     };
   };
 }
