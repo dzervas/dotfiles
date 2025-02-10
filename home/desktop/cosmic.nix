@@ -1,6 +1,4 @@
-{ config, lib, pkgs, ... }: let
-  cfg = config.setup;
-  modifier = "Mod4";
+{ config, ... }: let
   mkRonValue = type: value: { inherit value; __type = type; };
   mkRonVariant = variant: { inherit variant; __type = "enum"; };
   mkRonVarVal = variant: value: { inherit variant value; __type = "enum"; };
