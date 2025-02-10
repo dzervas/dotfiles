@@ -5,6 +5,15 @@
   mkRonVariant = variant: { inherit variant; __type = "enum"; };
   mkRonVarVal = variant: value: { inherit variant value; __type = "enum"; };
 in {
+  # Problems:
+  # - No per-output pinned workspaces (1 & 3 on left, 2 & 4 on right)
+  # - Auto-lock doesn't work
+  # - Screenshot utility doesn't work
+  # - Window gaps can't be configured (from GUI only?)
+  # - Window decorations can't be disabled
+  # - No single-window mode (tabbed layout)
+  # - No window rules (floating/fullscreen/etc.)
+
   wayland.desktopManager.cosmic = {
     enable = true;
     compositor = {
@@ -45,6 +54,7 @@ in {
     panels = [{
       name = "Panel";
       anchor = mkRonVariant "Top";
+      anchor_gap = false;
       size = mkRonVariant "XS";
       output = mkRonVariant "All";
       plugins_center = mkRonValue "optional" [ "com.system76.CosmicAppletTime" ];
