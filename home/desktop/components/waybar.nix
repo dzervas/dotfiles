@@ -15,33 +15,67 @@ _: {
         modules-left = [
           "custom/power"
           "custom/launcher"
+          "hyprland/workspaces"
           "sway/workspaces"
           "sway/scratchpad"
           # "custom/media"
         ];
-        modules-center = [ "sway/window" ];
+        modules-center = [ "sway/window" "hyprland/window" ];
         modules-right = [
           "tray"
           # "pulseaudio"
           "keyboard-state"
           "battery"
+          # "bluetooth"
           "sway/language"
           "clock"
+          "idle_inhibitor"
         ];
 
         # Module settings
+        "idle_inhibitor" = {
+          format = "{icon}";
+          format-icons = {
+            activated = "🤪";
+            deactivated = "😒";
+          };
+        };
+
+        "bluetooth" = {
+          format = "{icon}";
+        };
+
         "custom/power" = {
           format = " {icon} ";
           format-icons = "󰐥";
+          on-click-right = "loginctl lock-session";
         };
         "custom/launcher" = {
           format = " {icon} ";
           format-icons = "🚀";
         };
+        "hyprland/window" = {
+          icon = true;
+          separate-outputs = true;
+          rewrite = {
+            "(.*) — Mozilla Firefox" = "$1";
+          };
+        };
         "sway/window" = {
           icon = true;
         };
         "sway/workspaces" = {
+          format = "{icon} ";
+          # TODO: Show the name with format-activated
+          format-icons = {
+            "1" = "";
+            "2" = "";
+            "3" = "";
+            "4" = "";
+            "5" = "";
+          };
+        };
+        "hyprland/workspaces" = {
           format = "{icon} ";
           # TODO: Show the name with format-activated
           format-icons = {

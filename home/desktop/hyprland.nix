@@ -1,10 +1,15 @@
-{ inputs, pkgs, ... }: {
+{ config, inputs, pkgs, ... }: {
   imports = [
+    ./components/rofi.nix
     ./components/trays.nix
     ./components/waybar.nix
   ];
 
   services.dunst.enable = true;
+  home.pointerCursor.hyprcursor = {
+    enable = true;
+    size = 24;
+  };
 
   wayland.windowManager.hyprland = {
     enable = true;
@@ -16,6 +21,10 @@
         "$mod, E, exec, hyprctl keyword general:layout 'dwindle'"
         "$mod, T, exec, hyprctl keyword general:layout 'master'"
         "$mod, F, fullscreen"
+        "$mod, G, togglegroup"
+        "$mod, R, exec, ${config.setup.runner}"
+        "$mod, P, exec, 1password --quick-access"
+        "$mod, L, exec, hyprlock"
         "$mod+Shift, F, togglefloating"
         "$mod+Shift, R, exec, hyprctl reload"
         "$mod, Left, workspace, m-1"
@@ -27,6 +36,7 @@
         "$mod, Down, cyclenext, tiled, prev"
         "$mod+Shift, Down, swapnext, tiled, prev"
 
+        "$mod, Tab, workspace, previous"
         "$mod, Comma, focusmonitor, +1"
         "$mod+Shift, Comma, movecurrentworkspacetomonitor, +1"
         "$mod, Period, focusmonitor, -1"
@@ -73,6 +83,13 @@
         pseudotile = true;
         preserve_split = true;
       };
+
+      workspace = [
+        # No gaps when only 1 window exists in the workspace
+        # https://wiki.hyprland.org/Configuring/Workspace-Rules/#smart-gaps
+        "w[tv1], gapsout:0, gapsin:0"
+        "f[1], gapsout:0, gapsin:0"
+      ];
 
       input = {
         kb_layout = "us,gr";
