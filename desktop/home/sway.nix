@@ -56,10 +56,7 @@ in {
         { command = cfg.browser; }
         { command = cfg.terminal; }
       ];
-      bars = [{
-        position = "top";
-        command = cfg.bar;
-      }];
+      bars = []; # Waybar is triggered by systemd
       input = {
         "type:keyboard" = {
           xkb_layout = "us,gr";
