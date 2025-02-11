@@ -18,9 +18,6 @@
     ./tools.nix
     ./thumbnailers.nix
     ./wine
-    # ./desktop/sway.nix
-    # ./desktop/cosmic.nix
-    ./desktop/hyprland.nix
 
     ../modules/bwrapper.nix
   ];
@@ -40,7 +37,6 @@
       kdePackages.kate
       # kicad
       orca-slicer libdecor
-      vorta
 
       # TODO: cameractrls nix defined presets
       cameractrls-gtk4

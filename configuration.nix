@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: {
+{ pkgs, ... }: {
   imports = [ ./system ];
 
   system.copySystemConfiguration = false;
@@ -18,11 +18,6 @@
   };
 
   systemd = {
-#    services."getty@tty1" = {
-#      overrideStrategy = "asDropin";
-#      serviceConfig.ExecStart = ["" "@${pkgs.util-linux}/sbin/agetty agetty --login-program ${config.services.getty.loginProgram} --autologin dzervas --noclear --keep-baud %I 115200,38400,9600 $TERM"];
-#    };
-
     # Fix flatpak default browser
     user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
   };
@@ -72,8 +67,6 @@
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
       warn-dirty = false;
-      substituters = ["https://hyprland.cachix.org"];
-      trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
     };
   };
 }
