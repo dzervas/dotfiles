@@ -12,6 +12,10 @@ in {
   # - No single-window mode (tabbed layout)
   # - No window rules (floating/fullscreen/etc.)
 
+  imports = [
+    ./components/wayland-fixes.nix
+  ];
+
   wayland.desktopManager.cosmic = {
     enable = true;
     compositor = {

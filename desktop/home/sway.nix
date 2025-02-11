@@ -8,6 +8,7 @@ in {
     ./components/swaylock.nix
     ./components/trays.nix
     ./components/waybar.nix
+    ./components/wayland-fixes.nix
     ./components/xdg.nix
     # ./components/kanshi.nix
   ];
@@ -19,32 +20,12 @@ in {
     grim
     slurp
     swappy
-
-    wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
-    brightnessctl
-    playerctl
   ];
 
   programs.waybar.systemd.target = "sway-session.target";
   services = {
     swaync.enable = true;
     swayidle.systemdTarget = "sway-session.target";
-    flatpak.overrides.global = {
-      Context.sockets = ["wayland" "!x11" "!fallback-x11"];
-      Environment.GDK_BACKEND = "wayland";
-    };
-  };
-
-  home.sessionVariables = {
-    _JAVA_OPTIONS = "-Dawt.useSystemAAFontSettings=lcd -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
-
-    MOZ_ENABLE_WAYLAND = "1";
-    MOZ_USE_XINPUT2 = "1";
-
-    WLR_DRM_NO_MODIFIERS = "1";
-    WLR_NO_HARDWARE_CURSORS = "1";
-
-    _JAVA_AWT_WM_NONREPARENTING = "1";
   };
 
   gtk = {

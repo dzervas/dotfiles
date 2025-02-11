@@ -42,6 +42,9 @@
       cameractrls-gtk4
 
       filezilla
+
+      brightnessctl
+      playerctl
     ];
     file = {
       ".config/katerc".source = ./katerc;

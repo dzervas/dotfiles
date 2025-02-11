@@ -51,6 +51,8 @@
     inputs.stylix.nixosModules.stylix
     ./configuration.nix
     ./hardware/${hostName}.nix
+    # ./desktop/cosmic.nix # Needs flake.nix inputs
+    # ./desktop/hyprland.nix # Needs flake.nix inputs
     ./desktop/sway.nix
 
     inputs.home-manager.nixosModules.home-manager

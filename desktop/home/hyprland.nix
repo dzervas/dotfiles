@@ -3,6 +3,7 @@
     ./components/rofi.nix
     ./components/trays.nix
     ./components/waybar.nix
+    ./components/wayland-fixes.nix
   ];
 
   services.dunst.enable = true;
