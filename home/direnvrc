@@ -67,3 +67,7 @@ function use_op() {
 		eval "$(echo $data | jq -r '.fields[] | select(.section.label == "'$label'") | "export '$prefix'\(.label)=\"\(.value)\"; "')"
 	done
 }
+
+# https://devenv.sh/automatic-shell-activation/#configure-shell-activation
+source_url "https://raw.githubusercontent.com/cachix/devenv/82c0147677e510b247d8b9165c54f73d32dfd899/direnvrc" "sha256-7u4iDd1nZpxL4tCzmPG0dQgC5V+/44Ba+tHkPob1v2k="
+# In 1.4+ to replaced with: eval "$(devenv direnvrc)"
