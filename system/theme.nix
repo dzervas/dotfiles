@@ -5,6 +5,7 @@ in
 {
   stylix = {
     enable = true;
+    autoEnable = true;
     polarity = "dark";
     # For more see https://tinted-theming.github.io/base16-gallery/
     base16Scheme = base16Scheme { name = "snazzy"; };

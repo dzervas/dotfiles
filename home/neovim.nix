@@ -87,6 +87,12 @@
     '';
   };
 
+  stylix.targets.nixvim = {
+    enable = true;
+    transparentBackground.main = true;
+    plugin = "base16-nvim";
+  };
+
   home.sessionVariables = {
     EDITOR = "nvim";
     ALTERNATE_EDITOR = "vim";

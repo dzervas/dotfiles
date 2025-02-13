@@ -81,7 +81,6 @@ let g:netrw_winsize = 10
 
 " Set 256 colors and the theme
 set t_Co=256
-set t_ut=""  " Disable background color erase
 
 " Basic mappings
 " Don't move the comment at the start of the line (:help smartindent)

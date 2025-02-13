@@ -95,4 +95,9 @@
     share-net = true;
     die-with-parent = true;
   };
+
+  stylix = {
+    enable = true;
+    autoEnable = true;
+  };
 }
