@@ -10,9 +10,7 @@ _: {
       "org.onlyoffice.desktopeditors"
       "org.ryujinx.Ryujinx"
       "org.signal.Signal"
-
-      # Gamescope for Steam (deadlock isn't multi-monitor aware)
-      # "org.freedesktop.Platform.VulkanLayer.gamescope"
+      "com.github.skylot.jadx"
     ];
 
     overrides = {

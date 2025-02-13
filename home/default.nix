@@ -45,6 +45,8 @@
 
       brightnessctl
       playerctl
+
+      kooha # Screen recording
     ];
     file = {
       ".config/katerc".source = ./katerc;

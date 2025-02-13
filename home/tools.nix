@@ -3,7 +3,7 @@
     aircrack-ng
     android-tools
     binaryninja
-    # binwalk sleuthkit
+    binwalk sleuthkit
     dirb
     frida-tools
     gobuster
@@ -14,7 +14,6 @@
     inkscape-with-extensions
     iw
     netdiscover
-    # jadx
     man-pages
     mullvad-vpn
     # mullvad-browser
