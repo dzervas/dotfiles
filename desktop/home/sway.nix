@@ -26,6 +26,7 @@ in {
   services = {
     swaync.enable = true;
     swayidle.systemdTarget = "sway-session.target";
+    gnome-keyring.enable = true;
   };
 
   gtk = {

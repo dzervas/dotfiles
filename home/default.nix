@@ -47,23 +47,33 @@
       playerctl
 
       kooha # Screen recording
+
+      rquickshare # Android file sharing
     ];
     file = {
-      ".config/katerc".source = ./katerc;
+      "${xdg.configHome}/katerc".source = ./katerc;
       # From: https://wiki.archlinux.org/title/Chromium#Vulkan
-      ".config/chromium-flags.conf".text = ''
+      "${xdg.configHome}/chromium-flags.conf".text = ''
 --enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE
 --enable-features=WaylandWindowDecorations
 --ozone-platform=wayland
 '';
       # From: https://wiki.archlinux.org/title/Wayland#Electron
-      ".config/electron-flags.conf".text = ''
+      "${xdg.configHome}/electron-flags.conf".text = ''
 --enable-features=WebRTCPipeWireCapturer
 --enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE
 --enable-features=WaylandWindowDecorations
 --ozone-platform=wayland
 '';
-      ".config/nixpkgs/config.nix".text = "{ allowUnfree = true; }";
+      "${xdg.configHome}/nixpkgs/config.nix".text = "{ allowUnfree = true; }";
+      "${config.xdg.dataHome}/dev.mandre.rquickshare/.settings.json".text = builtins.toJSON {
+        download_path = "${config.xdg.userDirs.download}/Shared";
+        visibility = 0;
+        realclose = false;
+        autostart = true;
+        startminimized = true;
+        port = 24343;
+      };
     };
   };
 
