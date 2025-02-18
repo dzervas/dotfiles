@@ -1,5 +1,21 @@
 { pkgs, ... }: let
   atuin-port = "55888";
+  atuin-script = pkgs.writeShellScript "atuin-daemon.sh" ''
+set -euo pipefail
+echo "Starting atuin port forwarding..."
+${pkgs.kubectl}/bin/kubectl port-forward --context=gr --namespace=atuin --address=127.0.0.1 svc/atuin ${atuin-port}:8888 &
+PF_PID=$!
+sleep 2
+echo "Starting atuin daemon..."
+${pkgs.atuin}/bin/atuin daemon &
+DAEMON_PID=$!
+wait $PF_PID
+echo "Port forwarding stopped, killing daemon..."
+kill $DAEMON_PID
+wait $DAEMON_PID
+
+exit 1
+  '';
 in {
   programs.atuin = {
     enable = true;
@@ -18,42 +34,5 @@ in {
     };
   };
 
-  systemd.user.services.atuin-port-forward = {
-    Unit = {
-      Description = "Do a kubectl port-forward to the atuin service";
-      StartLimitBurst = 5;
-      StartLimitIntervalSec = 300;
-    };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
-    Service = {
-      ExecStart = [
-        "${pkgs.kubectl}/bin/kubectl port-forward --context=gr --namespace=atuin --address=127.0.0.1 svc/atuin ${atuin-port}:8888"
-      ];
-      Restart = "always";
-      RestartSec = 60;
-    };
-  };
-
-
-  systemd.user.services.atuind = {
-    Unit = {
-      Description = "Atuin daemon";
-      StartLimitBurst = 5;
-      StartLimitIntervalSec = 300;
-
-      Requires = [ "atuin-port-forward.service" ];
-    };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
-    Service = {
-      ExecStart = [
-        "${pkgs.atuin}/bin/atuin daemon"
-      ];
-      Restart = "always";
-      RestartSec = 60;
-    };
-  };
+  systemd.user.services.atuin-daemon.Service.ExecStart = [atuin-script];
 }
