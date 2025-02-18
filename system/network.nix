@@ -35,4 +35,6 @@
   boot.extraModulePackages = with config.boot.kernelPackages; [
     rtl88xxau-aircrack
   ];
+
+  programs.kdeconnect.enable = true;
 }

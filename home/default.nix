@@ -27,7 +27,13 @@
     home-manager.enable = true;
   };
 
-  services.keybase.enable = true;
+  services = {
+    keybase.enable = true;
+    kdeconnect = {
+      enable = true;
+      indicator = true;
+    };
+  };
 
   home = {
     username = "dzervas";
