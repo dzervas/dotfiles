@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ lib, pkgs, ... }: {
   imports = [ ./system ];
 
   system.copySystemConfiguration = false;
@@ -33,6 +33,17 @@
 
     # Serial comms rules (for Arduino n stuff)
     udev.packages = with pkgs; [ platformio-core.udev ];
+
+    # Better getty
+    kmscon = {
+      enable = lib.mkDefault true;
+      useXkbConfig = true;
+      hwRender = true;
+      extraConfig = ''
+xkb-layout=us,gr
+xkb_options=grp:alt_space_toggle,caps:escape
+      '';
+    };
 
     pipewire = {
       enable = true;

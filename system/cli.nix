@@ -5,6 +5,7 @@
     cyme # Better lsusb!
     difftastic
     dig
+    dmidecode
     fd
     file
     fzf

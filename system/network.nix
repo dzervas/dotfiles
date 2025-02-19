@@ -37,4 +37,11 @@
   ];
 
   programs.kdeconnect.enable = true;
+
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    ipv6 = false;
+    denyInterfaces = ["zt+"];
+  };
 }

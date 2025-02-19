@@ -34,6 +34,9 @@
     gvfs.enable = true;
     # Thumbnail support
     tumbler.enable = true;
+
+    # Can't start sway
+    kmscon.enable = false;
   };
 
   security = {

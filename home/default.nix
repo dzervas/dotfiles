@@ -3,6 +3,7 @@
     ./1password.nix
     ./alacritty.nix
     ./atuin.nix
+    ./chromium.nix
     ./dev.nix
     ./direnv.nix
     ./easyeffects

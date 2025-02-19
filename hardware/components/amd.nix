@@ -1,5 +1,5 @@
 { pkgs, ... }: {
-  services.xserver.videoDrivers = [ "modesetting" ];
+  services.xserver.videoDrivers = [ "amdgpu" ];
 
   # nixpkgs.config.rocmSupport = true;
 

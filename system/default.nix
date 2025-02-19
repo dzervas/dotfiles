@@ -7,6 +7,7 @@ _: {
 
   imports = [
     ./1password.nix
+    #./apparmor.nix
     ./bluetooth.nix
     ./cli.nix
     ./ddc-ci.nix

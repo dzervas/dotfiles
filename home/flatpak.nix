@@ -6,7 +6,7 @@ _: {
     uninstallUnmanaged = true;
     packages = [
       "md.obsidian.Obsidian"
-      "org.chromium.Chromium"
+      # "org.chromium.Chromium"
       "org.onlyoffice.desktopeditors"
       "org.ryujinx.Ryujinx"
       "org.signal.Signal"
@@ -34,7 +34,7 @@ _: {
         devices = [ "dri" "input" ];
         filesystems = [ "home/CryptVMs" ];
       };
-      "org.chromium.Chromium".Context.sockets = ["wayland"];
+      # "org.chromium.Chromium".Context.sockets = ["wayland"];
       "org.signal.Signal".Context.sockets = ["x11"];
       "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
       "md.obsidian.Obsidian".Context.filesystems = [ "xdg-documents/Obsidian" ];
@@ -45,8 +45,8 @@ _: {
   # Vulkan stuff from https://wiki.archlinux.org/title/Chromium#Vulkan
   # Might need manually setting wayland by `org.chromium.Chromium --ozone-platform-hint=wayland`
   # and then setting "Wayland" in chrome://flags/#ozone-platform-hint
-  home.file.".var/app/org.chromium.Chromium/config/chromium-flags.conf".text = ''
-    --enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE
-    --ozone-platform=wayland
-  '';
+  # home.file.".var/app/org.chromium.Chromium/config/chromium-flags.conf".text = ''
+    # --enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE
+    # --ozone-platform=wayland
+  # '';
 }
