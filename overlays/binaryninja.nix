@@ -39,7 +39,7 @@
 
     runScript = writeScript "binaryninja.sh" ''
       set -e
-      export QT_QPA_PLATFORM=wayland
+      # export QT_QPA_PLATFORM=wayland
       export PATH="${python}/bin:$PATH"
       export PYTHONPATH="${python}/lib/python3.12/site-packages:$PYTHONPATH"
       exec "${installPath}/binaryninja" "$@"

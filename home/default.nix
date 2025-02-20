@@ -59,19 +59,6 @@
     ];
     file = {
       "${config.xdg.configHome}/katerc".source = ./katerc;
-      # From: https://wiki.archlinux.org/title/Chromium#Vulkan
-      "${config.xdg.configHome}/chromium-flags.conf".text = ''
---enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE
---enable-features=WaylandWindowDecorations
---ozone-platform=wayland
-'';
-      # From: https://wiki.archlinux.org/title/Wayland#Electron
-      "${config.xdg.configHome}/electron-flags.conf".text = ''
---enable-features=WebRTCPipeWireCapturer
---enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE
---enable-features=WaylandWindowDecorations
---ozone-platform=wayland
-'';
       "${config.xdg.configHome}/nixpkgs/config.nix".text = "{ allowUnfree = true; }";
       "${config.xdg.dataHome}/dev.mandre.rquickshare/.settings.json".text = builtins.toJSON {
         download_path = "${config.xdg.userDirs.download}/Shared";

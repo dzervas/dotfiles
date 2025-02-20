@@ -14,6 +14,22 @@
 
       _JAVA_AWT_WM_NONREPARENTING = "1";
     };
+
+    file = {
+      # From: https://wiki.archlinux.org/title/Chromium#Vulkan
+      "${config.xdg.configHome}/chromium-flags.conf".text = ''
+--enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE
+--enable-features=WaylandWindowDecorations
+--ozone-platform=wayland
+'';
+      # From: https://wiki.archlinux.org/title/Wayland#Electron
+      "${config.xdg.configHome}/electron-flags.conf".text = ''
+--enable-features=WebRTCPipeWireCapturer
+--enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE
+--enable-features=WaylandWindowDecorations
+--ozone-platform=wayland
+'';
+    };
   };
 
   services.flatpak.overrides.global = {

@@ -41,7 +41,7 @@
       hwRender = true;
       extraConfig = ''
 xkb-layout=us,gr
-xkb_options=grp:alt_space_toggle,caps:escape
+xkb-options=grp:alt_space_toggle,caps:escape
       '';
     };
 
