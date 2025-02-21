@@ -8,7 +8,6 @@
     xserver = {
       enable = true;
       desktopManager.plasma5.enable = true;
-      desktopManager.plasma5.runUsingSystemd = false;
     };
     displayManager.defaultSession = "plasma";
     libinput.enable = true;
@@ -19,19 +18,12 @@
       wayland.enable = false;
       settings = {
         X11 = {
-          ServerArguments = "-nolisten tcp -dpi 132";
+          ServerArguments = "-nolisten tcp";
           MinimumVT = 1;
         };
       };
     };
   };
-
-  # environment.plasma5.excludePackages = with pkgs.kdePackages; [
-  #   konsole
-  #   oxygen
-  # ];
-
-  # stylix.targets.qt.enable = false;
 
   # GTK theming
   programs.dconf.enable = true;
@@ -55,5 +47,9 @@
     kdePackages.plasma-nm
     kdePackages.plasma-pa
     kdePackages.kate
+
+    xdotool
+    xclip
+    xsel
   ];
 }

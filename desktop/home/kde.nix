@@ -8,9 +8,7 @@ in {
   home.sessionVariables = {
     _JAVA_AWT_WM_NONREPARENTING = "1";
   };
-  # stylix.targets.kde.enable = false;
-  # stylix.targets.qt.enable = false;
-  # stylix.targets.qt.platform = false;
+  stylix.targets.qt.platform = "qtct";
 
   programs.plasma = {
     enable = true;
@@ -21,7 +19,8 @@ in {
 
     panels = [{
       location = "top";
-      height = 42;
+      height = 32;
+      # screen = i;
       widgets = [
         # {
           # kickoff = {
@@ -30,12 +29,22 @@ in {
           # };
         # }
         "org.kde.plasma.kickoff"
+        # "org.kde.plasma.pager"
         "org.kde.plasma.icontasks"
-        "org.kde.plasma.marginsseparator"
+        # "org.kde.plasma.panelspacer"
         "org.kde.plasma.appmenu"
-        "org.kde.plasma.marginsseparator"
+        # "org.kde.plasma.panelspacer"
         "org.kde.plasma.systemtray"
+        "org.kde.plasma.marginsseparator"
+        # "org.kde.plasma.keyboardlayout"
+        # "org.kde.plasma.mediacontroller"
+        # "org.kde.plasma.volume"
+        # "org.kde.plasma.kdeconnect"
+        # "org.kde.plasma.bluetooth"
+        # "org.kde.plasma.networkmanagement"
+        # "org.kde.plasma.battery"
         "org.kde.plasma.digitalclock"
+        "org.kde.plasma.notifications"
       ];
     }];
 
@@ -43,9 +52,6 @@ in {
       ksmserver = {
         "Lock Session" = [ "ScreenSaver" "Meta+L" ];
       };
-      # "services/org.kde.krunner.desktop" = {
-        # "_launch" = ["Meta+R"];
-      # };
       "services/org.kde.spectacle.desktop" = {
         "RectangularRegionScreenShot" = ["Print"];
       };
@@ -72,28 +78,13 @@ in {
     };
 
     configFile = {
-      "baloofilerc"."Basic Settings"."Indexing-Enabled" = false;
+      baloofilerc."Basic Settings"."Indexing-Enabled" = false;
+      kded5rc."Module-gtkconfig"."autoload" = false;
     };
     overrideConfigFiles = [
       "kglobalshortcutsrc"
     ];
   };
-
-# https://github.com/danth/stylix/issues/835#issuecomment-2646316101
-# qt = {
-# enable = true;
-# platformTheme.package = with pkgs.kdePackages; [
-# plasma-integration
-# I don't remember why I put this is here, maybe it fixes the theme of the system setttings
-# systemsettings
-# qtstyleplugin-kvantum
-# ];
-#style = {
-#    package = pkgs.kdePackages.breeze;
-#    name = lib.mkForce "Breeze";
-#};
-# };
-#systemd.user.sessionVariables = { QT_QPA_PLATFORMTHEME = lib.mkForce "kde"; };
 
   xsession.windowManager.i3 = {
     enable = true;
@@ -109,6 +100,7 @@ in {
         # Basic actions
         "${modifier}+c" = "kill";
         "${modifier}+f" = "fullscreen";
+        "${modifier}+z" = "exec xprop -id $(xdotool getmouselocation --shell | grep WINDOW | awk -F '=' '{print $2}') > /tmp/i3-xprop-output";
         "${modifier}+Down" = "focus prev sibling";
         "${modifier}+Up" = "focus next sibling";
         "${modifier}+Shift+e" = "exec i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3?' -b 'Yes, exit i3' 'i3-msg exit'";
@@ -170,7 +162,7 @@ in {
       show_marks yes
 
       for_window [urgent="latest"] focus
-      for_window [class=.*] inhibit_idle fullscreen
+      # for_window [class=.*] inhibit_idle fullscreen
       for_window [title=".*"] title_format %title
 
       for_window [class="(?i)(?:blueman-manager|azote|gnome-disks)"] floating enable
