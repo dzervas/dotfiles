@@ -4,6 +4,12 @@
     ./home/kde.nix
   ];
 
+  # Issues:
+  # - The panels doesn't work to play nice
+  # - A lot of configuration is missing, which isn't easy to do (keyboard layout, etc.)
+  # - A lot of widgets don't work (bluetooth, network, etc.)
+  # - No individual screen scaling
+
   services = {
     xserver = {
       enable = true;
