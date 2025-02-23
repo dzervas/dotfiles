@@ -49,6 +49,7 @@
       cameractrls-gtk4
 
       filezilla
+      affine-bin
 
       brightnessctl
       playerctl
