@@ -45,6 +45,7 @@
     oci-cli
     terraform
     vscode
+    cilium-cli
 
     opennoodl
   ];

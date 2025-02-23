@@ -42,6 +42,8 @@ in {
       repository = "rclone:backup:/rclone/backups/desktop";
       passwordFile = config.opnix.secrets.restic.path;
       rcloneConfigFile = "/etc/rclone/rclone.conf";
+
+      backupPrepareCommand = "${pkgs.restic}/bin/restic unlock";
     };
   };
 
