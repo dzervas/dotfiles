@@ -1,5 +1,11 @@
 { pkgs, ... }: {
-  programs.poetry.enable = true;
+  programs = {
+    poetry.enable = true;
+    kubecolor = {
+      enable = true;
+      enableAlias = true;
+    };
+  };
   home.packages = with pkgs; [
     nixpkgs-fmt # Used by the Nix IDE extension
     nil # Nix language server
@@ -40,6 +46,7 @@
     # Cloud stuff
     kubectl
     kubectx
+    kubescape
     kubetail
     kubernetes-helm
     oci-cli

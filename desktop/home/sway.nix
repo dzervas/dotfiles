@@ -103,8 +103,8 @@ in {
         "${modifier}+f" = "fullscreen";
         "${modifier}+z" = "scratchpad show";
         "${modifier}+Grave" = "scratchpad show";
-        "${modifier}+Down" = "focus left";
-        "${modifier}+Up" = "focus right";
+        "${modifier}+Up" = "focus next sibling";
+        "${modifier}+Down" = "focus prev sibling";
         "${modifier}+Shift+e" = "exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'";
         "${modifier}+Shift+f" = "floating toggle";
         "${modifier}+Shift+r" = "reload";
