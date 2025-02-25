@@ -41,6 +41,7 @@ _: {
     };
   };
 
+  # TODO: Move to wayland-fixes
   # Is it taken into account?
   # Vulkan stuff from https://wiki.archlinux.org/title/Chromium#Vulkan
   # Might need manually setting wayland by `org.chromium.Chromium --ozone-platform-hint=wayland`

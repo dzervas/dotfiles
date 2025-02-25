@@ -4,6 +4,10 @@
       wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
     ];
     sessionVariables = {
+      # Electron fix - https://nixos.wiki/wiki/Wayland#Electron_and_Chromium
+      NIXOS_OZONE_WL = "1";
+
+      _JAVA_AWT_WM_NONREPARENTING = "1";
       _JAVA_OPTIONS = "-Dawt.useSystemAAFontSettings=lcd -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
 
       MOZ_ENABLE_WAYLAND = "1";
@@ -11,8 +15,6 @@
 
       WLR_DRM_NO_MODIFIERS = "1";
       WLR_NO_HARDWARE_CURSORS = "1";
-
-      _JAVA_AWT_WM_NONREPARENTING = "1";
     };
 
     file = {

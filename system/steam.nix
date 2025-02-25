@@ -31,6 +31,7 @@
       enable = true;
       capSysNice = false;
       args = [
+        # TODO: Move to wayland-fixes
         "--backend" "wayland"
         "--fullscreen"
 

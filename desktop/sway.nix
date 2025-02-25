@@ -1,6 +1,12 @@
 { config, lib, pkgs, ... }: {
   home-manager.sharedModules = [ ./home/sway.nix ];
 
+  # Issues:
+  # - No screen mirroring
+  # - Many times copy doesn't work
+  # - Sway starts using the tty1 hack (no systemd)
+  # - Issues with gnome-keyring
+
   programs = {
     thunar = {
       enable = true;
