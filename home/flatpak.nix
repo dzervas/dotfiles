@@ -11,6 +11,7 @@ _: {
       "org.ryujinx.Ryujinx"
       "org.signal.Signal"
       "com.github.skylot.jadx"
+      "com.slack.Slack"
     ];
 
     overrides = {

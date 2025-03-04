@@ -5,7 +5,7 @@
 
   programs.direnv = {
     enable = true;
-    nix-direnv.enable = true;
+    # nix-direnv.enable = true;
     stdlib = builtins.readFile ./direnvrc;
     config = {
       global = {
@@ -14,4 +14,7 @@
       };
     };
   };
+
+  # Fix `use flake`
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 }
