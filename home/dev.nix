@@ -1,5 +1,8 @@
 { pkgs, ... }: {
   programs = {
+    awscli = {
+      enable = true;
+    };
     poetry.enable = true;
     kubecolor = {
       enable = true;

@@ -39,6 +39,7 @@ _: {
       "org.signal.Signal".Context.sockets = ["x11"];
       "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
       "md.obsidian.Obsidian".Context.filesystems = [ "xdg-documents/Obsidian" ];
+      "com.slack.Slack".Context.sockets = ["wayland" "pulseaudio"];
     };
   };
 
