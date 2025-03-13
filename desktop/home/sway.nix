@@ -75,19 +75,15 @@ in {
       };
 
       output = {
-        "Dell Inc. DELL P2419H C49BFZ2" = {
+        "GIGA-BYTE TECHNOLOGY CO., LTD. M27Q 24290B002448" = {
           position = "0,0";
-          transform = "270";
+          adaptive_sync = "on";
+          resolution = "2560x1440@170Hz";
         };
-        "Dell Inc. DELL S3422DWG B3F7KK3" = {
-          position = "1080,492";
-          scale = "1.25";
-          resolution = "3840x2160@60Hz";
-          subpixel = "rgb";
-          scale_filter = "linear";
-
-# TODO: Fix adaptive_sync screen flickering
-          adaptive_sync = "off";
+        "GIGA-BYTE TECHNOLOGY CO., LTD. M27Q 24290B002445" = {
+          position = "2560,0";
+          adaptive_sync = "on";
+          resolution = "2560x1440@170Hz";
         };
       };
 
