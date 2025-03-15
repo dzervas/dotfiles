@@ -22,7 +22,7 @@ in {
     # includeSystemBuildDependencies = true;
     contents = [{
       source = inputs.self.sourceInfo.outPath;
-      target = "/flake_source";
+      target = "/dotfiles";
     }];
   };
 

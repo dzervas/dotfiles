@@ -58,26 +58,29 @@ nix build .#nixosConfigurations.iso.config.system.build.isoImage
 ### Fresh install
 
 - With gparted (`sudo -E gparted`), create a GPT partition table with a 1G FAT32 partition labeled "BOOT" and the rest as another partition labeled "system".
-- LUKS format the second partition with `sudo cryptsetup luksFormat /dev/sdX2 --label cryptroot`.
-- Open the LUKS partition with `sudo cryptsetup open /dev/sdX2 cryptroot`.
-- Format the LUKS partition with `sudo mkfs.btrfs -L system /dev/mapper/cryptroot`.
+- LUKS format the second partition with `cryptsetup luksFormat /dev/sdX2 --label cryptroot`.
+- Open the LUKS partition with `cryptsetup open /dev/sdX2 cryptroot`.
+- Format the LUKS partition with `mkfs.btrfs -L system /dev/mapper/cryptroot`.
 - Create the subvolumes:
 
 ```bash
-sudo mount /dev/mapper/cryptroot /mnt
-sudo btrfs subvolume create /mnt/root
-sudo btrfs subvolume create /mnt/home
-sudo btrfs subvolume create /mnt/nix
+mount /dev/mapper/cryptroot /mnt
+btrfs subvolume create /mnt/root
+btrfs subvolume create /mnt/home
+btrfs subvolume create /mnt/nix
 ```
 
 - Mount the subvolumes:
 
 ```bash
-sudo mount -o subvol=root /dev/mapper/cryptroot /mnt
-sudo mkdir -p /mnt/home /mnt/nix
-sudo mount -o subvol=home /dev/mapper/cryptroot /mnt/home
-sudo mount -o subvol=nix /dev/mapper/cryptroot /mnt/nix
+mount -o subvol=root /dev/mapper/cryptroot /mnt
+mkdir -p /mnt/home /mnt/nix /mnt/boot
+mount -o subvol=home /dev/mapper/cryptroot /mnt/home
+mount -o subvol=nix /dev/mapper/cryptroot /mnt/nix
+mount /dev/disk/by-label/BOOT /mnt/boot
 ```
+
+- Install nixos with `nixos-install --flake /iso/dotfiles#<hostname> --root /mnt`.
 
 ## Troubleshooting
 

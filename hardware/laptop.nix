@@ -1,6 +1,6 @@
 { inputs, pkgs, ... }: let
-  root_part = "/dev/disk/by-label/system";
-  cryptroot_fs = "/dev/disk/by-label/cryptroot";
+  cryptroot_part = "/dev/disk/by-label/cryptroot";
+  system_fs = "/dev/disk/by-label/system";
 in {
   imports = [
     ./components/amd.nix
@@ -13,21 +13,21 @@ in {
     inputs.nixos-hardware.nixosModules.framework-13-7040-amd
   ];
 
-  boot.initrd.luks.devices.cryptroot.device = root_part;
+  boot.initrd.luks.devices.cryptroot.device = cryptroot_part;
 
   fileSystems = {
     "/" = {
-      device = cryptroot_fs;
+      device = system_fs;
       fsType = "btrfs";
       options = [ "subvol=root" ];
     };
     "/home" = {
-      device = cryptroot_fs;
+      device = system_fs;
       fsType = "btrfs";
       options = [ "subvol=home" ];
     };
     "/nix" = {
-      device = cryptroot_fs;
+      device = system_fs;
       fsType = "btrfs";
       options = [ "subvol=nix" ];
     };
@@ -35,7 +35,13 @@ in {
     "/boot" = {
       device = "/dev/disk/by-label/BOOT"; # replace with your actual EFI partition UUID
       fsType = "vfat";
-      options = [ "umask=077" ];
+      options = [
+        "uid=0"
+        "gid=0"
+        "umask=077"
+        "fmask=077"
+        "dmask=077"
+      ];
     };
   };
 
