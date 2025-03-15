@@ -1,6 +1,6 @@
 { inputs, pkgs, ... }: let
-  root_part = "/dev/disk/by-uuid/3153b379-9bc8-48e0-baa8-5e9ba59db081";
-  cryptroot_fs = "/dev/disk/by-uuid/554c3697-ff49-4f1c-af96-69624a12910b";
+  root_part = "/dev/disk/by-label/system";
+  cryptroot_fs = "/dev/disk/by-label/cryptroot";
 in {
   imports = [
     ./components/amd.nix
