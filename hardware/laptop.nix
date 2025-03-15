@@ -1,6 +1,6 @@
 { inputs, pkgs, ... }: let
   cryptroot_part = "/dev/disk/by-label/cryptroot";
-  system_fs = "/dev/disk/by-label/system";
+  system_fs = "/dev/mapper/cryptroot";
 in {
   imports = [
     ./components/amd.nix

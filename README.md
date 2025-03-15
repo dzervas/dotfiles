@@ -80,7 +80,16 @@ mount -o subvol=nix /dev/mapper/cryptroot /mnt/nix
 mount /dev/disk/by-label/BOOT /mnt/boot
 ```
 
-- Install nixos with `nixos-install --flake /iso/dotfiles#<hostname> --root /mnt`.
+- Install nixos with `nixos-install --flake /iso/dotfiles#<hostname>`
+- It will probably fail so:
+
+```bash
+nixos-enter
+sbctl create-keys
+exit
+```
+
+- Run nixos-install again
 
 ## Troubleshooting
 
