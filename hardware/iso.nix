@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: let
+{ config, inputs, lib, modulesPath, pkgs, ... }: let
   keys_str = builtins.fetchurl {
     url = "https://github.com/dzervas.keys";
     sha256 = "sha256:1wpgdqrvjqy9lldc6wns3i31sm1ic9yf7354q2c9j5hsfl2pbynh";
@@ -6,7 +6,10 @@
 
   keys_lines = lib.strings.splitString "\n" keys_str;
 in {
+  # Use the minimal installation CD
   imports = [
+    (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
+    (modulesPath + "/installer/cd-dvd/channel.nix")
   ];
 
   isoImage = {
@@ -17,6 +20,10 @@ in {
     makeUsbBootable = true;
     prependToMenuLabel = "DZervas ";
     # includeSystemBuildDependencies = true;
+    contents = [{
+      source = inputs.self.sourceInfo.outPath;
+      target = "/flake_source";
+    }];
   };
 
   users.users.dzervas.password = "nixos";
@@ -40,6 +47,7 @@ in {
 
   users.users.dzervas.openssh.authorizedKeys.keys = keys_lines;
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  # Pin nixpkgs to the flake input, so that the packages installed
+  # come from the flake inputs.nixpkgs.url.
+  nix.registry.nixpkgs.flake = inputs.nixpkgs;
 }

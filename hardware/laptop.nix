@@ -1,4 +1,4 @@
-{ pkgs, ... }: let
+{ inputs, pkgs, ... }: let
   root_part = "/dev/disk/by-uuid/3153b379-9bc8-48e0-baa8-5e9ba59db081";
   cryptroot_fs = "/dev/disk/by-uuid/554c3697-ff49-4f1c-af96-69624a12910b";
 in {
@@ -10,23 +10,10 @@ in {
     # ./components/virtualbox.nix
     ./components/libvirt.nix
     ./components/laptop.nix
+    inputs.nixos-hardware.nixosModules.framework-13-7040-amd
   ];
 
   boot.initrd.luks.devices.cryptroot.device = root_part;
-
-  # Generated using nix-shell -p lm_sensors --run pwmconfig
-  hardware.fancontrol.config = ''
-    INTERVAL=10
-    DEVPATH=hwmon6=devices/platform/dell_smm_hwmon
-    DEVNAME=hwmon6=dell_smm
-    FCTEMPS=hwmon6/pwm1=hwmon6/temp1_input
-    FCFANS= hwmon6/pwm1=hwmon6/fan1_input
-    MINTEMP=hwmon6/pwm1=45
-    MAXTEMP=hwmon6/pwm1=80
-    MINSTART=hwmon6/pwm1=150
-    MINSTOP=hwmon6/pwm1=0
-    MAXPWM=hwmon6/pwm1=200
-  '';
 
   fileSystems = {
     "/" = {
@@ -67,11 +54,11 @@ in {
 
   environment.systemPackages = with pkgs; [
     powertop
-    teleport
   ];
 
-  powerManagement = {
-    enable = true;
-    powertop.enable = true;
-  };
+  # powerManagement = {
+  #   enable = true;
+  #   powertop.enable = true;
+  # };
+  services.power-profiles-daemon.enable = true;
 }

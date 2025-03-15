@@ -40,11 +40,10 @@
     # };
 
     # ISO generation
-    nixos-generators.url = "github:nix-community/nixos-generators";
-    nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   };
 
-  outputs = inputs@{ self, nixpkgs, nixos-generators, ... }:
+  outputs = inputs@{ self, nixpkgs, ... }:
     let
       inherit (nixpkgs) lib;
       utils = import ./utils.nix { inherit inputs lib; };
@@ -59,22 +58,11 @@
     in lib.foldr lib.recursiveUpdate {
       # The ISO generation module
       # For more check https://blog.thomasheartman.com/posts/building-a-custom-nixos-installer
-      # packages.x86_64-linux.iso = nixos-generators.nixosGenerate {
-      # packages.x86_64-linux.iso = lib.nixosSystem {
       nixosConfigurations.iso = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        # format = "install-iso";
         specialArgs = { inherit inputs; };
 
-        modules = [
-          ({ pkgs, modulesPath, ... }: {
-            # Use the minimal installation CD
-            imports = [ (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix") ];
-            # Pin nixpkgs to the flake input, so that the packages installed
-            # come from the flake inputs.nixpkgs.url.
-            nix.registry.nixpkgs.flake = nixpkgs;
-          })
-        ] ++ utils.mkConfigModules {
+        modules = utils.mkConfigModules {
           system = "x86_64-linux";
           hostName = "iso";
           stateVersion = "25.05";
