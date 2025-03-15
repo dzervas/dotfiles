@@ -80,6 +80,7 @@
     py = "python";
     sv = "sudoedit";
     tf = "terraform";
+    tg = "terragrunt";
     v = "vim";
 
     # Nicer output

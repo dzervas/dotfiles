@@ -5,6 +5,10 @@
 		"direnvrc": "shellscript"
 	},
 	"cSpell.words": [
+		"nixos",
+		"nixpkgs",
 		"pkgs"
-	]
+	],
+	"editor.fontSize": 18,
+	"terminal.integrated.fontSize": 18
 }

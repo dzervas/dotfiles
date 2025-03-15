@@ -43,7 +43,7 @@ jobs:
         run: nix-collect-garbage -d
 
       - name: Build the ISO image
-        run: nix build .#iso
+        run: nix build .#nixosConfigurations.iso.config.system.build.isoImage
 
       - name: Generate tag name
         id: tag

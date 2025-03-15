@@ -33,11 +33,11 @@
     # };
 
     # KDE
-    plasma-manager = {
-      url = "github:nix-community/plasma-manager/plasma-5";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
-    };
+    # plasma-manager = {
+      # url = "github:nix-community/plasma-manager/plasma-5";
+      # inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.home-manager.follows = "home-manager";
+    # };
 
     # ISO generation
     nixos-generators.url = "github:nix-community/nixos-generators";
@@ -48,26 +48,37 @@
     let
       inherit (nixpkgs) lib;
       utils = import ./utils.nix { inherit inputs lib; };
-    in
-    lib.foldr lib.recursiveUpdate {
+      machines = map utils.mkMachine [
+        # Normal machines
+        { hostName = "laptop"; stateVersion = "25.05"; }
+        { hostName = "desktop"; stateVersion = "24.11"; }
+      ];
+    # This results in (recursiveUpdate ( recursiveUpdate { <iso> } machines[0] ) machines[1] )
+    # The { <iso> } is only passed as a function parameter once, on the first call to recursiveUpdate
+    # the rest of the calls are made with the result of the previous call + the next element in the list
+    in lib.foldr lib.recursiveUpdate {
       # The ISO generation module
-      packages.x86_64-linux.iso = nixos-generators.nixosGenerate {
+      # For more check https://blog.thomasheartman.com/posts/building-a-custom-nixos-installer
+      # packages.x86_64-linux.iso = nixos-generators.nixosGenerate {
+      # packages.x86_64-linux.iso = lib.nixosSystem {
+      nixosConfigurations.iso = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        format = "install-iso";
+        # format = "install-iso";
         specialArgs = { inherit inputs; };
 
-        # Pin nixpkgs to the flake input, so that the packages installed
-        # come from the flake inputs.nixpkgs.url.
-        modules = [(_: { nix.registry.nixpkgs.flake = nixpkgs; })]
-        ++ utils.mkConfigModules {
+        modules = [
+          ({ pkgs, modulesPath, ... }: {
+            # Use the minimal installation CD
+            imports = [ (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix") ];
+            # Pin nixpkgs to the flake input, so that the packages installed
+            # come from the flake inputs.nixpkgs.url.
+            nix.registry.nixpkgs.flake = nixpkgs;
+          })
+        ] ++ utils.mkConfigModules {
           system = "x86_64-linux";
           hostName = "iso";
-          stateVersion = "24.11";
+          stateVersion = "25.05";
         };
       };
-    } (map utils.mkMachine [
-      # Normal machines
-      { hostName = "laptop"; stateVersion = "23.05"; }
-      { hostName = "desktop"; stateVersion = "24.11"; }
-    ]);
+    } machines;
 }

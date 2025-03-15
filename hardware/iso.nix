@@ -1,11 +1,14 @@
 { config, lib, pkgs, ... }: let
-    keys_str = builtins.fetchurl {
+  keys_str = builtins.fetchurl {
     url = "https://github.com/dzervas.keys";
     sha256 = "sha256:1wpgdqrvjqy9lldc6wns3i31sm1ic9yf7354q2c9j5hsfl2pbynh";
   };
 
   keys_lines = lib.strings.splitString "\n" keys_str;
 in {
+  imports = [
+  ];
+
   isoImage = {
     isoName = lib.mkForce "dzervas-nixos-${config.system.nixos.label}.iso";
     # squashfsCompression = "gzip -Xcompression-level 1";
@@ -36,4 +39,7 @@ in {
   };
 
   users.users.dzervas.openssh.authorizedKeys.keys = keys_lines;
+
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 }

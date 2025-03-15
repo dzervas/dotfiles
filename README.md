@@ -46,13 +46,13 @@ oras pull ghcr.io/dzervas/dotfiles/nixos-iso:latest
 # Find the USB device
 lsblk
 # Replace /dev/sdX with the USB device
-sudo dd bs=4M status=progress oflag=sync if=$(ls nixos-*-linux.iso) of=/dev/sdX
+sudo dd bs=4M status=progress conv=fsync oflag=direct if=$(ls nixos-*-linux.iso) of=/dev/sdX
 ```
 
 ### Building manually
 
 ```bash
-nix build .#iso
+nix build .#nixosConfigurations.iso.config.system.build.isoImage
 ```
 
 ## Troubleshooting

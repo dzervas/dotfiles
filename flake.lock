@@ -507,30 +507,6 @@
         "type": "github"
       }
     },
-    "plasma-manager": {
-      "inputs": {
-        "home-manager": [
-          "home-manager"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1718294461,
-        "narHash": "sha256-SVgRGZ/fsSZ4rRY6EW/s0dSkz5p4t1+n/nk6mjIKZXM=",
-        "owner": "nix-community",
-        "repo": "plasma-manager",
-        "rev": "552888403867ba9cfd170c1e7edddabe54ef4342",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "ref": "plasma-5",
-        "repo": "plasma-manager",
-        "type": "github"
-      }
-    },
     "pre-commit-hooks-nix": {
       "inputs": {
         "flake-compat": [
@@ -565,7 +541,6 @@
         "nixos-generators": "nixos-generators",
         "nixpkgs": "nixpkgs",
         "opnix": "opnix",
-        "plasma-manager": "plasma-manager",
         "stylix": "stylix"
       }
     },

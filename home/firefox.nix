@@ -22,6 +22,7 @@
       };
     in rec {
       default = {
+        name = "Default";
         path = "8prfdmmp.default"; # Generated once so let's use it
         isDefault = true;
         userChrome = ''
