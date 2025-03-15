@@ -90,6 +90,7 @@ exit
 ```
 
 - Run nixos-install again
+- After the first boot, change the user password on a tty terminal
 
 ## Troubleshooting
 
