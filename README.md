@@ -144,9 +144,16 @@ sudo chmod +x /bin/bash /usr/bin/bash /usr/bin/python /usr/bin/python3
 OP_SERVICE_ACCOUNT_TOKEN="{your token here}"
 ```
 
+- To fix the command-not-found db not being present:
+
+```bash
+sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos
+sudo nix-channel --update
+```
+
 ### Secure boot
 
-```fish
+```bash
 # Crete the keys
 sudo sbctl create-keys
 # Check that everything is signed (apart from the kernel under nixos dir)
