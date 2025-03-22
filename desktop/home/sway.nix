@@ -2,6 +2,7 @@
   cfg = config.setup;
   modifier = "Mod4";
 in {
+  setup.windowManager = "sway";
   imports = [
     ./components/rofi.nix
     ./components/swayidle.nix

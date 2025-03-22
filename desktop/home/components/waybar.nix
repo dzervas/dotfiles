@@ -1,4 +1,7 @@
-_: {
+{ config, lib, ... }: let
+  inherit (lib) mkIf;
+  cfg = config.setup;
+in {
   setup.bar = "waybar";
   programs.waybar = {
     enable = true;
@@ -15,19 +18,22 @@ _: {
         modules-left = [
           "custom/power"
           "custom/launcher"
-          "hyprland/workspaces"
-          "sway/workspaces"
-          "sway/scratchpad"
+          (mkIf (cfg.windowManager == "hyprland") "hyprland/workspaces")
           # "custom/media"
+          (mkIf (cfg.windowManager == "sway") "sway/workspaces")
+          (mkIf (cfg.windowManager == "sway") "sway/scratchpad")
         ];
-        modules-center = [ "sway/window" "hyprland/window" ];
+        modules-center = [
+          (mkIf (cfg.windowManager == "sway") "sway/window")
+          (mkIf (cfg.windowManager == "hyprland") "hyprland/window")
+        ];
         modules-right = [
           "tray"
           # "pulseaudio"
           "keyboard-state"
           "battery"
           # "bluetooth"
-          "sway/language"
+          (mkIf (cfg.windowManager == "sway") "sway/language")
           "clock"
           "idle_inhibitor"
         ];

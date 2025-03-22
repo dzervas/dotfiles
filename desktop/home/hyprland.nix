@@ -1,4 +1,5 @@
 { config, inputs, pkgs, ... }: {
+  setup.windowManager = "hyprland";
   imports = [
     ./components/rofi.nix
     ./components/trays.nix

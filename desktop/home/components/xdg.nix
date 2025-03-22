@@ -26,6 +26,7 @@
         browser = "${config.setup.browser}.desktop";
       in {
         "text/plain" = "org.kde.kate.desktop";
+        "application/x-zerosize" = "org.kde.kate.desktop";
 
         "image/jpeg" = "org.gnome.gThumb.desktop";
         "image/png" = "org.gnome.gThumb.desktop";

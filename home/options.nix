@@ -31,5 +31,10 @@
       default = false;
       description = "The current machine is a laptop";
     };
+
+    windowManager = mkOption {
+      type = types.str;
+      description = "The used window manager";
+    };
   };
 }
