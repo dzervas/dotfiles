@@ -12,6 +12,7 @@ _: {
       "org.signal.Signal"
       "com.github.skylot.jadx"
       "com.slack.Slack"
+      "rest.insomnia.Insomnia"
     ];
 
     overrides = {

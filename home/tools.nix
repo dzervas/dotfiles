@@ -11,7 +11,6 @@
     hashcat-utils
     hcxtools
     hexyl
-    inkscape-with-extensions
     iw
     netdiscover
     man-pages

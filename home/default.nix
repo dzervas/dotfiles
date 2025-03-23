@@ -43,6 +43,8 @@
       kdePackages.filelight
       kdePackages.kate
       # kicad
+      krita
+      inkscape-with-extensions
       orca-slicer libdecor
 
       # TODO: cameractrls nix defined presets
