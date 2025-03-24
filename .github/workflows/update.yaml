@@ -44,7 +44,8 @@ jobs:
 
       - name: Build the ISO image
         # If there are dirty files, build the iso
-        run: git diff-files --quiet || nix build .#iso
+        run: git diff-files --quiet || nix build .#nixosConfigurations.iso.config.system.build.isoImage
+
 
       - name: Commit and push changes
         # If there are no dirty files, don't commit anything
