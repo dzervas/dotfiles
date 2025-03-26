@@ -68,6 +68,7 @@ mount /dev/mapper/cryptroot /mnt
 btrfs subvolume create /mnt/root
 btrfs subvolume create /mnt/home
 btrfs subvolume create /mnt/nix
+btrfs filesystem mkswapfile --size 16G /swapfile
 ```
 
 - Mount the subvolumes:

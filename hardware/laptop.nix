@@ -13,7 +13,11 @@ in {
     inputs.nixos-hardware.nixosModules.framework-13-7040-amd
   ];
 
-  boot.initrd.luks.devices.cryptroot.device = cryptroot_part;
+  boot = {
+    # Add kernel parameters to better support suspend (i.e., "sleep" feature)
+    kernelParams = [ "mem_sleep_default=s2idle" "amdgpu.dcdebugmask=0x10" ];
+    initrd.luks.devices.cryptroot.device = cryptroot_part;
+  };
 
   fileSystems = {
     "/" = {
@@ -45,7 +49,7 @@ in {
     };
   };
 
-  swapDevices = [{ device = "/swap/swapfile"; }];
+  swapDevices = [{ device = "/swapfile"; }];
 
   services.btrfs.autoScrub = {
     enable = true;

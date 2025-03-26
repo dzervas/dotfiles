@@ -206,8 +206,8 @@ in {
       bindsym --locked XF86AudioNext exec playerctl next
       bindsym --locked XF86AudioPrev exec playerctl previous
 
-      bindsym --locked XF86MonBrightnessUp exec light -A 10
-      bindsym --locked XF86MonBrightnessDown exec light -U 10
+      bindsym --locked XF86MonBrightnessUp exec brightnessctl set +10%
+      bindsym --locked XF86MonBrightnessDown exec brightnessctl set 10%-
 
       # Change the screen scale for some games
       for_window [class="^steam_app_[0-9]+$"] output DP-1 scale 1; fullscreen
