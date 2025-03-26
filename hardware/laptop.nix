@@ -19,6 +19,9 @@ in {
     initrd.luks.devices.cryptroot.device = cryptroot_part;
   };
 
+  # Disable light sensor & accelerometer
+  hardware.sensor.iio.enable = false;
+
   fileSystems = {
     "/" = {
       device = system_fs;
