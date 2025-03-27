@@ -6,6 +6,7 @@
     difftastic
     dig
     dmidecode
+    docker-compose
     fd
     file
     fzf
@@ -61,7 +62,7 @@
     c = "cargo";
     cdt = "cd $(mktemp -d)";
     d = "docker";
-    dc = "docker-compose";
+    dc = "docker compose";
     e = "$EDITOR";
     g = "git";
     h = "helm";
@@ -76,7 +77,7 @@
     lp = "locate -i -A \"$(pwd)\"";
     n = "echo -e \"\a\" && notify-send -a \"Terminal\" Notification!";
     p = "podman";
-    pc = "podman-compose";
+    pc = "podman compose";
     py = "python";
     sv = "sudoedit";
     tf = "terraform";
