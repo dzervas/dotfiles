@@ -1,4 +1,6 @@
-{ config, inputs, pkgs, ... }: {
+{ config, inputs, pkgs, ... }: let
+  wpctl = "${pkgs.wireplumber}/bin/wpctl";
+in {
   setup.windowManager = "hyprland";
   imports = [
     ./components/rofi.nix
@@ -7,12 +9,29 @@
     ./components/wayland-fixes.nix
   ];
 
-  services.dunst.enable = true;
   # home.pointerCursor = {
   #   enable = true;
   #   size = 24;
   #   hyprcursor.enable = true;
   # };
+
+  services = {
+    dunst.enable = true;
+    hypridle = {
+      enable = true;
+      settings = {
+        general = {
+          lock_cmd = "hyprlock";
+          after_sleep_cmd = "hyprctl dispatch dpms on";
+        };
+        listener = [
+          { timeout = 300; on-timeout = "hyprlock"; }
+          { timeout = 600; on-timeout = "hyprctl dispatch dpms off"; on-resume = "hyprctl dispatch dpms on"; }
+          { timeout = 330; on-timeout = "${wpctl} set-mute @DEFAULT_SOURCE@ 1"; on-resume = "${wpctl} set-mute @DEFAULT_SOURCE@ 0"; }
+        ];
+      };
+    };
+  };
 
   wayland.windowManager.hyprland = {
     enable = true;
