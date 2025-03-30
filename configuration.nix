@@ -36,7 +36,7 @@
 
     # Better getty
     kmscon = {
-      enable = lib.mkDefault true;
+      #enable = lib.mkDefault true;
       useXkbConfig = true;
       hwRender = true;
       extraConfig = ''

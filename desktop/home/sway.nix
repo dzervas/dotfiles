@@ -23,6 +23,12 @@ in {
     swappy
   ];
 
+  # home.pointerCursor = {
+  #   enable = true;
+  #   size = 24;
+  #   sway.enable = true;
+  # };
+
   programs.waybar.systemd.target = "sway-session.target";
   services = {
     swaync.enable = true;

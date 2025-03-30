@@ -1,13 +1,11 @@
-{ lib, ... }: {
+_: {
   nixpkgs.overlays = [
     (final: prev: {
       binaryninja = prev.callPackage ./binaryninja.nix {};
       opennoodl = prev.callPackage ./opennoodl.nix {};
       buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
 
-      vscode = prev.vscode.overrideAttrs (oldAttrs: let
-        codelldb = final.vscode-extensions.vadimcn.vscode-lldb;
-      in rec {
+      vscode = prev.vscode.overrideAttrs (oldAttrs: rec {
         plat = "linux-x64";
 
         # gha-updater: VERSION="$(curl https://update.code.visualstudio.com/api/releases/stable | jq -r '. | first')" && echo -n "$VERSION $(nix-prefetch-url https://update.code.visualstudio.com/$VERSION/linux-x64/stable)"

@@ -1,10 +1,10 @@
-{ inputs, pkgs, ... }: {
+{ inputs, lib, pkgs, ... }: {
   home-manager.sharedModules = [ ./home/hyprland.nix ];
 
   services = {
     hypridle.enable = true;
     # https://wiki.hyprland.org/Useful-Utilities/Systemd-start/#installation
-    #dbus.implementation = lib.mkForce "dbus";
+    dbus.implementation = lib.mkForce "dbus";
 
     displayManager.sddm = {
       enable = true;

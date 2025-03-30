@@ -5,13 +5,15 @@
     ./components/trays.nix
     ./components/waybar.nix
     ./components/wayland-fixes.nix
+    ./components/xdg.nix
   ];
 
   services.dunst.enable = true;
-  home.pointerCursor.hyprcursor = {
-    enable = true;
-    size = 24;
-  };
+  # home.pointerCursor = {
+  #   enable = true;
+  #   size = 24;
+  #   hyprcursor.enable = true;
+  # };
 
   wayland.windowManager.hyprland = {
     enable = true;
@@ -73,8 +75,10 @@
       ];
 
       monitor = [
-        "desc:Dell Inc. DELL S3422DWG B3F7KK3, preferred, 1080x492, 1.25"
-        "desc:Dell Inc. DELL P2419H C49BFZ2, preferred, 0x0, 1, transform, 1"
+        # Monitor Name                                       , Mode  , Pos, Scale, <other params>
+        "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002448, highrr, 0x0, 1, vrr, 1"
+        "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002445, highrr, auto-right, 1, vrr, 1"
+        ", preferred, auto, 1" # Rule for additional monitors
       ];
 
       # Layouts
