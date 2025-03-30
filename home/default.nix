@@ -19,6 +19,7 @@
     ./tools.nix
     ./thumbnailers.nix
     ./wine
+    ./xdg.nix
 
     ../modules/bwrapper.nix
   ];

@@ -1,10 +1,6 @@
-{ config, lib, pkgs, ... }: let
+{ config, lib, ... }: let
 cfg = config.setup;
 in {
-  imports = [
-    ./components/xdg.nix
-  ];
-
   home.sessionVariables = {
     _JAVA_AWT_WM_NONREPARENTING = "1";
   };

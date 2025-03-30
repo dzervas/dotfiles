@@ -5,7 +5,6 @@
     ./components/trays.nix
     ./components/waybar.nix
     ./components/wayland-fixes.nix
-    ./components/xdg.nix
   ];
 
   services.dunst.enable = true;

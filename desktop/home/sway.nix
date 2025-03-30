@@ -10,7 +10,6 @@ in {
     ./components/trays.nix
     ./components/waybar.nix
     ./components/wayland-fixes.nix
-    ./components/xdg.nix
     # ./components/kanshi.nix
   ];
 
@@ -28,6 +27,9 @@ in {
   #   size = 24;
   #   sway.enable = true;
   # };
+
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-gtk xdg-desktop-portal-wlr ];
 
   programs.waybar.systemd.target = "sway-session.target";
   services = {

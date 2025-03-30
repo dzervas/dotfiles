@@ -10,6 +10,9 @@
       enable = true;
       wayland.enable = true;
     };
+
+    # GNOME Keyring - used by VSCode mainly
+    gnome.gnome-keyring.enable = true;
   };
 
   programs = {
