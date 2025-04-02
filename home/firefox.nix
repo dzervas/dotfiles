@@ -78,7 +78,8 @@
           # Privacy
           "geo.enabled" = false;
           "network.captive-portal-service.enabled" = false;
-          "network.http.sendRefererHeader" = 1; # 0 for no referer, 1 for only clicked links, 2 for everything
+          # This results in numerous issues - iframes don't work as expected, (skroutz), weird broken sites, etc.
+          # "network.http.sendRefererHeader" = 1; # 0 for no referer, 1 for only clicked links, 2 for everything
           "privacy.resistFingerprinting" = false; # Resets prefers-color-scheme to light :/
           "privacy.trackingprotection.enabled" = true;
           "privacy.globalprivacycontrol.enabled" = true; # Tell websites not to sell or share my data (lol)
