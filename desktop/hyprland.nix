@@ -1,6 +1,16 @@
 { inputs, lib, pkgs, ... }: {
   home-manager.sharedModules = [ ./home/hyprland.nix ];
 
+  # Issues:
+  # - Crashes?
+  # - No 1Password rules
+  # - No single-window layout
+  # - Changing layout changes it to all workspaces?
+  # - Doesn't lock after resume
+  # - Titlebar even if 1 window in workspace
+  # - No mouse binds (move, resize, etc.)
+  # - No screenshot
+
   services = {
     # https://wiki.hyprland.org/Useful-Utilities/Systemd-start/#installation
     dbus.implementation = lib.mkForce "dbus";

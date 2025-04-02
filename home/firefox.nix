@@ -1,4 +1,7 @@
 { hostName, lib, ... }: {
+  # Issues:
+  # - Skroutz iframe is broken
+
   setup.browser = "firefox";
   programs.firefox = {
     enable = true;
