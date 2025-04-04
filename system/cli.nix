@@ -21,7 +21,7 @@
     ngrok
     p7zip
     podman-compose
-    python3Packages.python
+    python3Full
     readline
     ripgrep
     socat

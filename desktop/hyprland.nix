@@ -10,6 +10,7 @@
   # - Titlebar even if 1 window in workspace
   # - No mouse binds (move, resize, etc.)
   # - No screenshot
+  # - No per-app keyboard layout
 
   services = {
     # https://wiki.hyprland.org/Useful-Utilities/Systemd-start/#installation

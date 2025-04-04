@@ -126,6 +126,10 @@ in {
           clickfinger_behavior = true;
         };
       };
+
+      debug = {
+        disable_logs = false;
+      };
     };
     plugins = [
       inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprbars

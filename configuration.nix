@@ -32,7 +32,7 @@
     fwupd.enable = true;
 
     # Serial comms rules (for Arduino n stuff)
-    udev.packages = with pkgs; [ platformio-core.udev ];
+    # udev.packages = with pkgs; [ platformio-core.udev ];
 
     # Better getty
     kmscon = {
