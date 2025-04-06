@@ -15,7 +15,7 @@ in {
 
   boot = {
     # Add kernel parameters to better support suspend (i.e., "sleep" feature)
-    kernelParams = [ "mem_sleep_default=s2idle" "amdgpu.dcdebugmask=0x10" ];
+    kernelParams = [ "mem_sleep_default=s2idle" "amdgpu.dcdebugmask=0x10" "acpi_mask_gpe=0x1A" "rtc_cmos.use_acpi_alarm=1" ];
     initrd.luks.devices.cryptroot.device = cryptroot_part;
   };
 
@@ -70,9 +70,9 @@ in {
     framework-tool
   ];
 
-  # powerManagement = {
-  #   enable = true;
-  #   powertop.enable = true;
-  # };
+  powerManagement = {
+    enable = true;
+    powertop.enable = true;
+  };
   services.power-profiles-daemon.enable = true;
 }
