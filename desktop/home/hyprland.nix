@@ -1,5 +1,11 @@
 { config, inputs, pkgs, ... }: let
   wpctl = "${pkgs.wireplumber}/bin/wpctl";
+  mkRule = { rules, class ? null, title ? null }:
+    map (rule:
+      let
+        classStr = if class != null then ",class:${class}" else "";
+        titleStr = if title != null then ",title:${title}" else "";
+      in "${rule}${classStr}${titleStr}") rules;
 in {
   setup.windowManager = "hyprland";
   imports = [
@@ -116,6 +122,13 @@ in {
         "desc:BOE NE135A1M-NY1, highrr, auto, 1.67, vrr, 1"
         ", preferred, auto, 1" # Rule for additional monitors
       ];
+
+      # Rules
+      windowrule = 
+        mkRule { title = "1Password"; class = "1Password"; rules = ["float" "center" "persistentsize" "pin" "stayfocused"]; } ++
+        mkRule { class = "jadx-gui-JadxGUI"; rules = ["float"]; } ++
+        mkRule { class = "Steam Settings"; rules = ["float"]; } ++
+        mkRule { class = "OrcaSlicer"; rules = ["suppressevent"]; };
 
       # Layouts
       master = {
