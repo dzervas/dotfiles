@@ -5,6 +5,7 @@ in {
   setup.bar = "waybar";
   programs.waybar = {
     enable = true;
+    systemd.enable = true;
 
     settings = {
       mainBar = {

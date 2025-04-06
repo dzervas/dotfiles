@@ -1,4 +1,4 @@
-{ pkgs, ... }: let
+{ lib, pkgs, ... }: let
   atuin-port = "55888";
   atuin-script = pkgs.writeShellScript "atuin-daemon.sh" ''
 set -euo pipefail
@@ -17,6 +17,7 @@ in {
   programs.atuin = {
     enable = true;
     flags = [ "--disable-up-arrow" ];
+    daemon.enable = true;
     settings = {
       enter_accept = false;
       daemon.enabled = true;
@@ -31,5 +32,5 @@ in {
     };
   };
 
-  systemd.user.services.atuin-daemon.Service.ExecStart = [atuin-script];
+  systemd.user.services.atuin-daemon.Service.ExecStart = lib.mkForce [atuin-script];
 }

@@ -23,6 +23,7 @@ in {
 
   services = {
     dunst.enable = true;
+    hyprpolkitagent.enable = true;
     hypridle = {
       enable = true;
       settings = {
@@ -179,7 +180,10 @@ in {
     package = null;
     portalPackage = null;
 
-    # https://wiki.hyprland.org/Useful-Utilities/Systemd-start/#installation
-    systemd.enable = false;
+    systemd = {
+      # https://wiki.hyprland.org/Useful-Utilities/Systemd-start/#installation
+      enable = false;
+      enableXdgAutostart = true;
+    };
   };
 }
