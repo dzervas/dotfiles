@@ -17,10 +17,9 @@ in {
   programs.atuin = {
     enable = true;
     flags = [ "--disable-up-arrow" ];
-    daemon.enable = true;
+    # daemon.enable = true;
     settings = {
       enter_accept = false;
-      daemon.enabled = true;
       sync_address = "http://127.0.0.1:${atuin-port}";
       sync_frequency = "5m";
       sync.records = true;
@@ -29,8 +28,41 @@ in {
         # Ignore space-prefixed commands
         "^\s+"
       ];
+
+      # daemon.systemd_socket = true;
     };
   };
 
-  systemd.user.services.atuin-daemon.Service.ExecStart = lib.mkForce [atuin-script];
+  systemd.user.services.atuin-daemon = {
+    Unit = {
+      Description = "Atuin daemon";
+      After = ["network-online.target"];
+      Wants = ["network-online.target"];
+    };
+    Install = {
+      WantedBy = [ "multi-user.target" ];
+    };
+    Service = {
+      ExecStart = atuin-script;
+      Restart = "on-failure";
+      RestartSteps = 3;
+      RestartMaxDelaySec = 6;
+
+      # Environment = ["ATUIN_CONFIG_DIR=/etc/atuin"];
+      # ReadWritePaths = ["/etc/atuin"];
+
+      # Hardening options
+      CapabilityBoundingSet = [];
+      AmbientCapabilities = [];
+      NoNewPrivileges = true;
+      # ProtectHome = true;
+      ProtectSystem = "strict";
+      ProtectKernelTunables = true;
+      ProtectKernelModules = true;
+      ProtectControlGroups = true;
+      PrivateTmp = true;
+      PrivateDevices = true;
+      LockPersonality = true;
+    };
+  };
 }
