@@ -10,11 +10,14 @@
 
   services = {
     logind = {
-      lidSwitchDocked = "lock";
-      lidSwitchExternalPower = "lock";
+      lidSwitch = "suspend-then-hibernate";
+      lidSwitchDocked = "suspend-then-hibernate";
+      lidSwitchExternalPower = "suspend-then-hibernate";
       extraConfig = ''
         IdleAction=lock
         IdleActionSec=5m
+        LidSwitchIgnoreInhibited=yes
+        HibernateDelaySec=3600
       '';
     };
 

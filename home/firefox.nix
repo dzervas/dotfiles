@@ -3,6 +3,8 @@
   # - Skroutz iframe is broken
 
   setup.browser = "firefox";
+
+  stylix.targets.firefox.profileNames = ["default"];
   programs.firefox = {
     enable = true;
     policies = {
@@ -204,7 +206,6 @@
           '';
         };
       };
-      work = mkChildProfile 1 "Work" default;
     };
   };
 }
