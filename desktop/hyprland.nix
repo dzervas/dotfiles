@@ -6,11 +6,7 @@
   # - No 1Password rules
   # - No single-window layout
   # - Changing layout changes it to all workspaces?
-  # - Doesn't lock after resume
-  # - Titlebar even if 1 window in workspace
-  # - No mouse binds (move, resize, etc.)
-  # - No screenshot
-  # - No per-app keyboard layout
+  # - Inconsistent cursor
 
   services = {
     # https://wiki.hyprland.org/Useful-Utilities/Systemd-start/#installation

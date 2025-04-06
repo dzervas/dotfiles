@@ -15,6 +15,10 @@ in {
   #   hyprcursor.enable = true;
   # };
 
+  home.packages = with pkgs; [
+    hyprshot
+  ];
+
   services = {
     dunst.enable = true;
     hypridle = {
@@ -37,6 +41,15 @@ in {
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
+      general = {
+        gaps_in = 2.5;
+        gaps_out = 5;
+      };
+
+      exec-once = [
+        "${pkgs.hyprland-per-window-layout}/bin/hyprland-per-window-layout"
+      ];
+
       "$mod" = "SUPER";
       bind = [
         "$mod, Return, exec, alacritty"
@@ -64,7 +77,8 @@ in {
         "$mod+Shift, Comma, movecurrentworkspacetomonitor, +1"
         "$mod, Period, focusmonitor, -1"
         "$mod+Shift, Period, movecurrentworkspacetomonitor, -1"
-        ", Print, exec, grimblast copy area"
+        ", Print, exec, hyprshot -z -m region --clipboard-only"
+        "$mod, Print, exec, hyprshot -z -m output --clipboard-only"
       ] ++ (
         # workspaces
         # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
@@ -93,10 +107,17 @@ in {
         ",XF86MonBrightnessDown, exec, brightnessctl s 10%-"
       ];
 
+      # Mouse
+      bindm = [
+        "$mod, mouse:272, movewindow"
+        "$mod, mouse:273, resizewindow"
+      ];
+
       monitor = [
         # Monitor Name                                       , Mode  , Pos, Scale, <other params>
         "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002448, highrr, 0x0, 1, vrr, 1"
         "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002445, highrr, auto-right, 1, vrr, 1"
+        "desc:BOE NE135A1M-NY1, highrr, auto, 1.67, vrr, 1"
         ", preferred, auto, 1" # Rule for additional monitors
       ];
 
@@ -132,9 +153,6 @@ in {
         disable_logs = false;
       };
     };
-    plugins = [
-      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprbars
-    ];
 
     # set the Hyprland and XDPH packages to null to use the ones from the NixOS module
     package = null;
