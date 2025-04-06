@@ -67,6 +67,7 @@ in {
 
   environment.systemPackages = with pkgs; [
     powertop
+    framework-tool
   ];
 
   # powerManagement = {
