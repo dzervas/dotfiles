@@ -50,6 +50,18 @@ in {
 
       exec-once = [
         "${pkgs.hyprland-per-window-layout}/bin/hyprland-per-window-layout"
+
+        # Spawn inital windows
+        "com.slack.Slack; hyprctl dispatch movetoworkspacesilent 4"
+        "code; hyprctl dispatch movetoworkspacesilent 3"
+        "firefox; hyprctl dispatch movetoworkspacesilent 2"
+        "alacritty; hyprctl dispatch movetoworkspacesilent 1"
+
+        # Arrange workspaces to screens
+        "hyprctl dispatch moveworkspacetomonitor 1 0"
+        "hyprctl dispatch moveworkspacetomonitor 2 1"
+        "hyprctl dispatch moveworkspacetomonitor 3 1"
+        "hyprctl dispatch moveworkspacetomonitor 4 0"
       ];
 
       "$mod" = "SUPER";
@@ -124,8 +136,8 @@ in {
       ];
 
       # Rules
-      windowrule = 
-        mkRule { title = "1Password"; class = "1Password"; rules = ["float" "center" "persistentsize" "pin" "stayfocused"]; } ++
+      windowrule =
+        mkRule { title = "^1Password$"; class = "1Password"; rules = ["float" "center" "persistentsize" "pin" "stayfocused"]; } ++
         mkRule { class = "jadx-gui-JadxGUI"; rules = ["float"]; } ++
         mkRule { class = "Steam Settings"; rules = ["float"]; } ++
         mkRule { class = "OrcaSlicer"; rules = ["suppressevent"]; };
@@ -140,10 +152,10 @@ in {
       };
 
       workspace = [
-        # No gaps when only 1 window exists in the workspace
+        # No gaps or borders when only 1 window exists in the workspace
         # https://wiki.hyprland.org/Configuring/Workspace-Rules/#smart-gaps
-        "w[tv1], gapsout:0, gapsin:0"
-        "f[1], gapsout:0, gapsin:0"
+        "w[tv1], gapsout:0, gapsin:0, border:false"
+        "f[1], gapsout:0, gapsin:0, border:false"
       ];
 
       input = {

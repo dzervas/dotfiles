@@ -3,7 +3,6 @@
 
   # Issues:
   # - Crashes?
-  # - No 1Password rules
   # - No single-window layout
   # - Changing layout changes it to all workspaces?
   # - Inconsistent cursor
