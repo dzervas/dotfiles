@@ -9,11 +9,7 @@ in {
     ./components/wayland-fixes.nix
   ];
 
-  # home.pointerCursor = {
-  #   enable = true;
-  #   size = 24;
-  #   hyprcursor.enable = true;
-  # };
+  home.pointerCursor.hyprcursor.enable = true;
 
   home.packages = with pkgs; [
     hyprshot

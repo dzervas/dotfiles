@@ -22,11 +22,7 @@ in {
     swappy
   ];
 
-  # home.pointerCursor = {
-  #   enable = true;
-  #   size = 24;
-  #   sway.enable = true;
-  # };
+  home.pointerCursor.sway.enable = true;
 
   xdg.portal.enable = true;
   xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-gtk xdg-desktop-portal-wlr ];

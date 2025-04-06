@@ -40,6 +40,10 @@
   home = {
     username = "dzervas";
     homeDirectory = "/home/dzervas";
+    pointerCursor = {
+      inherit (config.stylix.cursor) name size;
+      enable = true;
+    };
     packages = with pkgs; [
       kdePackages.filelight
       kdePackages.kate
