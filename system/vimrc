@@ -39,7 +39,7 @@ set showmatch			" Show matching parentheses
 set shiftwidth=4
 set sidescroll=2		" Only scroll horizontally little by little
 set smartcase			" Ignore case when lowercase used in search
-set smartindent
+set nosmartindent
 set smarttab			" Helps with backspacing with space indent
 set spelllang=en_us,el_gr
 set tabstop=4
@@ -93,9 +93,6 @@ inoremap <silent><expr> <CR> pumvisible() ? '<C-y>' : '<CR>'
 
 " Unhighlight search
 noremap <C-l>			:nohlsearch<CR>
-
-" Don't forget sudo ever again!
-cnoremap w!				w !sudo tee % >/dev/null
 
 noremap <A-s>			:set spell!<CR>
 

@@ -1,4 +1,14 @@
 { pkgs, ... }: {
+  # Issues:
+  # - Comments get un-indented
+  # - Copilot? (only when hitting a specific keybind)
+  # - Move to a better language server?
+  # - More intuitive git controls (stage/unstage block)
+  # - Automatically UpdateRemotePlugins
+  # - Transparent background
+  # - Open to vscode keybind (with confirmation/menu to open the whole dir)
+  # - Run python script with args/env
+
   programs.neovim = {
     enable = true;
 
@@ -12,6 +22,9 @@
     withPython3 = true;
 
     plugins = with pkgs.vimPlugins; [
+      # Sudo helper
+      vim-suda
+
       # Git helper
       vim-gitgutter
 
@@ -84,6 +97,16 @@
       nmap <C-down> <Plug>MoveLineDown
       vmap <C-up>   <Plug>MoveBlockUp
       vmap <C-down> <Plug>MoveBlockDown
+
+      " Automatically open a file with sudo
+      let g:suda_smart_edit = 1
+      cnoremap e! SudaRead
+      cnoremap w! SudaWrite
+
+      " Terminal stuff
+      autocmd TermOpen * startinsert
+      autocmd FileType nix noremap <leader>r <cmd>belowright 10split term://rebuild<cr>
+      noremap <A-R> <cmd>source ~/.config/nvim/init.lua<cr>
     '';
   };
 
