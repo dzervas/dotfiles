@@ -26,6 +26,7 @@
       vim-suda
 
       # Git helper
+      vim-fugitive
       vim-gitgutter
 
       # Buffer view helpers
@@ -106,7 +107,7 @@
       " Terminal stuff
       autocmd TermOpen * startinsert
       autocmd FileType nix noremap <leader>r <cmd>belowright 10split term://rebuild<cr>
-      noremap <A-R> <cmd>source ~/.config/nvim/init.lua<cr>
+      noremap <A-R> <cmd>source ~/.config/nvim/init.lua<cr><cmd>lua print("Reloaded!")<cr>
     '';
   };
 
