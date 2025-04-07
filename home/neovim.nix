@@ -1,7 +1,6 @@
 { pkgs, ... }: {
   # Issues:
   # - Comments get un-indented
-  # - Copilot? (only when hitting a specific keybind)
   # - Move to a better language server?
   # - More intuitive git controls (stage/unstage block)
   # - Automatically UpdateRemotePlugins
@@ -62,6 +61,9 @@
       vim-textobj-comment
       vim-textobj-function
       # vim-textobj-indent # Doesn't exist
+
+      # AI
+      copilot-vim
     ];
 
     extraPython3Packages = p: with p; [ jedi ];
@@ -106,8 +108,12 @@
 
       " Terminal stuff
       autocmd TermOpen * startinsert
-      autocmd FileType nix noremap <leader>r <cmd>belowright 10split term://rebuild<cr>
+      command Rebuild belowright 10split term://rebuild
       noremap <A-R> <cmd>source ~/.config/nvim/init.lua<cr><cmd>lua print("Reloaded!")<cr>
+
+      " AI
+      let g:copilot_enabled = v:false
+      nnoremap <leader>c <cmd>Copilot enable<cr><cmd>lua print("Copilot Enabled")<cr>
     '';
   };
 

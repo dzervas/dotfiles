@@ -78,6 +78,7 @@ xkb-options=grp:alt_space_toggle,caps:escape
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
       warn-dirty = false;
+      keep-outputs = true;
     };
   };
 }
