@@ -21,6 +21,9 @@
     gvfs.enable = true;
     # Thumbnail support
     tumbler.enable = true;
+
+    # GNOME Keyring - used by VSCode mainly
+    gnome.gnome-keyring.enable = true;
   };
 
   programs = {
@@ -47,6 +50,8 @@
     # Save xfce settings
     xfconf.enable = true;
   };
+
+  security.pam.services.login.enableGnomeKeyring = true;
 
   nix.settings = {
     substituters = ["https://hyprland.cachix.org"];
