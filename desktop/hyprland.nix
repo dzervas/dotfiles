@@ -15,6 +15,12 @@
       enable = true;
       wayland.enable = true;
     };
+
+    # XFCE File management
+    # Mount, trash and more
+    gvfs.enable = true;
+    # Thumbnail support
+    tumbler.enable = true;
   };
 
   programs = {
@@ -27,6 +33,19 @@
       withUWSM = true;
     };
     hyprlock.enable = true;
+
+    thunar = {
+      enable = true;
+      plugins = with pkgs.xfce; [
+        thunar-volman
+        thunar-archive-plugin
+        thunar-media-tags-plugin
+      ];
+    };
+    # Thunar archive manager
+    file-roller.enable = true;
+    # Save xfce settings
+    xfconf.enable = true;
   };
 
   nix.settings = {
