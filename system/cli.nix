@@ -19,6 +19,7 @@
     libnotify # For notify-send
     lsd
     ngrok
+    nix-search-cli
     p7zip
     podman-compose
     python3Full
