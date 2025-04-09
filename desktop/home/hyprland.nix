@@ -138,7 +138,8 @@ in {
 
       # Rules
       windowrule =
-        mkRule { title = "^1Password$"; class = "1Password"; rules = ["float" "center" "persistentsize" "pin" "stayfocused"]; } ++
+        mkRule { title = "^1Password$"; class = "^1Password$"; rules = ["float" "center" "persistentsize" "pin" "stayfocused"]; } ++
+        mkRule { title = ".+— 1Password$"; rules = ["unset" "float" "center" "persistentsize"]; } ++
         mkRule { class = "jadx-gui-JadxGUI"; rules = ["float"]; } ++
         mkRule { class = "Steam Settings"; rules = ["float"]; } ++
         mkRule { class = "OrcaSlicer"; rules = ["suppressevent"]; };
