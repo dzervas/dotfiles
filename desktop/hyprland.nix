@@ -2,10 +2,10 @@
   home-manager.sharedModules = [ ./home/hyprland.nix ];
 
   # Issues:
-  # - Crashes?
-  # - No single-window layout
-  # - Changing layout changes it to all workspaces?
   # - Inconsistent cursor
+  # - 1Password rules
+
+  environment.systemPackages = [ pkgs.sddm-chili-theme ]; # SDDM theme
 
   services = {
     # https://wiki.hyprland.org/Useful-Utilities/Systemd-start/#installation
@@ -13,6 +13,7 @@
 
     displayManager.sddm = {
       enable = true;
+      theme = "chili";
       wayland.enable = true;
     };
 

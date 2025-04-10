@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: {
+{ config, pkgs, ... }: {
   setup.runner = "rofi -show combi";
   programs.rofi = {
     enable = true;
@@ -32,7 +32,7 @@
   programs.waybar.settings.mainBar = let
     suspend = if config.setup.isLaptop then "" else "suspend/";
   in {
-    "custom/power".on-click = "rofi -no-fixed-num-lines -location 1 -theme-str 'window {width: 10%;}' -show menu -modi 'menu:rofi-power-menu --choices=${suspend}shutdown/reboot'";
+    "custom/power".on-click = "rofi -no-fixed-num-lines -location 1 -theme-str 'window {width: 10%;}' -show menu -modi 'menu:rofi-power-menu --choices=${suspend}shutdown/reboot/logout'";
     "custom/launcher".on-click = "rofi -location 1 -theme-str 'window {width: 20%;}' -show drun";
   };
 }

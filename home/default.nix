@@ -35,6 +35,22 @@
       enable = true;
       indicator = true;
     };
+    # flameshot.enable = true; # Requires grim!
+  };
+
+  gtk = {
+    enable = true;
+
+    cursorTheme = {
+      inherit (config.stylix.cursor) package name;
+    };
+
+    gtk3.extraConfig = { gtk-application-prefer-dark-theme = 1; };
+
+    gtk4.extraConfig = {
+      gtk-application-prefer-dark-theme = 1;
+      gtk-cursor-theme-name = config.stylix.cursor.name;
+    };
   };
 
   home = {
@@ -43,6 +59,9 @@
     pointerCursor = {
       inherit (config.stylix.cursor) name size;
       enable = true;
+      gtk.enable = true;
+      x11.enable = true;
+      x11.defaultCursor = config.stylix.cursor.name;
     };
     packages = with pkgs; [
       kdePackages.filelight
@@ -63,7 +82,7 @@
 
       kooha # Screen recording
 
-      rquickshare # Android file sharing
+      gtk3 gtk4 # Install to fix some inconsistencies (cursor, DPI, theme, etc.)
     ];
     file = {
       "${config.xdg.configHome}/katerc".source = ./katerc;

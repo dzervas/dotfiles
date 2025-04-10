@@ -1,4 +1,4 @@
-{ hostName, lib, ... }: {
+{ hostName, ... }: {
   # Issues:
   # - Skroutz iframe is broken
 
@@ -19,13 +19,8 @@
       OfferToSaveLogins = false;
       PasswordManagerEnabled = false;
     };
-    profiles = let
-      mkChildProfile = id: name: parent: parent // {
-        inherit name id;
-        path = lib.strings.toLower name;
-        isDefault = false;
-      };
-    in rec {
+    # Creating a new porfile breaks firefox - no addons, no settings, etc.
+    profiles = {
       default = {
         name = "Default";
         path = "8prfdmmp.default"; # Generated once so let's use it

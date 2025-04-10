@@ -1,4 +1,4 @@
-{ config, inputs, pkgs, ... }: let
+{ config, pkgs, ... }: let
   wpctl = "${pkgs.wireplumber}/bin/wpctl";
   mkRule = { rules, class ? null, title ? null }:
     map (rule:
@@ -15,7 +15,7 @@ in {
     ./components/wayland-fixes.nix
   ];
 
-  home.pointerCursor.hyprcursor.enable = true;
+  # home.pointerCursor.hyprcursor.enable = true;
 
   home.packages = with pkgs; [
     hyprshot
