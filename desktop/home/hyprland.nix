@@ -70,6 +70,7 @@ in {
         "$mod, Return, exec, alacritty"
         "$mod, C, killactive"
         "$mod, E, exec, hyprctl keyword general:layout 'dwindle'"
+        "$mod, E, exec, hyprctl keyword general:layout 'dwindle'"
         "$mod, T, exec, hyprctl keyword general:layout 'master'"
         "$mod, F, fullscreen"
         "$mod, G, togglegroup"
@@ -83,9 +84,13 @@ in {
         "$mod, Right, workspace, m+1"
         "$mod+Shift, Right, movetoworkspacesilent, m+1"
         "$mod, Up, cyclenext, tiled"
+        "$mod, Up, changegroupactive"
         "$mod+Shift, Up, swapnext, tiled"
+        "$mod+Shift, Up, movegroupwindow"
         "$mod, Down, cyclenext, tiled, prev"
+        "$mod, Down, changegroupactive, back"
         "$mod+Shift, Down, swapnext, tiled, prev"
+        "$mod+Shift, Down, movegroupwindow, back"
 
         "$mod, Tab, workspace, previous"
         "$mod, Comma, focusmonitor, +1"
@@ -138,8 +143,8 @@ in {
 
       # Rules
       windowrule =
-        mkRule { title = "^1Password$"; class = "^1Password$"; rules = ["float" "center" "persistentsize" "pin" "stayfocused"]; } ++
-        mkRule { title = ".+— 1Password$"; rules = ["unset" "float" "center" "persistentsize"]; } ++
+        # mkRule { title = "^1Password$"; class = "^1Password$"; rules = ["float" "center" "persistentsize" "pin" "stayfocused"]; } ++
+        # mkRule { title = ".+— 1Password$"; rules = ["unset" "float" "center" "persistentsize"]; } ++
         mkRule { class = "jadx-gui-JadxGUI"; rules = ["float"]; } ++
         mkRule { class = "Steam Settings"; rules = ["float"]; } ++
         mkRule { class = "OrcaSlicer"; rules = ["suppressevent"]; };
