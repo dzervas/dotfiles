@@ -2,6 +2,7 @@
   locker = "swaylock -f";
 in {
   setup.locker = "${options.setup.locker.default}; ${locker}";
+  setup.lockerInstant = config.setup.locker;
   programs.swaylock = {
     enable = true;
 

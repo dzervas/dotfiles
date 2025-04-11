@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: let
+{ config, pkgs, ... }: let
   wpctl = "${pkgs.wireplumber}/bin/wpctl";
   mkRule = { rules, class ? null, title ? null }:
     map (rule:
@@ -9,6 +9,7 @@
 in {
   setup.windowManager = "hyprland";
   imports = [
+    ./components/hyprlock.nix
     ./components/rofi.nix
     ./components/trays.nix
     ./components/waybar.nix
@@ -21,52 +22,6 @@ in {
     hyprshot
   ];
 
-  programs.hyprlock = {
-    enable = true;
-    settings = {
-      general = {
-        grace = 5;
-        hide_cursor = true;
-        ignore_empty_input = true;
-        fail_timeout = 1000;
-      };
-
-      background = lib.mkForce [{
-        path = "screenshot";
-        blur_size = 6;
-        blur_passes = 2;
-        noise = 0.0117;
-        contrast = 1.3000;
-        brightness = 0.8000;
-        vibrancy = 0.2100;
-        vibrancy_darkness = 0.0;
-      }];
-
-      label = [
-      {
-        text = "cmd[update:1000] date +'%H:%m'";
-
-        font_size = 80;
-        font_family = "Iosevka Term Extrabold";
-
-        position = "0, -200";
-        halign = "center";
-        valign = "top";
-      }
-      {
-        text = "cmd[update:1000] if [ $ATTEMPTS -gt 0 ]; then echo 🕵️‍♂️ $ATTEMPTS; fi";
-
-        font_size = 40;
-        font_family = "Iosevka Term Extrabold";
-
-        position = "0, 100";
-        halign = "center";
-        valign = "bottom";
-      }
-      ];
-    };
-  };
-
   services = {
     dunst.enable = true;
     hyprpolkitagent.enable = true;
@@ -74,12 +29,12 @@ in {
       enable = true;
       settings = {
         general = {
-          lock_cmd = "hyprlock";
-          before_sleep_cmd = "hyprlock -q --immediate --immediate-render --no-fade-in";
+          lock_cmd = config.setup.locker;
+          before_sleep_cmd = config.setup.lockerInstant;
           after_sleep_cmd = "hyprctl dispatch dpms on";
         };
         listener = [
-          { timeout = 300; on-timeout = "hyprlock"; }
+          { timeout = 300; on-timeout = config.setup.locker; }
           { timeout = 600; on-timeout = "hyprctl dispatch dpms off"; on-resume = "hyprctl dispatch dpms on"; }
           { timeout = 330; on-timeout = "${wpctl} set-mute @DEFAULT_SOURCE@ 1"; on-resume = "${wpctl} set-mute @DEFAULT_SOURCE@ 0"; }
         ];
@@ -122,7 +77,7 @@ in {
         "$mod, G, togglegroup"
         "$mod, R, exec, ${config.setup.runner}"
         "$mod, P, exec, 1password --quick-access"
-        "$mod, L, exec, hyprlock --immediate --immediate-render --no-fade-in"
+        "$mod, L, exec, ${config.setup.lockerInstant}"
         "$mod+Shift, F, togglefloating"
         "$mod+Shift, R, exec, hyprctl reload"
         "$mod, Left, workspace, m-1"
