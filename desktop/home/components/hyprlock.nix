@@ -1,6 +1,8 @@
 { lib, options, ... }: let
   locker = "hyprlock --immediate --immediate-render --no-fade-in";
 in {
+  # TODO: Show weather, battery status, media
+
   setup.locker = "${options.setup.locker.default}; hyprlock --immediate --immediate-render --no-fade-in";
   setup.lockerInstant = "${options.setup.locker.default}; hyprlock";
 
