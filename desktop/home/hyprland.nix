@@ -1,5 +1,4 @@
 { config, pkgs, ... }: let
-  wpctl = "${pkgs.wireplumber}/bin/wpctl";
   mkRule = { rules, class ? null, title ? null }:
     map (rule:
       let

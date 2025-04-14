@@ -1,4 +1,6 @@
-{ config, ... }: {
+{ config, pkgs, ... }: let
+  wpctl = "${pkgs.wireplumber}/bin/wpctl";
+in {
   services.hypridle = {
     enable = true;
     settings = {
