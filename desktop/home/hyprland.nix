@@ -55,11 +55,13 @@ in {
       bind = [
         "$mod, Return, exec, alacritty"
         "$mod, C, killactive"
+        "$mod+Shift, C, forcekillactive"
         "$mod, E, exec, hyprctl keyword general:layout 'dwindle'"
         "$mod, E, exec, hyprctl keyword general:layout 'dwindle'"
         "$mod, T, exec, hyprctl keyword general:layout 'master'"
         "$mod, F, fullscreen"
         "$mod, G, togglegroup"
+        "$mod+Shift, G, moveoutofgroup"
         "$mod, R, exec, ${config.setup.runner}"
         "$mod, P, exec, 1password --quick-access"
         "$mod, L, exec, ${config.setup.lockerInstant}"
@@ -142,6 +144,13 @@ in {
       dwindle = {
         pseudotile = true;
         preserve_split = true;
+      };
+
+      group.groupbar = {
+        font_family = config.stylix.fonts.monospace.name;
+        font_size = 14;
+        height = 16;
+        gradients = true;
       };
 
       workspace = [
