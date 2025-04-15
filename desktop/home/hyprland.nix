@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: let
+{ config, lib, pkgs, ... }: let
   mkRule = { rules, class ? null, title ? null }:
     map (rule:
       let
@@ -151,6 +151,7 @@ in {
         font_size = 14;
         height = 16;
         gradients = true;
+        gaps_out = 0;
       };
 
       workspace = [
@@ -162,7 +163,11 @@ in {
 
       input = {
         kb_layout = "us,gr";
-        kb_options = "grp:alt_space_toggle,caps:escape";
+        kb_options = lib.strings.concatStringsSep "," [
+          "grp:alt_space_toggle" # Alt-Space to change keyboard layout
+          "caps:escape" # Caps Lock is Escape
+          "fkeys:basic_13-24" # F13-24 are normal keys, not Xkb/Media keys (for weird key maps)
+        ];
         repeat_rate = "56";
         repeat_delay = "200";
         touchpad = {

@@ -1,19 +1,35 @@
-{ config, lib, ... }: let
+{ config, lib, pkgs, ... }: let
   inherit (lib) mkIf;
   cfg = config.setup;
 in {
   setup.bar = "waybar";
+
+  # Add some fonts for styling
+  home.packages = with pkgs; [
+    martian-mono
+    nerd-fonts.jetbrains-mono
+  ];
+
   programs.waybar = {
     enable = true;
     systemd.enable = true;
 
+    style = lib.mkForce ./waybar.style.css;
     settings = {
-      mainBar = {
+      mainBar = rec {
         # Base
-        layer = "bottom";
+        layer = "top";
+        mode = "dock";
         position = "top";
         spacing = 4;
         height = 30;
+        exclusive = true;
+
+        # Margins
+        margin-top = 5;
+        margin-bottom = 5;
+        margin-left = 10;
+        margin-right = margin-left;
 
         # Module positioning
         modules-left = [
@@ -29,12 +45,14 @@ in {
           (mkIf (cfg.windowManager == "hyprland") "hyprland/window")
         ];
         modules-right = [
+          "mpris"
           "tray"
           # "pulseaudio"
           "keyboard-state"
           "battery"
           # "bluetooth"
           (mkIf (cfg.windowManager == "sway") "sway/language")
+          (mkIf (cfg.windowManager == "hyprland") "hyprland/language")
           "clock"
           "idle_inhibitor"
         ];
@@ -68,6 +86,10 @@ in {
             "(.*) — Mozilla Firefox" = "$1";
           };
         };
+        "hyprland/language" = {
+          format = "{shortDescription}";
+          on-click = "hyprctl switchxkblayout $(hyprctl devices -j | ${pkgs.jq}/bin/jq -r '.keyboards[] | select(.main) | .name') next";
+        };
         "sway/window" = {
           icon = true;
         };
@@ -100,6 +122,19 @@ in {
           tooltip = true;
           tooltip-format = "{app}: {title}";
           on-click = "swaymsg scratchpad show";
+        };
+
+        mpris = {
+          format = "{player_icon} {dynamic}";
+          format-paused = "<span color='grey'>{status_icon} {dynamic}</span>";
+          max-length = 50;
+          player-icons = {
+            default = "⏸";
+            mpv = "🎵";
+          };
+          status-icons = {
+            paused = "▶";
+          };
         };
         keyboard-state = {
           format = "{name}";

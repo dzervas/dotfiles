@@ -3,6 +3,9 @@
 in {
   # TODO: Show weather, battery status, media
   # Weather from https://www.yr.no/en/forecast/daily-table/2-257282/Greece/Thessaly/L%C3%A1risa/Melivoia
+  # Forecast: https://www.yr.no/api/v0/locations/2-257282/forecast
+  # Current: https://www.yr.no/api/v0/locations/2-257282/forecast/currenthour
+  # Styling: https://github.com/mahaveergurjar/Hyprlock-Dots
 
   setup.lockerInstant = "${options.setup.locker.default}; hyprlock --immediate --immediate-render --no-fade-in";
   setup.locker = "${options.setup.locker.default}; hyprlock";
@@ -30,12 +33,22 @@ in {
 
       label = [
       {
-        text = "cmd[update:1000] date +'%H:%m'";
+        text = "cmd[update:60000] date +'%H:%m'";
 
         font_size = 80;
         font_family = "Iosevka Term Extrabold";
 
         position = "0, -200";
+        halign = "center";
+        valign = "top";
+      }
+      {
+        text = "cmd[update:1000] date +'%A, %-d %B %Y'";
+
+        font_size = 34;
+        font_family = "Iosevka Term Extrabold";
+
+        position = "0, -325";
         halign = "center";
         valign = "top";
       }
