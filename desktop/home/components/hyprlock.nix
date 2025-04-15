@@ -4,8 +4,8 @@ in {
   # TODO: Show weather, battery status, media
   # Weather from https://www.yr.no/en/forecast/daily-table/2-257282/Greece/Thessaly/L%C3%A1risa/Melivoia
 
-  setup.locker = "${options.setup.locker.default}; hyprlock --immediate --immediate-render --no-fade-in";
-  setup.lockerInstant = "${options.setup.locker.default}; hyprlock";
+  setup.lockerInstant = "${options.setup.locker.default}; hyprlock --immediate --immediate-render --no-fade-in";
+  setup.locker = "${options.setup.locker.default}; hyprlock";
 
   programs.hyprlock = {
     enable = true;
@@ -20,7 +20,7 @@ in {
       background = lib.mkForce [{
         path = "screenshot";
         blur_size = 6;
-        blur_passes = 2;
+        blur_passes = 3;
         noise = 0.0117;
         contrast = 1.3000;
         brightness = 0.8000;
