@@ -17,6 +17,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Free up some disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+
+      - name: Implement https://github.com/jlumbroso/free-disk-space/pull/24
+        run: |
+          sudo apt-get purge --auto-remove -y snapd microsoft-edge-stable '^temurin-.*' '^.*jdk.*' '^.*jre.*' --fix-missing
+          sudo rm -rf /usr/local /usr/share
+
         
       # Create with liberal rights, otherwise cache action will complain
       # about permission errors.
@@ -43,16 +54,6 @@ jobs:
         uses: cachix/install-nix-action@v27
         with:
           nix_path: nixpkgs=channel:nixos-unstable
-
-      - name: Free up some disk space
-        uses: jlumbroso/free-disk-space@main
-        with:
-          tool-cache: true
-
-      - name: Implement https://github.com/jlumbroso/free-disk-space/pull/24
-        run: |
-          sudo apt-get purge --auto-remove -y snapd microsoft-edge-stable '^temurin-.*' '^.*jdk.*' '^.*jre.*' --fix-missing
-          sudo rm -rf /usr/local /usr/share
 
       - name: Run Garbage Collector
         run: nix-collect-garbage -d
