@@ -70,3 +70,6 @@ jobs:
           cd result/iso
           oras login ghcr.io -u github -p ${{ secrets.GITHUB_TOKEN }}
           oras push ghcr.io/${{ github.repository }}/nixos-iso:${{ steps.tag.outputs.name }},latest *.iso
+
+      # Let gh cache as the created files are not owned by us
+      - run: sudo chmod -R 777 /nix
