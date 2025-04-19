@@ -125,8 +125,8 @@ in {
         };
 
         mpris = {
-          format = "{player_icon} {dynamic}";
-          format-paused = "<span color='grey'>{status_icon} {dynamic}</span>";
+          format = "{player_icon} {title}";
+          format-paused = "<span color='grey'>{status_icon} {title}</span>";
           max-length = 50;
           player-icons = {
             default = "⏸";

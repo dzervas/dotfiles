@@ -24,7 +24,13 @@
 
   # Fix home-manager xdg desktop portal support
   environment.pathsToLink = [ "/share/xdg-desktop-portal" "/share/applications" ];
-  programs.dconf.enable = true;
+  programs = {
+    dconf.enable = true;
+    nix-ld = {
+      enable = true;
+      # libraries = with pkgs; [];
+    };
+  };
 
   hardware.enableAllFirmware = true;
 
@@ -65,7 +71,14 @@ xkb-options=grp:alt_space_toggle,caps:escape
   };
 
   nix = {
-    extraOptions = "min-free = ${toString (512 * 1024 * 1024)}"; # Garbage collect when free space is less than 512MB
+    extraOptions = ''
+      # Garbage collect when free space is less than 512MB
+      min-free = ${toString (512 * 1024 * 1024)}
+
+      # DevEnv cachix
+      extra-substituters = https://devenv.cachix.org
+      extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
+    '';
     gc = {
       automatic = true;
       dates = "weekly";
