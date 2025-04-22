@@ -177,6 +177,11 @@ in {
         };
       };
 
+      cursor = {
+        # Fix crash when podman exits (???)
+        no_hardware_cursors = true;
+      };
+
       debug = {
         disable_logs = false;
       };

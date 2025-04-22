@@ -42,6 +42,7 @@
     cargo-expand
     rustup
     probe-rs-tools
+    watchexec
 
     pnpm
     nodejs
