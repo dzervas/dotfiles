@@ -76,9 +76,9 @@ in {
         "$mod+Shift, Up, swapnext, tiled"
         "$mod+Shift, Up, movegroupwindow"
         "$mod, Down, cyclenext, tiled, prev"
-        "$mod, Down, changegroupactive, back"
+        "$mod, Down, changegroupactive, b"
         "$mod+Shift, Down, swapnext, tiled, prev"
-        "$mod+Shift, Down, movegroupwindow, back"
+        "$mod+Shift, Down, movegroupwindow, b"
 
         "$mod, Tab, workspace, previous"
         "$mod, Comma, focusmonitor, +1"
@@ -178,7 +178,7 @@ in {
       };
 
       cursor = {
-        # Fix crash when podman exits (???)
+        # Fixes inconsistent cursor
         no_hardware_cursors = true;
       };
 

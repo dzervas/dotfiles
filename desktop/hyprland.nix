@@ -2,7 +2,6 @@
   home-manager.sharedModules = [ ./home/hyprland.nix ];
 
   # Issues:
-  # - Inconsistent cursor
   # - 1Password rules
 
   environment.systemPackages = [ pkgs.sddm-chili-theme ]; # SDDM theme

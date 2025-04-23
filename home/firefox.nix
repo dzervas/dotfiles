@@ -114,11 +114,11 @@
                   "stop-reload-button",
                   "urlbar-container",
                   "downloads-button",
+                  "ublock0_raymondhill_net-browser-action",
+                  "search_kagi_com-browser-action",
                   "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action",
                   "fxa-toolbar-menu-button",
                   "_testpilot-containers-browser-action",
-                  "ublock0_raymondhill_net-browser-action",
-                  "sponsorblocker_ajay_app-browser-action",
                   "unified-extensions-button"
                 ],
                 "toolbar-menubar": [

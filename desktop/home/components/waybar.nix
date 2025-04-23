@@ -10,26 +10,28 @@ in {
     nerd-fonts.jetbrains-mono
   ];
 
+  stylix.targets.waybar = {
+    font = "sansSerif";
+    addCss = false;
+  };
+
   programs.waybar = {
     enable = true;
     systemd.enable = true;
 
-    style = lib.mkForce ./waybar.style.css;
+    style = lib.mkAfter (builtins.readFile ./waybar.style.css);
     settings = {
-      mainBar = rec {
+      mainBar = {
         # Base
         layer = "top";
         mode = "dock";
+        exclusive = true;
+
+        # Appearance
         position = "top";
         spacing = 4;
         height = 30;
-        exclusive = true;
-
-        # Margins
-        margin-top = 5;
         margin-bottom = 5;
-        margin-left = 10;
-        margin-right = margin-left;
 
         # Module positioning
         modules-left = [
