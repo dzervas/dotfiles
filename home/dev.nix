@@ -51,7 +51,6 @@
     kubectl
     kubectx
     kubescape
-    kubetail
     kubernetes-helm
     oci-cli
     terraform

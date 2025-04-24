@@ -73,7 +73,6 @@
     k = "kubectl";
     kn = "kubens";
     kc = "kubectx";
-    kl = "kubetail";
     l = "locate -i";
     lp = "locate -i -A \"$(pwd)\"";
     n = "echo -e \"\a\" && notify-send -a \"Terminal\" Notification!";

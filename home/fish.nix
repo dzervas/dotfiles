@@ -37,6 +37,10 @@
         description = "A curl wrapper with enhanced features tailored for REST APIs";
         wraps = "curl";
       };
+      kubelog = {
+        body = builtins.readFile ./fish-functions/kubelog.fish;
+        description = "KubeCTL log for human beings";
+      };
       kubeseal-env = {
         body = builtins.readFile ./fish-functions/kubeseal-env.fish;
         description = "Create a kubeseal secret from an env file";
@@ -74,6 +78,7 @@
     shellAliases = {
       update = "sh (echo -n $FLAKE_URL | cut -d'?' -f1)/.github/scripts/gha-updater.sh && nix flake update --flake \"$FLAKE_URL\" && rebuild";
       miniterm = "python3 -m serial.tools.miniterm";
+      kl = "kubelog";
       v = "nvim";
       w = "watchf";
     };
