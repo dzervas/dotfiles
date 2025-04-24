@@ -74,10 +74,6 @@ xkb-options=grp:alt_space_toggle,caps:escape
     extraOptions = ''
       # Garbage collect when free space is less than 512MB
       min-free = ${toString (512 * 1024 * 1024)}
-
-      # DevEnv cachix
-      extra-substituters = https://devenv.cachix.org
-      extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
     '';
     gc = {
       automatic = true;
