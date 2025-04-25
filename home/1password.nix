@@ -35,7 +35,6 @@ in {
   systemd.user.services._1password-tray = {
     Unit = {
       Description = "1password Tray";
-      PartOf = [ "graphical-session.target" ];
       Requires = [ "tray.target" ];
       After = [
         "graphical-session-pre.target"

@@ -42,12 +42,22 @@
       vim-surround
 
       # Auto completion
-      deoplete-clang
-      deoplete-fish
-      # deoplete-go
-      deoplete-jedi
-      deoplete-nvim
-      deoplete-rust
+      # DevOps
+      coc-docker
+      coc-json
+      coc-markdownlint
+      coc-sh
+      coc-toml
+      coc-yaml
+      # Dev
+      coc-go
+      # coc-lua
+      coc-pyright
+      coc-rust-analyzer
+      # Web
+      coc-tsserver
+      # coc-css
+      # coc-html
       echodoc-vim
       vim-hcl
       vim-vagrant
@@ -66,55 +76,13 @@
       copilot-vim
     ];
 
+    coc = {
+      enable = true;
+      settings = {};
+    };
+
     extraPython3Packages = p: with p; [ jedi ];
-    extraConfig = ''
-      source /etc/vimrc
-      set viminfo&
-
-      " Airline
-      let g:airline_powerline_fonts = 1
-      let g:airline_theme = "badwolf"
-      let g:airline#extensions#syntastic#enabled = 1
-      let g:airline#extensions#hunks#non_zero_only = 0
-
-      " Nerd Commenter
-      let g:NERDSpaceDelims = 1
-      let g:NERDTrimTrailingWhitespace = 1
-      nmap <C-/> <Plug>NERDCommenterToggle
-      vmap <C-/> <Plug>NERDCommenterToggle<CR>gv
-
-      " Deoplete
-      let g:deoplete#enable_at_startup = 1
-      let g:deoplete#sources#clang#libclang_path = "${pkgs.libclang}/lib"
-      let g:echodoc_enable_at_startup = 1
-      let g:jedi#show_docstring = 1
-      let g:jedi#show_call_signatures = 2
-      let g:jedi#popup_select_first = 0
-      call deoplete#custom#option('smart_case', v:true)
-      call deoplete#custom#source('_', 'converters', ['converter_auto_paren', 'converter_auto_delimiter'])
-      autocmd InsertLeave * if !pumvisible() | pclose | endif
-
-      " Move
-      let g:move_map_keys = 0
-      nmap <C-up>   <Plug>MoveLineUp
-      nmap <C-down> <Plug>MoveLineDown
-      vmap <C-up>   <Plug>MoveBlockUp
-      vmap <C-down> <Plug>MoveBlockDown
-
-      " Automatically open a file with sudo
-      let g:suda_smart_edit = 1
-      cnoremap e! SudaRead
-      cnoremap w! SudaWrite
-
-      " Terminal stuff
-      autocmd TermOpen * startinsert
-      command Rebuild belowright 10split term://rebuild
-      noremap <A-R> <cmd>source ~/.config/nvim/init.lua<cr><cmd>lua print("Reloaded!")<cr>
-
-      " AI
-      let g:copilot_enabled = v:false
-      nnoremap <leader>c <cmd>Copilot enable<cr><cmd>lua print("Copilot Enabled")<cr>
-    '';
+    extraConfig = builtins.readFile ./neovim.vim;
   };
 
   stylix.targets.nixvim = {
