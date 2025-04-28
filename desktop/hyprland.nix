@@ -3,6 +3,7 @@
 
   # Issues:
   # - 1Password rules
+  # - Podman crash
 
   environment.systemPackages = [ pkgs.sddm-chili-theme ]; # SDDM theme
 

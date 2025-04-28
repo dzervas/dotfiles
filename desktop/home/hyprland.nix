@@ -5,6 +5,7 @@
         classStr = if class != null then ",class:${class}" else "";
         titleStr = if title != null then ",title:${title}" else "";
       in "${rule}${classStr}${titleStr}") rules;
+  mkRules = rules: builtins.concatLists (map mkRule rules);
 in {
   setup.windowManager = "hyprland";
   imports = [
@@ -130,12 +131,17 @@ in {
       ];
 
       # Rules
-      windowrule =
-        # mkRule { title = "^1Password$"; class = "^1Password$"; rules = ["float" "center" "persistentsize" "pin" "stayfocused"]; } ++
-        # mkRule { title = ".+— 1Password$"; rules = ["unset" "float" "center" "persistentsize"]; } ++
-        mkRule { class = "jadx-gui-JadxGUI"; rules = ["float"]; } ++
-        mkRule { class = "Steam Settings"; rules = ["float"]; } ++
-        mkRule { class = "OrcaSlicer"; rules = ["suppressevent"]; };
+      # TODO: Move the rules to each program
+      # TODO: Define a global mkWindowRule function that each wm overrides
+      windowrule = mkRules [
+        # mkRule { title = "^1Password$"; class = "^1Password$"; rules = ["float" "center" "persistentsize" "pin" "stayfocused"]; }
+        # mkRule { title = ".+— 1Password$"; rules = ["unset" "float" "center" "persistentsize"]; }
+        { title = "1Password"; class = "1Password"; rules = ["float" "center" ]; }
+        { class = "jadx-gui-JadxGUI"; rules = ["float"]; }
+        { class = "Steam Settings"; rules = ["float"]; }
+        { class = "OrcaSlicer"; rules = ["suppressevent"]; }
+        { class = "org.pulseaudio.pavucontrol"; rules = ["float" "center"]; }
+      ];
 
       # Layouts
       master = {
