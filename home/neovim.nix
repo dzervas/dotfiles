@@ -1,12 +1,8 @@
 { pkgs, ... }: {
   # Issues:
-  # - Comments get un-indented
-  # - Move to a better language server?
-  # - More intuitive git controls (stage/unstage block)
-  # - Automatically UpdateRemotePlugins
   # - Transparent background
   # - Open to vscode keybind (with confirmation/menu to open the whole dir)
-  # - Run python script with args/env
+  # - Run python script with args/env (nvim-iron?)
 
   programs.neovim = {
     enable = true;
@@ -62,6 +58,18 @@
       vim-hcl
       vim-vagrant
 
+      # Debugging
+      nvim-dap
+      nvim-dap-lldb
+      nvim-dap-python
+      nvim-dap-rr
+      nvim-dap-ui
+
+      # Telescope fuzzy finder
+      telescope-nvim
+      telescope-coc-nvim
+      telescope-dap-nvim
+
       # Nix linter
       statix
 
@@ -78,11 +86,29 @@
 
     coc = {
       enable = true;
-      settings = {};
+      settings = {
+        coc.preferences = {
+          currentFunctionSymbolAutoUpdate = true;
+          enableMessageDialog = true;
+          # formatOnSave = true;
+          watchmanPath = "${pkgs.watchman}/bin/watchman";
+        };
+        workspace.removeEmptyWorkspaceFolder = true; # Remove workspace folder when no buffer associated
+        fileSystemWatch = {
+          watchmanPath = "${pkgs.watchman}/bin/watchman";
+          ignoredFolders = ["/private/tmp" "/" "$tmpdir" "target" "node_modules"];
+        };
+        markdownlint.config = {
+          line_length = false;
+        };
+      };
     };
 
-    extraPython3Packages = p: with p; [ jedi ];
     extraConfig = builtins.readFile ./neovim.vim;
+
+    extraPackages = with pkgs; [
+      rr # For dap-rr
+    ];
   };
 
   stylix.targets.nixvim = {

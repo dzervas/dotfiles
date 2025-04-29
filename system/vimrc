@@ -105,15 +105,8 @@ noremap <A-backspace>	:close<CR>
 noremap <A-Tab>			<C-W><C-W>
 noremap <A-up>			<C-W>l
 noremap <A-down>		<C-W>h
-noremap <A-f>			<C-W>o
+noremap <A-C>			<C-W>o
 noremap <A-return>		:vsp<CR>
 noremap <A-S-return>	:sp<CR>
-
-nnoremap <Tab>			==
-nnoremap <S-Tab>		>>
-nnoremap <A-Tab>		<<
-vnoremap <Tab>			==
-vnoremap <S-Tab>		>>
-vnoremap <A-Tab>		<<
 
 noremap <leader>l		<cmd>Lexplore<cr>
