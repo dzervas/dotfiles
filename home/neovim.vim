@@ -1,9 +1,6 @@
 source /etc/vimrc
 set viminfo&
 
-" Transparent background
-autocmd UIEnter * highlight Normal guibg=NONE ctermbg=NONE
-
 " Airline
 let g:airline_powerline_fonts = 1
 let g:airline_theme = "badwolf"
@@ -81,6 +78,6 @@ highlight DapBreakpoint guifg=LightenColor("String", 25) guibg=LightenColor("Str
 highlight DapLogPoint guifg=LightenColor("Function", 25)
 highlight DapStopped guifg=LightenColor("Identifier", 25)
 
-call sign_define("DapBreakpoint", {"text": "⬤", "linehl": "DapBreakpoint"})
-call sign_define("DapLogPoint", {"text": "ⓘ", "linehl": "DapLogPoint"})
-call sign_define("DapStopped", {"text": "⏸", "linehl": "DapStopped"})
+sign define DapBreakpoint linehl=DapBreakpoint text=⬤
+sign define DapLogPoint linehl=DapLogPoint text=ⓘ
+sign define DapStopped linehl=DapStopped text=⏸

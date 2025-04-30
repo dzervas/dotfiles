@@ -3,6 +3,9 @@
   # - Transparent background
   # - Open to vscode keybind (with confirmation/menu to open the whole dir)
   # - Run python script with args/env (nvim-iron?)
+  # - Set up nvim-dap
+  # - Use nixvim?
+  # - Move to lua?
 
   programs.neovim = {
     enable = true;
@@ -101,6 +104,13 @@
         markdownlint.config = {
           line_length = false;
         };
+        languageserver = {
+          terraform = {
+            command = "${pkgs.terraform-lsp}/bin/terraform-lsp";
+            filetypes = ["terraform" "hcl"];
+            initializationOptions = {};
+          };
+        };
       };
     };
 
@@ -111,7 +121,7 @@
     ];
   };
 
-  stylix.targets.nixvim = {
+  stylix.targets.neovim = {
     enable = true;
     transparentBackground.main = true;
     plugin = "base16-nvim";
