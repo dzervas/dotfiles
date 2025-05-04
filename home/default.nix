@@ -27,6 +27,13 @@
   programs = {
     mpv.enable = true;
     home-manager.enable = true;
+
+    nix-index = {
+      enable = true;
+      enableBashIntegration = true;
+      enableFishIntegration = true;
+      enableZshIntegration = true;
+    };
   };
 
   services = {
@@ -75,7 +82,6 @@
       cameractrls-gtk4
 
       filezilla
-      affine-bin
 
       brightnessctl
       playerctl
@@ -83,6 +89,8 @@
       kooha # Screen recording
 
       gtk3 gtk4 # Install to fix some inconsistencies (cursor, DPI, theme, etc.)
+
+      atuin-desktop
     ];
     file = {
       "${config.xdg.configHome}/katerc".source = ./katerc;

@@ -8,11 +8,9 @@ _: {
       "md.obsidian.Obsidian"
       # "org.chromium.Chromium"
       "org.onlyoffice.desktopeditors"
-      "org.ryujinx.Ryujinx"
       "org.signal.Signal"
       "com.github.skylot.jadx"
       "com.slack.Slack"
-      "rest.insomnia.Insomnia"
     ];
 
     overrides = {

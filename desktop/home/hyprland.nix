@@ -141,6 +141,7 @@ in {
         { class = "Steam Settings"; rules = ["float"]; }
         { class = "OrcaSlicer"; rules = ["suppressevent"]; }
         { class = "org.pulseaudio.pavucontrol"; rules = ["float" "center"]; }
+        { title = "Ropuka's Idle Island"; rules = ["float" "persistentsize" "fullscreenstate 0 0"]; }
       ];
 
       # Layouts
