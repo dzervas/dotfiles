@@ -24,7 +24,25 @@ in {
   ];
 
   services = {
-    dunst.enable = true;
+    # dunst.enable = true;
+    swaync = {
+      enable = true;
+      settings = {
+        hide-on-clear = true;
+        widgets = ["inhibitors" "dnd" "mpris" "notifications"];
+        widget-config = {
+          inhibitors = {
+            text = "Inhibitors";
+            button-text = "Clear All";
+            clear-all-button = true;
+          };
+          mpris = {
+            image-size = 96;
+            blur = true;
+          };
+        };
+      };
+    };
     hyprpolkitagent.enable = true;
   };
 
@@ -182,6 +200,10 @@ in {
           tap-to-click = true;
           clickfinger_behavior = true;
         };
+      };
+
+      decoration = {
+        rounding = 10;
       };
 
       cursor = {

@@ -57,6 +57,7 @@ in {
           (mkIf (cfg.windowManager == "hyprland") "hyprland/language")
           "clock"
           "idle_inhibitor"
+          "custom/notifications"
         ];
 
         # Module settings
@@ -80,6 +81,26 @@ in {
         "custom/launcher" = {
           format = " {icon} ";
           format-icons = "🚀";
+        };
+        "custom/notifications" = {
+          tooltip = false;
+          format = "{icon} ";
+          format-icons = {
+            notification = "<span foreground='red'><sup></sup></span>";
+            none = "";
+            dnd-notification = "<span foreground='red'><sup></sup></span>";
+            dnd-none = "";
+            inhibited-notification = "<span foreground='red'><sup></sup></span>";
+            inhibited-none = "";
+            dnd-inhibited-notification = "<span foreground='red'><sup></sup></span>";
+            dnd-inhibited-none = "";
+          };
+          return-type = "json";
+          exec-if = "which swaync-client";
+          exec = "swaync-client -swb";
+          on-click = "swaync-client -t -sw";
+          on-click-right = "swaync-client -d -sw";
+          escape = true;
         };
         "hyprland/window" = {
           icon = true;
@@ -129,14 +150,18 @@ in {
         mpris = {
           format = "{player_icon} {title}";
           format-paused = "<span color='grey'>{status_icon} {title}</span>";
-          max-length = 50;
+          max-length = 30;
           player-icons = {
             default = "⏸";
             mpv = "🎵";
+            firefox = "🦊";
           };
           status-icons = {
             paused = "▶";
+            playing = "⏸";
           };
+          tooltip-format-playing = "{title}\n\n{artist} - {album}\n{status} - {position}/{length}";
+          tooltip-format-paused = "{title}\n\n{artist} - {album}\n{status} - {position}/{length}";
         };
         keyboard-state = {
           format = "{name}";
@@ -145,7 +170,7 @@ in {
           spacing = 10;
         };
         clock = {
-          format = "{:%H:%M %d/%m}";
+          format = "{:%H:%M %a %d/%m}";
           tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
         };
         battery = {
