@@ -7,6 +7,7 @@ in {
     ./components/rofi.nix
     ./components/swayidle.nix
     ./components/swaylock.nix
+    ./components/swaync.nix
     ./components/trays.nix
     ./components/waybar.nix
     ./components/wayland-fixes.nix

@@ -12,6 +12,7 @@ in {
     ./components/hypridle.nix
     ./components/hyprlock.nix
     ./components/rofi.nix
+    ./components/swaync.nix
     ./components/trays.nix
     ./components/waybar.nix
     ./components/wayland-fixes.nix
@@ -23,28 +24,7 @@ in {
     hyprshot
   ];
 
-  services = {
-    # dunst.enable = true;
-    swaync = {
-      enable = true;
-      settings = {
-        hide-on-clear = true;
-        widgets = ["inhibitors" "dnd" "mpris" "notifications"];
-        widget-config = {
-          inhibitors = {
-            text = "Inhibitors";
-            button-text = "Clear All";
-            clear-all-button = true;
-          };
-          mpris = {
-            image-size = 96;
-            blur = true;
-          };
-        };
-      };
-    };
-    hyprpolkitagent.enable = true;
-  };
+  services.hyprpolkitagent.enable = true;
 
   wayland.windowManager.hyprland = {
     enable = true;
