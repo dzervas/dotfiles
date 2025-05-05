@@ -19,9 +19,6 @@ in {
     initrd.luks.devices.cryptroot.device = cryptroot_part;
   };
 
-  # Disable light sensor & accelerometer
-  hardware.sensor.iio.enable = false;
-
   fileSystems = {
     "/" = {
       device = system_fs;
@@ -54,9 +51,13 @@ in {
 
   swapDevices = [{ device = "/swapfile"; }];
 
-  services.btrfs.autoScrub = {
-    enable = true;
-    interval = "weekly";
+  services = {
+    power-profiles-daemon.enable = true;
+    fprintd.enable = true;
+    btrfs.autoScrub = {
+      enable = true;
+      interval = "weekly";
+    };
   };
 
   stylix.image = pkgs.fetchurl {
@@ -74,5 +75,12 @@ in {
     enable = true;
     powertop.enable = true;
   };
-  services.power-profiles-daemon.enable = true;
+
+  hardware = {
+    # Disable light sensor & accelerometer
+    sensor.iio.enable = false;
+
+    # https://github.com/NixOS/nixos-hardware/tree/master/framework/13-inch/7040-amd#suspendwake-workaround
+    framework.amd-7040.preventWakeOnAC = true;
+  };
 }
