@@ -31,7 +31,6 @@ in {
         position = "top";
         spacing = 4;
         height = 30;
-        margin-bottom = 5;
 
         # Module positioning
         modules-left = [
@@ -74,17 +73,17 @@ in {
         };
 
         "custom/power" = {
-          format = " {icon} ";
+          format = " {icon}";
           format-icons = "󰐥";
           on-click-right = "loginctl lock-session";
         };
         "custom/launcher" = {
-          format = " {icon} ";
+          format = " {icon}";
           format-icons = "🚀";
         };
         "custom/notifications" = {
           tooltip = false;
-          format = "{icon} ";
+          format = "{icon}";
           format-icons = {
             notification = "<span foreground='red'><sup></sup></span>";
             none = "";

@@ -50,7 +50,7 @@ in {
     enable = true;
     settings = {
       general = {
-        gaps_in = 2.5;
+        gaps_in = 2;
         gaps_out = 5;
       };
 
@@ -72,6 +72,7 @@ in {
 
       "$mod" = "SUPER";
       bind = [
+        # To check if the active window is grouped: hyprctl clients -j | jq --exit-status '.[] | select(.focusHistoryID == 0 and (.grouped | length) > 0)'
         "$mod, Return, exec, alacritty"
         "$mod, C, killactive"
         "$mod+Shift, C, forcekillactive"
@@ -90,14 +91,16 @@ in {
         "$mod+Shift, Left, movetoworkspacesilent, m-1"
         "$mod, Right, workspace, m+1"
         "$mod+Shift, Right, movetoworkspacesilent, m+1"
+
+        # Window selection
         "$mod, Up, cyclenext, tiled"
-        "$mod, Up, changegroupactive"
+        "$mod+Alt, Up, changegroupactive"
         "$mod+Shift, Up, swapnext, tiled"
-        "$mod+Shift, Up, movegroupwindow"
+        "$mod+Alt+Shift, Up, movegroupwindow"
         "$mod, Down, cyclenext, tiled, prev"
-        "$mod, Down, changegroupactive, b"
+        "$mod+Alt, Down, changegroupactive, b"
         "$mod+Shift, Down, swapnext, tiled, prev"
-        "$mod+Shift, Down, movegroupwindow, b"
+        "$mod+Alt+Shift, Down, movegroupwindow, b"
 
         "$mod, Tab, workspace, previous"
         "$mod, Comma, focusmonitor, +1"
@@ -172,17 +175,21 @@ in {
       };
 
       group.groupbar = {
-        font_family = config.stylix.fonts.monospace.name;
+        font_family = config.stylix.fonts.sansSerif.name;
         font_size = 14;
-        height = 16;
+        indicator_height = 0;
+        height = 20;
         gradients = true;
-        gaps_out = 0;
+        gaps_out = 5;
+        gaps_in = 2;
+        gradient_rounding = 10;
+        keep_upper_gap = false;
       };
 
       workspace = [
         # No gaps or borders when only 1 window exists in the workspace
         # https://wiki.hyprland.org/Configuring/Workspace-Rules/#smart-gaps
-        "w[tv1], gapsout:0, gapsin:0, border:false"
+        "w[tv1], border:false"
         "f[1], gapsout:0, gapsin:0, border:false"
       ];
 

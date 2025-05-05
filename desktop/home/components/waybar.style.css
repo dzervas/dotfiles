@@ -5,35 +5,38 @@ tooltip {
 
 /* Transparent background so that islands stand out */
 window#waybar {
-    background: transparent;
+    background: @base00;
     color: @base05;
 }
 
 /* Just pad everything */
 #window,
-#wireplumber,
-#wireplumber.muted,
+#backlight,
+#battery,
+#battery.Charging,
+#clock,
+#cpu,
+#custom-power,
+#custom-launcher,
+#custom-notifications,
+#disk,
+#idle_inhibitor,
+#keyboard-state,
+#language,
+#memory,
+#mpd,
+#network,
+#network.disconnected,
 #pulseaudio,
 #pulseaudio.muted,
 #sndio,
 #sndio.muted,
+#temperature,
 #upower,
 #upower.charging,
-#battery,
-#battery.Charging,
-#network,
-#network.disconnected,
 #user,
-#clock,
-#backlight,
-#cpu,
-#disk,
-#idle_inhibitor,
-#temperature,
-#mpd,
-#language,
-#keyboard-state,
-#memory {
+#wireplumber,
+#wireplumber.muted {
     padding: 0 5px;
 }
 
@@ -57,16 +60,4 @@ window#waybar {
 .modules-left, .modules-center, .modules-right {
     background: @base00;
     padding: 0 5px;
-    border-left: 15px solid @base00;
-    border-right: 15px solid @base00;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-}
-
-.modules-left {
-    border-bottom-left-radius: 0;
-}
-
-.modules-right {
-    border-bottom-right-radius: 0;
 }
