@@ -13,11 +13,11 @@
       export FLAKE_URL="/home/dzervas/Lab/dotfiles?submodules=1"
 
       # Watch command completions
-      complete -c watch -s n -l interval -d "Set update interval in seconds"
-      complete -c watch -s d -l differences -d "Highlight differences between updates"
-      complete -c watch -s g -l exit-diff -d "Exit when output differences occur"
-      complete -c watch -s e -l exit-error -d "Exit if the command returns a non-zero exit code"
-      complete -c watch -f -a "(__fish_complete_subcommand)"
+      complete -c watchf -s n -l interval -d "Set update interval in seconds"
+      complete -c watchf -s d -l differences -d "Highlight differences between updates"
+      complete -c watchf -s g -l exit-diff -d "Exit when output differences occur"
+      complete -c watchf -s e -l exit-error -d "Exit if the command returns a non-zero exit code"
+      complete -c watchf -f -a "(__fish_complete_subcommand)"
     '';
     plugins = [
       { name = "autopair"; inherit (pkgs.fishPlugins.autopair) src; }
@@ -67,7 +67,7 @@
       watchf = {
         body = builtins.readFile ./fish-functions/watchf.fish;
         description = "Watch command";
-        wraps = "nix shell";
+        # wraps = "nix shell";
       };
 
       # Internal

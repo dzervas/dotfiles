@@ -2,16 +2,26 @@
   atuin-port = "55888";
   atuin-script = pkgs.writeShellScript "atuin-daemon.sh" ''
 set -euo pipefail
-echo "Starting atuin daemon..."
-${pkgs.atuin}/bin/atuin daemon &
+
+echo "Starting atuin port forwarding..."
+${pkgs.kubectl}/bin/kubectl port-forward --context=gr --namespace=atuin --address=127.0.0.1 svc/atuin ${atuin-port}:8888 &
 DAEMON_PID=$!
 
-while true; do
-  echo "Starting atuin port forwarding..."
-  ${pkgs.kubectl}/bin/kubectl port-forward --context=gr --namespace=atuin --address=127.0.0.1 svc/atuin ${atuin-port}:8888 || true
-  echo "Port forward got killed, waiting a bit"
-  sleep 600
+for i in $(seq 1 30); do
+  ${pkgs.netcat-gnu}/bin/nc -z 127.0.0.1 ${atuin-port} && break
+  echo "Port forward not up yet, waiting 10s"
+  sleep 10
 done
+
+if [ $i -gt 29 ]; then
+  echo "Port forward failed to start after 5 minutes, exiting"
+  exit 1
+fi
+
+echo "Starting atuin daemon..."
+${pkgs.atuin}/bin/atuin daemon
+echo "Atuin daemon exited, killing port forward"
+kill $DAEMON_PID
 '';
 in {
   programs.atuin = {
