@@ -138,5 +138,11 @@
   stylix = {
     enable = true;
     autoEnable = true;
+    iconTheme = {
+      enable = true;
+      package = pkgs.rose-pine-icon-theme;
+      light = "rose-pine-dawn";
+      dark = "rose-pine";
+    };
   };
 }

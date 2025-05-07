@@ -18,11 +18,12 @@ in {
     ./components/wayland-fixes.nix
   ];
 
-  # home.pointerCursor.hyprcursor.enable = true;
-
   home.packages = with pkgs; [
     hyprshot
   ];
+
+  gtk.enable = true;
+  qt.enable = true;
 
   services.hyprpolkitagent.enable = true;
 

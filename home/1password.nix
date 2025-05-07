@@ -36,10 +36,7 @@ in {
     Unit = {
       Description = "1password Tray";
       Requires = [ "tray.target" ];
-      After = [
-        "graphical-session-pre.target"
-        "tray.target"
-      ];
+      After = [ "tray.target" ];
     };
 
     Service.ExecStart = "${pkgs._1password-gui}/bin/1password --silent";

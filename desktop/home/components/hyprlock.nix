@@ -33,7 +33,7 @@ in {
 
       label = [
       {
-        text = "cmd[update:60000] date +'%H:%m'";
+        text = "cmd[update:1000] date +'%H:%m'";
 
         font_size = 80;
         font_family = "Iosevka Term Extrabold";

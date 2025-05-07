@@ -35,13 +35,7 @@ in {
     gnome-keyring.enable = true;
   };
 
-  gtk = {
-    enable = true;
-    iconTheme = {
-      package = pkgs.adwaita-icon-theme;
-      name = "Adwaita";
-    };
-  };
+  gtk.enable = true;
   qt.enable = true;
 
   wayland.windowManager.sway = {
