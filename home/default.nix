@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: {
+{ config, isPrivate, pkgs, ... }: {
   imports = [
     ./1password.nix
     ./alacritty.nix
@@ -90,7 +90,7 @@
 
       gtk3 gtk4 # Install to fix some inconsistencies (cursor, DPI, theme, etc.)
 
-      atuin-desktop
+      (lib.mkIf isPrivate atuin-desktop)
     ];
     file = {
       "${config.xdg.configHome}/katerc".source = ./katerc;
