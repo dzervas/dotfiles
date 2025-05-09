@@ -17,8 +17,8 @@ _: {
         plat = "linux-x64";
 
         # gha-updater: VERSION="$(curl https://update.code.visualstudio.com/api/releases/stable | jq -r '. | first')" && echo -n "$VERSION $(nix-prefetch-url https://update.code.visualstudio.com/$VERSION/linux-x64/stable)"
-        version = "1.99.3";
-        sha256 = "0d9qfifxslwkyv9v42y2h7nbqndq5w16z08qar4vly1hnjnmzzxl";
+        version = "1.100.0";
+        sha256 = "0hzynlbakwvyfscs8m6mlsjkj01lj69ixpc3lca2ajv6ra6g42vs";
 
         src = prev.fetchurl {
           inherit sha256;
