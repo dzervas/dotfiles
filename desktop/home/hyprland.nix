@@ -140,6 +140,7 @@ in {
         # mkRule { title = ".+— 1Password$"; rules = ["unset" "float" "center" "persistentsize"]; }
         { title = "1Password"; class = "1Password"; rules = ["float" "center" ]; }
         { class = "jadx-gui-JadxGUI"; rules = ["float"]; }
+        { class = "firefox"; title = "Picture-in-Picture"; rules = ["float" "center"]; }
         { class = "Steam Settings"; rules = ["float"]; }
         { class = "OrcaSlicer"; rules = ["suppressevent"]; }
         { class = "org.pulseaudio.pavucontrol"; rules = ["float" "center"]; }
