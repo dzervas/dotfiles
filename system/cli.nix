@@ -42,11 +42,16 @@
     package = pkgs.plocate;
   };
 
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-    autoPrune.enable = true;
-    dockerSocket.enable = true;
+  virtualisation = {
+    containers.enable = true;
+    podman = {
+      enable = true;
+      dockerCompat = true;
+      autoPrune.enable = true;
+      dockerSocket.enable = true;
+      # Allow podman-compose containers to talk to eachother
+      defaultNetwork.settings.dns_enabled = true;
+    };
   };
   virtualisation.containers.registries.search = [ "docker.io" ];
 

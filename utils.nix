@@ -5,18 +5,16 @@
     # "Private build" mode. If enabled the private nix files will be used.
     # Disabled to be able to build the ISO and initial installation
     isPrivate = builtins.pathExists ./home/.private/default.nix && hostName != "iso";
-  in {
-    nixosConfigurations.${hostName} = lib.nixosSystem {
-      inherit system;
+  in lib.nixosSystem {
+    inherit system;
 
-      specialArgs = { inherit inputs; };
-      modules = mkConfigModules {
-        inherit hostName stateVersion system isPrivate;
-      } ++ [
-        # Insert the secure boot module only here to avoid breaking the ISO
-        inputs.lanzaboote.nixosModules.lanzaboote
-      ];
-    };
+    specialArgs = { inherit inputs; };
+    modules = mkConfigModules {
+      inherit hostName stateVersion system isPrivate;
+    } ++ [
+      # Insert the secure boot module only here to avoid breaking the ISO
+      inputs.lanzaboote.nixosModules.lanzaboote
+    ];
   };
 
   # Function to generate the configuration imports

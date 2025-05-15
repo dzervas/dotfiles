@@ -3,11 +3,12 @@
 
   system.copySystemConfiguration = false;
 
+  # Allow rootless dmesg
   boot.kernel.sysctl."kernel.dmesg_restrict" = false;
 
   users.users.dzervas = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "audio" "video" "uucp" "uinput" "vboxusers" "gamemode" "dialout" "libvirtd" ];
+    extraGroups = [ "wheel" "audio" "video" "uucp" "uinput" "vboxusers" "gamemode" "dialout" "libvirtd" "podman" ];
     shell = pkgs.fish;
   };
 
@@ -38,7 +39,7 @@
     fwupd.enable = true;
 
     # Serial comms rules (for Arduino n stuff)
-    # udev.packages = with pkgs; [ platformio-core.udev ];
+    udev.packages = with pkgs; [ platformio-core.udev ];
 
     # Better getty
     kmscon = {
@@ -72,8 +73,8 @@ xkb-options=grp:alt_space_toggle,caps:escape
 
   nix = {
     extraOptions = ''
-      # Garbage collect when free space is less than 512MB
-      min-free = ${toString (512 * 1024 * 1024)}
+      # Garbage collect when free space is less than 32GB
+      min-free = ${toString (32 * 1024 * 1024 * 1024)}
     '';
     gc = {
       automatic = true;

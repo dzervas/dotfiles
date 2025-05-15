@@ -48,22 +48,14 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   };
 
-  outputs = inputs@{ self, nixpkgs, ... }:
-    let
-      inherit (nixpkgs) lib;
-      utils = import ./utils.nix { inherit inputs lib; };
-      machines = map utils.mkMachine [
-        # Normal machines
-        { hostName = "laptop"; stateVersion = "25.05"; }
-        { hostName = "desktop"; stateVersion = "24.11"; }
-      ];
-    # This results in (recursiveUpdate ( recursiveUpdate { <iso> } machines[0] ) machines[1] )
-    # The { <iso> } is only passed as a function parameter once, on the first call to recursiveUpdate
-    # the rest of the calls are made with the result of the previous call + the next element in the list
-    in lib.foldr lib.recursiveUpdate {
-      # The ISO generation module
-      # For more check https://blog.thomasheartman.com/posts/building-a-custom-nixos-installer
-      nixosConfigurations.iso = nixpkgs.lib.nixosSystem {
+  outputs = inputs@{ self, nixpkgs, ... }: let
+    inherit (nixpkgs) lib;
+    utils = import ./utils.nix { inherit inputs lib; };
+  in {
+    nixosConfigurations = {
+      desktop = utils.mkMachine { hostName = "desktop"; stateVersion = "24.11"; };
+      laptop = utils.mkMachine { hostName = "laptop"; stateVersion = "25.05"; };
+      iso = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
 
@@ -73,5 +65,6 @@
           stateVersion = "25.05";
         };
       };
-    } machines;
+    };
+  };
 }
