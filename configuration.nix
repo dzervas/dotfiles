@@ -18,10 +18,8 @@
     users.dzervas = import ./home;
   };
 
-  systemd = {
-    # Fix flatpak default browser
-    user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
-  };
+# Fix flatpak default browser
+  systemd.user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
 
   # Fix home-manager xdg desktop portal support
   environment.pathsToLink = [ "/share/xdg-desktop-portal" "/share/applications" ];
@@ -89,6 +87,8 @@ xkb-options=grp:alt_space_toggle,caps:escape
       experimental-features = [ "nix-command" "flakes" ];
       warn-dirty = false;
       keep-outputs = true;
+      max-jobs = "auto";
+      cores = 0;  # Use all available cores
     };
   };
 }

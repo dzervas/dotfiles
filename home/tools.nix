@@ -23,9 +23,10 @@
     seclists
     sqlmap
     subfinder
-    # wifite2
+    wifite2
     wirelesstools
     wireshark
     wpscan
+    xh
   ];
 }

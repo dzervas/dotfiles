@@ -27,6 +27,7 @@
   programs = {
     mpv.enable = true;
     home-manager.enable = true;
+    zoxide.enable = true;
 
     nix-index = {
       enable = true;
@@ -71,6 +72,8 @@
       x11.defaultCursor = config.stylix.cursor.name;
     };
     packages = with pkgs; [
+      home-manager
+
       kdePackages.filelight
       kdePackages.kate
       # kicad

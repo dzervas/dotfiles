@@ -8,7 +8,7 @@ ${pkgs.kubectl}/bin/kubectl port-forward --context=gr --namespace=atuin --addres
 DAEMON_PID=$!
 
 for i in $(seq 1 30); do
-  ${pkgs.netcat-gnu}/bin/nc -z 127.0.0.1 ${atuin-port} && break
+  netstat -tulpn 2>&1 | grep 127.0.0.1:${atuin-port} && break
   echo "Port forward not up yet, waiting 10s"
   sleep 10
 done
