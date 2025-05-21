@@ -5,8 +5,6 @@ _: {
     update.auto.enable = true;
     uninstallUnmanaged = true;
     packages = [
-      "md.obsidian.Obsidian"
-      # "org.chromium.Chromium"
       "org.onlyoffice.desktopeditors"
       "org.signal.Signal"
       "com.github.skylot.jadx"

@@ -16,9 +16,9 @@ _: {
       vscode = prev.vscode.overrideAttrs (oldAttrs: rec {
         plat = "linux-x64";
 
-        #disable gha-updater: VERSION="$(curl https://update.code.visualstudio.com/api/releases/stable | jq -r '. | first')" && echo -n "$VERSION $(nix-prefetch-url https://update.code.visualstudio.com/$VERSION/linux-x64/stable)"
-        version = "1.99.3";
-        sha256 = "sha256-tP9frbQweLpJVhiBbwIvuFm87IHCC7LT9pNT3V10ODU=";
+        #gha-updater: VERSION="$(curl https://update.code.visualstudio.com/api/releases/stable | jq -r '. | first')" && echo -n "$VERSION $(nix-prefetch-url https://update.code.visualstudio.com/$VERSION/linux-x64/stable)"
+        version = "1.100.2";
+        sha256 = "1h55vjyv6vy4vyzi6lypnh4jrng8dgb7i6l9rq6k94lbl3mbnb2w";
 
         src = prev.fetchurl {
           inherit sha256;
