@@ -1,4 +1,4 @@
-{ inputs, pkgs, ... }: let
+{ config, inputs, pkgs, ... }: let
   cryptroot_part = "/dev/disk/by-label/cryptroot";
   system_fs = "/dev/mapper/cryptroot";
 in {
@@ -45,6 +45,17 @@ in {
         "umask=077"
         "fmask=077"
         "dmask=077"
+      ];
+    };
+
+    "/home/dzervas/Downloads/tmp" = {
+      fsType = "tmpfs";
+      options = [
+        "uid=1000"
+        "gid=100" # Users GID
+        "mode=0700"
+        "size=5%"
+        "user"
       ];
     };
   };

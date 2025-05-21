@@ -1,4 +1,4 @@
-{ pkgs, ... }: let
+{ config, pkgs, ... }: let
   # Partitions
   add_part = "/dev/disk/by-uuid/f4d0a081-deb5-45cb-b610-dfaf2af14cd3";
   root_part = "/dev/disk/by-uuid/faa05c46-36c9-4662-8b1c-fb81b44e23d8";
@@ -54,6 +54,17 @@ in {
     "/home/dzervas/CryptVMs" = {
       device = "/dev/mapper/cryptvms";
       fsType = "ext4";
+    };
+
+    "/home/dzervas/Downloads/tmp" = {
+      fsType = "tmpfs";
+      options = [
+        "uid=1000"
+        "gid=100" # Users GID
+        "mode=0700"
+        "size=5%"
+        "user"
+      ];
     };
   };
 
