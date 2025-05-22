@@ -3,6 +3,11 @@ let
   base16Scheme = { name }: "${pkgs.base16-schemes}/share/themes/${name}.yaml";
 in
 {
+  fonts.packages = with pkgs; [
+    iosevka-bin
+    nerd-fonts.iosevka
+  ];
+
   stylix = {
     enable = true;
     autoEnable = true;
@@ -19,8 +24,8 @@ in
 
     fonts = {
       monospace = {
-        package = pkgs.iosevka-bin;
-        name = "Iosevka";
+        package = pkgs.nerd-fonts.iosevka;
+        name = "Iosevka Nerd Font";
       };
       sizes = {
         desktop = 12;

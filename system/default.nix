@@ -12,7 +12,6 @@ _: {
     ./cli.nix
     ./ddc-ci.nix
     ./display.nix
-    ./fonts.nix
     ./network.nix
     ./steam.nix
     ./theme.nix

@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   imports = [ ./system ];
 
   system.copySystemConfiguration = false;
@@ -42,6 +42,7 @@
     # Better getty
     kmscon = {
       #enable = lib.mkDefault true;
+      fonts = [ config.stylix.fonts.monospace ];
       useXkbConfig = true;
       hwRender = true;
       extraConfig = ''

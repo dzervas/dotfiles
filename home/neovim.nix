@@ -1,11 +1,24 @@
 { config, pkgs, ... }: {
   # Issues:
-  # - Transparent background
-  # - Open to vscode keybind (with confirmation/menu to open the whole dir)
   # - Run python script with args/env (nvim-iron?)
   # - Set up nvim-dap
   # - Use nixvim?
   # - Move to lua?
+  # - Change theme
+  # - Symbol hovering info (like vscode)
+  # - Fix the fucking == comments
+  # - Ctrl-backspace deletes the whole word
+  # - TreeSitter? just better directory listing show? (icons, etc.)
+  # - Integrated terminal
+  # - Ctrl-<arrow> to accept only word of copilot suggestion
+  # - Copilot by default? maybe with an alias?
+  # - Markdown preview
+  # - Better git diff view when `:G d`
+  # - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
+  # - Command to edit nix/neovim config
+  # - Better rebuild command
+  # - Restart with the same buffers/state
+  # - vscode-like runner (run this test/function/etc.)
 
   programs = {
     neovim = {

@@ -55,15 +55,11 @@
       };
 
       diff = {
-        guitool = "vscode";
         srcprefix = "-h";
         zip.textconv = "unzip -c -a";
       };
 
-      difftool = {
-        prompt = false;
-        vscode.cmd = "code --wait --diff \"$LOCAL\" \"$REMOTE\"";
-      };
+      difftool.prompt = false;
     };
 
     ignores = [

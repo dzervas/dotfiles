@@ -32,9 +32,6 @@
 
     displayManager.autoLogin.enable = lib.mkForce false;
 
-    # GNOME Keyring - used by VSCode mainly
-    gnome.gnome-keyring.enable = true;
-
     # XFCE File management
     # Mount, trash and more
     gvfs.enable = true;

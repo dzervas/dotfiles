@@ -121,7 +121,6 @@ nix flake update --override-input nixpkgs github:NixOS/nixpkgs/7252b96d60dc2ccf3
 
 ## Quirks
 
-- VSCode needs `"password-store": "gnome-libsecret"` to `~/.vscode/argv.json` to see gnome-keyring
 - GParted needs `sudo -E gparted` to run
 - Although it shouldn't be needed, to change the M720 Triathlon buttons:
 
