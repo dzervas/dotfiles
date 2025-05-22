@@ -20,13 +20,14 @@
     # Home stuff
     stylix.url = "github:danth/stylix";
     flatpak.url = "github:gmodena/nix-flatpak";
+    nixvim.url = "github:nix-community/nixvim";
+    # nixvim.follows = "nixpkgs";
 
     # HyprLand
     hyprland.url = "github:hyprwm/Hyprland";
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
+    hyprland-plugins.url = "github:hyprwm/hyprland-plugins";
+    hyprland-plugins.inputs.hyprland.follows = "hyprland";
+
     rose-pine-hyprcursor = {
       url = "github:ndom91/rose-pine-hyprcursor";
       inputs.nixpkgs.follows = "nixpkgs";

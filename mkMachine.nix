@@ -25,7 +25,10 @@
             extraSpecialArgs = { inherit desktop hostName isPrivate inputs; };
 
             # Allow home-manager to have access to nix-flatpak
-            sharedModules = [ inputs.flatpak.homeManagerModules.nix-flatpak ];
+            sharedModules = [
+              inputs.flatpak.homeManagerModules.nix-flatpak
+              inputs.nixvim.homeManagerModules.nixvim
+            ];
           };
         };
       }

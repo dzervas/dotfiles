@@ -2,20 +2,15 @@ source /etc/vimrc
 set viminfo&
 
 " Airline
-let g:airline_theme = "badwolf"
-let g:airline_powerline_fonts = 1
-let g:airline_highlighting_cache = 1
-let g:airline_section_y = 0 " encoding, file format, etc.
-let g:airline_section_z = 0 " position: line no, column, etc.
-let g:airline#extensions#coc#enabled = 1
+" let g:airline#extensions#coc#enabled = 1
 " let g:airline#extensions#coc#error_symbol = 'E:'
 " let g:airline#extensions#coc#warning_symbol = 'W:'
-let g:airline#extensions#hunks#enabled = 1
-let g:airline#extensions#hunks#non_zero_only = 0
-let g:airline#extensions#syntastic#enabled = 1
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#whitespace#enabled = 0
-let g:airline#extensions#wordcount#enabled = 0
+" let g:airline#extensions#hunks#enabled = 1
+" let g:airline#extensions#hunks#non_zero_only = 0
+" let g:airline#extensions#syntastic#enabled = 1
+" let g:airline#extensions#tabline#enabled = 1
+" let g:airline#extensions#whitespace#enabled = 0
+" let g:airline#extensions#wordcount#enabled = 0
 
 " Nerd Commenter
 let g:NERDSpaceDelims = 1
