@@ -1,6 +1,7 @@
 { pkgs, ... }: {
   environment.systemPackages = with pkgs; [
     bat
+    btop
     colordiff
     cyme # Better lsusb!
     difftastic
@@ -11,7 +12,6 @@
     file
     fzf
     git
-    htop
     inetutils
     ijq
     jq
@@ -109,6 +109,7 @@
     webserver = "python3 -m http.server";
 
     # Hipster tools
+    htop = "btop";
     cat = "bat -p --style=header-filename,header-filesize,snip --paging=never";
     diff = "colordiff -ub";
     grep = "rg";

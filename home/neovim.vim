@@ -58,6 +58,7 @@ nnoremap <C-]> <Plug>(coc-definition)
 nnoremap <A-f> <cmd>Telescope find_files<CR>
 nnoremap <C-F> <cmd>Telescope live_grep<CR>
 nnoremap <A-r> <cmd>Telescope commands<CR>
+nnoremap <A-z> <cmd>Telescope zoxide list<CR>
 nnoremap <A-Tab> <cmd>Telescope buffers<CR>
 nnoremap <C-}> <cmd>Telescope coc definitions<CR>
 nnoremap <C-{> <cmd>Telescope coc references<CR>

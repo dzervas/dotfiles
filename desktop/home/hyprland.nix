@@ -40,10 +40,11 @@ in {
         "${pkgs.hyprland-per-window-layout}/bin/hyprland-per-window-layout"
 
         # Spawn inital windows
-        "com.slack.Slack; hyprctl dispatch movetoworkspacesilent 4"
-        "code; hyprctl dispatch movetoworkspacesilent 3"
-        "firefox; hyprctl dispatch movetoworkspacesilent 2"
-        "alacritty; hyprctl dispatch movetoworkspacesilent 1"
+        # TODO: Fix this
+        # "com.slack.Slack; hyprctl dispatch movetoworkspacesilent 4"
+        # "code; hyprctl dispatch movetoworkspacesilent 3"
+        # "firefox; hyprctl dispatch movetoworkspacesilent 2"
+        # "alacritty; hyprctl dispatch movetoworkspacesilent 1"
 
         # Arrange workspaces to screens
         "hyprctl dispatch moveworkspacetomonitor 1 0"
@@ -55,7 +56,7 @@ in {
       "$mod" = "SUPER";
       bind = [
         # To check if the active window is grouped: hyprctl clients -j | jq --exit-status '.[] | select(.focusHistoryID == 0 and (.grouped | length) > 0)'
-        "$mod, Return, exec, alacritty"
+        "$mod, Return, exec, ${config.setup.terminal}"
         "$mod, C, killactive"
         "$mod+Shift, C, forcekillactive"
         "$mod, E, exec, hyprctl keyword general:layout 'dwindle'"

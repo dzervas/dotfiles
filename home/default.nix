@@ -1,7 +1,7 @@
 { config, isPrivate, pkgs, ... }: {
   imports = [
     ./1password.nix
-    ./alacritty.nix
+    # ./alacritty.nix
     ./atuin.nix
     ./chromium.nix
     ./dev.nix
@@ -12,6 +12,7 @@
     ./fish.nix
     ./flatpak.nix
     ./git.nix
+    ./ghostty.nix
     ./neovim.nix
     ./options.nix
     ./qutebrowser
