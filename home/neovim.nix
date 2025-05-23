@@ -2,11 +2,8 @@
 # Issues:
 # - Run python script with args/env (nvim-iron?)
 # - Set up nvim-dap
-# - Use nixvim?
 # - Move to lua?
-# - Change theme
 # - Symbol hovering info (like vscode)
-# - Fix the fucking == comments
 # - Ctrl-backspace deletes the whole word
 # - TreeSitter? just better directory listing show? (icons, etc.)
 # - Integrated terminal
@@ -19,6 +16,9 @@
 # - Better rebuild command
 # - Restart with the same buffers/state
 # - vscode-like runner (run this test/function/etc.)
+# - Fix right-click menu
+# - Use lazy loading
+# - Add performance settings
 
   programs.nixvim = {
     enable = true;
@@ -64,6 +64,7 @@
       };
       multicursors.enable = true;
       nvim-surround.enable = true;
+      markdown-preview.enable = true;
 
       # Auto completion
       # trouble.enable = true; # Better code diagnostics
@@ -76,6 +77,7 @@
         # };
       # };
       # rustaceanvim.enable = true;
+      # https://github.com/MikaelFangel/nixvim-config/blob/main/config/cmp.nix
       cmp = {
         enable = true;
         settings = {
@@ -92,7 +94,7 @@
             }
             { name = "nvim_lua"; }
             { name = "path"; }
-            { name = "copilot"; }
+            # { name = "copilot"; }
           ];
         };
       };
@@ -162,10 +164,9 @@
         enable = true;
         settings = {
           suggestion = {
-            autoTrigger = true;
-            acceptWord = "<C-Right>";
-            acceptLine = "<C-Down>";
-            acceptWordOrLine = "<C-Right>";
+            auto_trigger = true;
+            accept_word = "<C-Right>";
+            accept_line = "<C-Down>";
           };
         };
       };
@@ -180,10 +181,10 @@
 
     extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ];
 
-    defaultEditor = true;
+    extraConfigVim = builtins.readFile ../system/vimrc;
+
     viAlias = true;
     vimAlias = true;
-    vimdiffAlias = true;
 
     withNodeJs = false;
     withRuby = false;
@@ -192,30 +193,6 @@
     performance = {
 
     };
-
-    # plugins = with pkgs.vimPlugins; [
-        # vim-move
-
-        # coc-docker
-        # coc-json
-        # coc-markdownlint
-        # coc-toml
-        # coc-yaml
-
-# Debugging
-        # nvim-dap
-        # nvim-dap-lldb
-        # nvim-dap-python
-        # nvim-dap-rr
-        # nvim-dap-ui
-
-# Text objects
-        # targets-vim
-        # vim-textobj-user
-        # vim-textobj-comment
-        # vim-textobj-function
-# vim-textobj-indent # Doesn't exist
-        # ];
   };
 
   stylix.targets.nixvim = {
