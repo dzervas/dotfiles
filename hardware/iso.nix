@@ -1,3 +1,4 @@
+# For more check https://blog.thomasheartman.com/posts/building-a-custom-nixos-installer
 { config, inputs, lib, modulesPath, pkgs, ... }: let
   keys_str = builtins.fetchurl {
     url = "https://github.com/dzervas.keys";
@@ -14,7 +15,6 @@ in {
 
   isoImage = {
     isoName = lib.mkForce "dzervas-nixos-${config.system.nixos.label}.iso";
-    # squashfsCompression = "gzip -Xcompression-level 1";
     squashfsCompression = "zstd -Xcompression-level 9";
     makeEfiBootable = true;
     makeUsbBootable = true;

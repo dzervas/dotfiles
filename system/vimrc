@@ -87,9 +87,9 @@ set t_Co=256
 inoremap # X#
 
 " Completion
-imap <silent><expr> <Tab> pumvisible() ? '<C-n>' : '<Tab>'
-inoremap <silent><expr> <C-Tab> pumvisible() ? '<C-p>' : '<Tab>'
-inoremap <silent><expr> <CR> pumvisible() ? '<C-y>' : '<CR>'
+" imap <silent><expr> <Tab> pumvisible() ? '<C-n>' : '<Tab>'
+" inoremap <silent><expr> <C-Tab> pumvisible() ? '<C-p>' : '<Tab>'
+" inoremap <silent><expr> <CR> pumvisible() ? '<C-y>' : '<CR>'
 
 " Unhighlight search
 noremap <C-l>			:nohlsearch<CR>

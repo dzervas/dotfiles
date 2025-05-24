@@ -1,4 +1,4 @@
-{ config, isPrivate, pkgs, ... }: {
+{ config, inputs, isPrivate, pkgs, ... }: {
   imports = [
     ./1password.nix
     # ./alacritty.nix
@@ -30,11 +30,10 @@
     home-manager.enable = true;
     zoxide.enable = true;
 
-    nix-index = {
+    nh = {
       enable = true;
-      enableBashIntegration = true;
-      enableFishIntegration = true;
-      enableZshIntegration = true;
+      flake = "${config.home.homeDirectory}/Lab/dotfiles";
+      clean.enable = true;
     };
   };
 

@@ -38,10 +38,16 @@
 
   programs.kdeconnect.enable = true;
 
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true;
-    ipv6 = false;
-    denyInterfaces = ["zt+"];
+  services = {
+    printing = {
+      enable = true;
+      drivers = with pkgs; [ brlaser ];
+    };
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+      ipv6 = false;
+      denyInterfaces = ["zt+"];
+    };
   };
 }

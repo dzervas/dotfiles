@@ -2,23 +2,19 @@
 # Issues:
 # - Run python script with args/env (nvim-iron?)
 # - Set up nvim-dap
-# - Move to lua?
 # - Symbol hovering info (like vscode)
 # - Ctrl-backspace deletes the whole word
 # - TreeSitter? just better directory listing show? (icons, etc.)
 # - Integrated terminal
-# - Ctrl-<arrow> to accept only word of copilot suggestion
 # - Copilot by default? maybe with an alias?
-# - Markdown preview
 # - Better git diff view when `:G d`
 # - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
 # - Command to edit nix/neovim config
-# - Better rebuild command
+# - rebuild command
 # - Restart with the same buffers/state
 # - vscode-like runner (run this test/function/etc.)
 # - Fix right-click menu
 # - Use lazy loading
-# - Add performance settings
 
   programs.nixvim = {
     enable = true;
@@ -81,7 +77,16 @@
       cmp = {
         enable = true;
         settings = {
-          experimental.ghost_text = true;
+          # experimental.ghost_text = true;
+          mapping = {
+            "<C-Space>" = "cmp.mapping.complete()";
+            "<C-d>" = "cmp.mapping.scroll_docs(-4)";
+            "<C-e>" = "cmp.mapping.close()";
+            "<C-f>" = "cmp.mapping.scroll_docs(4)";
+            "<CR>" = "cmp.mapping.confirm({ select = true })";
+            "<S-Tab>" = "cmp.mapping(cmp.mapping.select_prev_item(), {'i', 's'})";
+            "<Tab>" = "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
+          };
           completion = {
             completeopt = "menu,menuone,noinsert,noselect";
           };
@@ -165,8 +170,11 @@
         settings = {
           suggestion = {
             auto_trigger = true;
-            accept_word = "<C-Right>";
-            accept_line = "<C-Down>";
+            keymap = {
+              accept = "<Tab>";
+              accept_word = "<C-Right>";
+              accept_line = "<C-Down>";
+            };
           };
         };
       };
@@ -191,7 +199,12 @@
     withPython3 = true;
 
     performance = {
-
+      byteCompileLua = {
+        enable = true;
+        nvimRuntime = true;
+        luaLib = true;
+        plugins = true;
+      };
     };
   };
 

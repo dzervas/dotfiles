@@ -21,7 +21,7 @@
     stylix.url = "github:danth/stylix";
     flatpak.url = "github:gmodena/nix-flatpak";
     nixvim.url = "github:nix-community/nixvim";
-    # nixvim.follows = "nixpkgs";
+    nixvim.inputs.nixpkgs.follows = "nixpkgs";
 
     # HyprLand
     hyprland.url = "github:hyprwm/Hyprland";

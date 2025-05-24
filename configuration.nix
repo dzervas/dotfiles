@@ -90,6 +90,7 @@ xkb-options=grp:alt_space_toggle,caps:escape
       keep-outputs = true;
       max-jobs = "auto";
       cores = 0;  # Use all available cores
+      build-cores = 0;
     };
   };
 }

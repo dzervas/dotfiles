@@ -91,11 +91,4 @@ in {
     url = "https://images.unsplash.com/photo-1524252500348-1bb07b83f3be";
     sha256 = "sha256-3gH1F4MAM2bKhfHWZrEvCasY8T+rQVxWnKBfHmtTOrM=";
   };
-
-  services.sunshine = {
-    enable = true;
-    autoStart = false;
-    capSysAdmin = false;
-    openFirewall = true;
-  };
 }
