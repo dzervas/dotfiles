@@ -59,6 +59,10 @@
         description = "Rebuild the system";
         wraps = "nixos-rebuild switch";
       };
+      todo = {
+        body = builtins.readFile ./fish-functions/todo.fish;
+        description = "Find local todos";
+      };
       use = {
         body = builtins.readFile ./fish-functions/use.fish;
         description = "Use a nix shell";

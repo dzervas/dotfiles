@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: {
+{ pkgs, ... }: {
 # Issues:
 # - Run python script with args/env (nvim-iron?)
 # - Set up nvim-dap
@@ -48,14 +48,9 @@
       comment = {
         enable = true;
         settings = {
-          toggler = {
-            line = "<C-/>";
-            # block = "<C-/>"; # TODO: Fix this
-          };
-          mappings = {
-            basic = false;
-            extra = false;
-          };
+          mappings.extra = false;
+          opleader.line = "<C-/>"; # Ctrl-/
+          toggler.line = "<C-/>"; # Ctrl-/
         };
       };
       multicursors.enable = true;
@@ -74,33 +69,14 @@
       # };
       # rustaceanvim.enable = true;
       # https://github.com/MikaelFangel/nixvim-config/blob/main/config/cmp.nix
-      cmp = {
+      blink-cmp = {
         enable = true;
         settings = {
-          # experimental.ghost_text = true;
-          mapping = {
-            "<C-Space>" = "cmp.mapping.complete()";
-            "<C-d>" = "cmp.mapping.scroll_docs(-4)";
-            "<C-e>" = "cmp.mapping.close()";
-            "<C-f>" = "cmp.mapping.scroll_docs(4)";
-            "<CR>" = "cmp.mapping.confirm({ select = true })";
-            "<S-Tab>" = "cmp.mapping(cmp.mapping.select_prev_item(), {'i', 's'})";
-            "<Tab>" = "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
-          };
           completion = {
-            completeopt = "menu,menuone,noinsert,noselect";
+            documentation.auto_show = true;
+            ghost_text.enabled = true;
           };
-          sources = [
-            { name = "nvim_lsp"; }
-            { name = "treesitter"; }
-            {
-              name = "buffer";
-              option.get_bufnrs.__raw = "vim.api.nvim_list_bufs";
-            }
-            { name = "nvim_lua"; }
-            { name = "path"; }
-            # { name = "copilot"; }
-          ];
+          signature.enabled = true;
         };
       };
 
@@ -119,8 +95,9 @@
           ruff.enable = true;
           rust_analyzer = {
             enable = true;
-            installCargo = false;
-            installRustc = false;
+            installCargo = true;
+            installRustc = true;
+            installRustfmt = true;
           };
           ts_ls.enable = true;
         };
@@ -130,16 +107,19 @@
         enable = true;
           keymaps = {
             "<A-f>" = "find_files";
-            "<C-F>" = "live_grep";
-            "<A-r>" = "commands";
+            "<A-j>" = "lsp_document_symbols";
+            "<A-r>" = "command_history";
             "<A-z>" = "zoxide list";
             "<A-Tab>" = "buffers";
+            "<C-F>" = "live_grep";
+            "<C-Z>" = "undo";
           };
 
           extensions = {
             fzf-native.enable = true;
             zoxide.enable = true;
             ui-select.enable = true;
+            undo.enable = true;
           };
       };
 
@@ -179,12 +159,34 @@
         };
       };
 
+      noice = {
+        enable = true;
+        settings = {
+          lsp = {
+            progress = {
+              enabled = true;
+              throttle = 100;
+            };
+            override = {
+              "vim.lsp.util.convert_input_to_markdown_lines" = true;
+              "vim.lsp.util.stylize_markdown" = true;
+            };
+          };
+          presets = {
+            bottom_search = true;
+            command_palette = true;
+            long_message_to_split = true;
+            inc_rename = true;
+          };
+        };
+      };
+
       web-devicons.enable = true; # Telescope dep
     };
 
     keymaps = [
-      { key = "<C-Up>"; action = "<CMD>move +1<CR>"; }
-      { key = "<C-Down>"; action = "<CMD>move -1<CR>"; }
+      { key = "<C-Up>"; action = "<CMD>move -2<CR>"; }
+      { key = "<C-Down>"; action = "<CMD>move +1<CR>"; }
     ];
 
     extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ];
@@ -199,12 +201,12 @@
     withPython3 = true;
 
     performance = {
-      byteCompileLua = {
-        enable = true;
-        nvimRuntime = true;
-        luaLib = true;
-        plugins = true;
-      };
+      # byteCompileLua = {
+      #   enable = true;
+      #   nvimRuntime = true;
+      #   luaLib = true;
+      #   plugins = true;
+      # };
     };
   };
 
