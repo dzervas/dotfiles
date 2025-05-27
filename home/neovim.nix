@@ -72,16 +72,24 @@
       blink-cmp = {
         enable = true;
         settings = {
+          # VS-Code like tab completion
+          keymap.preset = "super-tab";
+
           completion = {
             documentation.auto_show = true;
             ghost_text.enabled = true;
           };
           signature.enabled = true;
+          setupLspCapabilities = true;
+
+          sources.default = [ "lsp" "buffer" "path" ];
+
         };
       };
 
       lsp = {
         enable = true;
+
         servers = {
           # DevOps
           bashls.enable = true;
@@ -101,6 +109,8 @@
           };
           ts_ls.enable = true;
         };
+
+        capabilities = "\ncapabilities = require('blink.cmp').get_lsp_capabilities(capabilities)\n";
       };
 
       telescope = {
@@ -146,7 +156,7 @@
 
       nvim-autopairs.enable = true;
       copilot-lua = {
-        enable = true;
+        enable = false;
         settings = {
           suggestion = {
             auto_trigger = true;

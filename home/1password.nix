@@ -1,5 +1,6 @@
 { config, lib, pkgs, ... }: let
   lock = "${pkgs._1password-gui}/bin/1password --lock --silent";
+  ssh-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj";
 in {
   programs = {
     ssh = {
@@ -17,9 +18,15 @@ in {
         };
       };
       signing = {
-        key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj";
+        key = ssh-key;
         signByDefault = true;
       };
+    };
+
+    jujutsu.settings.signing = {
+      backend = "ssh";
+      key = ssh-key;
+      backends.ssh.program = "${pkgs._1password-gui}/bin/op-ssh-sign";
     };
   };
 
