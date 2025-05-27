@@ -2,7 +2,6 @@
 # Issues:
 # - Run python script with args/env (nvim-iron?)
 # - Set up nvim-dap
-# - Symbol hovering info (like vscode)
 # - Ctrl-backspace deletes the whole word
 # - TreeSitter? just better directory listing show? (icons, etc.)
 # - Integrated terminal
@@ -15,6 +14,7 @@
 # - vscode-like runner (run this test/function/etc.)
 # - Fix right-click menu
 # - Use lazy loading
+# - v within floaterm uses the floaterm command instead
 
   programs.nixvim = {
     enable = true;
@@ -60,14 +60,17 @@
       gitgutter.enable = true;
 
       # Buffer view helpers
-      airline = {
+      lualine = {
         enable = true;
         settings = {
           theme = "badwolf";
           powerline_fonts = 1;
           highlighting_cache = 1;
-          section_y = null; # encoding, file format, etc.
-          section_z = null; # position: line no, column, etc.
+          sections = {
+            lualine_y = null; # encoding, file format, etc.
+            lualine_z = null; # position: line no, column, etc.
+          };
+          skip_empty_sections = 1;
         };
       };
       illuminate.enable = true;
@@ -96,8 +99,6 @@
           # poll_rate = 1;
         # };
       # };
-      # rustaceanvim.enable = true;
-      # https://github.com/MikaelFangel/nixvim-config/blob/main/config/cmp.nix
       blink-cmp = {
         enable = true;
         setupLspCapabilities = true;
@@ -114,6 +115,7 @@
         };
       };
 
+      rustaceanvim.enable = true;
       lspconfig.enable = true;
 
       telescope = {
@@ -192,6 +194,11 @@
             inc_rename = true;
           };
         };
+      };
+
+      floaterm = {
+        enable = true;
+        settings.keymap_toggle = "<A-Esc>";
       };
 
       web-devicons.enable = true; # Telescope dep
