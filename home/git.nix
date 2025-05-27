@@ -80,10 +80,22 @@
           email = git.userEmail;
         };
 
+        aliases = {
+          d = ["diff"];
+          s = ["status"];
+          ll = ["log"];
+        };
+
+        git.auto-local-bookmark = true;
+
         # Sign all commits owned by us
         signing.behavior = "own";
         git.sign-on-push = true;
-        ui.show-cryptographic-signatures = true;
+        ui = {
+          default-command = "log";
+          pager = ":builtin";
+          show-cryptographic-signatures = true;
+        };
       };
     };
   };
