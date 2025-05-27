@@ -19,8 +19,37 @@
   programs.nixvim = {
     enable = true;
 
-    # colorscheme = "vscode";
     colorschemes.vscode.enable = true;
+
+    lsp = {
+      servers = {
+        # DevOps
+        ansiblels.enable = true;
+        bashls.enable = true;
+        dockerls.enable = true;
+        docker_compose_language_service.enable = true;
+        helm_ls.enable = true;
+        marksman.enable = true;
+        nixd.enable = true;
+        statix.enable = true;
+        terraformls.enable = true;
+
+        # Dev
+        clangd.enable = true;
+        gopls.enable = true;
+        ruff.enable = true;
+        rust_analyzer.enable = true;
+
+        # Web dev
+        astro.enable = true;
+        cssls.enable = true;
+        html.enable = true;
+        tailwindcss.enable = true;
+        # superhtml.enable = true;
+        # eslint.enable = true;
+        # ts_ls.enable = true;
+      };
+    };
 
     plugins = {
       # Sudo helper
@@ -71,6 +100,8 @@
       # https://github.com/MikaelFangel/nixvim-config/blob/main/config/cmp.nix
       blink-cmp = {
         enable = true;
+        setupLspCapabilities = true;
+
         settings = {
           # VS-Code like tab completion
           keymap.preset = "super-tab";
@@ -80,38 +111,10 @@
             ghost_text.enabled = true;
           };
           signature.enabled = true;
-          setupLspCapabilities = true;
-
-          sources.default = [ "lsp" "buffer" "path" ];
-
         };
       };
 
-      lsp = {
-        enable = true;
-
-        servers = {
-          # DevOps
-          bashls.enable = true;
-          marksman.enable = true;
-          nixd.enable = true;
-          terraformls.enable = true;
-
-          # Dev
-          clangd.enable = true;
-          gopls.enable = true;
-          ruff.enable = true;
-          rust_analyzer = {
-            enable = true;
-            installCargo = true;
-            installRustc = true;
-            installRustfmt = true;
-          };
-          ts_ls.enable = true;
-        };
-
-        capabilities = "\ncapabilities = require('blink.cmp').get_lsp_capabilities(capabilities)\n";
-      };
+      lspconfig.enable = true;
 
       telescope = {
         enable = true;

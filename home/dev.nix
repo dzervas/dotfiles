@@ -38,6 +38,7 @@
     ]))
     pyenv
 
+    cargo
     cargo-edit
     cargo-expand
     rustup
