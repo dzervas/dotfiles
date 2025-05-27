@@ -47,10 +47,10 @@ in {
         # "alacritty; hyprctl dispatch movetoworkspacesilent 1"
 
         # Arrange workspaces to screens
-        "hyprctl dispatch moveworkspacetomonitor 1 0"
-        "hyprctl dispatch moveworkspacetomonitor 2 1"
-        "hyprctl dispatch moveworkspacetomonitor 3 1"
-        "hyprctl dispatch moveworkspacetomonitor 4 0"
+        # "hyprctl dispatch moveworkspacetomonitor 1 0"
+        # "hyprctl dispatch moveworkspacetomonitor 2 1"
+        # "hyprctl dispatch moveworkspacetomonitor 3 1"
+        # "hyprctl dispatch moveworkspacetomonitor 4 0"
       ];
 
       "$mod" = "SUPER";

@@ -102,24 +102,22 @@ in {
         };
         "sway/workspaces" = {
           format = "{icon} ";
-          # TODO: Show the name with format-activated
+          all-outputs = true;
           format-icons = {
             "1" = "";
             "2" = "";
-            "3" = "";
-            "4" = "";
-            "5" = "";
+            "3" = "";
+            "4" = "";
           };
         };
         "hyprland/workspaces" = {
           format = "{icon} ";
-          # TODO: Show the name with format-activated
+          all-outputs = true;
           format-icons = {
             "1" = "";
             "2" = "";
-            "3" = "";
-            "4" = "";
-            "5" = "";
+            "3" = "";
+            "4" = "";
           };
         };
         "sway/scratchpad" = {

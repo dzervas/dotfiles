@@ -62,16 +62,7 @@
       # Buffer view helpers
       lualine = {
         enable = true;
-        settings = {
-          theme = "badwolf";
-          powerline_fonts = 1;
-          highlighting_cache = 1;
-          sections = {
-            lualine_y = null; # encoding, file format, etc.
-            lualine_z = null; # position: line no, column, etc.
-          };
-          skip_empty_sections = 1;
-        };
+        settings.options.globalstatus = true;
       };
       illuminate.enable = true;
       repeat.enable = true;
