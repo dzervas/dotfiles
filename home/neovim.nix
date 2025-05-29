@@ -4,7 +4,6 @@
 # - Set up nvim-dap
 # - Ctrl-backspace deletes the whole word
 # - TreeSitter? just better directory listing show? (icons, etc.)
-# - Integrated terminal
 # - Copilot by default? maybe with an alias?
 # - Better git diff view when `:G d`
 # - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
@@ -15,6 +14,8 @@
 # - Fix right-click menu
 # - Use lazy loading
 # - v within floaterm uses the floaterm command instead
+# - conform-nvim for formatting
+# - Floaterm-specific Alt-keys (new term, next/prev, etc.)
 
   programs.nixvim = {
     enable = true;
@@ -96,7 +97,7 @@
 
         settings = {
           # VS-Code like tab completion
-          keymap.preset = "super-tab";
+          keymap.preset = "enter";
 
           completion = {
             documentation.auto_show = true;
@@ -132,6 +133,8 @@
       treesitter = {
         enable = true;
         settings = {
+          highlight.enable = true;
+          indent.enable = true;
           parsers = {
             bash.enable = true;
             c.enable = true;
@@ -192,12 +195,15 @@
         settings.keymap_toggle = "<A-Esc>";
       };
 
+      neo-tree.enable = true;
+
       web-devicons.enable = true; # Telescope dep
     };
 
     keymaps = [
       { key = "<C-Up>"; action = "<CMD>move -2<CR>"; }
       { key = "<C-Down>"; action = "<CMD>move +1<CR>"; }
+      { key = "<leader>l"; action = "<CMD>Neotree toggle<CR>"; }
     ];
 
     extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ];

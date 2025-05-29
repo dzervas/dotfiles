@@ -22,6 +22,8 @@
     gvfs.enable = true;
     # Thumbnail support
     tumbler.enable = true;
+
+    gnome.gnome-keyring.enable = true;
   };
 
   programs = {

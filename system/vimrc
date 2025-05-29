@@ -2,6 +2,7 @@
 set nocompatible		" This must be first, because it changes other options as side effect
 
 set autoindent
+" set cindent
 set clipboard^=unnamed,unnamedplus
 set colorcolumn=80		" Where to put the vertical line
 set completeopt=menuone,noselect
@@ -30,6 +31,7 @@ set noswapfile			" Disable the fucking .swp files
 set nowritebackup
 set nowrap
 set number				" Show line numbers
+set preserveindent		" Try to preserve the indent according to the rest of the file
 set ruler				" Show where are you in the file
 set rnu					" Relative line numbers
 set scrolloff=3			" 3 Lines around cursor when scrolling

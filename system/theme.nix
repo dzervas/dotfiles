@@ -19,7 +19,7 @@ in
     cursor = {
       package = inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default;
       name = "BreezX-RosePine-Linux";
-      size = 48;
+      size = 64;
     };
 
     fonts = {

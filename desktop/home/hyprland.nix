@@ -128,8 +128,8 @@ in {
 
       monitor = [
         # Monitor Name                                       , Mode  , Pos, Scale, <other params>
-        "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002448, highrr, 0x0, 1, vrr, 1"
-        "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002445, highrr, auto-right, 1, vrr, 1"
+        "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002445, highrr, 0x0, 1, vrr, 1"
+        "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002448, highrr, auto-right, 1, vrr, 1"
         "desc:BOE NE135A1M-NY1, highrr, auto, 1.67, vrr, 1"
         ", preferred, auto, 1" # Rule for additional monitors
       ];
@@ -147,6 +147,7 @@ in {
         { class = "OrcaSlicer"; rules = ["suppressevent"]; }
         { class = "org.pulseaudio.pavucontrol"; rules = ["float" "center"]; }
         { title = "Ropuka's Idle Island"; rules = ["float" "persistentsize" "fullscreenstate 0 0"]; }
+        { title = "atuin-desktop"; rules = ["float"]; }
       ];
 
       # Layouts
