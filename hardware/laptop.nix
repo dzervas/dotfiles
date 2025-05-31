@@ -10,6 +10,7 @@ in {
     # ./components/virtualbox.nix
     ./components/libvirt.nix
     ./components/laptop.nix
+    ./components/fingerprint.nix
     inputs.nixos-hardware.nixosModules.framework-13-7040-amd
   ];
 
@@ -64,7 +65,6 @@ in {
 
   services = {
     power-profiles-daemon.enable = true;
-    fprintd.enable = true;
     btrfs.autoScrub = {
       enable = true;
       interval = "weekly";
