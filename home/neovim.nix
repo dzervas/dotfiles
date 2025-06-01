@@ -42,7 +42,10 @@
         rust_analyzer.enable = true;
 
         # Web dev
-        astro.enable = true;
+        astro = {
+          enable = true;
+          settings.init_options.typescript.tsdk = "${pkgs.typescript}/lib/node_modules/typescript/lib";
+        };
         cssls.enable = true;
         html.enable = true;
         tailwindcss.enable = true;
@@ -61,6 +64,7 @@
       gitgutter.enable = true;
 
       # Buffer view helpers
+      bufferline.enable = true;
       lualine = {
         enable = true;
         settings.options.globalstatus = true;

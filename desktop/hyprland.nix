@@ -42,6 +42,7 @@
         thunar-volman
         thunar-archive-plugin
         thunar-media-tags-plugin
+        thunar-vcs-plugin
       ];
     };
     # Thunar archive manager

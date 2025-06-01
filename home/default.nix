@@ -94,6 +94,8 @@
       gtk3 gtk4 # Install to fix some inconsistencies (cursor, DPI, theme, etc.)
 
       (lib.mkIf isPrivate atuin-desktop)
+
+      gvfs
     ];
     file = {
       "${config.xdg.configHome}/katerc".source = ./katerc;
