@@ -14,9 +14,8 @@
 # - Use lazy loading
 # - v within floaterm uses the floaterm command instead
 # - conform-nvim for formatting
-# - Tab vs enter completion
-# - Auto diagnostics on hover
-# - Maybe hover on cursor sit?
+# - Better which-key config
+# - hover.nvim?
 
   programs.nixvim = {
     enable = true;
@@ -62,7 +61,7 @@
 
       # Git helper
       fugitive.enable = true;
-      gitgutter.enable = true;
+      gitsigns.enable = true;
 
       # Buffer view helpers
       bufferline.enable = true;
@@ -88,14 +87,36 @@
       guess-indent.enable = true;
 
       # Auto completion
-      trouble.enable = true; # Better code diagnostics
+      trouble = {
+        # Better code diagnostics
+        enable = true;
+        settings = {
+          auto_close = true;
+          auto_preview = true;
+          focus = true;
+        };
+      };
       blink-cmp = {
         enable = true;
         setupLspCapabilities = true;
 
         settings = {
-          # VS-Code like tab completion
-          keymap.preset = "enter";
+          keymap = {
+            "<Tab>" = [
+              { __raw = "function(cmp) if cmp.snippet_active() then return cmp.accept() else return cmp.select_and_accept() end end";}
+              "snippet_forward"
+              "fallback"
+            ];
+            "<S-Tab>" = ["snippet_backward" "fallback"];
+            "<CR>" = ["accept" "fallback"];
+
+            "<Up>" = ["select_prev" "fallback"];
+            "<Down>" = ["select_next" "fallback"];
+
+            "<C-e>" = ["hide" "fallback"];
+            "<C-k>" = ["show_signature" "hide_signature" "fallback"];
+            "<C-space>" = ["show" "show_documentation" "fallback"];
+          };
 
           completion = {
             documentation.auto_show = true;
@@ -213,6 +234,12 @@
         event = "BufReadPost";
         pattern = "*";
       }
+      {
+        desc = "Auto-show diagnostics";
+        command = "lua vim.diagnostic.open_float()";
+        event = "CursorHold";
+        pattern = "*";
+      }
     ];
 
     keymaps = [
@@ -246,6 +273,14 @@
 
       # Show the filesystem tree
       { key = "<leader>l"; action = "<CMD>Neotree toggle<CR>"; }
+
+      # Show trouble diagnostics
+      { key = "<C-.>"; action = "<CMD>Trouble diagnostics toggle<CR>"; }
+
+      # Ctrl-backspace delete word
+      { key = "<C-BS>"; action = "<C-w>"; mode = "i"; }
+      { key = "<C-BS>"; action = "<C-w>"; mode = "c"; }
+      { key = "<C-BS>"; action = "<C-w>"; mode = "t"; }
     ];
 
     extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ];
@@ -282,6 +317,7 @@
       # Highlight search results
       hlsearch = true;
       # By default ignore the case during search
+      ignorecase = true;
       smartcase = true;
       # By default do an incremental search
       incsearch = true;
@@ -292,6 +328,13 @@
       # Tab width shows as 4 characters
       tabstop = 4;
 
+      # Never wrap
+      wrap = false;
+
+      # Time to fire the `CursorHold` event
+      updatetime = 1500;
+
+      # Show whitespace characters
       list = true;
       listchars = {
         tab = ">_";
