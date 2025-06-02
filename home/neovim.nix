@@ -3,7 +3,6 @@
 # - Run python script with args/env (nvim-iron?)
 # - Set up nvim-dap
 # - Ctrl-backspace deletes the whole word
-# - TreeSitter? just better directory listing show? (icons, etc.)
 # - Copilot by default? maybe with an alias?
 # - Better git diff view when `:G d`
 # - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
@@ -15,7 +14,9 @@
 # - Use lazy loading
 # - v within floaterm uses the floaterm command instead
 # - conform-nvim for formatting
-# - Floaterm-specific Alt-keys (new term, next/prev, etc.)
+# - Tab vs enter completion
+# - Auto diagnostics on hover
+# - Maybe hover on cursor sit?
 
   programs.nixvim = {
     enable = true;
@@ -50,8 +51,8 @@
         html.enable = true;
         tailwindcss.enable = true;
         # superhtml.enable = true;
-        # eslint.enable = true;
-        # ts_ls.enable = true;
+        eslint.enable = true;
+        ts_ls.enable = true;
       };
     };
 
@@ -84,17 +85,10 @@
       multicursors.enable = true;
       nvim-surround.enable = true;
       markdown-preview.enable = true;
+      guess-indent.enable = true;
 
       # Auto completion
-      # trouble.enable = true; # Better code diagnostics
-      # fidget = { # Better LSP progress
-        # enable = true;
-        # settings.progress = {
-          # suppress_on_insert = true;
-          # ignore_done_already = true;
-          # poll_rate = 1;
-        # };
-      # };
+      trouble.enable = true; # Better code diagnostics
       blink-cmp = {
         enable = true;
         setupLspCapabilities = true;
@@ -140,11 +134,18 @@
           highlight.enable = true;
           indent.enable = true;
           parsers = {
+            astro.enable = true;
             bash.enable = true;
             c.enable = true;
+            css.enable = true;
+            # comment.enable = true;
+            fish.enable = true;
             go.enable = true;
             hcl.enable = true;
             html.enable = true;
+            hurl.enable = true;
+            ini.enable = true;
+            javascript.enable = true;
             json.enable = true;
             lua.enable = true;
             nix.enable = true;
@@ -200,19 +201,54 @@
       };
 
       neo-tree.enable = true;
+      which-key.enable = true;
 
       web-devicons.enable = true; # Telescope dep
     };
 
+    autoCmd = [
+      {
+        desc = "Open file at the last position it was edited earlier";
+        command = "silent! normal! g`\"zv";
+        event = "BufReadPost";
+        pattern = "*";
+      }
+    ];
+
     keymaps = [
+      # Buffer manipulation
+      { key = "<A-c>"; action = "<CMD>bdelete<CR>"; }
+      { key = "<A-c>"; action = "<CMD>FloatermKill<CR>"; mode = "t"; }
+      { key = "<A-C>"; action = "<CMD>close<CR>"; }
+      { key = "<A-Left>"; action = "<CMD>bprevious<CR>"; }
+      { key = "<A-Left>"; action = "<CMD>FloatermPrev<CR>"; mode = "t"; }
+      { key = "<A-Right>"; action = "<CMD>bnext<CR>"; }
+      { key = "<A-Right>"; action = "<CMD>FloatermNext<CR>"; mode = "t"; }
+
+      # Window navigation
+      { key = "<A-Up>"; action = "<C-W>w"; }
+      { key = "<A-Down>"; action = "<C-W>W"; }
+
+      # Split management
+      { key = "<A-Return>"; action = "<CMD>vsplit<CR>"; }
+      { key = "<A-S-Return>"; action = "<CMD>split<CR>"; }
+      { key = "<A-Return>"; action = "<CMD>FloatermNew<CR>"; mode = "t"; }
+
+      # Spell checking toggle
+      { key = "<A-s>"; action = "<CMD>set spell!<CR>"; }
+
+      # Disable search highlight
+      { key = "<C-l>"; action = "<CMD>nohlsearch<CR>"; }
+
+      # Move a line
       { key = "<C-Up>"; action = "<CMD>move -2<CR>"; }
       { key = "<C-Down>"; action = "<CMD>move +1<CR>"; }
+
+      # Show the filesystem tree
       { key = "<leader>l"; action = "<CMD>Neotree toggle<CR>"; }
     ];
 
     extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ];
-
-    extraConfigVim = builtins.readFile ../system/vimrc;
 
     viAlias = true;
     vimAlias = true;
@@ -221,13 +257,57 @@
     withRuby = false;
     withPython3 = true;
 
+    clipboard = {
+      providers.wl-copy.enable = true;
+      register = [ "unnamed" "unnamedplus" ];
+    };
+
+    globals = {
+      # Leader is space
+      mapleader = " ";
+    };
+
+    opts = {
+      # Vertical column to avoid ultra long lines
+      colorcolumn = "100";
+      ruler = true;
+
+      # Line numbers on the side
+      number = true;
+      relativenumber = true;
+
+      # Highlight the current line
+      cursorline = true;
+
+      # Highlight search results
+      hlsearch = true;
+      # By default ignore the case during search
+      smartcase = true;
+      # By default do an incremental search
+      incsearch = true;
+
+      # When scrolling, always have 3 lines of buffer
+      scrolloff = 3;
+
+      # Tab width shows as 4 characters
+      tabstop = 4;
+
+      list = true;
+      listchars = {
+        tab = ">_";
+        trail = "•";
+        extends = "#";
+        nbsp = "¶";
+      };
+    };
+
     performance = {
-      # byteCompileLua = {
-      #   enable = true;
-      #   nvimRuntime = true;
-      #   luaLib = true;
-      #   plugins = true;
-      # };
+      byteCompileLua = {
+        enable = true;
+        nvimRuntime = true;
+        luaLib = true;
+        plugins = true;
+      };
     };
   };
 
@@ -236,9 +316,4 @@
     # transparentBackground.main = true;
     # plugin = "base16-nvim";
   };
-
-  home.sessionVariables = {
-    EDITOR = "nvim";
-    ALTERNATE_EDITOR = "vim";
-  };
-                       }
+}
