@@ -27,7 +27,7 @@ _: {
         devices = [ "!all:reset" ];
       };
 
-      "org.ryujinx.Ryujinx".Context = {
+      "io.github.ryubing.Ryujinx".Context = {
         sockets = ["x11"];
         devices = [ "dri" "input" ];
         filesystems = [ "home/CryptVMs" ];

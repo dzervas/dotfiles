@@ -2,7 +2,6 @@
 # Issues:
 # - Run python script with args/env (nvim-iron?)
 # - Set up nvim-dap
-# - Ctrl-backspace deletes the whole word
 # - Copilot by default? maybe with an alias?
 # - Better git diff view when `:G d`
 # - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
@@ -16,6 +15,7 @@
 # - conform-nvim for formatting
 # - Better which-key config
 # - hover.nvim?
+# - Fix neo-tree vs bdelete issue
 
   programs.nixvim = {
     enable = true;
@@ -31,9 +31,10 @@
         docker_compose_language_service.enable = true;
         helm_ls.enable = true;
         marksman.enable = true;
-        nixd.enable = true;
+        nil_ls.enable = true;
         statix.enable = true;
         terraformls.enable = true;
+        tflint.enable = true;
 
         # Dev
         clangd.enable = true;
@@ -56,9 +57,6 @@
     };
 
     plugins = {
-      # Sudo helper
-      vim-suda.enable = true;
-
       # Git helper
       fugitive.enable = true;
       gitsigns.enable = true;
@@ -242,6 +240,15 @@
       }
     ];
 
+    diagnostic.settings.signs = {
+      text = {
+        "__rawKey__vim.diagnostic.severity.ERROR" = "✘";
+        "__rawKey__vim.diagnostic.severity.WARN" = "";
+        "__rawKey__vim.diagnostic.severity.INFO" = "";
+        "__rawKey__vim.diagnostic.severity.HINT" = "󰌵";
+      };
+    };
+
     keymaps = [
       # Buffer manipulation
       { key = "<A-c>"; action = "<CMD>bdelete<CR>"; }
@@ -300,6 +307,10 @@
     globals = {
       # Leader is space
       mapleader = " ";
+
+      # TFLint stuff
+      terraform_fmt_on_save = 1;
+      terraform_align = 1;
     };
 
     opts = {
@@ -358,5 +369,10 @@
     enable = false;
     # transparentBackground.main = true;
     # plugin = "base16-nvim";
+  };
+
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    ALTERNATE_EDITOR = "vim";
   };
 }

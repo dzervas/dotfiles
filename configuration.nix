@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: {
+{ config, pkgs, ... }: {
   imports = [ ./system ];
 
   system.copySystemConfiguration = false;
@@ -27,7 +27,7 @@
     dconf.enable = true;
     nix-ld = {
       enable = true;
-      libraries = with pkgs; [];
+      # libraries = with pkgs; [];
     };
   };
 

@@ -9,4 +9,7 @@ _: {
 
   # Needed for home-manager's blueman
   services.blueman.enable = true;
+
+  # Better Xbox gamepad driver
+  hardware.xpadneo.enable = true;
 }
