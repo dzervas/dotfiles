@@ -16,9 +16,21 @@
 # - Better which-key config
 # - hover.nvim?
 # - Fix neo-tree vs bdelete issue
+# - fish completion within floaterm (e.g. % expands to current file)
+# - Fix multiline prompt in floaterm
 
   programs.nixvim = {
     enable = true;
+
+    defaultEditor = true;
+
+    viAlias = true;
+    vimAlias = true;
+    vimdiffAlias = true;
+
+    withNodeJs = false;
+    withRuby = false;
+    withPython3 = true;
 
     colorschemes.vscode.enable = true;
 
@@ -291,13 +303,6 @@
     ];
 
     extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ];
-
-    viAlias = true;
-    vimAlias = true;
-
-    withNodeJs = false;
-    withRuby = false;
-    withPython3 = true;
 
     clipboard = {
       providers.wl-copy.enable = true;

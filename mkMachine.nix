@@ -51,4 +51,10 @@
         builtins.trace "📢 Public build" {})
     ];
   };
+
+  # Create a map compatible with the `apps.<system>.<whatever>` variable that is just a shell script
+  mkShellApp = (pkgs: script: {
+    type = "app";
+    program = builtins.toString (pkgs.writeShellScript "script" script);
+  });
 }

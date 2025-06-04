@@ -1,20 +1,8 @@
 # NixOS Configuration
 
-## Rebuilding
+Test my neovim config with `nix run github:dzervas/dotfiles`! :tada:
 
-```bash
-sudo nixos-rebuild switch --flake .#<hostname>
-```
-
-## Updating
-
-```bash
-sudo nix-channel --update
-nix flake update
-sudo nixos-rebuild switch --flake .
-sudo nix store gc
-sudo nix store optimize
-```
+<sub>Please, it took me hours to figure out how to do that</sub>
 
 ## Live CD
 
@@ -22,7 +10,15 @@ There's also a live CD configuration in `hardware/iso`.
 
 ### Download
 
-In NixOS:
+In NixOS (with flakes):
+```bash
+# Once per system
+nix run github:dzervas/dotfiles#iso-auth
+
+nix run github:dzervas/dotfiles#iso-get
+```
+
+In NixOS (for normies):
 
 ```bash
 # Once per system
@@ -52,7 +48,7 @@ sudo dd bs=4M status=progress conv=fsync oflag=direct if=$(ls nixos-*-linux.iso)
 ### Building manually
 
 ```bash
-nix build .#nixosConfigurations.iso.config.system.build.isoImage
+nix build .#iso
 ```
 
 ### Fresh install
