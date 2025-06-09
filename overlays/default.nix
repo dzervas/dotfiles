@@ -5,6 +5,7 @@ _: {
       binaryninja = prev.callPackage ./binaryninja.nix {};
       opennoodl = prev.callPackage ./opennoodl.nix {};
       buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
+      pico8 = prev.callPackage ./pico8.nix {};
       flameshot = prev.flameshot.overrideAttrs (previousAttrs: {
         cmakeFlags = [
           "-DUSE_WAYLAND_CLIPBOARD=1"
