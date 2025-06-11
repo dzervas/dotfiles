@@ -53,6 +53,7 @@
         "x-scheme-handler/prusaslicer" = "OrcaSlicer.desktop";
         "x-scheme-handler/bambustudio" = "OrcaSlicer.desktop";
         "x-scheme-handler/slack" = "Slack.desktop";
+        "x-scheme-handler/atuin" = "Atuin.desktop";
       };
     };
   };

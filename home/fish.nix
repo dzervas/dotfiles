@@ -1,6 +1,6 @@
-{ pkgs, ... }: {
-  # On first fish launch:
-  # tide configure --auto --style=Classic --prompt_colors='True color' --classic_prompt_color=Dark --show_time='24-hour format' --classic_prompt_separators=Angled --powerline_prompt_heads=Sharp --powerline_prompt_tails=Slanted --powerline_prompt_style='Two lines, character and frame' --prompt_connection=Dotted --powerline_right_prompt_frame=Yes --prompt_connection_andor_frame_color=Dark --prompt_spacing=Compact --icons='Few icons' --transient=Yes
+{ lib, pkgs, ... }: {
+  home.shell.enableFishIntegration = true; # Enable fish integration for everything
+
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
@@ -23,7 +23,6 @@
       { name = "autopair"; inherit (pkgs.fishPlugins.autopair) src; }
       { name = "fzf-fish"; inherit (pkgs.fishPlugins.fzf-fish) src; }
       { name = "puffer"; inherit (pkgs.fishPlugins.puffer) src; }
-      { name = "tide"; inherit (pkgs.fishPlugins.tide) src; }
     ];
 
     functions = {
@@ -85,6 +84,80 @@
       kl = "kubelog";
       v = "nvim";
       w = "watchf";
+    };
+  };
+
+  programs.starship = {
+    enable = true;
+    enableTransience = true;
+    settings = {
+      format = lib.concatStrings [
+        "[░▒▓](#a3aed2)"
+        "[  ](bg:#a3aed2 fg:#090c0c)"
+        "[](bg:#769ff0 fg:#a3aed2)"
+        "$directory"
+        "[](fg:#769ff0 bg:#394260)"
+        "$git_branch"
+        "$git_status"
+        "[](fg:#394260 bg:#212736)"
+        "$nodejs"
+        "$rust"
+        "$golang"
+        "$php"
+        "[](fg:#212736 bg:#1d2230)"
+        "$time"
+        "[ ](fg:#1d2230)"
+        "\n$character"
+    ];
+
+      directory = {
+        style = "fg:#e3e5e5 bg:#769ff0";
+        format = "[ $path ]($style)";
+        truncation_length = 3;
+        truncation_symbol = "…/";
+        substitutions = {
+          Documents = "󰈙 ";
+          Downloads = " ";
+          Music = " ";
+          Pictures = " ";
+        };
+      };
+
+      git_branch = {
+        symbol = "";
+        style = "bg:#394260";
+        format = "[[ $symbol $branch ](fg:#769ff0 bg:#394260)]($style)";
+      };
+
+      git_status = {
+        style = "bg:#394260";
+        format = "[[($all_status$ahead_behind )](fg:#769ff0 bg:#394260)]($style)";
+      };
+
+      nodejs = {
+        symbol = "";
+        style = "bg:#212736";
+        format = "[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)";
+      };
+
+      rust = {
+        symbol = "";
+        style = "bg:#212736";
+        format = "[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)";
+      };
+
+      golang = {
+        symbol = "";
+        style = "bg:#212736";
+        format = "[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)";
+      };
+
+      time = {
+        disabled = false;
+        time_format = "%R"; # Hour:Minute Format
+        style = "bg:#1d2230";
+        format = "[[  $time ](fg:#a0a9cb bg:#1d2230)]($style)";
+      };
     };
   };
 }
