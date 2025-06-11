@@ -2,7 +2,7 @@
 # Issues:
 # - Run python script with args/env (nvim-iron?)
 # - Set up nvim-dap
-# - Copilot by default? maybe with an alias?
+# - Copilot by default? maybe with an alias? Save per folder/git?
 # - Better git diff view when `:G d`
 # - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
 # - Command to edit nix/neovim config
@@ -18,6 +18,11 @@
 # - Fix neo-tree vs bdelete issue
 # - fish completion within floaterm (e.g. % expands to current file)
 # - Fix multiline prompt in floaterm
+# - ctrl-tab like firefox for buffers
+# - ctrl-tab like firefox for jumps
+# - F2 rename/refactor
+# - Telescope fuzzy finder
+# - blink-cmp fix cmdline
 
   programs.nixvim = {
     enable = true;
