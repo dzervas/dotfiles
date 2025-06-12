@@ -96,7 +96,7 @@
       (lib.mkIf isPrivate atuin-desktop)
 
       gvfs
-      pico8
+      (lib.mkIf isPrivate pico8)
     ];
     file = {
       "${config.xdg.configHome}/katerc".source = ./katerc;

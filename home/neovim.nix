@@ -2,7 +2,7 @@
 # Issues:
 # - Run python script with args/env (nvim-iron?)
 # - Set up nvim-dap
-# - Copilot by default? maybe with an alias? Save per folder/git?
+# - Copilot save per folder/git?
 # - Better git diff view when `:G d`
 # - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
 # - Command to edit nix/neovim config
@@ -10,7 +10,6 @@
 # - Restart with the same buffers/state
 # - vscode-like runner (run this test/function/etc.)
 # - Fix right-click menu
-# - Use lazy loading
 # - v within floaterm uses the floaterm command instead
 # - conform-nvim for formatting
 # - Better which-key config
@@ -20,9 +19,9 @@
 # - Fix multiline prompt in floaterm
 # - ctrl-tab like firefox for buffers
 # - ctrl-tab like firefox for jumps
-# - F2 rename/refactor
 # - Telescope fuzzy finder
-# - blink-cmp fix cmdline
+# - blink-cmp fix cmdline and disable on treesitter-rename
+# - Ctrl-. for common fixes
 
   programs.nixvim = {
     enable = true;
@@ -146,22 +145,23 @@
 
       telescope = {
         enable = true;
-          keymaps = {
-            "<A-f>" = "find_files";
-            "<A-j>" = "lsp_document_symbols";
-            "<A-r>" = "command_history";
-            "<A-z>" = "zoxide list";
-            "<A-Tab>" = "buffers";
-            "<C-F>" = "live_grep";
-            "<C-Z>" = "undo";
-          };
+        # TODO: Lazy load
+        keymaps = {
+          "<A-f>" = "find_files";
+          "<A-j>" = "lsp_document_symbols";
+          "<A-r>" = "commands";
+          "<A-z>" = "zoxide list";
+          "<A-Tab>" = "buffers";
+          "<C-F>" = "live_grep";
+          "<C-Z>" = "undo";
+        };
 
-          extensions = {
-            fzf-native.enable = true;
-            zoxide.enable = true;
-            ui-select.enable = true;
-            undo.enable = true;
-          };
+        extensions = {
+          fzf-native.enable = true;
+          zoxide.enable = true;
+          ui-select.enable = true;
+          undo.enable = true;
+        };
       };
 
       treesitter = {
@@ -193,10 +193,30 @@
           };
         };
       };
+      treesitter-refactor = {
+        enable = true;
+        smartRename = {
+          enable = true;
+          keymaps.smartRename = "<F2>";
+        };
+      };
 
       nvim-autopairs.enable = true;
       copilot-lua = {
-        enable = false;
+        enable = true;
+
+        lazyLoad = {
+          enable = true;
+          settings = {
+            cmd = "Copilot";
+            keys = [{
+              __unkeyed-1 = "<leader>cc";
+              __unkeyed-3 = "<CMD>Copilot enable<CR>";
+              desc = "Enable Copilot";
+            }];
+          };
+        };
+
         settings = {
           suggestion = {
             auto_trigger = true;
@@ -207,6 +227,29 @@
             };
           };
         };
+      };
+
+      avante = {
+        enable = true;
+        lazyLoad = {
+          enable = true;
+          settings = {
+            cmd = "AvanteToggle";
+            keys = [
+              {
+                __unkeyed-1 = "<leader>at";
+                __unkeyed-3 = "<CMD>AvanteToggle<CR>";
+                desc = "Toggle avante window";
+              }
+              {
+                __unkeyed-1 = "<leader>aa";
+                __unkeyed-3 = "<CMD>AvanteShow<CR>";
+                desc = "Focus avante window";
+              }
+            ];
+          };
+        };
+        settings.provider = "copilot";
       };
 
       noice = {
@@ -240,6 +283,7 @@
       which-key.enable = true;
 
       web-devicons.enable = true; # Telescope dep
+      lz-n.enable = true; # Lazy loading
     };
 
     autoCmd = [
@@ -296,7 +340,7 @@
       { key = "<C-Down>"; action = "<CMD>move +1<CR>"; }
 
       # Show the filesystem tree
-      { key = "<leader>l"; action = "<CMD>Neotree toggle<CR>"; }
+      { key = "<leader>f"; action = "<CMD>Neotree toggle<CR>"; }
 
       # Show trouble diagnostics
       { key = "<C-.>"; action = "<CMD>Trouble diagnostics toggle<CR>"; }
