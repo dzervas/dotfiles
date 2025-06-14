@@ -70,6 +70,15 @@ xkb-options=grp:alt_space_toggle,caps:escape
     };
   };
 
+  security = {
+    audit.enable = "lock";
+    auditd.enable = true;
+    pam.services = {
+      root.ttyAudit.enable = true;
+      dzervas.ttyAudit.enable = true;
+    };
+  };
+
   nix = {
     extraOptions = ''
       # Garbage collect when free space is less than 32GB
