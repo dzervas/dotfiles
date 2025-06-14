@@ -71,7 +71,7 @@ xkb-options=grp:alt_space_toggle,caps:escape
   };
 
   security = {
-    audit.enable = "lock";
+    audit.enable = true;
     auditd.enable = true;
     pam.services = {
       root.ttyAudit.enable = true;

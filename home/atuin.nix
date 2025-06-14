@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }: let
+{ pkgs, ... }: let
   atuin-port = "55888";
   atuin-script = pkgs.writeShellScript "atuin-daemon.sh" ''
 set -euo pipefail

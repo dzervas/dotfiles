@@ -1,4 +1,4 @@
-{ config, inputs, isPrivate, pkgs, ... }: {
+{ config, isPrivate, pkgs, ... }: {
   imports = [
     ./1password.nix
     # ./alacritty.nix
@@ -16,6 +16,7 @@
     ./neovim.nix
     ./options.nix
     ./qutebrowser
+    ./recording-sign.nix
     ./ssh.nix
     ./tools.nix
     ./thumbnailers.nix
