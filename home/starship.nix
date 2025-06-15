@@ -17,6 +17,9 @@
       rightSepString = "[ ${rightSep} ](${sepColor})";
     in {
       format = lib.concatStrings [
+        # TODO: Fix bottom pinning
+        # "$\{custom.pin_bottom}"
+
         # Top left
         "[╭─](${frameStyle})"
         "[](fg:${bgColorHex})"
@@ -160,6 +163,12 @@
       fill = {
         symbol = "·";
         style = frameStyle;
+      };
+
+      custom.pin_bottom = {
+        command = "tput cup $COLUMNS 1";
+        format = "$output";
+        when = true;
       };
     };
   };
