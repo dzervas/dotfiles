@@ -13,9 +13,6 @@
         27036
         # Steam local data transfers
         27040
-
-        # rquickshare - Android sharing
-        24343
       ];
 
       allowedUDPPorts = [

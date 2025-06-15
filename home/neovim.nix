@@ -299,6 +299,12 @@
         event = "CursorHold";
         pattern = "*";
       }
+      {
+        desc = "2 space indentation filetypes";
+        command = "setlocal ts=2 sts=2 sw=2 expandtab";
+        event = "FileType";
+        pattern = builtins.concatStringsSep "," ["nix" "hcl" "tf" "yml" "yaml"];
+      }
     ];
 
     diagnostic.settings.signs = {

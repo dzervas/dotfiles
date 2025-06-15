@@ -17,6 +17,7 @@
     ./options.nix
     ./qutebrowser
     ./recording-sign.nix
+    ./starship.nix
     ./ssh.nix
     ./tools.nix
     ./thumbnailers.nix
@@ -102,14 +103,6 @@
     file = {
       "${config.xdg.configHome}/katerc".source = ./katerc;
       "${config.xdg.configHome}/nixpkgs/config.nix".text = "{ allowUnfree = true; }";
-      "${config.xdg.dataHome}/dev.mandre.rquickshare/.settings.json".text = builtins.toJSON {
-        download_path = "${config.xdg.userDirs.download}/Shared";
-        visibility = 0;
-        realclose = false;
-        autostart = true;
-        startminimized = true;
-        port = 24343;
-      };
     };
   };
 

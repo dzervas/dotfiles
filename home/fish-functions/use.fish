@@ -18,7 +18,7 @@ end
 echo "Entering nix shell with packages: $packages"
 
 if test -n "$IN_NIX_SHELL"
-	set -f IN_NIX_SHELL "$IN_NIX_SHELL > "
+	set -f IN_NIX_SHELL "$IN_NIX_SHELL / "
 end
 
 set -l cmd $argv[$index..-1]
