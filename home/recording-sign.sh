@@ -13,14 +13,14 @@ last_open_time=0
 # Function to execute OPEN command with debouncing
 handle_open() {
     echo "Executing OPEN command..."
-    curl -s "$OPEN_URL"
+    curl -s "$OPEN_URL" || echo "Failed to execute OPEN command"
     echo "OPEN command executed at $(date)"
 }
 
 # Function to execute CLOSE command
 handle_close() {
     echo "Executing CLOSE command..."
-    curl -s "$CLOSE_URL"
+    curl -s "$CLOSE_URL" || echo "Failed to execute CLOSE command"
     echo "CLOSE command executed at $(date)"
 }
 

@@ -9,10 +9,6 @@
     Unit = {
       Description = "Video camera watcher to toggle the camera accordingly";
       After = ["network-online.target"];
-      Wants = ["network-online.target"];
-    };
-    Install = {
-      WantedBy = [ "multi-user.target" ];
     };
     Service = {
       ExecStart = pkgs.writeShellScript "recording-sign.sh" ./recording-sign.sh;
@@ -20,5 +16,6 @@
       RestartSteps = 3;
       RestartMaxDelaySec = 6;
     };
+    Install.WantedBy = [ "default.target" ];
   };
 }
