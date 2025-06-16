@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ lib, pkgs, ... }: {
 # Issues:
 # - Run python script with args/env (nvim-iron?)
 # - Set up nvim-dap
@@ -78,10 +78,44 @@
       gitsigns.enable = true;
 
       # Buffer view helpers
-      bufferline.enable = true;
+      bufferline = {
+        enable = true;
+        settings = {
+          options = {
+            always_show_bufferline = false; # When there's 1 buffer, don't show the bufferline
+            diagnostics = "nvim_lsp"; # Show LSP diagnostics
+            separator_style = "slant"; # Slanted separators
+          };
+        };
+      };
       lualine = {
         enable = true;
-        settings.options.globalstatus = true;
+        settings = {
+          options.globalstatus = true;
+          sections = {
+            lualine_c = [{
+              __unkeyed-1 = "filename";
+              path = 1; # Relative path
+            }];
+            lualine_z = lib.mkAfter [{
+              __unkeyed-1.__raw = ''
+                function()
+                  if package.loaded["copilot"] == nil then
+                    return "";
+                  end
+
+                  local status = vim.cmd("Copilot status")
+                  if string.match(status, "offline") then
+                    return " "
+                  else
+                    return " "
+                  end
+                end
+              '';
+              color.fg = "#ffffff";
+            }];
+          };
+        };
       };
       illuminate.enable = true;
       repeat.enable = true;
@@ -119,7 +153,9 @@
             "<Tab>" = [
               { __raw = ''
                 function(cmp)
-                  if require("copilot.suggestion").is_visible() then require("copilot.suggestion").accept()
+                  -- If Copilot is loaded, accept the suggestion
+                  if package.loaded["copilot"] ~= nil and require("copilot.suggestion").is_visible() then
+                    require("copilot.suggestion").accept()
                   elseif cmp.snippet_active() then return cmp.accept()
                   else return cmp.select_and_accept()
                   end
@@ -217,7 +253,16 @@
             cmd = "Copilot";
             keys = [{
               __unkeyed-1 = "<leader>cc";
-              __unkeyed-3 = "<CMD>Copilot enable<CR>";
+              __unkeyed-3.__raw = ''
+                function()
+                  local status = vim.cmd("Copilot status")
+                  if string.match(status, "offline") then
+                    vim.cmd("Copilot enable")
+                  else
+                    vim.cmd("Copilot disable")
+                  end
+                end
+              '';
               desc = "Enable Copilot";
             }];
           };
@@ -328,8 +373,10 @@
       { key = "<A-c>"; action = "<CMD>FloatermKill<CR>"; mode = "t"; }
       { key = "<A-C>"; action = "<CMD>close<CR>"; }
       { key = "<A-Left>"; action = "<CMD>bprevious<CR>"; }
+      { key = "<A-Right>"; action = "<CMD>BufferLineMovePrev<CR>"; }
       { key = "<A-Left>"; action = "<CMD>FloatermPrev<CR>"; mode = "t"; }
       { key = "<A-Right>"; action = "<CMD>bnext<CR>"; }
+      { key = "<A-Right>"; action = "<CMD>BufferLineMoveNext<CR>"; }
       { key = "<A-Right>"; action = "<CMD>FloatermNext<CR>"; mode = "t"; }
 
       # Window navigation

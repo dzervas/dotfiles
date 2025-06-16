@@ -38,6 +38,7 @@
       pip # BinaryNinja needs this
     ]))
     pyenv
+    uv
 
     cargo-edit
     cargo-expand

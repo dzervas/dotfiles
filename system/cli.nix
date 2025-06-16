@@ -124,4 +124,9 @@
   # services.udev.extraRules = ''
     # KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{serial}=="*vial:f64c2b3c*", MODE="0660", GROUP="users", TAG+="uaccess", TAG+="udev-acl"
   # '';
+
+  # Add support for the thermal printer
+  services.udev.extraRules = ''
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="4b43", ATTRS{idProduct}=="3538", MODE="0664", GROUP="dialout"
+  '';
 }
