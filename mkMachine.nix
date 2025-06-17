@@ -36,7 +36,7 @@
       inputs.opnix.nixosModules.default
 
       inputs.stylix.nixosModules.stylix
-      ./configuration.nix
+      ./nixos
       ./hardware/${hostName}.nix
       ./desktop/${desktop}.nix
 
