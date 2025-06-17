@@ -1,5 +1,7 @@
-{ config, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   imports = [ ./system ];
+
+  # TODO: Mark all partitions as noexec apart from /nix/store/
 
   system.copySystemConfiguration = false;
 
@@ -18,11 +20,16 @@
     users.dzervas = import ./home;
   };
 
-# Fix flatpak default browser
+  # Fix flatpak default browser
   systemd.user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
 
-  # Fix home-manager xdg desktop portal support
-  environment.pathsToLink = [ "/share/xdg-desktop-portal" "/share/applications" ];
+  environment = {
+    # Fix home-manager xdg desktop portal support
+    pathsToLink = [ "/share/xdg-desktop-portal" "/share/applications" ];
+
+    # Remove some default packages that come with nix
+    defaultPackages = lib.mkForce [];
+  };
   programs = {
     dconf.enable = true;
     nix-ld = {
@@ -77,6 +84,7 @@ xkb-options=grp:alt_space_toggle,caps:escape
       root.ttyAudit.enable = true;
       dzervas.ttyAudit.enable = true;
     };
+    sudo.execWheelOnly = true;
   };
 
   nix = {
@@ -100,6 +108,9 @@ xkb-options=grp:alt_space_toggle,caps:escape
       max-jobs = "auto";
       cores = 0;  # Use all available cores
       build-cores = 0;
+
+      # Only allow wheel users to run nix
+      allowed-users = [ "@wheel" ];
     };
   };
 }
