@@ -1,16 +1,18 @@
-{ config, inputs, pkgs, ... }: let
+{ inputs, pkgs, ... }: let
   cryptroot_part = "/dev/disk/by-label/cryptroot";
   system_fs = "/dev/mapper/cryptroot";
 in {
   imports = [
     ./components/amd.nix
     ./components/boot.nix
+    ./components/libvirt.nix
     ./components/peripherals.nix
     ./components/secure-boot.nix
-    # ./components/virtualbox.nix
-    ./components/libvirt.nix
-    ./components/laptop.nix
+
+    # Laptop
     ./components/fingerprint.nix
+    ./components/laptop.nix
+
     inputs.nixos-hardware.nixosModules.framework-13-7040-amd
   ];
 
@@ -36,62 +38,20 @@ in {
       fsType = "btrfs";
       options = [ "subvol=nix" ];
     };
-
-    "/boot" = {
-      device = "/dev/disk/by-label/BOOT"; # replace with your actual EFI partition UUID
-      fsType = "vfat";
-      options = [
-        "uid=0"
-        "gid=0"
-        "umask=077"
-        "fmask=077"
-        "dmask=077"
-      ];
-    };
-
-    "/home/dzervas/Downloads/tmp" = {
-      fsType = "tmpfs";
-      options = [
-        "uid=1000"
-        "gid=100" # Users GID
-        "mode=0700"
-        "size=5%"
-        "user"
-      ];
-    };
   };
 
   swapDevices = [{ device = "/swapfile"; }];
 
-  services = {
-    power-profiles-daemon.enable = true;
-    btrfs.autoScrub = {
-      enable = true;
-      interval = "weekly";
-    };
-  };
+  # Actually hardware-specific
+  environment.systemPackages = with pkgs; [ framework-tool ];
+  services.power-profiles-daemon.enable = true;
+
+  # https://github.com/NixOS/nixos-hardware/tree/master/framework/13-inch/7040-amd#suspendwake-workaround
+  hardware.framework.amd-7040.preventWakeOnAC = true;
 
   stylix.image = pkgs.fetchurl {
     # Photo by Dave Hoefler on Unsplash: https://unsplash.com/photos/sunlight-through-trees-hQNY2WP-qY4
     url = "https://unsplash.com/photos/hQNY2WP-qY4/download?ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzIwMzUyNTA4fA&force=true";
     sha256 = "sha256-gw+BkfVkuzMEI8ktiLoHiBMupiUS9AoiB+acFTCt36g=";
-  };
-
-  environment.systemPackages = with pkgs; [
-    powertop
-    framework-tool
-  ];
-
-  powerManagement = {
-    enable = true;
-    powertop.enable = true;
-  };
-
-  hardware = {
-    # Disable light sensor & accelerometer
-    sensor.iio.enable = false;
-
-    # https://github.com/NixOS/nixos-hardware/tree/master/framework/13-inch/7040-amd#suspendwake-workaround
-    framework.amd-7040.preventWakeOnAC = true;
   };
 }

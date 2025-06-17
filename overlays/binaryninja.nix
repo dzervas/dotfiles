@@ -7,6 +7,7 @@
 }: let
   # TODO: Use the config.xdg.dataHome
   # TODO: Build coolsigmaker & binja-msvc
+  # TODO: Use a better build script like pico8 that reads the zip from home/.private
   installPath = "/home/dzervas/.local/share/binaryninja";
   program = buildFHSEnv rec {
     name = "binaryninja";
