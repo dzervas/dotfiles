@@ -83,6 +83,8 @@
       inkscape-with-extensions
       orca-slicer libdecor
 
+      itch
+
       # TODO: cameractrls nix defined presets
       cameractrls-gtk4
 

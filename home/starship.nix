@@ -23,7 +23,7 @@
         # Top left
         "[╭─](${frameStyle})"
         "[](fg:${bgColorHex})"
-        # "[ ](bg:${bgColorHex})"
+        "[ ](bg:${bgColorHex})"
 
         "$sudo"
         "$direnv"
@@ -32,6 +32,7 @@
         "$git_status"
         "$git_state"
 
+        "[ ](bg:${bgColorHex})"
         "[](fg:${bgColorHex})"
 
         "$fill"
@@ -79,7 +80,7 @@
         disabled = false;
         style = "fg:#00AFFF bg:${bgColorHex}";
         format = "[ $symbol$loaded]($style)";
-        symbol = "";
+        symbol = " ";
         loaded_msg = "";
         unloaded_msg = " ✘";
       };
@@ -88,7 +89,7 @@
         style = "fg:#00AFFF bg:${bgColorHex}";
         read_only_style = "fg:#e3e5e5 bg:${bgColorHex}";
         read_only = "󰌾 ";
-        format = "[ $path]($style)";
+        format = "[$path]($style)";
 
         truncate_to_repo = false;
         truncation_length = 3;
@@ -110,7 +111,7 @@
 
       git_status = {
         style = "fg:#D7AF00 bg:${bgColorHex}";
-        format = "[$all_status$ahead_behind ]($style)";
+        format = "[$all_status$ahead_behind]($style)";
 
         ahead = "  $count";
         behind = "  $count";

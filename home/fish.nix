@@ -10,7 +10,7 @@
       bind \e\` "__smart_help (commandline -p)"
       # Maps to Ctrl-Shift-Delete
       bind \e\[3\;6~ __forget
-      export FLAKE_URL="/home/dzervas/Lab/dotfiles?submodules=1"
+      export FLAKE_URL="/home/dzervas/Lab/dotfiles?submodules=1&lfs=1"
 
       # Watch command completions
       complete -c watchf -s n -l interval -d "Set update interval in seconds"

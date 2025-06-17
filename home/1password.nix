@@ -42,7 +42,7 @@ in {
   systemd.user.services._1password-tray = {
     Unit = {
       Description = "1password Tray";
-      Requires = [ "tray.target" ];
+      # Requires = [ "tray.target" ];
       After = [ "tray.target" ];
     };
 

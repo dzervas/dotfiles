@@ -2,8 +2,8 @@
 { pkgs, ...}: with pkgs; stdenv.mkDerivation rec {
   name = "pico-8";
   src = ../home/.private/pico-8_0.2.6b_amd64.zip;
+  # TODO: move the pico8 zip to lfs
 
-  nativeBuildInputs = [copyDesktopItems];
   buildInputs = [
     unzip
     patchelf
@@ -47,13 +47,13 @@
        $out/pico8_dyn
   '';
 
-  desktopItems = [(makeDesktopItem {
+  desktopItem = makeDesktopItem {
     name = "Pico 8";
     exec = "pico8 -splore";
     icon = "pico8";
     desktopName = "Pico 8";
     categories = [ "Development" "Game" ];
-  })];
+  };
 
   installPhase = ''
     mkdir $out
@@ -65,5 +65,7 @@
 
     mkdir -p $out/share/icons/hicolor/scalable/apps
     cp pico-8/lexaloffle-pico8.png $out/share/icons/hicolor/scalable/apps/pico8.png
+    mkdir -p $out/share/applications
+    cp ${desktopItem}/share/applications/*.desktop $out/share/applications
   '';
 }

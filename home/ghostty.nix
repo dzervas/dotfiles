@@ -1,5 +1,6 @@
 { config, ... }: {
   # TODO: Slow startup
+  # TODO: Handle local file urls with nvim
   setup.terminal = "ghostty";
   programs.ghostty = {
     enable = true;
