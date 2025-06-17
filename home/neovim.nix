@@ -103,13 +103,8 @@
                   if package.loaded["copilot"] == nil then
                     return "";
                   end
-
-                  local status = vim.cmd("Copilot status")
-                  if string.match(status, "offline") then
-                    return " "
-                  else
-                    return " "
-                  end
+                  -- TODO: Check if copilot is actually enabled
+                  return " "
                 end
               '';
               color.fg = "#ffffff";
@@ -253,16 +248,7 @@
             cmd = "Copilot";
             keys = [{
               __unkeyed-1 = "<leader>cc";
-              __unkeyed-3.__raw = ''
-                function()
-                  local status = vim.cmd("Copilot status")
-                  if string.match(status, "offline") then
-                    vim.cmd("Copilot enable")
-                  else
-                    vim.cmd("Copilot disable")
-                  end
-                end
-              '';
+              __unkeyed-3 = "<CMD>Copilot enable<CR>";
               desc = "Enable Copilot";
             }];
           };
