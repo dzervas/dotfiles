@@ -120,13 +120,15 @@
     find = "fd";
   };
 
-  # Add vial udev rule: https://get.vial.today/manual/linux-udev.html
-  # services.udev.extraRules = ''
-    # KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{serial}=="*vial:f64c2b3c*", MODE="0660", GROUP="users", TAG+="uaccess", TAG+="udev-acl"
-  # '';
-
   # Add support for the thermal printer
-  services.udev.extraRules = ''
-    SUBSYSTEM=="usb", ATTRS{idVendor}=="4b43", ATTRS{idProduct}=="3538", MODE="0664", GROUP="dialout"
-  '';
+  services.udev = {
+    # TODO: Do we want to allow user-based keeb config?
+    packages = with pkgs; [qmk-udev-rules];
+    extraRules = ''
+      SUBSYSTEM=="usb", ATTRS{idVendor}=="4b43", ATTRS{idProduct}=="3538", MODE="0664", GROUP="dialout"
+    '';
+  };
+
+  # Non-root access to the qmk
+  # hardware.keyboard.qmk.enable = true;
 }

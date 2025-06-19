@@ -21,7 +21,7 @@ in {
     cryptroot.device = root_part;
   };
 
-  # TODO: Share config with the laptop
+  # TODO: Share config with the laptop, subvolumes need to match
   fileSystems = {
     "/" = {
       device = system_fs;
