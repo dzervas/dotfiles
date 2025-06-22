@@ -123,7 +123,8 @@
   # Add support for the thermal printer
   services.udev = {
     # TODO: Do we want to allow user-based keeb config?
-    packages = with pkgs; [qmk-udev-rules];
+    # TODO: Enabling this breaks the bt controller
+    # packages = with pkgs; [qmk-udev-rules];
     extraRules = ''
       SUBSYSTEM=="usb", ATTRS{idVendor}=="4b43", ATTRS{idProduct}=="3538", MODE="0664", GROUP="dialout"
     '';

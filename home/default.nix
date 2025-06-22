@@ -74,7 +74,7 @@
       x11.defaultCursor = config.stylix.cursor.name;
     };
     packages = with pkgs; [
-      home-manager
+      # home-manager
 
       kdePackages.filelight
       kdePackages.kate
@@ -96,8 +96,6 @@
       kooha # Screen recording
 
       gtk3 gtk4 # Install to fix some inconsistencies (cursor, DPI, theme, etc.)
-
-      (lib.mkIf isPrivate atuin-desktop)
 
       gvfs
       (lib.mkIf isPrivate pico8)

@@ -353,15 +353,18 @@
       };
     };
 
-    keymaps = [
+    keymaps =
+      # Alt-<number> selects buffer number
+      (lib.map (n: { key = "<A-${toString n}>"; action = "<CMD>BufferLineGoToBuffer ${toString n}<CR>"; }) (lib.range 1 9)) ++
+    [
       # Buffer manipulation
       { key = "<A-c>"; action = "<CMD>bdelete<CR>"; }
       { key = "<A-c>"; action = "<CMD>FloatermKill<CR>"; mode = "t"; }
       { key = "<A-C>"; action = "<CMD>close<CR>"; }
-      { key = "<A-Left>"; action = "<CMD>bprevious<CR>"; }
+      { key = "<A-Left>"; action = "<CMD>BufferLineCycleNext<CR>"; }
       { key = "<A-Left>"; action = "<CMD>FloatermPrev<CR>"; mode = "t"; }
       { key = "<A-S-Left>"; action = "<CMD>BufferLineMovePrev<CR>"; }
-      { key = "<A-Right>"; action = "<CMD>bnext<CR>"; }
+      { key = "<A-Right>"; action = "<CMD>BufferLineCycleNext<CR>"; }
       { key = "<A-Right>"; action = "<CMD>FloatermNext<CR>"; mode = "t"; }
       { key = "<A-S-Right>"; action = "<CMD>BufferLineMoveNext<CR>"; }
 

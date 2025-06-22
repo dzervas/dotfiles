@@ -36,7 +36,15 @@ in {
     "/nix" = {
       device = system_fs;
       fsType = "btrfs";
-      options = [ "subvol=nixroot/nix" ];
+      options = [
+        "subvol=nixroot/nix"
+
+        # Nix store optimizations
+        "noatime" # Don't keep access times
+        "nodiratime" # Ditto for directories
+        "discard=async" # Asynchronously discard old files with SSD TRIM operations
+        "compress=zstd:3" # Compress the files - even with level 3 a ratio of ~2 is expected
+      ];
     };
 
     "/home/dzervas/CryptVMs" = {
@@ -56,11 +64,5 @@ in {
       hashTableSizeMB = 128;
       extraOptions = [ "--thread-count" "8" ];
     };
-  };
-
-  stylix.image = pkgs.fetchurl {
-    # Photo by Wren Meinberg on Unsplash: https://unsplash.com/photos/forest-covered-with-fogs-Fs-bcmsV-hA
-    url = "https://images.unsplash.com/photo-1524252500348-1bb07b83f3be";
-    sha256 = "sha256-3gH1F4MAM2bKhfHWZrEvCasY8T+rQVxWnKBfHmtTOrM=";
   };
 }

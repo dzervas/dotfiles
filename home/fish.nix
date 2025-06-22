@@ -58,6 +58,14 @@
         description = "Rebuild the system";
         wraps = "nixos-rebuild switch";
       };
+      scanner = {
+        description = "Ask for a scan from the local scanner";
+        body = ''
+          set -l filename (string split $argv[1])
+          ${pkgs.sane-backends}/bin/scanimage -p --mode Color --resolution 600 --format=$filename[-1] -o $argv[1]
+        '';
+        wraps = "scanimage";
+      };
       todo = {
         body = builtins.readFile ./fish-functions/todo.fish;
         description = "Find local todos";

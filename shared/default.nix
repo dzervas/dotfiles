@@ -1,12 +1,17 @@
+
 { inputs, lib, pkgs, ... }:
 let
   base16Scheme = { name }: "${pkgs.base16-schemes}/share/themes/${name}.yaml";
 in
 {
-  fonts.packages = with pkgs; [
-    iosevka-bin
-    nerd-fonts.iosevka
+  imports = [
+    ./nix.nix
   ];
+
+  nixpkgs.config = {
+    allowUnfree = true;
+    segger-jlink.acceptLicense = true;
+  };
 
   stylix = {
     enable = true;

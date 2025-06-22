@@ -1,4 +1,4 @@
-{ config, ... }: {
+{ config, pkgs, ... }: {
   imports = [
     ./1password.nix
     #./apparmor.nix
@@ -7,21 +7,13 @@
     ./ddc-ci.nix
     ./display.nix
     ./network.nix
-    ./nix.nix
     ./steam.nix
-    ./theme.nix
     # ./usb-kvm.nix
     ./user.nix
     ./vim.nix
   ];
 
   # TODO: Mark all partitions as noexec apart from /nix/store/
-
-  nixpkgs.config = {
-    allowUnfree = true;
-    segger-jlink.acceptLicense = true;
-  };
-
   hardware.enableAllFirmware = true;
 
   # Flake is used, it's irrelevant - copies the configuration.nix in /etc
@@ -37,6 +29,24 @@
       # libraries = with pkgs; [];
     };
   };
+
+  fonts.packages = with pkgs; [
+    iosevka-bin
+    nerd-fonts.iosevka
+  ];
+
+  nix = {
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 10d";
+    };
+    optimise = {
+      automatic = true;
+      dates = [ "weekly" ];
+    };
+  };
+
 
   services = {
     dbus.enable = true;

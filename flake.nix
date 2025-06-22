@@ -1,7 +1,7 @@
 {
   description = "NixOS configuration flake";
 
-  outputs = { self, nixpkgs, flake-utils, nixvim, ... }@inputs: let
+  outputs = { self, nixpkgs, flake-utils, home-manager, nixvim, ... }@inputs: let
     inherit (nixpkgs) lib;
     inherit (flake-utils.lib) eachDefaultSystemPassThrough mkApp;
 
@@ -10,9 +10,11 @@
     isPrivate = builtins.pathExists ./home/.private/default.nix;
     desktop = "hyprland";
 
-    inherit (import ./mkMachine.nix { inherit inputs lib desktop; }) mkMachine mkShellApp;
+    inherit (import ./mkMachine.nix { inherit inputs lib desktop nixpkgs; }) mkMachine mkHome mkShellApp;
   in rec {
     # System definition
+    # If you're here to check how to make your own flake for nixos, only the following matters
+    # in the outputs. The rest are "nice to haves".
     nixosConfigurations = {
       desktop = mkMachine { inherit isPrivate; hostName = "desktop"; stateVersion = "24.11"; };
       laptop = mkMachine { inherit isPrivate; hostName = "laptop"; stateVersion = "25.05"; };
@@ -21,6 +23,12 @@
 
     # Helper to be able to do `nix build .#iso`
     iso = nixosConfigurations.iso.config.system.build.isoImage;
+
+    # Standalone home manager configuration to be able to avoid whole system rebuild
+    homeConfigurations = {
+      "dzervas@desktop" = mkHome { inherit isPrivate; hostName = "desktop"; stateVersion = "24.11"; };
+      "dzervas@laptop" = mkHome { inherit isPrivate; hostName = "laptop"; stateVersion = "25.05"; };
+    };
 
     # Some additional apps to run directly with `nix run github:dzervas/dotfiles#<app>`
     # If you're browsing flake configs, you should probably skip the whole `apps` variable,

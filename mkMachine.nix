@@ -1,5 +1,5 @@
 # flake.nix specific functions
-{ desktop, inputs, lib }: {
+{ desktop, inputs, nixpkgs, lib }: {
   # Function to generate a machine configuration
   mkMachine = {
     hostName,
@@ -37,6 +37,8 @@
 
       inputs.stylix.nixosModules.stylix
       ./nixos
+      ./shared
+      ./shared/${hostName}.nix
       ./hardware/${hostName}.nix
       ./desktop/${desktop}.nix
 
@@ -50,6 +52,36 @@
       else
         builtins.trace "📢 Public build" {})
     ];
+  };
+
+  mkHome = {
+    hostName,
+    stateVersion,
+    isPrivate,
+    system ? "x86_64-linux",
+  }: inputs.home-manager.lib.homeManagerConfiguration {
+    pkgs = nixpkgs.legacyPackages.${system};
+    modules = [
+      inputs.flatpak.homeManagerModules.nix-flatpak
+      inputs.nixvim.homeManagerModules.nixvim
+      inputs.stylix.homeModules.stylix
+
+      ./home
+      ./shared
+      ./shared/${hostName}.nix
+      ./overlays
+      ./desktop/home/${desktop}.nix
+
+      # (if isPrivate then
+      #   builtins.trace "🔐 Private submodule build" ./home/.private/home.nix
+      # else
+      #   builtins.trace "📢 Public build" {})
+
+      ({ home.stateVersion = stateVersion; })
+    ];
+    extraSpecialArgs = {
+      inherit desktop isPrivate inputs hostName;
+    };
   };
 
   # Create a map compatible with the `apps.<system>.<whatever>` variable that is just a shell script
