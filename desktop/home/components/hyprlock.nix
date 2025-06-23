@@ -1,14 +1,12 @@
-{ lib, options, ... }: let
-  locker = "hyprlock --immediate --immediate-render --no-fade-in";
-in {
+{ config, lib, ... }: {
   # TODO: Show weather, battery status, media
   # Weather from https://www.yr.no/en/forecast/daily-table/2-257282/Greece/Thessaly/L%C3%A1risa/Melivoia
   # Forecast: https://www.yr.no/api/v0/locations/2-257282/forecast
   # Current: https://www.yr.no/api/v0/locations/2-257282/forecast/currenthour
   # Styling: https://github.com/mahaveergurjar/Hyprlock-Dots
 
-  setup.lockerInstant = "${options.setup.locker.default}; hyprlock --immediate --immediate-render --no-fade-in";
-  setup.locker = "${options.setup.locker.default}; hyprlock";
+  setup.lockerInstant = "hyprlock --immediate --immediate-render --no-fade-in";
+  setup.locker = "hyprlock";
 
   programs.hyprlock = {
     enable = true;
@@ -19,6 +17,8 @@ in {
         ignore_empty_input = true;
         fail_timeout = 1000;
       };
+
+      auth."fingerprint:enabled" = config.setup.isLaptop;
 
       background = lib.mkForce [{
         path = "screenshot";
@@ -33,7 +33,7 @@ in {
 
       label = [
       {
-        text = "cmd[update:1000] date +'%H:%m'";
+        text = "cmd[update:100] date +'%H:%m'";
 
         font_size = 80;
         font_family = "Iosevka Term Extrabold";

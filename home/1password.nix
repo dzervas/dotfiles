@@ -1,7 +1,9 @@
-{ config, lib, pkgs, ... }: let
-  lock = "${pkgs._1password-gui}/bin/1password --lock --silent";
+{ pkgs, ... }: let
+  lock = "${pkgs._1password-gui}/bin/1password --lock --silent || true";
   ssh-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj";
 in {
+  setup.passwordManagerLock = "${pkgs._1password-gui}/bin/1password --lock --silent";
+
   programs = {
     ssh = {
       extraConfig = ''
@@ -30,7 +32,7 @@ in {
     };
   };
 
-  services.swayidle = lib.mkIf config.services.swayidle.enable {
+  services.swayidle = {
     events = [
       { event = "before-sleep"; command = lock;}
     ];
@@ -42,11 +44,12 @@ in {
   systemd.user.services._1password-tray = {
     Unit = {
       Description = "1password Tray";
-      # Requires = [ "tray.target" ];
-      After = [ "tray.target" ];
+      Requires = [ "tray.target" ];
+      After = [ "graphical-session.target" "tray.target" ];
+      PartOf = [ "graphical-session.target" ];
     };
 
     Service.ExecStart = "${pkgs._1password-gui}/bin/1password --silent";
-    # Install.WantedBy = [ "graphical-session.target" ];
+    Install.WantedBy = [ "graphical-session.target" ];
   };
 }

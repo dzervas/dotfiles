@@ -36,7 +36,15 @@ in {
     "/nix" = {
       device = system_fs;
       fsType = "btrfs";
-      options = [ "subvol=nix" ];
+      options = [
+        "subvol=nix"
+
+        # Nix store optimizations
+        "noatime" # Don't keep access times
+        "nodiratime" # Ditto for directories
+        "discard=async" # Asynchronously discard old files with SSD TRIM operations
+        "compress=zstd:3" # Compress the files - even with level 3 a ratio of ~2 is expected
+      ];
     };
   };
 
@@ -44,7 +52,6 @@ in {
 
   # Actually hardware-specific
   environment.systemPackages = with pkgs; [ framework-tool ];
-  services.power-profiles-daemon.enable = true;
 
   # https://github.com/NixOS/nixos-hardware/tree/master/framework/13-inch/7040-amd#suspendwake-workaround
   hardware.framework.amd-7040.preventWakeOnAC = true;

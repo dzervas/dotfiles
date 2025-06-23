@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }: with lib; {
+{ lib, ... }: with lib; {
   options.setup = {
     bar = mkOption {
       type = types.str;
@@ -12,14 +12,17 @@
 
     locker = mkOption {
       type = types.str;
-      default = "${pkgs._1password-gui}/bin/1password --lock";
       description = "The screen locking program to use";
     };
 
     lockerInstant = mkOption {
       type = types.str;
-      default = "${pkgs._1password-gui}/bin/1password --lock";
-      description = "The screen locking program to use";
+      description = "The screen locking program to use without any fades or wait times";
+    };
+
+    passwordManagerLock = mkOption {
+      type = types.str;
+      description = "How to lock the password manager";
     };
 
     runner = mkOption {
