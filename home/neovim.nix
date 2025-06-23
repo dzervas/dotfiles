@@ -126,8 +126,11 @@
       };
       multicursors.enable = true;
       nvim-surround.enable = true;
-      markdown-preview.enable = true;
       guess-indent.enable = true;
+
+      # Documents (markdown)
+      markdown-preview.enable = true;
+      render-markdown.enable = true;
 
       # Auto completion
       trouble = {
@@ -361,7 +364,7 @@
       { key = "<A-c>"; action = "<CMD>bdelete<CR>"; }
       { key = "<A-c>"; action = "<CMD>FloatermKill<CR>"; mode = "t"; }
       { key = "<A-C>"; action = "<CMD>close<CR>"; }
-      { key = "<A-Left>"; action = "<CMD>BufferLineCycleNext<CR>"; }
+      { key = "<A-Left>"; action = "<CMD>BufferLineCyclePrev<CR>"; }
       { key = "<A-Left>"; action = "<CMD>FloatermPrev<CR>"; mode = "t"; }
       { key = "<A-S-Left>"; action = "<CMD>BufferLineMovePrev<CR>"; }
       { key = "<A-Right>"; action = "<CMD>BufferLineCycleNext<CR>"; }

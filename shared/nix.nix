@@ -12,6 +12,7 @@
       cores = 0;  # Use all available cores
       build-cores = 0;
       http-connections = 50; # Parallel downloads
+      auto-optimise-store = true;
 
       # Keep more derivations in memory
       keep-derivations = true;
@@ -20,6 +21,7 @@
       # Only allow wheel users to run nix
       allowed-users = [ "@wheel" ];
 
+      # Binary caches
       substituters = [
         "https://cache.nixos.org/"
         "https://nix-community.cachix.org"

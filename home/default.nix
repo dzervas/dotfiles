@@ -99,6 +99,8 @@
 
       gvfs
       (lib.mkIf isPrivate pico8)
+      (lib.mkIf isPrivate atuin-desktop)
+      (lib.mkIf isPrivate burpsuite)
     ];
     file = {
       "${config.xdg.configHome}/katerc".source = ./katerc;
