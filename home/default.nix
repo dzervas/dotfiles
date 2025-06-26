@@ -15,7 +15,7 @@
     ./ghostty.nix
     ./neovim.nix
     ./options.nix
-    ./qutebrowser
+    # ./qutebrowser
     ./recording-sign.nix
     ./starship.nix
     ./ssh.nix
@@ -101,6 +101,8 @@
       (lib.mkIf isPrivate pico8)
       (lib.mkIf isPrivate atuin-desktop)
       (lib.mkIf isPrivate burpsuite)
+
+      (lib.mkIf config.setup.isLaptop powertop)
     ];
     file = {
       "${config.xdg.configHome}/katerc".source = ./katerc;

@@ -17,12 +17,14 @@ _: {
     auto-cpufreq = {
       enable = true;
       settings = {
+        # Found with: cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors
+        # TODO: add more settings for the framework
         battery = {
           governor = "powersave";
           turbo = "never";
         };
         charger = {
-          governor = "powersave";
+          governor = "balanced";
           turbo = "auto";
         };
       };
