@@ -9,7 +9,7 @@ in {
   imports = [
     ./components/amd.nix
     ./components/boot.nix
-    ./components/libvirt.nix
+    # ./components/libvirt.nix
     ./components/peripherals.nix
     ./components/restic.nix
     ./components/secure-boot.nix

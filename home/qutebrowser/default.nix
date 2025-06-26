@@ -106,16 +106,16 @@ in {
       categories = [ "Network" "InstantMessaging" ];
       emoji = "♻️";
     })
-    (quteDesktopWrap {
-      name = "Spotify";
-      url = "https://open.spotify.com/";
-      # gha-updater: ICONURL="$(curl -s https://open.spotify.com/ | grep -oP 'https://open\.spotifycdn\.com/cdn/images/favicon32\.[0-9a-f]+\.png')" && echo -n "$ICONURL $(nix-prefetch-url $ICONURL)"
-      icon = "https://open.spotifycdn.com/cdn/images/favicon32.b64ecc03.png";
-      iconSha256 = "0mvjmi73by3ljp3fa4khvjy8savzfi6v3i6njj7nhiyc1l1wqkmn";
-      categories = [ "Network" "Audio" ];
-      emoji = "🎧";
-      customAdblock = true;
-    })
+    # (quteDesktopWrap {
+    #   name = "Spotify";
+    #   url = "https://open.spotify.com/";
+    #   # gha-updater: ICONURL="$(curl -s https://open.spotify.com/ | grep -oP 'https://open\.spotifycdn\.com/cdn/images/favicon32\.[0-9a-f]+\.png')" && echo -n "$ICONURL $(nix-prefetch-url $ICONURL)"
+    #   icon = "https://open.spotifycdn.com/cdn/images/favicon32.b64ecc03.png";
+    #   iconSha256 = "0mvjmi73by3ljp3fa4khvjy8savzfi6v3i6njj7nhiyc1l1wqkmn";
+    #   categories = [ "Network" "Audio" ];
+    #   emoji = "🎧";
+    #   customAdblock = true;
+    # })
     (quteDesktopWrap {
       name = "Telegram";
       url = "https://web.telegram.org/a/";
