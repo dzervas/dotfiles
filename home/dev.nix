@@ -46,6 +46,8 @@
     probe-rs-tools
     watchexec
 
+    nixos-anywhere
+
     pnpm
     nodejs
 

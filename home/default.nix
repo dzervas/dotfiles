@@ -15,7 +15,7 @@
     ./ghostty.nix
     ./neovim.nix
     ./options.nix
-    # ./qutebrowser
+    ./qutebrowser
     ./recording-sign.nix
     ./starship.nix
     ./ssh.nix
