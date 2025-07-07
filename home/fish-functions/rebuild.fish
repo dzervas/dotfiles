@@ -1,4 +1,4 @@
-nh os switch "$FLAKE_URL" $argv || return $status
+sudo nixos-rebuild switch --flake "$FLAKE_URL" $argv || return $status
 
 set -f flake_file (echo "$FLAKE_URL" | cut -d'#' -f1 | cut -d'?' -f1)
 

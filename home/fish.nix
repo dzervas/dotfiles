@@ -25,6 +25,7 @@
       { name = "puffer"; inherit (pkgs.fishPlugins.puffer) src; }
     ];
 
+    # TODO: Add a flake-init function that generates a flake shell with whatever is in the env from use and checks for common lang files
     functions = {
       backup = {
         body = builtins.readFile ./fish-functions/backup.fish;
@@ -63,6 +64,19 @@
         body = ''
           set -l filename (string split $argv[1])
           ${pkgs.sane-backends}/bin/scanimage -p --mode Color --resolution 600 --format=$filename[-1] -o $argv[1]
+        '';
+        wraps = "scanimage";
+      };
+      scanner-many = {
+        description = "Ask for multiple scans from the local scanner and merge them into a pdf";
+        body = ''
+          set -l count (string split $argv[1])
+          set -l filename (string split $argv[2])
+          ${pkgs.sane-backends}/bin/scanimage -p --mode Color --resolution 600 --format=tiff --batch=/tmp/scanner-many.p%04.tiff --batch-prompt --batch-count $count
+          echo
+          echo
+          echo Scan done, compressing images into a pdf (might take a minute)
+          ${pkgs.imagemagick}/bin/magick -density 120 -quality 40 -compress jpeg /tmp/scanner-many.p*.tiff $filename
         '';
         wraps = "scanimage";
       };
