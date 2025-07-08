@@ -52,6 +52,7 @@
     nodejs
 
     # Cloud stuff
+    krew
     kubectl
     kubectx
     kubescape
@@ -62,4 +63,6 @@
 
     opennoodl
   ];
+
+  home.sessionPath = [ "$HOME/.krew/bin" ];
 }
