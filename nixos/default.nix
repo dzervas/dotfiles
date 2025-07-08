@@ -67,19 +67,7 @@ xkb-options=grp:alt_space_toggle,caps:escape
     pipewire = {
       enable = true;
       pulse.enable = true;
-      wireplumber = {
-        enable = true;
-        extraConfig = {
-          "51-disable-hfp" = {
-            "wireplumber.settings" = {
-              "bluetooth.autoswitch-to-headset-profile" = false;
-            };
-            "monitor.bluez.properties" = {
-              "bluez5.roles" = [ "a2dp_sink" "a2dp_source" ];
-            };
-          };
-        };
-      };
+      wireplumber.enable = true;
     };
   };
 }
