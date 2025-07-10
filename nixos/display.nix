@@ -1,12 +1,10 @@
 { pkgs, ... }: {
   hardware.graphics.enable = true;
 
-  environment = {
-    systemPackages = with pkgs; [
-      gthumb
-      libsecret
-    ];
-  };
+  environment.systemPackages = with pkgs; [
+    gthumb
+    libsecret
+  ];
 
   services = {
     logind = {
@@ -21,9 +19,6 @@
       '';
     };
 
-  };
-
-  services = {
     # FlatPak
     flatpak.enable = true;
     accounts-daemon.enable = true; # Flatpak needs this
