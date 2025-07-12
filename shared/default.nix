@@ -13,6 +13,8 @@ in
     segger-jlink.acceptLicense = true;
   };
 
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+
   stylix = {
     enable = true;
     autoEnable = true;
