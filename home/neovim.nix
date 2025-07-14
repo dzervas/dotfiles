@@ -22,6 +22,7 @@
 # - Telescope fuzzy finder
 # - blink-cmp fix cmdline and disable on treesitter-rename
 # - Ctrl-. for common fixes
+# - Set up kagi search with avante - https://github.com/yetone/avante.nvim?tab=readme-ov-file#web-search-engines
 
   programs.nixvim = {
     enable = true;
@@ -319,10 +320,22 @@
         settings.keymap_toggle = "<A-Esc>";
       };
 
-      neo-tree.enable = true;
+      neo-tree = {
+        enable = true;
+        addBlankLineAtTop = true;
+        closeIfLastWindow = true;
+
+        buffers.followCurrentFile.leaveDirsOpen = true;
+
+        filesystem.filteredItems = {
+          hideDotfiles = false;
+          # hideGitignored = false;
+          visible = true;
+        };
+      };
       which-key.enable = true;
 
-      web-devicons.enable = true; # Telescope dep
+      web-devicons.enable = true; # Telescope & neo-tree dep
       lz-n.enable = true; # Lazy loading
     };
 
