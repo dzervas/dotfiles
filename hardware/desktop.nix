@@ -1,4 +1,4 @@
-{ pkgs, ... }: let
+_: let
   # Partitions
   add_part = "/dev/disk/by-uuid/f4d0a081-deb5-45cb-b610-dfaf2af14cd3";
   root_part = "/dev/disk/by-uuid/faa05c46-36c9-4662-8b1c-fb81b44e23d8";
@@ -13,7 +13,7 @@ in {
     ./components/peripherals.nix
     ./components/restic.nix
     ./components/secure-boot.nix
-    ./components/virtualbox.nix
+    # ./components/virtualbox.nix
   ];
 
   boot.initrd.luks.devices = {

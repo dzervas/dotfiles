@@ -30,7 +30,6 @@
     tree
     unzip
     usbutils
-    vagrant
     wget
   ];
 

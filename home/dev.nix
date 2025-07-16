@@ -1,14 +1,13 @@
 { pkgs, ... }: {
   programs = {
-    awscli = {
-      enable = true;
-    };
+    awscli.enable = true;
     poetry.enable = true;
     kubecolor = {
       enable = true;
       enableAlias = true;
     };
   };
+
   home.packages = with pkgs; [
     nixpkgs-fmt # Used by the Nix IDE extension
     nil # Nix language server
@@ -54,14 +53,18 @@
     # Cloud stuff
     krew
     kubectl
+    kubectl-doctor
+    kubectl-view-secret
     kubectx
     kubescape
-    kubernetes-helm
+    (wrapHelm kubernetes-helm {
+      plugins = with pkgs.kubernetes-helmPlugins; [ helm-git ];
+    })
     oci-cli
     terraform
-    cilium-cli
+    calicoctl
 
-    opennoodl
+    # opennoodl
   ];
 
   home.sessionPath = [ "$HOME/.krew/bin" ];

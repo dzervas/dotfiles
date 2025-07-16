@@ -12,6 +12,7 @@
       cores = 0;  # Use all available cores
       build-cores = 0;
       http-connections = 50; # Parallel downloads
+      download-buffer-size = 524288000;
       auto-optimise-store = true;
 
       # Keep more derivations in memory

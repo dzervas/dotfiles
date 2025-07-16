@@ -24,27 +24,18 @@
     ./wine
     ./xdg.nix
 
-    ../modules/bwrapper.nix
+    # ../modules/bwrapper.nix
   ];
 
   programs = {
-    mpv.enable = true;
     home-manager.enable = true;
+    mpv.enable = true;
+    nix-index.enable = true;
     zoxide.enable = true;
-
-    nh = {
-      enable = true;
-      flake = "${config.home.homeDirectory}/Lab/dotfiles";
-      clean.enable = true;
-    };
   };
 
   services = {
     keybase.enable = true;
-    kdeconnect = {
-      enable = true;
-      indicator = true;
-    };
     # flameshot.enable = true; # Requires grim!
   };
 
@@ -100,7 +91,7 @@
       gvfs
       (lib.mkIf isPrivate pico8)
       (lib.mkIf isPrivate atuin-desktop)
-      (lib.mkIf isPrivate burpsuite)
+      # (lib.mkIf isPrivate burpsuite)
 
       (lib.mkIf config.setup.isLaptop powertop)
     ];
@@ -108,35 +99,6 @@
       "${config.xdg.configHome}/katerc".source = ./katerc;
       "${config.xdg.configHome}/nixpkgs/config.nix".text = "{ allowUnfree = true; }";
     };
-  };
-
-  bwrapper.prismlauncher = {
-    dev-bind = [ { src = "/dev/dri"; } ];
-
-    setenv = { "XDG_RUNTIME_DIR" = "/tmp"; };
-    unsetenv = [ "DBUS_SESSION_BUS_ADDRESS" ];
-
-    ro-bind = [
-      { src = "/etc"; }
-      { src = "/nix"; }
-      { src = "/tmp/.X11-unix"; }
-      { src = "/tmp/.ICE-unix"; try = true; }
-      { src = "/run/opengl-driver"; }
-
-      { src = "/sys/class"; try = true; }
-      { src = "/sys/dev/char"; try = true; }
-      { src = "/sys/devices/pci0000:00"; try = true; }
-      { src = "/sys/devices/system/cpu"; try = true; }
-
-      { src = "\\$XDG_RUNTIME_DIR/pulse"; dest = "/tmp/pulse"; try = true; }
-      { src = "\\$XDG_RUNTIME_DIR/pipewire-0"; dest = "/tmp/pipewire-0"; try = true; }
-    ];
-    bind = [ { src = "${config.xdg.dataHome}/PrismLauncher"; } ];
-    tmpfs = [ "/tmp" ];
-
-    unshare-all = true;
-    share-net = true;
-    die-with-parent = true;
   };
 
   stylix = {
