@@ -69,5 +69,8 @@ xkb-options=grp:alt_space_toggle,caps:escape
       pulse.enable = true;
       wireplumber.enable = true;
     };
+
+    # YubiKey support
+    udev.packages = [ pkgs.yubikey-personalization ];
   };
 }
