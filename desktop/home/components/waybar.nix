@@ -140,7 +140,7 @@ in {
           player-icons = {
             default = "⏸";
             mpv = "🎵";
-            firefox = "";
+            firefox = " ";
           };
           status-icons = {
             paused = "▶";
