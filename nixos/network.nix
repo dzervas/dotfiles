@@ -44,7 +44,10 @@
       enable = true;
       nssmdns4 = true;
       ipv6 = false;
-      denyInterfaces = ["zt+"];
+      denyInterfaces = ["zt+" "tailscale+"];
     };
+
+    tailscale.enable = true;
+    zerotierone.enable = true;
   };
 }
