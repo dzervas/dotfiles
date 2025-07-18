@@ -290,7 +290,10 @@
             ];
           };
         };
-        settings.provider = "copilot";
+        settings = {
+          provider = "copilot";
+          disabled_tools = [ "git_commit" ];
+        };
       };
 
       noice = {
@@ -377,6 +380,8 @@
       { key = "<A-c>"; action = "<CMD>bdelete<CR>"; }
       { key = "<A-c>"; action = "<CMD>FloatermKill<CR>"; mode = "t"; }
       { key = "<A-C>"; action = "<CMD>close<CR>"; }
+      { key = "<A-o>"; action = "<CMD>only<CR>"; }
+      { key = "<A-O>"; action = "<CMD>BufferLineCloseOthers<CR>"; }
       { key = "<A-Left>"; action = "<CMD>BufferLineCyclePrev<CR>"; }
       { key = "<A-Left>"; action = "<CMD>FloatermPrev<CR>"; mode = "t"; }
       { key = "<A-S-Left>"; action = "<CMD>BufferLineMovePrev<CR>"; }

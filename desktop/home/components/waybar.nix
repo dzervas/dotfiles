@@ -48,6 +48,8 @@ in {
         modules-right = [
           "mpris"
           "tray"
+          # TODO: Replace with wireplumber
+          # TODO: Bluetooth state when devices are connected
           # "pulseaudio"
           "keyboard-state"
           "battery"
@@ -79,7 +81,7 @@ in {
         };
         "custom/launcher" = {
           format = " {icon}";
-          format-icons = "🚀";
+          format-icons = " ";
         };
         "custom/notifications" = lib.mkDefault {
           tooltip = false;
@@ -97,28 +99,30 @@ in {
           format = "{shortDescription}";
           on-click = "hyprctl switchxkblayout $(hyprctl devices -j | ${pkgs.jq}/bin/jq -r '.keyboards[] | select(.main) | .name') next";
         };
-        "sway/window" = {
-          icon = true;
-        };
+        "sway/window".icon = true;
         "sway/workspaces" = {
           format = "{icon} ";
           all-outputs = true;
           format-icons = {
             "1" = "";
             "2" = "";
-            "3" = "";
-            "4" = "";
+            "3" = "󰨞";
+            "4" = "";
+            "5" = "";
           };
         };
-        "hyprland/workspaces" = {
+        "hyprland/workspaces" = rec {
           format = "{icon} ";
           all-outputs = true;
           format-icons = {
             "1" = "";
             "2" = "";
-            "3" = "";
-            "4" = "";
+            "3" = "󰨞";
+            "4" = "";
+            "5" = "";
           };
+          # Generate an attrmap in the form of `<number> = []` so that all the iconed workspaces are persistent
+          persistent-workspaces = lib.attrsets.mapAttrs (_: _: []) format-icons;
         };
         "sway/scratchpad" = {
           format = "{icon}  {count}";
@@ -136,7 +140,7 @@ in {
           player-icons = {
             default = "⏸";
             mpv = "🎵";
-            firefox = "🦊";
+            firefox = "";
           };
           status-icons = {
             paused = "▶";
@@ -156,16 +160,17 @@ in {
           tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
         };
         battery = {
+          # TODO: Use states and have different format-icons per state
           states = {
             warning = 30;
             critical = 15;
           };
           format = "{icon} {capacity}%";
           format-charging = "⚡ {capacity}%";
-          format-plugged = "🔌 {capacity}%";
+          format-plugged = " {capacity}%";
           format-alt = "{time} {icon}";
-          format-full = "🔋 {capacity}%";
-          format-icons = ["💀" "🪫" "🔋"];
+          format-full = "󱟢";
+          format-icons = ["󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
         };
         pulseaudio = {
           format = "{volume}% {icon} {format_source}";
