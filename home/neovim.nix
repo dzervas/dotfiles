@@ -257,6 +257,20 @@
         };
       };
 
+      # Debugging
+      # TODO: Lazy load
+      dap = {
+        enable = true;
+        # TODO: Signs https://nix-community.github.io/nixvim/search/?option_scope=0&option=plugins.dap.signs.dapBreakpoint.text&query=dap.
+      };
+      dap-lldb = {
+        enable = true;
+        settings.codelldb_path = "${pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter}/bin/codelldb";
+      };
+      dap-python.enable = true;
+      dap-virtual-text.enable = true;
+      dap-view.enable = true;
+
       rustaceanvim.enable = true;
       lspconfig.enable = true;
 
