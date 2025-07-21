@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DEBOUNCE_TIME=2
+DEBOUNCE_TIME=0.1
 OPEN_URL="http://exit-sign.lan/light/panel/turn_on"
 CLOSE_URL="http://exit-sign.lan/light/panel/turn_off"
 
@@ -24,18 +24,20 @@ handle_close() {
     echo "CLOSE command executed at $(date)"
 }
 
+check_status() {
+    # Sync the status on (re)start
+    status=$(lsof -Q /dev/video* | wc -l)
+    if [ "$status" -gt 0 ]; then
+        echo "Camera is already open, sending OPEN command"
+        handle_open
+    else
+        echo "Camera is already closed, sending CLOSE command"
+        handle_close
+    fi
+}
+
 echo "Script started. Waiting for OPEN or CLOSE commands..."
 echo "Press Ctrl+C to exit."
-
-# Sync the status on (re)start
-init_status=$(lsof -Q /dev/video* | wc -l)
-if [ "$init_status" -gt 0 ]; then
-    echo "Camera is already open, sending OPEN command"
-    handle_open
-else
-    echo "Camera is already closed, sending CLOSE command"
-    handle_close
-fi
 
 # Main loop
 inotifywait -m /dev -e open,close --include "video[0-9]+" --format "%e" | while read -r line; do
@@ -43,6 +45,7 @@ inotifywait -m /dev -e open,close --include "video[0-9]+" --format "%e" | while 
     time_diff=$((current_time - last_open_time))
 
     if [ $time_diff -lt $DEBOUNCE_TIME ]; then
+        { sleep $DEBOUNCE_TIME; check_status; } &
         continue
     fi
     last_open_time=$current_time

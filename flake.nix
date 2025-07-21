@@ -1,7 +1,7 @@
 {
   description = "NixOS configuration flake";
 
-  outputs = { self, nixpkgs, flake-utils, home-manager, nixvim, ... }@inputs: let
+  outputs = { nixpkgs, flake-utils, nixvim, ... }@inputs: let
     inherit (nixpkgs) lib;
     inherit (flake-utils.lib) eachDefaultSystemPassThrough mkApp;
 
@@ -25,10 +25,10 @@
     iso = nixosConfigurations.iso.config.system.build.isoImage;
 
     # Standalone home manager configuration to be able to avoid whole system rebuild
-    homeConfigurations = {
-      "dzervas@desktop" = mkHome { inherit isPrivate; hostName = "desktop"; stateVersion = "24.11"; };
-      "dzervas@laptop" = mkHome { inherit isPrivate; hostName = "laptop"; stateVersion = "25.05"; };
-    };
+    # homeConfigurations = {
+    #   "dzervas@desktop" = mkHome { inherit isPrivate; hostName = "desktop"; stateVersion = "24.11"; };
+    #   "dzervas@laptop" = mkHome { inherit isPrivate; hostName = "laptop"; stateVersion = "25.05"; };
+    # };
 
     # Some additional apps to run directly with `nix run github:dzervas/dotfiles#<app>`
     # If you're browsing flake configs, you should probably skip the whole `apps` variable,

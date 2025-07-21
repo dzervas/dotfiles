@@ -8,11 +8,6 @@ in
     ./nix.nix
   ];
 
-  nixpkgs.config = {
-    allowUnfree = true;
-    segger-jlink.acceptLicense = true;
-  };
-
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
   stylix = {

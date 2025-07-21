@@ -1,6 +1,7 @@
 { lib, pkgs, ... }: {
 # Issues:
 # - Run python script with args/env (nvim-iron?)
+# - Set up nvim-neotest
 # - Set up nvim-dap
 # - Copilot save per folder/git?
 # - Better git diff view when `:G d`
@@ -13,7 +14,6 @@
 # - v within floaterm uses the floaterm command instead
 # - conform-nvim for formatting
 # - Better which-key config
-# - hover.nvim?
 # - Fix neo-tree vs bdelete issue
 # - fish completion within floaterm (e.g. % expands to current file)
 # - Fix multiline prompt in floaterm
@@ -21,11 +21,11 @@
 # - ctrl-tab like firefox for jumps
 # - Telescope fuzzy finder
 # - blink-cmp fix cmdline and disable on treesitter-rename
-# - Ctrl-. for common fixes
 # - Set up kagi search with avante - https://github.com/yetone/avante.nvim?tab=readme-ov-file#web-search-engines
 
   programs.nixvim = {
     enable = true;
+    nixpkgs.config.allowUnfree = true;
 
     defaultEditor = true;
 
@@ -39,38 +39,36 @@
 
     colorschemes.vscode.enable = true;
 
-    lsp = {
-      servers = {
-        # DevOps
-        ansiblels.enable = true;
-        bashls.enable = true;
-        dockerls.enable = true;
-        docker_compose_language_service.enable = true;
-        helm_ls.enable = true;
-        marksman.enable = true;
-        nil_ls.enable = true;
-        statix.enable = true;
-        terraformls.enable = true;
-        tflint.enable = true;
+    lsp.servers = {
+      # DevOps
+      ansiblels.enable = true;
+      bashls.enable = true;
+      dockerls.enable = true;
+      docker_compose_language_service.enable = true;
+      helm_ls.enable = true;
+      marksman.enable = true;
+      nil_ls.enable = true;
+      statix.enable = true;
+      terraformls.enable = true;
+      tflint.enable = true;
 
-        # Dev
-        clangd.enable = true;
-        gopls.enable = true;
-        ruff.enable = true;
-        rust_analyzer.enable = true;
+      # Dev
+      clangd.enable = true;
+      gopls.enable = true;
+      ruff.enable = true;
+      rust_analyzer.enable = true;
 
-        # Web dev
-        astro = {
-          enable = true;
-          settings.init_options.typescript.tsdk = "${pkgs.typescript}/lib/node_modules/typescript/lib";
-        };
-        cssls.enable = true;
-        html.enable = true;
-        tailwindcss.enable = true;
-        # superhtml.enable = true;
-        eslint.enable = true;
-        ts_ls.enable = true;
+      # Web dev
+      astro = {
+        enable = true;
+        settings.init_options.typescript.tsdk = "${pkgs.typescript}/lib/node_modules/typescript/lib";
       };
+      cssls.enable = true;
+      html.enable = true;
+      tailwindcss.enable = true;
+      # superhtml.enable = true;
+      eslint.enable = true;
+      ts_ls.enable = true;
     };
 
     plugins = {
@@ -132,6 +130,84 @@
       # Documents (markdown)
       markdown-preview.enable = true;
       render-markdown.enable = true;
+
+      # Lint/Code actions
+      none-ls = {
+        enable = true;
+
+        # Check https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md
+        sources = {
+          code_actions = {
+            gitrebase.enable = true;
+            gitsigns.enable = true;
+            gomodifytags.enable = true;
+            impl.enable = true;
+            proselint.enable = true; # English lang (?)
+            refactoring.enable = true;
+            statix.enable = true;
+            # textlint.enable = true;
+            ts_node_action.enable = true; # Tree sitter
+          };
+          completion = {
+            spell.enable = true;
+            tags.enable = true;
+          };
+          diagnostics = {
+            actionlint.enable = true;
+            ansiblelint.enable = true;
+            checkmake.enable = true;
+            codespell.enable = true;
+            commitlint.enable = true;
+            deadnix.enable = true;
+            dotenv_linter.enable = true;
+            fish.enable = true;
+            ltrs.enable = true; # Rust
+            markdownlint.enable = true;
+            mypy.enable = true;
+            # opentofu_validate.enable = true;
+            pylint.enable = true;
+            revive.enable = true; # Golang
+            selene.enable = true; # Lua
+            sqruff.enable = true; # SQL
+            statix.enable = true; # SQL
+            terraform_validate.enable = true;
+            terragrunt_validate.enable = true;
+            tfsec.enable = true;
+            tidy.enable = true; # HTML & XML
+            todo_comments.enable = true; # todo comments - is it good?
+            trivy.enable = true; # Terraform vulns
+            yamllint.enable = true; # Terraform vulns
+          };
+          formatting = {
+            # alejandra.enable = true; # Nix - nixfmt instead
+            # biome.enable = true; # HTML/CSS/JS/TS/JSON
+            black.enable = true; # Python
+            codespell.enable = true;
+            fish_indent.enable = true;
+            gofmt.enable = true;
+            goimports.enable = true;
+            goimports_reviser.enable = true; # Does it need goimports too?
+            hclfmt.enable = true;
+            isort.enable = true; # Python imports sorter
+            markdownlint.enable = true;
+            nixfmt = {
+              enable = true;
+              package = pkgs.nixfmt-rfc-style;
+            };
+            nix_flake_fmt.enable = true;
+            # opentofu_fmt.enable = true;
+            prettier.enable = true; # HTML/CSS/JS/TS/JSON/Astro
+            rustywind.enable = true; # Tailwind classes
+            shellharden.enable = true;
+            shfmt.enable = true;
+            stylua.enable = true;
+            terraform_fmt.enable = true;
+            terragrunt_fmt.enable = true;
+            tidy.enable = true; # HTML & XML
+            yamlfix.enable = true;
+          };
+        };
+      };
 
       # Auto completion
       trouble = {
@@ -411,8 +487,9 @@
       # Show the filesystem tree
       { key = "<leader>f"; action = "<CMD>Neotree toggle<CR>"; }
 
-      # Show trouble diagnostics
-      { key = "<C-.>"; action = "<CMD>Trouble diagnostics toggle<CR>"; }
+      # Show code actions
+      { key = "<C-.>"; action = "<CMD>lua vim.lsp.buf.code_action()<CR>"; }
+      { key = "<leader>w"; action = "<CMD>lua vim.lsp.buf.format({ async = false })<CR>"; }
 
       # Ctrl-backspace delete word
       { key = "<C-BS>"; action = "<C-w>"; mode = "i"; }

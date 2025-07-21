@@ -17,6 +17,10 @@
       # Set some basic options
       {
         config = {
+          nixpkgs.config = {
+            allowUnfree = true;
+            segger-jlink.acceptLicense = true;
+          };
           networking.hostName = hostName;
           system.stateVersion = stateVersion;
 
