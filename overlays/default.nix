@@ -1,4 +1,4 @@
-{ isPrivate, lib, ... }: {
+_: {
   nixpkgs.overlays = [
     (final: prev: {
       binaryninja = prev.callPackage ./binaryninja.nix {};
@@ -12,6 +12,6 @@
         ];
         buildInputs = previousAttrs.buildInputs ++ [ final.libsForQt5.kguiaddons ];
       });
-    } // (lib.mkIf isPrivate (import ../home/.private/overlays.nix)))
+    })
   ];
 }

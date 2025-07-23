@@ -23,8 +23,6 @@
     ./thumbnailers.nix
     ./wine
     ./xdg.nix
-
-    # ../modules/bwrapper.nix
   ];
 
   programs = {
@@ -91,7 +89,7 @@
       gvfs
       (lib.mkIf isPrivate pico8)
       (lib.mkIf isPrivate atuin-desktop)
-      # (lib.mkIf isPrivate burpsuite)
+      (lib.mkIf isPrivate burpsuite-pro)
 
       (lib.mkIf config.setup.isLaptop powertop)
     ];

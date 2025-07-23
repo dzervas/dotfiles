@@ -1,6 +1,7 @@
 { pkgs, ... }: {
   services.xserver.videoDrivers = [ "amdgpu" ];
 
+  # Results in an error:
   # nixpkgs.config.rocmSupport = true;
 
   boot = {

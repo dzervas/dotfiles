@@ -148,10 +148,7 @@
             # textlint.enable = true;
             ts_node_action.enable = true; # Tree sitter
           };
-          completion = {
-            spell.enable = true;
-            tags.enable = true;
-          };
+          # No completion, it's taken care of by blink-cmp
           diagnostics = {
             actionlint.enable = true;
             ansiblelint.enable = true;
@@ -164,7 +161,7 @@
             ltrs.enable = true; # Rust
             markdownlint.enable = true;
             mypy.enable = true;
-            # opentofu_validate.enable = true;
+            # opentofu_validate.enable = true; # Fights with terraform_validate
             pylint.enable = true;
             revive.enable = true; # Golang
             selene.enable = true; # Lua
