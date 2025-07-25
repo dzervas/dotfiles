@@ -48,6 +48,5 @@
     };
 
     tailscale.enable = true;
-    zerotierone.enable = true;
   };
 }
