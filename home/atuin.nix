@@ -49,19 +49,15 @@ in {
   };
 
   systemd.user.services.atuin-daemon = {
-    Unit = {
-      Description = "Atuin daemon";
-      After = ["network-online.target"];
-      Wants = ["network-online.target"];
-    };
-    Install = {
-      WantedBy = [ "multi-user.target" ];
-    };
+    Unit.Description = "Atuin daemon";
+    Install.WantedBy = [ "multi-user.target" ];
+
     Service = {
       ExecStart = atuin-script;
       Restart = "on-failure";
       RestartSteps = 3;
       RestartMaxDelaySec = 6;
+      StartLimitInterval = 0;
 
       # Environment = ["ATUIN_CONFIG_DIR=/etc/atuin"];
       # ReadWritePaths = ["/etc/atuin"];
