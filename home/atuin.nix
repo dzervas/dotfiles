@@ -5,12 +5,12 @@ set -euo pipefail
 
 echo "Starting atuin port forwarding..."
 ${pkgs.kubectl}/bin/kubectl port-forward --context=gr --namespace=atuin --address=127.0.0.1 svc/atuin ${atuin-port}:8888 &
-DAEMON_PID=$!
+PORT_FORWARD_PID=$!
 
 for i in $(seq 1 30); do
   netstat -tulpn 2>&1 | grep 127.0.0.1:${atuin-port} && break
-  echo "Port forward not up yet, waiting 10s"
-  sleep 10
+  echo "Port forward not up yet, waiting 5s"
+  sleep 5
 done
 
 if [ $i -gt 29 ]; then
@@ -19,9 +19,14 @@ if [ $i -gt 29 ]; then
 fi
 
 echo "Starting atuin daemon..."
-${pkgs.atuin}/bin/atuin daemon
-echo "Atuin daemon exited, killing port forward"
-kill $DAEMON_PID
+${pkgs.atuin}/bin/atuin daemon &
+# DAEMON_PID=$!
+#
+# echo "Syncing"
+#
+# atuin sync
+# echo "Done, killing daemons"
+# kill $DAEMON_PID $PORT_FORWARD_PID
 '';
 in {
   programs.atuin = {

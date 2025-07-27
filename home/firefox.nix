@@ -49,7 +49,6 @@
           "browser.aboutConfig.showWarning" = false;
           "browser.bookmarks.restore_default_bookmarks" = false;
           "browser.compactmode.show" = true;
-          "browser.tabs.insertAfterCurrent" = true;
           "browser.ctrlTab.sortByRecentlyUsed" = true;
           "browser.newtabpage.activity-stream.showSponsored" = false;
           "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
