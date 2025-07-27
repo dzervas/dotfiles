@@ -1,7 +1,6 @@
 { config, isPrivate, pkgs, ... }: {
   imports = [
     ./1password.nix
-    # ./alacritty.nix
     ./atuin.nix
     ./chromium.nix
     ./dev.nix
@@ -21,7 +20,6 @@
     ./ssh.nix
     ./tools.nix
     ./thumbnailers.nix
-    ./wine
     ./xdg.nix
   ];
 
@@ -63,21 +61,14 @@
       x11.defaultCursor = config.stylix.cursor.name;
     };
     packages = with pkgs; [
-      # home-manager
-
-      kdePackages.filelight
+      # kdePackages.filelight
       kdePackages.kate
       # kicad
-      krita
       inkscape-with-extensions
       orca-slicer libdecor
 
-      itch
-
       # TODO: cameractrls nix defined presets
       cameractrls-gtk4
-
-      filezilla
 
       brightnessctl
       playerctl

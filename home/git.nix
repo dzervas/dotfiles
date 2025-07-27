@@ -73,7 +73,7 @@
     };
 
     jujutsu = {
-      enable = true;
+      enable = false;
       settings = {
         user = {
           name = git.userName;

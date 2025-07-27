@@ -6,6 +6,7 @@
     binwalk sleuthkit
     dirb
     frida-tools
+    filezilla
     gobuster
     hashcat
     hashcat-utils
@@ -14,7 +15,7 @@
     iw
     netdiscover
     man-pages
-    mullvad-vpn
+    # mullvad-vpn
     # mullvad-browser
     nmap
     nuclei
@@ -25,7 +26,7 @@
     subfinder
     wifite2
     wirelesstools
-    wireshark
+    # wireshark
     wpscan
     xh
   ];

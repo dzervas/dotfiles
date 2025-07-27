@@ -10,6 +10,7 @@
 
   home.packages = with pkgs; [
     nixpkgs-fmt # Used by the Nix IDE extension
+    nix-du
     nil # Nix language server
     gnuplot
 

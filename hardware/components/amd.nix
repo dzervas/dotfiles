@@ -13,9 +13,9 @@
     amdgpu.initrd.enable = true;
     cpu.amd.updateMicrocode = true;
     enableRedistributableFirmware = true;
-    graphics.extraPackages = with pkgs; [
-      mesa
-      rocmPackages.clr.icd
-    ];
+    # graphics.extraPackages = with pkgs; [
+    #   mesa
+    #   rocmPackages.clr.icd
+    # ];
   };
 }
