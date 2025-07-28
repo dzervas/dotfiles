@@ -103,6 +103,8 @@
     shellAliases = {
       update = "sh (echo -n $FLAKE_URL | cut -d'?' -f1)/.github/scripts/gha-updater.sh && nix flake update --flake \"$FLAKE_URL\" && rebuild";
       miniterm = "python3 -m serial.tools.miniterm";
+      homelab = "nix run /home/dzervas/Lab/homelab/nixos";
+
       kl = "kubelog";
       v = "nvim";
       w = "watchf";
