@@ -9,19 +9,21 @@
   };
 
   home.packages = with pkgs; [
+    go
+
+    # Nix
     nixpkgs-fmt # Used by the Nix IDE extension
     nix-du
     nil # Nix language server
     gnuplot
 
-    # Languages
+    # C/C++
     gcc
     pkg-config
     openssl.dev
     sqlite-interactive
 
-    go
-
+    # Python
     pipenv
     (python3.withPackages (p: with p; [
       ipython
@@ -40,14 +42,14 @@
     pyenv
     uv
 
+    # Rust
     cargo-edit
     cargo-expand
     rustup
     probe-rs-tools
     watchexec
 
-    nixos-anywhere
-
+    # JS
     pnpm
     nodejs
 
@@ -63,7 +65,6 @@
     })
     oci-cli
     terraform
-    calicoctl
 
     # opennoodl
   ];

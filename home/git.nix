@@ -72,6 +72,19 @@
       ];
     };
 
+    gh = {
+      enable = true;
+      gitCredentialHelper.enable = true;
+      extensions = with pkgs; [ gh-copilot ];
+      settings = {
+        git_protocol = "ssh";
+        aliases = {
+          co = "pr checkout";
+          pv = "pr view";
+        };
+      };
+    };
+
     jujutsu = {
       enable = false;
       settings = {
