@@ -31,6 +31,7 @@ In other systems, install oras and github cli:
 
 ```bash
 # Once per system
+gh auth login --scopes "repo,read:org,gist,read:packages"
 gh auth token | oras login ghcr.io --password-stdin -u github
 
 oras pull ghcr.io/dzervas/dotfiles/nixos-iso:latest

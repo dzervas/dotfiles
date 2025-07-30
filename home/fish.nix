@@ -6,6 +6,7 @@
     interactiveShellInit = ''
       set fish_greeting
       fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
+      bind \ea "cop (commandline); commandline -f repaint"
       bind \ew "echo; watchf (commandline); echo; echo; commandline -f repaint"
       bind \e\` "__smart_help (commandline -p)"
       # Maps to Ctrl-Shift-Delete
@@ -32,6 +33,18 @@
         description = "Backup a file or directory";
         wraps = "cp";
       };
+      cop = {
+        body = ''
+          set -l args (echo $argv | sed -E 's/\s*$//')
+          if test -z "$args"
+            gh copilot suggest -t shell
+          else
+            gh copilot explain "$argv"
+          end
+        '';
+        description = "Bring up GitHub CoPilot";
+        wraps = "gh copilot explain";
+      };
       crest = {
         body = builtins.readFile ./fish-functions/crest.fish;
         description = "A curl wrapper with enhanced features tailored for REST APIs";
@@ -40,10 +53,6 @@
       kubelog = {
         body = builtins.readFile ./fish-functions/kubelog.fish;
         description = "KubeCTL log for human beings";
-      };
-      kubeseal-env = {
-        body = builtins.readFile ./fish-functions/kubeseal-env.fish;
-        description = "Create a kubeseal secret from an env file";
       };
       mc = {
         body = "mkdir -p $argv[1] && cd $argv[1]";

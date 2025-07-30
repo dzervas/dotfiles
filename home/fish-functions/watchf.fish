@@ -46,7 +46,7 @@ while true
 		# Move cursor up by prev_line_count lines
 		set buffer "$buffer"(tput cuu $prev_line_count)
 
-		# Move cursor to begginging of line
+		# Move cursor to beginning of line
 		set buffer "$buffer"(printf "\r")
 
 		# Clear from cursor to end of screen

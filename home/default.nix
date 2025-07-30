@@ -42,8 +42,7 @@
       inherit (config.stylix.cursor) package name;
     };
 
-    gtk3.extraConfig = { gtk-application-prefer-dark-theme = 1; };
-
+    gtk3.extraConfig.gtk-application-prefer-dark-theme = 1;
     gtk4.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
       gtk-cursor-theme-name = config.stylix.cursor.name;
