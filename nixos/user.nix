@@ -23,7 +23,7 @@
   environment.pathsToLink = [ "/share/xdg-desktop-portal" "/share/applications" ];
 
   # Serial comms rules (for Arduino n stuff)
-  services.udev.packages = with pkgs; [ platformio-core.udev ];
+  # services.udev.packages = with pkgs; [ platformio-core.udev ];
 
   security = {
     audit.enable = true;

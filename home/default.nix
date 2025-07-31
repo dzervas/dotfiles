@@ -64,7 +64,7 @@
       kdePackages.kate
       # kicad
       inkscape-with-extensions
-      orca-slicer libdecor
+      # orca-slicer libdecor
 
       # TODO: cameractrls nix defined presets
       cameractrls-gtk4

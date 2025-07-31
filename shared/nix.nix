@@ -20,7 +20,7 @@
       keep-outputs = true;
 
       # Only allow wheel users to run nix
-      allowed-users = [ "@wheel" ];
+      trusted-users = [ "@wheel" "root" ];
 
       # Binary caches
       substituters = [
