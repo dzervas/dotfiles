@@ -195,18 +195,12 @@ in {
         };
       };
 
-      decoration = {
-        rounding = 10;
-      };
+      decoration.rounding = 10;
 
-      cursor = {
-        # Fixes inconsistent cursor
-        no_hardware_cursors = true;
-      };
+      # Fix inconsistent cursor
+      #cursor.no_hardware_cursors = true;
 
-      debug = {
-        disable_logs = false;
-      };
+      debug.disable_logs = false;
     };
 
     # set the Hyprland and XDPH packages to null to use the ones from the NixOS module

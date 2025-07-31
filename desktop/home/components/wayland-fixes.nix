@@ -14,7 +14,6 @@
       MOZ_USE_XINPUT2 = "1";
 
       WLR_DRM_NO_MODIFIERS = "1";
-      WLR_NO_HARDWARE_CURSORS = "1";
     };
 
     file = {
