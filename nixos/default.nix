@@ -54,7 +54,7 @@
 
     # Better getty
     kmscon = {
-      #enable = lib.mkDefault true;
+      # enable = true;
       fonts = [ config.stylix.fonts.monospace ];
       useXkbConfig = true;
       hwRender = true;
