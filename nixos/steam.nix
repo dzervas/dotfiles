@@ -4,7 +4,11 @@
 
   environment.systemPackages = with pkgs; [ mangohud ];
 
+  # services.joycond.enable = true;
+
   programs = {
+    # joycond-cemuhook.enable = true;
+
     gamemode = {
       enable = true;
       enableRenice = true;

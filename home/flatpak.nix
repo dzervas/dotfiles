@@ -10,6 +10,7 @@ _: {
       "com.github.skylot.jadx"
       "com.slack.Slack"
       "com.spotify.Client"
+      "io.github.ryubing.Ryujinx"
     ];
 
     overrides = {

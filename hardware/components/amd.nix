@@ -12,7 +12,14 @@
   };
 
   hardware = {
-    amdgpu.initrd.enable = true;
+    amdgpu = {
+      initrd.enable = true;
+      amdvlk = {
+        enable = true;
+        support32Bit.enable = true;
+      };
+    };
+
     cpu.amd.updateMicrocode = true;
     enableRedistributableFirmware = true;
 

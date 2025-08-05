@@ -3,7 +3,24 @@
 
   users.users.dzervas = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "audio" "video" "uucp" "uinput" "vboxusers" "gamemode" "dialout" "libvirtd" "podman" "lp" ];
+    extraGroups = [
+      "wheel"
+
+      "audio"
+      "video"
+      "input"
+      "uinput"
+
+      "uucp"
+      "dialout"
+      "gamemode"
+
+      "libvirtd"
+      "podman"
+      "vboxusers"
+
+      "lp"
+    ];
     shell = pkgs.fish;
   };
 

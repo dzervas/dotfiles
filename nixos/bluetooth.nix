@@ -11,7 +11,7 @@ _: {
   services.blueman.enable = true;
 
   # Better Xbox gamepad driver
-  hardware.xpadneo.enable = true;
+  # hardware.xpadneo.enable = true;
 
   # Disable bluetooth headphone HFP profile
   services.pipewire.wireplumber.extraConfig = {
