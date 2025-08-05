@@ -142,10 +142,8 @@
             gitsigns.enable = true;
             gomodifytags.enable = true;
             impl.enable = true;
-            proselint.enable = true; # English lang (?)
             refactoring.enable = true;
             statix.enable = true;
-            # textlint.enable = true;
             ts_node_action.enable = true; # Tree sitter
           };
           # No completion, it's taken care of by blink-cmp

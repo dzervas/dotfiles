@@ -1,7 +1,7 @@
 # https://github.com/danielbarter/nixos-pico8/blob/main/pico8.nix
 { pkgs, ...}: with pkgs; stdenv.mkDerivation rec {
   name = "pico-8";
-  src = ../home/.private/pico-8_0.2.6b_amd64.zip;
+  src = ../home/.private/apps/pico-8_0.2.6b_amd64.zip;
   # TODO: move the pico8 zip to lfs
 
   buildInputs = [
