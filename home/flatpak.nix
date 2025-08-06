@@ -10,6 +10,7 @@ _: {
       "com.github.skylot.jadx"
       "com.slack.Slack"
       "com.spotify.Client"
+
       "io.github.ryubing.Ryujinx"
     ];
 
@@ -32,8 +33,9 @@ _: {
       "io.github.ryubing.Ryujinx".Context = {
         sockets = ["x11"];
         devices = [ "dri" "input" ];
-        filesystems = [ "home/CryptVMs" ];
+        filesystems = [ "home/CryptVMs/Switch" ];
       };
+
       # "org.chromium.Chromium".Context.sockets = ["wayland"];
       "org.signal.Signal".Environment = {
         SIGNAL_PASSWORD_STORE = "gnome-libsecret";

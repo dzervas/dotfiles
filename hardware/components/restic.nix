@@ -16,10 +16,13 @@ in {
     documents = {
       paths = [
         "${homedir}/Documents"
+
         "${homedir}/.BurpSuite/UserConfigPro.json"
         "${homedir}/.java/.userPrefs"
-        "${homedir}/.var/app/org.ryujinx.Ryujinx/config/Ryujinx/bis/user"
         "${homedir}/.binaryninja"
+
+        "${homedir}/.var/app/org.ryujinx.Ryujinx/config/Ryujinx/bis/user"
+        "${homedir}/.var/app/io.github.ryubing.Ryujinx/config/Ryujinx/bis/user"
       ];
 
       exclude = [

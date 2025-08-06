@@ -31,7 +31,7 @@
             # Allow home-manager to have access to nix-flatpak
             sharedModules = [
               inputs.flatpak.homeManagerModules.nix-flatpak
-              inputs.nixvim.homeManagerModules.nixvim
+              inputs.nixvim.homeModules.nixvim
             ];
           };
         };
@@ -67,7 +67,7 @@
     pkgs = nixpkgs.legacyPackages.${system};
     modules = [
       inputs.flatpak.homeManagerModules.nix-flatpak
-      inputs.nixvim.homeManagerModules.nixvim
+      inputs.nixvim.homeModules.nixvim
       inputs.stylix.homeModules.stylix
 
       ./home

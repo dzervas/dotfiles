@@ -2,7 +2,10 @@
     # Steam udev rules
   hardware.steam-hardware.enable = true;
 
-  environment.systemPackages = with pkgs; [ mangohud ];
+  environment.systemPackages = with pkgs; [
+    steam-rom-manager
+    mangohud
+  ];
 
   # services.joycond.enable = true;
 
