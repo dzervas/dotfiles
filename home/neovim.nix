@@ -495,6 +495,7 @@
 
       # Show the filesystem tree
       { key = "<leader>f"; action = "<CMD>Neotree toggle<CR>"; }
+      { key = "<leader>F"; action = "<CMD>Neotree reveal<CR>"; }
 
       # Show code actions
       { key = "<C-.>"; action = "<CMD>lua vim.lsp.buf.code_action()<CR>"; }

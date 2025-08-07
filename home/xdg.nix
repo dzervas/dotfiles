@@ -28,6 +28,8 @@
         "application/x-zerosize" = "org.kde.kate.desktop";
         "application/x-wine-extension-ini" = "org.kde.kate.desktop";
 
+        "application/vnd.ms-excel" = "org.onlyoffice.desktopeditors.desktop";
+
         "image/jpeg" = "org.gnome.gThumb.desktop";
         "image/png" = "org.gnome.gThumb.desktop";
 
