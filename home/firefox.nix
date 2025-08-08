@@ -60,6 +60,9 @@
           "reader.content_width" = 5;
           "reader.font_size" = 5;
           "browser.tabs.inTitlebar" = 1;
+          "sidebar.visibility" = "always-show";
+          "sidebar.main.tools" = "aichat,bookmarks";
+          "sidebar.position_start" = false; # true = left, false = right
 
           # Disable engagement pop-ups
           "browser.engagement.ctrlTab.has-used" = true;

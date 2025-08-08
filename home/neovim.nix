@@ -379,6 +379,7 @@
           provider = "copilot";
           disabled_tools = [ "git_commit" ];
           behaviour.auto_approve_tool_permissions = false;
+          providers.copilot.model = "claude-sonnet-4";
         };
       };
 
