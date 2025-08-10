@@ -10,12 +10,15 @@ _: {
       "com.github.skylot.jadx"
       "com.slack.Slack"
       "com.spotify.Client"
+      "dev.vencord.Vesktop"
+      "org.telegram.desktop"
+      "im.riot.Riot"
 
       "io.github.ryubing.Ryujinx"
     ];
 
     overrides = {
-      # global.Environment.GTK_THEME = "stylix";
+      # https://docs.flatpak.org/en/latest/flatpak-command-reference.html search for "[Context]"
       global.Context = {
         filesystems = [
           "xdg-config/gtk-3.0:ro"
@@ -27,7 +30,8 @@ _: {
           "!host-etc:reset"
           "!home:reset"
         ];
-        devices = [ "!all:reset" ];
+        devices = [ "!all:reset" "dri" ];
+        sockets = [ "wayland" ];
       };
 
       "io.github.ryubing.Ryujinx".Context = {
@@ -36,14 +40,17 @@ _: {
         filesystems = [ "home/CryptVMs/Switch" ];
       };
 
-      # "org.chromium.Chromium".Context.sockets = ["wayland"];
       "org.signal.Signal".Environment = {
         SIGNAL_PASSWORD_STORE = "gnome-libsecret";
         SIGNAL_USE_WAYLAND = "1";
       };
-      "org.onlyoffice.desktopeditors".Context.sockets = ["x11"];
+      "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" "cups" ];
       "md.obsidian.Obsidian".Context.filesystems = [ "xdg-documents/Obsidian" ];
-      "com.slack.Slack".Context.sockets = ["wayland" "pulseaudio"];
+
+      "com.slack.Slack".Context.sockets = [ "wayland" "pulseaudio" ];
+      "dev.vencord.Vesktop".Context.sockets = [ "wayland" "pulseaudio" ];
+
+      "org.telegram.desktop".Context.sockets = [ "wayland" "pulseaudio" ];
     };
   };
 

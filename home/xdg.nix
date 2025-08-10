@@ -33,9 +33,6 @@
         "image/jpeg" = "org.gnome.gThumb.desktop";
         "image/png" = "org.gnome.gThumb.desktop";
 
-        "x-scheme-handler/http" = browser;
-        "x-scheme-handler/https" = browser;
-        "x-scheme-handler/chrome" = browser;
         "text/html" = browser;
         "text/xml" = browser;
         "application/pdf" = browser;
@@ -44,6 +41,7 @@
         "application/x-extension-shtml" = browser;
         "application/x-extension-xhtml" = browser;
         "application/x-extension-xht" = browser;
+        "application/x-xdg-protocol-tg" = "Telegram.desktop";
         "application/rdf+xml" = browser;
         "application/rss+xml" = browser;
         "application/xhtml+xml" = browser;
@@ -52,11 +50,15 @@
 
         "model/stl" = "f3d-plugin-native.desktop";
 
+        "x-scheme-handler/http" = browser;
+        "x-scheme-handler/https" = browser;
+        "x-scheme-handler/chrome" = browser;
         "x-scheme-handler/orcaslicer" = "OrcaSlicer.desktop";
         "x-scheme-handler/prusaslicer" = "OrcaSlicer.desktop";
         "x-scheme-handler/bambustudio" = "OrcaSlicer.desktop";
         "x-scheme-handler/slack" = "Slack.desktop";
         "x-scheme-handler/atuin" = "Atuin.desktop";
+        "x-scheme-handler/tg" = "Telegram.desktop";
       };
     };
   };
