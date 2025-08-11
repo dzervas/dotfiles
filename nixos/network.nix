@@ -47,6 +47,9 @@
       denyInterfaces = ["zt+" "tailscale+"];
     };
 
-    tailscale.enable = true;
+    tailscale = {
+      enable = true;
+      openFirewall = true;
+    };
   };
 }
