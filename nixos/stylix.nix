@@ -1,4 +1,3 @@
-
 { inputs, lib, pkgs, ... }:
 let
   base16Scheme = { name }: "${pkgs.base16-schemes}/share/themes/${name}.yaml";

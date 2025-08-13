@@ -41,8 +41,6 @@
 
       inputs.stylix.nixosModules.stylix
       ./nixos
-      ./shared
-      ./shared/${hostName}.nix
       ./hardware/${hostName}.nix
       ./desktop/${desktop}.nix
 
@@ -58,39 +56,9 @@
     ];
   };
 
-  mkHome = {
-    hostName,
-    stateVersion,
-    isPrivate,
-    system ? "x86_64-linux",
-  }: inputs.home-manager.lib.homeManagerConfiguration {
-    pkgs = nixpkgs.legacyPackages.${system};
-    modules = [
-      inputs.flatpak.homeManagerModules.nix-flatpak
-      inputs.nixvim.homeModules.nixvim
-      inputs.stylix.homeModules.stylix
-
-      ./home
-      ./shared
-      ./shared/${hostName}.nix
-      ./overlays
-      ./desktop/home/${desktop}.nix
-
-      # (if isPrivate then
-      #   builtins.trace "🔐 Private submodule build" ./home/.private/home.nix
-      # else
-      #   builtins.trace "📢 Public build" {})
-
-      ({ home.stateVersion = stateVersion; })
-    ];
-    extraSpecialArgs = {
-      inherit desktop isPrivate inputs hostName;
-    };
-  };
-
   # Create a map compatible with the `apps.<system>.<whatever>` variable that is just a shell script
-  mkShellApp = (pkgs: script: {
+  mkShellApp = pkgs: script: {
     type = "app";
     program = builtins.toString (pkgs.writeShellScript "script" script);
-  });
+  };
 }

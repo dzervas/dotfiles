@@ -7,11 +7,15 @@
     ./ddc-ci.nix
     ./display.nix
     ./network.nix
+    ./nix.nix
     ./steam.nix
+    ./stylix.nix
     # ./usb-kvm.nix
     ./user.nix
     ./vim.nix
   ];
+
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
   # TODO: Mark all partitions as noexec apart from /nix/store/
   hardware.enableAllFirmware = true;

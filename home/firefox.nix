@@ -107,9 +107,13 @@
               "placements": {
                 "widget-overflow-fixed-list": [],
                 "unified-extensions-area": [
+                  "search_kagi_com-browser-action",
+                  "dearrow_ajay_app-browser-action",
                   "plasma-browser-integration_kde_org-browser-action",
                   "_ublacklist-browser-action",
-                  "gdpr_cavi_au_dk-browser-action"
+                  "gdpr_cavi_au_dk-browser-action",
+                  "https-everywhere_eff_org-browser-action",
+                  "sponsorblocker_ajay_app-browser-action"
                 ],
                 "nav-bar": [
                   "back-button",
@@ -118,7 +122,6 @@
                   "urlbar-container",
                   "downloads-button",
                   "ublock0_raymondhill_net-browser-action",
-                  "search_kagi_com-browser-action",
                   "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action",
                   "fxa-toolbar-menu-button",
                   "_testpilot-containers-browser-action",
@@ -143,17 +146,22 @@
                 "ublock0_raymondhill_net-browser-action",
                 "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action",
                 "sponsorblocker_ajay_app-browser-action",
-                "developer-button"
+                "developer-button",
+                "search_kagi_com-browser-action",
+                "https-everywhere_eff_org-browser-action",
+                "dearrow_ajay_app-browser-action",
+                "screenshot-button"
               ],
               "dirtyAreaCache": [
                 "unified-extensions-area",
                 "nav-bar",
                 "toolbar-menubar",
                 "TabsToolbar",
-                "PersonalToolbar"
+                "PersonalToolbar",
+                "vertical-tabs"
               ],
               "currentVersion": 100,
-              "newElementCount": 5
+              "newElementCount": 6
             }
           '';
 

@@ -148,7 +148,7 @@ in {
         { class = "org.pulseaudio.pavucontrol"; rules = ["float" "center"]; }
         { title = "Ropuka's Idle Island"; rules = ["float" "persistentsize" "fullscreenstate 0 0"]; }
         { title = "atuin-desktop"; rules = ["float"]; }
-        { class = "spotify"; rules = ["float"]; }
+        { class = "spotify"; rules = ["float" "center"]; }
         { class = "thunar"; title = ''^Rename ".*"$''; rules = ["float"]; }
       ];
 
