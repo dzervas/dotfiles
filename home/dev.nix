@@ -32,11 +32,6 @@
       python-dotenv
       frida-python
 
-      # Ansible deps
-      ansible-core
-      netaddr
-      dnspython
-
       pip # BinaryNinja needs this
     ]))
     pyenv
@@ -57,7 +52,6 @@
     krew
     kubectl
     kubectl-doctor
-    kubectl-view-secret
     kubectx
     kubescape
     (wrapHelm kubernetes-helm {
@@ -65,8 +59,6 @@
     })
     oci-cli
     terraform
-
-    # opennoodl
   ];
 
   home.sessionPath = [ "$HOME/.krew/bin" ];
