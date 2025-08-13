@@ -1,4 +1,4 @@
-_: {
+{ config, ... }: {
   # To update shortcuts: nix-shell -p desktop-file-utils --run "update-desktop-database -v"
   services.flatpak = {
     enable = true;
@@ -7,15 +7,15 @@ _: {
     packages = [
       "org.onlyoffice.desktopeditors"
       "org.signal.Signal"
-      "com.github.skylot.jadx"
       "com.slack.Slack"
       "com.spotify.Client"
-      "dev.vencord.Vesktop"
       "org.telegram.desktop"
       "im.riot.Riot"
-
+    ] ++ (if !config.setup.isLaptop then [
+      "dev.vencord.Vesktop"
+      "com.github.skylot.jadx"
       "io.github.ryubing.Ryujinx"
-    ];
+    ] else []);
 
     overrides = {
       # https://docs.flatpak.org/en/latest/flatpak-command-reference.html search for "[Context]"

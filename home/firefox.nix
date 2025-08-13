@@ -102,68 +102,62 @@
           "browser.fixup.domainsuffixwhitelist.lan" = true;
 
           # ToolBar state
-          "browser.uiCustomization.state" = ''
-            {
-              "placements": {
-                "widget-overflow-fixed-list": [],
-                "unified-extensions-area": [
-                  "search_kagi_com-browser-action",
-                  "dearrow_ajay_app-browser-action",
-                  "plasma-browser-integration_kde_org-browser-action",
-                  "_ublacklist-browser-action",
-                  "gdpr_cavi_au_dk-browser-action",
-                  "https-everywhere_eff_org-browser-action",
-                  "sponsorblocker_ajay_app-browser-action"
-                ],
-                "nav-bar": [
-                  "back-button",
-                  "forward-button",
-                  "stop-reload-button",
-                  "urlbar-container",
-                  "downloads-button",
-                  "ublock0_raymondhill_net-browser-action",
-                  "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action",
-                  "fxa-toolbar-menu-button",
-                  "_testpilot-containers-browser-action",
-                  "unified-extensions-button"
-                ],
-                "toolbar-menubar": [
-                  "menubar-items"
-                ],
-                "TabsToolbar": [
-                  "tabbrowser-tabs",
-                  "new-tab-button",
-                  "alltabs-button"
-                ],
-                "PersonalToolbar": [
-                  "personal-bookmarks"
-                ]
-              },
-              "seen": [
-                "gdpr_cavi_au_dk-browser-action",
-                "_testpilot-containers-browser-action",
-                "_ublacklist-browser-action",
-                "ublock0_raymondhill_net-browser-action",
-                "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action",
-                "sponsorblocker_ajay_app-browser-action",
-                "developer-button",
-                "search_kagi_com-browser-action",
-                "https-everywhere_eff_org-browser-action",
-                "dearrow_ajay_app-browser-action",
-                "screenshot-button"
-              ],
-              "dirtyAreaCache": [
-                "unified-extensions-area",
-                "nav-bar",
-                "toolbar-menubar",
-                "TabsToolbar",
-                "PersonalToolbar",
-                "vertical-tabs"
-              ],
-              "currentVersion": 100,
-              "newElementCount": 6
-            }
-          '';
+          "browser.uiCustomization.state" = builtins.toJSON {
+            placements = {
+              widget-overflow-fixed-list = [];
+              unified-extensions-area = [
+                "search_kagi_com-browser-action"
+                "dearrow_ajay_app-browser-action"
+                "plasma-browser-integration_kde_org-browser-action"
+                "_ublacklist-browser-action"
+                "gdpr_cavi_au_dk-browser-action"
+                "https-everywhere_eff_org-browser-action"
+                "sponsorblocker_ajay_app-browser-action"
+              ];
+              nav-bar = [
+                "back-button"
+                "forward-button"
+                "stop-reload-button"
+                "urlbar-container"
+                "downloads-button"
+                "ublock0_raymondhill_net-browser-action"
+                "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action"
+                "fxa-toolbar-menu-button"
+                "_testpilot-containers-browser-action"
+                "unified-extensions-button"
+              ];
+              toolbar-menubar = [ "menubar-items" ];
+              TabsToolbar = [
+                "tabbrowser-tabs"
+                "new-tab-button"
+                "alltabs-button"
+              ];
+              PersonalToolbar = [ "personal-bookmarks" ];
+            };
+            seen = [
+              "gdpr_cavi_au_dk-browser-action"
+              "_testpilot-containers-browser-action"
+              "_ublacklist-browser-action"
+              "ublock0_raymondhill_net-browser-action"
+              "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action"
+              "sponsorblocker_ajay_app-browser-action"
+              "developer-button"
+              "search_kagi_com-browser-action"
+              "https-everywhere_eff_org-browser-action"
+              "dearrow_ajay_app-browser-action"
+              "screenshot-button"
+            ];
+            dirtyAreaCache = [
+              "unified-extensions-area"
+              "nav-bar"
+              "toolbar-menubar"
+              "TabsToolbar"
+              "PersonalToolbar"
+              "vertical-tabs"
+            ];
+            currentVersion = 100;
+            newElementCount = 6;
+          };
 
           # Net tab page
           "browser.newtabpage.activity-stream.section.highlights.includePocket" = false;
@@ -173,43 +167,41 @@
           "services.sync.prefs.sync-seen.browser.newtabpage.activity-stream.showSponsored" = false;
           "services.sync.prefs.sync.browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
           "services.sync.prefs.sync-seen.browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
-          "browser.newtabpage.pinned" = ''
-            [
-              {
-                "url": "https://hass.dzerv.art/",
-                "label": "HASS"
-              },
-              {
-                "url": "https://search.nixos.org/packages?channel=unstable",
-                "label": "NixOS Search",
-                "customScreenshotURL": "https://search.nixos.org/images/nix-logo.png"
-              },
-              {
-                "url": "https://home-manager-options.extranix.com/?query=&release=master",
-                "label": "Home Manager Options"
-              },
-              {
-                "url": "https://hackaday.com/",
-                "label": "HackADay"
-              },
-              {
-                "url": "https://news.ycombinator.com/",
-                "label": "HackerNews"
-              },
-              {
-                "url": "https://lobste.rs",
-                "label": "Lobsters"
-              },
-              {
-                "url": "https://github.com/",
-                "label": "GitHub"
-              },
-              {
-                "url": "https://www.skroutz.gr/",
-                "label": "Skroutz"
-              }
-            ]
-          '';
+          "browser.newtabpage.pinned" = builtins.toJSON [
+            {
+              url = "https://hass.dzerv.art/";
+              label = "HASS";
+            }
+            {
+              url = "https://search.nixos.org/packages?channel=unstable";
+              label = "NixOS Search";
+              customScreenshotURL = "https://search.nixos.org/images/nix-logo.png";
+            }
+            {
+              url = "https://home-manager-options.extranix.com/?query=&release=master";
+              label = "Home Manager Options";
+            }
+            {
+              url = "https://hackaday.com/";
+              label = "HackADay";
+            }
+            {
+              url = "https://news.ycombinator.com/";
+              label = "HackerNews";
+            }
+            {
+              url = "https://lobste.rs";
+              label = "Lobsters";
+            }
+            {
+              url = "https://github.com/";
+              label = "GitHub";
+            }
+            {
+              url = "https://www.skroutz.gr/";
+              label = "Skroutz";
+            }
+          ];
         };
       };
     };

@@ -14,6 +14,7 @@ in {
     ./components/restic.nix
     ./components/secure-boot.nix
     # ./components/virtualbox.nix
+    ./components/steam.nix
   ];
 
   boot.initrd.luks.devices = {

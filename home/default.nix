@@ -59,29 +59,26 @@
       x11.defaultCursor = config.stylix.cursor.name;
     };
     packages = with pkgs; [
-      # kdePackages.filelight
-      kdePackages.kate
-      # kicad
-      inkscape-with-extensions
-      # orca-slicer libdecor
+      man-pages
 
       # TODO: cameractrls nix defined presets
       cameractrls-gtk4
-
       brightnessctl
       playerctl
+      rclone
 
       kooha # Screen recording
 
       gtk3 gtk4 # Install to fix some inconsistencies (cursor, DPI, theme, etc.)
-
       gvfs
-      (lib.mkIf isPrivate pico8)
-      (lib.mkIf isPrivate atuin-desktop)
-      (lib.mkIf isPrivate burpsuite-pro)
 
       (lib.mkIf config.setup.isLaptop powertop)
-    ];
+      # (lib.mkIf (!config.setup.isLaptop) orca-slicer)
+    ] ++ (if isPrivate then [
+      atuin-desktop
+      pico8
+    ] else []);
+
     file = {
       "${config.xdg.configHome}/katerc".source = ./katerc;
       "${config.xdg.configHome}/nixpkgs/config.nix".text = "{ allowUnfree = true; }";

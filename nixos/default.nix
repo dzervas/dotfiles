@@ -8,7 +8,6 @@
     ./display.nix
     ./network.nix
     ./nix.nix
-    ./steam.nix
     ./stylix.nix
     # ./usb-kvm.nix
     ./user.nix

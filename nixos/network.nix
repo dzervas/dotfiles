@@ -8,20 +8,7 @@
       allowedTCPPorts = [
         # Generic ports
         8181
-
-        # Steam remote-play
-        27036
-        # Steam local data transfers
-        27040
       ];
-
-      allowedUDPPorts = [
-        # Steam peer discovery
-        27036
-      ];
-
-      # Steam remote-play
-      allowedUDPPortRanges = [ { from = 27031; to = 27035; } ];
     };
   };
 
@@ -32,8 +19,6 @@
   boot.extraModulePackages = with config.boot.kernelPackages; [
     rtl88xxau-aircrack
   ];
-
-  programs.kdeconnect.enable = true;
 
   services = {
     printing = {
