@@ -54,6 +54,7 @@
   services = {
     dbus.enable = true;
     fwupd.enable = true;
+    pcscd.enable = true;
 
     # Better getty
     kmscon = {
