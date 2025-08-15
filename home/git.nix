@@ -5,6 +5,7 @@
   programs = rec {
     git = {
       enable = true;
+      lfs.enable = true;
 
       userName = "Dimitris Zervas";
       userEmail = "dzervas@dzervas.gr";

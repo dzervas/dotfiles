@@ -74,6 +74,7 @@
 
       (lib.mkIf config.setup.isLaptop powertop)
       # (lib.mkIf (!config.setup.isLaptop) orca-slicer)
+      (lib.mkIf (!config.setup.isLaptop) plasticity)
     ] ++ (if isPrivate then [
       atuin-desktop
       pico8
