@@ -78,6 +78,7 @@
     rustup
     probe-rs-tools
     watchexec
+    strace
 
     # JS
     pnpm
