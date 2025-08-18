@@ -20,7 +20,7 @@ _: {
         # To make the venv: cd ~/.binaryninja && python -m venv venv
         nativeBuildInputs = prevAttrs.nativeBuildInputs ++ [ final.kdePackages.wrapQtAppsHook ];
         buildInputs = with final; [
-          file.dev # libmagic.so
+          # file.dev # libmagic.so
           openssl.dev
 
           qt6.qtbase
@@ -35,9 +35,7 @@ _: {
           })
         ];
 
-        _settings = builtins.toJSON {
-
-        };
+        # TODO: Move the settings.json here
       });
 
       openvpn-aws = prev.openvpn.overrideAttrs (prevAttrs: {

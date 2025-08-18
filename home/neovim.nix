@@ -171,7 +171,19 @@
             tidy.enable = true; # HTML & XML
             todo_comments.enable = true; # todo comments - is it good?
             trivy.enable = true; # Terraform vulns
-            yamllint.enable = true; # Terraform vulns
+            yamllint = {
+              enable = true;
+              settings = {
+                extra_args = [
+                  "-d"
+                  (builtins.toJSON {
+                    extends = "default";
+                    rules.line-length = "disable";
+                  })
+                ];
+                extra_filetypes = ["toml"];
+              };
+            };
           };
           formatting = {
             # alejandra.enable = true; # Nix - nixfmt instead

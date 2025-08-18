@@ -83,6 +83,7 @@
     # JS
     pnpm
     nodejs
+    yarn
 
     # Cloud stuff
     argocd
