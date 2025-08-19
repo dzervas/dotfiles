@@ -49,11 +49,11 @@ for file in $FILES; do
 		fi
 
 		if [ "$NEW_URL" != "" ]; then
-			sed -Ei "${URL_NO}s|$URL|$NEW_URL|g" $file || echo "Failed to update URL"
+			sed -Ei "${URL_NO}s|$URL|$NEW_URL|g" "$file" || echo "Failed to update URL"
 		fi
 
 		if [ "$NEW_HASH" != "" ]; then
-			sed -Ei "${HASH_NO}s|$HASH|$NEW_HASH|g" $file || echo "Failed to update HASH"
+			sed -Ei "${HASH_NO}s|$HASH|$NEW_HASH|g" "$file" || echo "Failed to update HASH"
 		fi
 
 		echo

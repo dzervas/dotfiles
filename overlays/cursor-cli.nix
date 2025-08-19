@@ -1,12 +1,13 @@
-{pkgs, ...}: pkgs.stdenv.mkDerivation rec {
+# Based on https://github.com/MichaelFisher1997/cursor-cli-flake/blob/master/flake.nix
+{pkgs, ...}: pkgs.stdenv.mkDerivation {
   pname = "cursor-cli";
 
   src = pkgs.fetchurl {
-    # gha-updater: DLURL=$(curl https://cursor.com/install -fsS | rg '^DOWNLOAD_URL' | rg -o "https://.+.tar.gz") echo -n "$DLURL $(nix-prefetch-url $DLURL)"
-    url = "https://downloads.cursor.com/lab/${version}/linux/x64/agent-cli-package.tar.gz";
-    hash = "sha256-ikoxUvpLMngDOlHawq7i69mOcPGkV8q1capDU83QMWs=";
+    # gha-updater: DLURL=$(curl https://cursor.com/install -fsS | rg '^DOWNLOAD_URL' | rg -o "https://.+.tar.gz" | sed 's#\${OS}/\${ARCH}#linux/x64#') && echo -n "$DLURL $(nix-prefetch-url $DLURL)"
+    url = "https://downloads.cursor.com/lab/2025.08.15-dbc8d73/linux/x64/agent-cli-package.tar.gz";
+    sha256 = "0k44x70yk8pbykqz7v9nsq3x6jn7xiyqx744w8kc4vxvymzvvbpi";
   };
-  version = "2025.08.08-f57cb59";
+  version = "latest";
 
   nativeBuildInputs = with pkgs; [
     autoPatchelfHook
@@ -65,14 +66,13 @@
     fi
 
     runHook postInstall
-    '';
+  '';
 
   meta = with pkgs.lib; {
     description = "Cursor CLI - AI-powered code editor command line interface";
     homepage = "https://cursor.com";
     license = licenses.unfree;
     platforms = [ "x86_64-linux" "aarch64-linux" ];
-    maintainers = with maintainers; [ ];
     mainProgram = "cursor";
   };
 }
