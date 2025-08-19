@@ -45,6 +45,7 @@
   };
 
   home.packages = with pkgs; [
+    cursor-cli
     go
 
     # Nix

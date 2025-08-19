@@ -1,6 +1,7 @@
 _: {
   nixpkgs.overlays = [
     (final: prev: {
+      cursor-cli = prev.callPackage ./cursor-cli.nix {};
       opennoodl = prev.callPackage ./opennoodl.nix {};
       buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
       pico8 = prev.callPackage ./pico8.nix {};
