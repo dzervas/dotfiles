@@ -66,10 +66,11 @@
 
       ignores = [
         "*~"
-          "*.swp"
-          ".envrc"
-          ".direnv"
-          ".shell.nix"
+        "*.swp"
+        ".envrc"
+        ".direnv"
+        ".shell.nix"
+        ".claude"
       ];
     };
 

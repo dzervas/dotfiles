@@ -14,7 +14,7 @@
 
   systemd.services.NetworkManager-wait-online.enable = false;
 
-  time.timeZone = "Europe/London";
+  time.timeZone = "Europe/Athens";
 
   boot.extraModulePackages = with config.boot.kernelPackages; [
     rtl88xxau-aircrack
