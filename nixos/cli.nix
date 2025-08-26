@@ -31,8 +31,6 @@
     unzip
     usbutils
     wget
-
-    openvpn-aws
   ];
 
   # Set fish as the default shell

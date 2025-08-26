@@ -47,6 +47,7 @@
 
   home.packages = with pkgs; [
     cursor-cli
+    codex
     go
 
     # Nix

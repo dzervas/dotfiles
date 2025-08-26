@@ -38,8 +38,6 @@ _: {
 
         # TODO: Move the settings.json here
       });
-
-      openvpn-aws = import ./openvpn-aws final prev;
     })
   ];
 }
