@@ -100,6 +100,7 @@
     })
     oci-cli
     terraform
+    k2tf
 
     foundry
   ];

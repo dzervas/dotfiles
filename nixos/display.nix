@@ -10,16 +10,17 @@
   ];
 
   services = {
-    logind = {
-      lidSwitch = "suspend-then-hibernate";
-      lidSwitchDocked = "suspend-then-hibernate";
-      lidSwitchExternalPower = "suspend-then-hibernate";
-      extraConfig = ''
-        IdleAction=lock
-        IdleActionSec=5m
-        LidSwitchIgnoreInhibited=yes
-        HibernateDelaySec=3600
-      '';
+    logind.settings.Login = {
+      IdleAction = "lock";
+      IdleActionSec = "5m";
+
+      HibernateDelaySec = 3600;
+      KillUserProcesses = true;
+
+      LidSwitchIgnoreInhibited = true;
+      HandleLidSwitch = "suspend-then-hibernate";
+      HandleLidSwitchDocked = "suspend-then-hibernate";
+      HandleLidSwitchExternalPower = "suspend-then-hibernate";
     };
 
     # FlatPak
