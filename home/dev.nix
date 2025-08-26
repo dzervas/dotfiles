@@ -45,6 +45,49 @@
 
     claude-code = {
       enable = true;
+      mcpServers = {
+        binaryninja = {
+          command = "python";
+          args = [
+            "/home/dzervas/.binaryninja/repositories/community/plugins/fosdickio_binary_ninja_mcp/bridge/binja_mcp_bridge.py"
+          ];
+          env = {};
+        };
+        grafana = {
+          command = "op";
+          args = [
+            "run" "--"
+            "podman" "run"
+            "--rm" "-i"
+            "-e" "GRAFANA_URL"
+            "-e" "GRAFANA_API_KEY"
+            "mcp/grafana"
+            "-t" "stdio"
+          ];
+          env = {
+            GRAFANA_URL = "op://Sites/Grafana/website";
+            GRAFANA_API_KEY = "op://Sites/Grafana/api-key";
+          };
+        };
+        n8n = {
+          command = "op";
+          args = [
+            "run" "--"
+            "podman" "run"
+            "--rm" "-i" "--init"
+            "-e" "MCP_MODE=stdio"
+            "-e" "LOG_LEVEL=error"
+            "-e" "DISABLE_CONSOLE_OUTPUT=true"
+            "-e" "N8N_API_URL"
+            "-e" "N8N_API_KEY"
+            "ghcr.io/czlonkowski/n8n-mcp:latest"
+          ];
+          env = {
+            N8N_API_URL = "op://Sites/N8n/website";
+            N8N_API_KEY = "op://Sites/N8n/api-key";
+          };
+        };
+      };
     };
   };
 
@@ -74,6 +117,7 @@
       frida-python
 
       pip magic # BinaryNinja needs these
+      mcp # AI
     ]))
     uv
 
@@ -88,7 +132,7 @@
     # JS
     pnpm
     nodejs
-    yarn
+    yarn-berry
 
     # Cloud stuff
     argocd
@@ -102,6 +146,8 @@
     })
     oci-cli
     terraform
+
+    foundry
   ];
 
   home.sessionPath = [ "$HOME/.krew/bin" ];

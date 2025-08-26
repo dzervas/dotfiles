@@ -131,7 +131,7 @@ in {
         "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002445, highrr, 0x0,              1,    vrr, 1"
         "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002448, highrr, auto-right,       1,    vrr, 1"
         "desc:BOE NE135A1M-NY1,                                highrr, 0x0,              1.67, vrr, 1" # Built-in monitor
-        "DP-3,                                                 highrr, auto-center-up,   1,    vrr, 1"
+        # "DP-3,                                                 highrr, auto-center-up,   1,    vrr, 1"
         ", preferred, auto, 1" # Rule for additional monitors
       ];
 

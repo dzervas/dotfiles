@@ -1,7 +1,7 @@
 { config, pkgs, ... }: {
   imports = [
     ./1password.nix
-    #./apparmor.nix
+    ./apparmor.nix
     ./bluetooth.nix
     ./cli.nix
     ./ddc-ci.nix

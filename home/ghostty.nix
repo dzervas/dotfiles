@@ -13,6 +13,10 @@
       font-size = config.stylix.fonts.sizes.terminal;
       gtk-single-instance = true;
       shell-integration-features = "no-cursor"; # Fish sets cursor as bar
+
+      keybind = [
+        "shift+enter=text:\n" # Claude Code fix
+      ];
     };
   };
 
