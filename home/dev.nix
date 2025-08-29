@@ -102,6 +102,7 @@
     oci-cli
     terraform
     k2tf
+    # hurl
 
     foundry
   ];

@@ -276,7 +276,7 @@
       };
       dap-python.enable = true;
       dap-virtual-text.enable = true;
-      dap-view.enable = true;
+      dap-ui.enable = true;
 
       rustaceanvim.enable = true;
       lspconfig.enable = true;
