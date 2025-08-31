@@ -2,7 +2,20 @@ _: {
   programs.ssh = {
     enable = true;
     includes = ["~/.ssh/local.ssh.cfg"];
+    enableDefaultConfig = false;
     matchBlocks = rec {
+      "*" = {
+        addKeysToAgent = "no";
+        compression = false;
+        controlMaster = "no";
+        controlPersist = "no";
+        forwardAgent = false;
+        hashKnownHosts = false;
+        serverAliveInterval = 60;
+        serverAliveCountMax = 30;
+        userKnownHostsFile = "~/.ssh/known_hosts";
+      };
+
       # Aliases
       gh = {
         hostname = "github.com";

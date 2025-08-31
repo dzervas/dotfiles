@@ -103,6 +103,7 @@
     terraform
     k2tf
     # hurl
+    openssl
 
     foundry
   ];
