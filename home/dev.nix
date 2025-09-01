@@ -102,7 +102,8 @@
     oci-cli
     terraform
     k2tf
-    # hurl
+    hurl
+    # krr
     openssl
 
     foundry
