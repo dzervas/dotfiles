@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ inputs, pkgs, ... }: {
   programs = {
     awscli.enable = true;
     claude-code.enable = true;
@@ -46,6 +46,7 @@
   };
 
   home.packages = with pkgs; [
+    inputs.claude-desktop.packages.${pkgs.system}.claude-desktop-with-fhs
     cursor-cli
     codex
     go

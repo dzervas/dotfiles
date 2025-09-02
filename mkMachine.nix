@@ -32,6 +32,7 @@
             sharedModules = [
               inputs.flatpak.homeManagerModules.nix-flatpak
               inputs.nixvim.homeModules.nixvim
+              inputs.nix-private.homeModules.private
             ];
           };
         };
@@ -50,7 +51,7 @@
       (if (hostName != "iso") then inputs.lanzaboote.nixosModules.lanzaboote else {})
 
       (if isPrivate then
-        builtins.trace "🔐 Private submodule build" ./home/.private
+        builtins.trace "🔐 Private submodule build" {}
       else
         builtins.trace "📢 Public build" {})
     ];

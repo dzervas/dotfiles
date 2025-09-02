@@ -1,16 +1,16 @@
 {
   description = "NixOS configuration flake";
 
-  outputs = { nixpkgs, flake-utils, nixvim, ... }@inputs: let
+  outputs = { nixpkgs, flake-utils, nixvim, nix-private, ... }@inputs: let
     inherit (nixpkgs) lib;
     inherit (flake-utils.lib) eachDefaultSystemPassThrough mkApp;
 
     # "Private build" mode. If enabled the private nix files will be used.
     # Disabled to be able to build the ISO and initial installation
-    isPrivate = builtins.pathExists ./home/.private/default.nix;
+    inherit (nix-private) isPrivate;
     desktop = "hyprland";
 
-    inherit (import ./mkMachine.nix { inherit inputs lib desktop nixpkgs; }) mkMachine mkHome mkShellApp;
+    inherit (import ./mkMachine.nix { inherit inputs lib desktop nixpkgs; }) mkMachine mkShellApp;
   in rec {
     # System definition
     # If you're here to check how to make your own flake for nixos, only the following matters
@@ -23,12 +23,6 @@
 
     # Helper to be able to do `nix build .#iso`
     iso = nixosConfigurations.iso.config.system.build.isoImage;
-
-    # Standalone home manager configuration to be able to avoid whole system rebuild
-    # homeConfigurations = {
-    #   "dzervas@desktop" = mkHome { inherit isPrivate; hostName = "desktop"; stateVersion = "24.11"; };
-    #   "dzervas@laptop" = mkHome { inherit isPrivate; hostName = "laptop"; stateVersion = "25.05"; };
-    # };
 
     # Some additional apps to run directly with `nix run github:dzervas/dotfiles#<app>`
     # If you're browsing flake configs, you should probably skip the whole `apps` variable,
@@ -100,6 +94,15 @@
     nixvim.url = "github:nix-community/nixvim";
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
 
+    claude-desktop = {
+      url = "github:k3d3/claude-desktop-linux-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
+    nix-private.url = "path:.github/dummy";
+    nix-private.inputs.nixpkgs.follows = "nixpkgs";
+
     # HyprLand
     hyprland.url = "github:hyprwm/Hyprland";
     hyprland-plugins.url = "github:hyprwm/hyprland-plugins";
@@ -127,4 +130,6 @@
       # inputs.home-manager.follows = "home-manager";
     # };
   };
+
+  nixConfig.ssh-auth-sock = "env:SSH_AUTH_SOCK";
 }

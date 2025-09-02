@@ -42,6 +42,7 @@
         "application/x-extension-xhtml" = browser;
         "application/x-extension-xht" = browser;
         "application/x-xdg-protocol-tg" = "Telegram.desktop";
+        "application/x-xdg-protocol-slack" = "Slack.desktop";
         "application/rdf+xml" = browser;
         "application/rss+xml" = browser;
         "application/xhtml+xml" = browser;

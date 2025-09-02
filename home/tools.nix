@@ -1,4 +1,4 @@
-{ isPrivate, pkgs, ... }: {
+{ pkgs, ... }: {
   home.packages = with pkgs; [
     aircrack-ng
     android-tools
@@ -23,8 +23,5 @@
     wirelesstools
     wpscan
     xh
-
-    (lib.mkIf isPrivate burpsuite-pro)
-    (lib.mkIf isPrivate binaryninja)
   ];
 }
