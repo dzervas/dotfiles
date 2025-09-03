@@ -72,8 +72,10 @@
       gtk3 gtk4 # Install to fix some inconsistencies (cursor, DPI, theme, etc.)
       gvfs
 
+      trilium-desktop
+
       (lib.mkIf config.setup.isLaptop powertop)
-      # (lib.mkIf (!config.setup.isLaptop) orca-slicer)
+      (lib.mkIf (!config.setup.isLaptop) bambu-studio)
       (lib.mkIf (!config.setup.isLaptop) plasticity)
     ];
 
