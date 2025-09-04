@@ -71,6 +71,8 @@
         ".direnv"
         ".shell.nix"
         ".claude"
+        ".claude.json"
+        ".mcp.json"
       ];
     };
 

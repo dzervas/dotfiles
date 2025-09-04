@@ -1,4 +1,6 @@
-{ inputs, pkgs, ... }: {
+{ inputs, pkgs, ... }: let
+  tools = mcp: tools: builtins.map(t: "mcp__${mcp}__${t}") tools;
+in {
   home.packages = with pkgs; [
     inputs.claude-desktop.packages.${pkgs.system}.claude-desktop-with-fhs
     cursor-cli
@@ -32,7 +34,56 @@
           "Bash(yarn test)"
 
           "WebSearch"
+          "WebFetch(domain:docs.rs)"
           "WebFetch(domain:hurl.dev)"
+          "WebFetch(domain:registry.terraform.io)"
+
+          (tools "grafana" [
+            "find_error_pattern_logs"
+            "find_slow_requests"
+            "fetch_pyroscope_profile"
+
+            "get_alert_rule_by_uid"
+            "get_dashboard_by_uid"
+            "get_dashboard_panel_queries"
+            "get_dashboard_property"
+            "get_dashboard_summary"
+            "get_datasource_by_uid"
+            "get_datasource_by_name"
+            "get_incident"
+            "get_oncall_shift"
+            "get_current_oncall_users"
+            "get_sift_investigation"
+            "get_sift_analysis"
+            "get_assertions"
+            "generate_deeplink"
+
+            "list_alert_rules"
+            "list_contact_points"
+            "list_datasources"
+            "list_loki_label_names"
+            "list_loki_label_values"
+            "list_oncall_schedules"
+            "list_oncall_teams"
+            "list_oncall_users"
+            "list_prometheus_metric_metadata"
+            "list_prometheus_metric_names"
+            "list_prometheus_label_names"
+            "list_prometheus_label_values"
+            "list_prometheus_label_values"
+            "list_pyroscope_label_names"
+            "list_pyroscope_label_values"
+            "list_pyroscope_profile_types"
+            "list_sift_investigations"
+            "list_teams"
+            "list_users_by_org"
+
+            "query_loki_logs"
+            "query_loki_stats"
+            "query_prometheus"
+
+            "search_dashboards"
+          ])
         ];
         ask = [
           "Bash(git commit:*)"
