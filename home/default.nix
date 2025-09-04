@@ -1,6 +1,7 @@
-{ config, isPrivate, pkgs, ... }: {
+{ config, pkgs, ... }: {
   imports = [
     ./1password.nix
+    ./ai.nix
     ./atuin.nix
     ./chromium.nix
     ./dev.nix

@@ -1,7 +1,6 @@
-{ inputs, pkgs, ... }: {
+{ pkgs, ... }: {
   programs = {
     awscli.enable = true;
-    claude-code.enable = true;
     poetry.enable = true;
     pyenv.enable = true;
     kubecolor = {
@@ -46,9 +45,6 @@
   };
 
   home.packages = with pkgs; [
-    inputs.claude-desktop.packages.${pkgs.system}.claude-desktop-with-fhs
-    cursor-cli
-    codex
     go
 
     # Nix
@@ -107,7 +103,7 @@
     # krr
     openssl
 
-    foundry
+    foundry # cast eth chain testing tool
   ];
 
   home.sessionPath = [ "$HOME/.krew/bin" ];

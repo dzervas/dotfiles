@@ -6,11 +6,16 @@ on:
   schedule:
     - cron: '10 0 * * *'
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   update:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
 
     steps:
       - name: Checkout repository
@@ -47,6 +52,16 @@ jobs:
         # If there are dirty files, build the iso
         run: git diff-files --quiet || nix build .#nixosConfigurations.iso.config.system.build.isoImage
 
+      - name: Generate tag name
+        id: tag
+        run: echo "name=$(ls result/iso/ | sed -E 's/.*\.([[:alnum:]]+)\.iso$/iso-\1/')" >> $GITHUB_OUTPUT
+
+      - uses: oras-project/setup-oras@v1
+      - run: |
+          git diff-files --quiet && exit 0
+          cd result/iso
+          oras login ghcr.io -u github -p ${{ secrets.GITHUB_TOKEN }}
+          oras push ghcr.io/${{ github.repository }}/nixos-iso:${{ steps.tag.outputs.name }},latest ./*.iso
 
       - name: Commit and push changes
         # If there are no dirty files, don't commit anything
@@ -58,3 +73,6 @@ jobs:
           find . -name '*.nix' -print0 | xargs -0 git add
           git commit -m "Update flake.lock"
           git push
+
+      # Let gh cache as the created files are not owned by us
+      - run: sudo chmod -R 777 /nix

@@ -56,14 +56,66 @@ function use_op() {
 	done
 
 	for s in $section; do
-		local vault=$(echo $s | cut -d/ -f1)
-		local item=$(echo $s | cut -d/ -f2)
-		local label=$(echo $s | cut -d/ -f3 | cut -d'#' -f1)
-		local prefix=$(echo $s | cut -d'#' -f2)
+		local vault="$(echo $s | cut -d/ -f1)"
+		local item="$(echo $s | cut -d/ -f2)"
+		local label="$(echo $s | cut -d/ -f3 | cut -d'#' -f1)"
+		local prefix="$(echo $s | cut -d'#' -f2)"
 		prefix=${prefix:-""}
 
-		local data=$(op item get $item --vault $vault --format json | jq -c)
+		local data="$(op item get $item --vault $vault --format json | jq -c)"
 
 		eval "$(echo $data | jq -r '.fields[] | select(.section.label == "'$label'") | "export '$prefix'\(.label)=\"\(.value)\"; "')"
 	done
+}
+
+# direnv: Load MCP servers for Claude Code
+# Usage: use_mcp <server1> [server2] [server3] ...
+# 
+# Example:
+#   use_mcp filesystem brave-search
+#   This will create an alias for claude that includes the specified MCP servers
+function use_mcp() {
+	if test "$#" -eq 0; then
+		echo "mcp: No servers specified. Usage: use_mcp <server1> [server2] ..."
+		return
+	fi
+	
+	if test ! -f "$HOME/mcp.yaml"; then
+		echo "mcp: Error - $HOME/mcp.yaml not found"
+		return
+	fi
+	
+	if ! command -v yq &> /dev/null; then
+		echo "mcp: Error - yq command not found"
+		return
+	fi
+	
+	echo "mcp: Adding MCP servers: $*"
+	
+	local mcp_config=""
+	
+	for server in "$@"; do
+		# Check if the server exists in the YAML file
+		if ! yq eval ".mcpServers | has(\"$server\")" "$HOME/mcp.yaml" | grep -q "true"; then
+			echo "mcp: Warning - server '$server' not found in mcp.yaml"
+			continue
+		fi
+		
+		# Extract the server configuration and convert to JSON
+		local server_config=$(yq eval ".mcpServers.$server" "$HOME/mcp.yaml" -o json)
+		
+		if test -n "$mcp_config"; then
+			mcp_config="$mcp_config,$server_config"
+		else
+			mcp_config="$server_config"
+		fi
+	done
+	
+	if test -n "$mcp_config"; then
+		# Wrap the servers in a proper JSON object
+		local full_config="{\"mcpServers\":{$mcp_config}}"
+		eval "alias claude='claude --mcp-config <(echo '\''$full_config'\'')'"
+	else
+		echo "mcp: No valid servers found"
+	fi
 }
