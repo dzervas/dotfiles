@@ -32,6 +32,7 @@ in {
           "Bash(hurl:*)"
           "Bash(nix run .)"
           "Bash(yarn test)"
+          "Bash(statix check:*)"
 
           "WebSearch"
           "WebFetch(domain:docs.rs)"

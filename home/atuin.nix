@@ -76,4 +76,17 @@ in {
       LockPersonality = true;
     };
   };
+
+  # Fix atuin-daemon connectivity after suspend/resume
+  systemd.user.services."atuin-daemon-resume" = {
+    Unit = {
+      Description = "Restart atuin-daemon after resume";
+      After = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
+    };
+    Install.WantedBy = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.systemd}/bin/systemctl --user restart atuin-daemon.service";
+    };
+  };
 }

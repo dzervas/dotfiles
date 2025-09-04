@@ -37,4 +37,15 @@
       openFirewall = true;
     };
   };
+
+  # Fix Tailscale connectivity after suspend/resume
+  systemd.services."tailscale-resume" = {
+    description = "Restart Tailscale after resume";
+    after = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
+    wantedBy = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.systemd}/bin/systemctl restart tailscaled.service";
+    };
+  };
 }
