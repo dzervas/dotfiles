@@ -56,7 +56,6 @@
       clangd.enable = true;
       gopls.enable = true;
       ruff.enable = true;
-      rust_analyzer.enable = true;
 
       # Web dev
       astro = {
@@ -278,7 +277,10 @@
       dap-virtual-text.enable = true;
       dap-ui.enable = true;
 
-      rustaceanvim.enable = true;
+      rustaceanvim = {
+        enable = true;
+        settings.server.default_settings.rust-analyzer.cargo.targetDir = "target/lsp";
+      };
       lspconfig.enable = true;
 
       telescope = {
@@ -425,7 +427,7 @@
       neo-tree = {
         enable = true;
         addBlankLineAtTop = true;
-        closeIfLastWindow = true;
+        # closeIfLastWindow = true;
 
         buffers.followCurrentFile.leaveDirsOpen = true;
 
