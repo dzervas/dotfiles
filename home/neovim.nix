@@ -55,8 +55,8 @@
       # Dev
       clangd.enable = true;
       gopls.enable = true;
-      ruff.enable = true;
-      rust_analyzer.enable = true;
+      pyright.enable = true;  # Full Python language server
+      ruff.enable = true;     # Python linter/formatter
 
       # Web dev
       astro = {
@@ -278,7 +278,10 @@
       dap-virtual-text.enable = true;
       dap-ui.enable = true;
 
-      rustaceanvim.enable = true;
+      rustaceanvim = {
+        enable = true;
+        settings.server.default_settings.rust-analyzer.cargo.targetDir = "target/lsp";
+      };
       lspconfig.enable = true;
 
       telescope = {
@@ -425,7 +428,7 @@
       neo-tree = {
         enable = true;
         addBlankLineAtTop = true;
-        closeIfLastWindow = true;
+        # closeIfLastWindow = true;
 
         buffers.followCurrentFile.leaveDirsOpen = true;
 
@@ -459,6 +462,12 @@
         command = "setlocal ts=2 sts=2 sw=2 expandtab";
         event = "FileType";
         pattern = builtins.concatStringsSep "," ["nix" "hcl" "tf" "yml" "yaml"];
+      }
+      {
+        desc = "Rust-specific keymaps for rustaceanvim";
+        command = "lua vim.keymap.set('n', '<C-.>', function() vim.cmd.RustLsp('codeAction') end, { silent = true, buffer = true })";
+        event = "FileType";
+        pattern = "rust";
       }
     ];
 
@@ -511,7 +520,13 @@
       { key = "<leader>f"; action = "<CMD>Neotree toggle<CR>"; }
       { key = "<leader>F"; action = "<CMD>Neotree reveal<CR>"; }
 
-      # Show code actions
+      # LSP navigation and actions
+      { key = "K"; action = "<CMD>lua vim.lsp.buf.hover()<CR>"; }
+      { key = "gd"; action = "<CMD>lua vim.lsp.buf.definition()<CR>"; }
+      { key = "gD"; action = "<CMD>lua vim.lsp.buf.declaration()<CR>"; }
+      { key = "gi"; action = "<CMD>lua vim.lsp.buf.implementation()<CR>"; }
+      { key = "gr"; action = "<CMD>lua vim.lsp.buf.references()<CR>"; }
+      { key = "<C-]>"; action = "<CMD>lua vim.lsp.buf.definition()<CR>"; }
       { key = "<C-.>"; action = "<CMD>lua vim.lsp.buf.code_action()<CR>"; }
       { key = "<leader>w"; action = "<CMD>lua vim.lsp.buf.format({ async = false })<CR>"; }
 

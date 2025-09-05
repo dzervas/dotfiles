@@ -36,10 +36,11 @@ in {
 
           "WebSearch"
           "WebFetch(domain:docs.rs)"
+          "WebFetch(domain:github.com)"
+          "WebFetch(domain:nix-community.github.io)"
           "WebFetch(domain:hurl.dev)"
           "WebFetch(domain:registry.terraform.io)"
-
-          (tools "grafana" [
+        ] ++ (tools "grafana" [
             "find_error_pattern_logs"
             "find_slow_requests"
             "fetch_pyroscope_profile"
@@ -84,8 +85,7 @@ in {
             "query_prometheus"
 
             "search_dashboards"
-          ])
-        ];
+          ]);
         ask = [
           "Bash(git commit:*)"
           "Bash(git push:*)"
