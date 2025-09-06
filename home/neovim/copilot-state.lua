@@ -43,47 +43,6 @@ function M.is_copilot_enabled_for_buffer()
   return vim.b.copilot_enabled == true
 end
 
-function M.setup_copilot()
-  local ok, copilot = pcall(require, "copilot")
-  if ok then
-    copilot.setup({
-      suggestion = { auto_trigger = true }
-    })
-    return true
-  end
-  return false
-end
-
-function M.enable_copilot_temporarily()
-  if M.setup_copilot() then
-    vim.notify("Copilot enabled temporarily for this session", vim.log.levels.INFO)
-  else
-    vim.notify("Copilot not available", vim.log.levels.WARN)
-  end
-end
-
-function M.enable_copilot_for_buffer()
-  vim.b.copilot_enabled = true
-  if M.setup_copilot() then
-    vim.notify("Copilot enabled for current buffer", vim.log.levels.INFO)
-  else
-    vim.notify("Copilot not available", vim.log.levels.WARN)
-  end
-end
-
-function M.enable_copilot_for_project()
-  local project_root = M.get_project_root()
-  local state = M.load_copilot_state()
-  state.projects[project_root] = true
-  M.save_copilot_state(state)
-
-  if M.setup_copilot() then
-    vim.notify("Copilot enabled and saved for project: " .. project_root, vim.log.levels.INFO)
-  else
-    vim.notify("Copilot not available", vim.log.levels.WARN)
-  end
-end
-
 function M.show_copilot_enable_menu()
   vim.ui.select(
     {
@@ -98,13 +57,16 @@ function M.show_copilot_enable_menu()
       end,
     },
     function(choice, idx)
-      if idx == 1 then
-        M.enable_copilot_temporarily()
-      elseif idx == 2 then
-        M.enable_copilot_for_buffer()
+      if idx == 2 then
+        vim.b.copilot_enabled = true
       elseif idx == 3 then
-        M.enable_copilot_for_project()
+        local project_root = M.get_project_root()
+        local state = M.load_copilot_state()
+        state.projects[project_root] = true
+        M.save_copilot_state(state)
       end
+
+      vim.cmd("Copilot enable")
     end
   )
 end
@@ -115,9 +77,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
     vim.defer_fn(function()
       local project_root = M.get_project_root()
       if M.is_copilot_enabled_for_project(project_root) then
-        if M.setup_copilot() then
-          vim.notify("Copilot auto-enabled for project: " .. vim.fn.fnamemodify(project_root, ":t"), vim.log.levels.INFO)
-        end
+        vim.notify("Copilot enabled for the project")
+        vim.cmd("Copilot enable")
       end
     end, 100) -- Delay to allow plugins to load
   end,
@@ -127,7 +88,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
 vim.api.nvim_create_autocmd("BufEnter", {
   callback = function()
     if M.is_copilot_enabled_for_buffer() then
-      M.setup_copilot()
+        vim.notify("Copilot enabled for the buffer")
+        vim.cmd("Copilot enable")
     end
   end,
 })

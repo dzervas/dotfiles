@@ -37,7 +37,7 @@
         # that we then pass to mkApp - but with the correct binary name
         nvim = let
           # Import the config file - just like home-manager expects it
-          nixvimConfigFile = import ./home/neovim.nix { inherit pkgs; };
+          nixvimConfigFile = import ./home/neovim { inherit pkgs; };
           # Pull out only the nixvim config (not home.* or whatever)
           nixvimConfigFull = nixvimConfigFile.programs.nixvim;
           # The "standalone" mode nixvim doesn't have some keys so we filter them out
