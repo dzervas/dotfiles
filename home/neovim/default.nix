@@ -1,12 +1,10 @@
-{ config, lib, pkgs, ... }: {
+{ lib, pkgs, ... }: {
 # Issues:
 # - Run python script with args/env (nvim-iron?)
 # - Set up nvim-neotest
 # - Better git diff view when `:G d`
 # - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
 # - Command to edit nix/neovim config
-# - rebuild command
-# - Restart with the same buffers/state
 # - vscode-like runner (run this test/function/etc.)
 # - Fix right-click menu
 # - v within floaterm uses the floaterm command instead
@@ -126,7 +124,6 @@
             fish.enable = true;
             ltrs.enable = true; # Rust
             markdownlint.enable = true;
-            mypy.enable = true;
             # opentofu_validate.enable = true; # Fights with terraform_validate
             pylint.enable = true;
             revive.enable = true; # Golang
@@ -232,6 +229,19 @@
       dap-python.enable = true;
       dap-virtual-text.enable = true;
       dap-ui.enable = true;
+
+      # Python interactive development
+      molten = {
+        enable = true;
+        settings = {
+          auto_image_popup = true;
+          auto_init_behavior = "init";
+          auto_open_output = true;
+          output_win_max_height = 20;
+          enter_output_behavior = "open_and_enter";
+          tick_time = 150;
+        };
+      };
 
       lspconfig.enable = true;
 
@@ -382,6 +392,16 @@
       { key = "<C-BS>"; action = "<C-w>"; mode = "i"; }
       { key = "<C-BS>"; action = "<C-w>"; mode = "c"; }
       { key = "<C-BS>"; action = "<C-w>"; mode = "t"; }
+
+      # Python development - Molten (Jupyter-like)
+      { key = "<leader>pi"; action = "<CMD>MoltenInit python3<CR>"; }
+      { key = "<leader>pe"; action = "<CMD>MoltenEvaluateOperator<CR>"; }
+      { key = "<leader>pl"; action = "<CMD>MoltenEvaluateLine<CR>"; }
+      { key = "<leader>pr"; action = "<CMD>MoltenReevaluateCell<CR>"; }
+      { key = "<leader>pv"; action = ":<C-u>MoltenEvaluateVisual<CR>gv"; mode = "v"; }
+      { key = "<leader>ph"; action = "<CMD>MoltenHideOutput<CR>"; }
+      { key = "<leader>ps"; action = "<CMD>MoltenShowOutput<CR>"; }
+      { key = "<leader>pd"; action = "<CMD>MoltenDelete<CR>"; }
     ];
 
     extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ];

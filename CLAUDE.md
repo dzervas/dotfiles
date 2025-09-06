@@ -33,7 +33,7 @@ This is a comprehensive NixOS dotfiles configuration using Nix Flakes. The syste
 ### Key Technologies
 - **Primary DE**: Hyprland (Wayland compositor) with Waybar, rofi, swaylock
 - **Shell**: Fish with custom functions in `home/fish-functions/`
-- **Editor**: Neovim configured via NixVim
+- **Editor**: Neovim configured via NixVim with comprehensive LSP, AI assistance, and development tools
 - **Storage**: BTRFS with compression, deduplication, snapshots
 - **Security**: Secure boot (lanzaboote), LUKS encryption, AppArmor
 - **Theming**: Stylix with Rose Pine theme
@@ -63,10 +63,50 @@ The system supports private configuration modules via `nix-private` input, with 
 - **1Password**: System-wide integration requiring `/etc/opnix.env` setup
 - **AppArmor**: Security profiles enabled system-wide
 
+## NixVim Editor Configuration
+
+The Neovim configuration is fully declarative via NixVim and split across multiple modules:
+
+### Core Configuration (`home/neovim/default.nix`)
+- **LSP Servers**: Comprehensive language server support for DevOps (Ansible, Bash, Docker, Helm, Nix, Terraform), Development (C/C++, Go, Python, Rust), and Web (Astro, CSS, HTML, TypeScript, Tailwind)
+- **Completion**: blink-cmp with intelligent Tab behavior that integrates with Copilot suggestions
+- **Debugging**: DAP support with Python and Rust debugging capabilities
+- **Formatting/Linting**: none-ls integration with extensive formatters and linters
+- **Key Features**: Tree-sitter syntax highlighting, auto-pairs, surround editing, multicursors, fuzzy finding via Telescope
+
+### AI Assistant Integration (`home/neovim/ai.nix`)
+- **GitHub Copilot**: Smart project/buffer-level enablement with custom management system
+- **Avante**: AI chat interface with Claude integration for code assistance
+- **Custom Keybindings**: `<leader>cc` for Copilot management, `<leader>at/aa` for Avante
+
+### UI Enhancements (`home/neovim/ui.nix`)
+- **Buffer Management**: BufferLine with diagnostics and slanted separators
+- **Status Line**: Lualine with Copilot status indicator and relative file paths
+- **Enhanced UI**: Noice for better command line and LSP progress, Trouble for diagnostics
+- **Navigation**: Telescope with fzf, zoxide, and undo tree integration
+
+### Rust Development (`home/neovim/rust.nix`)
+- **Rustaceanvim**: Advanced Rust development with dedicated LSP target directory
+- **Debugging**: LLDB integration via dap-lldb
+- **Custom Formatting**: Hard tabs, 4-space width, 100-character line limit
+
+### Key Bindings
+- **Buffer Navigation**: Alt+Number (1-9) for direct buffer access, Alt+Left/Right for cycling
+- **Window Management**: Alt+Up/Down for window navigation, Alt+Enter for splits
+- **Terminal**: Alt+Esc for floating terminal toggle
+- **File Operations**: Leader+f/F for file tree, Alt+f for fuzzy file finding
+- **LSP Actions**: F2 for rename, Ctrl+. for code actions, K for hover, gd for definition
+
 ## Development Guidelines
 
 ### Shell Scripting
 Prefer Fish shell for interactive scripts over Bash. Custom Fish functions are located in `home/fish-functions/` and provide better integration with the NixOS environment.
+
+### Neovim Development
+- Configuration is split across modular files in `home/neovim/`
+- Custom Copilot management system provides project-specific AI assistance control
+- LSP and formatting tools are extensively configured for consistent code quality
+- Rust development includes specialized tooling with separate build targets for LSP performance
 
 ### Pre-commit Hooks
 The repository includes statix linting that runs automatically on commits. The hook is documented in the README and checks all Nix code for quality issues.
