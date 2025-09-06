@@ -1,9 +1,7 @@
-{ lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
 # Issues:
 # - Run python script with args/env (nvim-iron?)
 # - Set up nvim-neotest
-# - Set up nvim-dap
-# - Copilot save per folder/git?
 # - Better git diff view when `:G d`
 # - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
 # - Command to edit nix/neovim config
@@ -22,6 +20,12 @@
 # - Telescope fuzzy finder
 # - blink-cmp fix cmdline and disable on treesitter-rename
 # - Set up kagi search with avante - https://github.com/yetone/avante.nvim?tab=readme-ov-file#web-search-engines
+
+  imports = [
+    ./ai.nix
+    ./rust.nix
+    ./ui.nix
+  ];
 
   programs.nixvim = {
     enable = true;
@@ -75,42 +79,6 @@
       # Git helper
       fugitive.enable = true;
       gitsigns.enable = true;
-
-      # Buffer view helpers
-      bufferline = {
-        enable = true;
-        settings = {
-          options = {
-            always_show_bufferline = false; # When there's 1 buffer, don't show the bufferline
-            diagnostics = "nvim_lsp"; # Show LSP diagnostics
-            separator_style = "slant"; # Slanted separators
-          };
-        };
-      };
-      lualine = {
-        enable = true;
-        settings = {
-          options.globalstatus = true;
-          sections = {
-            lualine_c = [{
-              __unkeyed-1 = "filename";
-              path = 1; # Relative path
-            }];
-            lualine_z = lib.mkAfter [{
-              __unkeyed-1.__raw = ''
-                function()
-                  if package.loaded["copilot"] == nil then
-                    return "";
-                  end
-                  -- TODO: Check if copilot is actually enabled
-                  return " "
-                end
-              '';
-              color.fg = "#ffffff";
-            }];
-          };
-        };
-      };
       illuminate.enable = true;
       repeat.enable = true;
 
@@ -217,15 +185,6 @@
       };
 
       # Auto completion
-      trouble = {
-        # Better code diagnostics
-        enable = true;
-        settings = {
-          auto_close = true;
-          auto_preview = true;
-          focus = true;
-        };
-      };
       blink-cmp = {
         enable = true;
         setupLspCapabilities = true;
@@ -270,40 +229,11 @@
         enable = true;
         # TODO: Signs https://nix-community.github.io/nixvim/search/?option_scope=0&option=plugins.dap.signs.dapBreakpoint.text&query=dap.
       };
-      dap-lldb = {
-        enable = true;
-        settings.codelldb_path = "${pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter}/bin/codelldb";
-      };
       dap-python.enable = true;
       dap-virtual-text.enable = true;
       dap-ui.enable = true;
 
-      rustaceanvim = {
-        enable = true;
-        settings.server.default_settings.rust-analyzer.cargo.targetDir = "target/lsp";
-      };
       lspconfig.enable = true;
-
-      telescope = {
-        enable = true;
-        # TODO: Lazy load
-        keymaps = {
-          "<A-f>" = "find_files";
-          "<A-j>" = "lsp_document_symbols";
-          "<A-r>" = "commands";
-          "<A-z>" = "zoxide list";
-          "<A-Tab>" = "buffers";
-          "<C-F>" = "live_grep";
-          "<C-Z>" = "undo";
-        };
-
-        extensions = {
-          fzf-native.enable = true;
-          zoxide.enable = true;
-          ui-select.enable = true;
-          undo.enable = true;
-        };
-      };
 
       treesitter = {
         enable = true;
@@ -343,82 +273,6 @@
       };
 
       nvim-autopairs.enable = true;
-      copilot-lua = {
-        enable = true;
-
-        lazyLoad = {
-          enable = true;
-          settings = {
-            cmd = "Copilot";
-            keys = [{
-              __unkeyed-1 = "<leader>cc";
-              __unkeyed-3 = "<CMD>Copilot enable<CR>";
-              desc = "Enable Copilot";
-            }];
-          };
-        };
-
-        settings = {
-          suggestion = {
-            auto_trigger = true;
-            keymap = {
-              accept = "<Tab>";
-              accept_word = "<C-Right>";
-              accept_line = "<C-Down>";
-            };
-          };
-        };
-      };
-
-      avante = {
-        enable = true;
-        lazyLoad = {
-          enable = true;
-          settings = {
-            cmd = "AvanteToggle";
-            keys = [
-              {
-                __unkeyed-1 = "<leader>at";
-                __unkeyed-3 = "<CMD>AvanteToggle<CR>";
-                desc = "Toggle avante window";
-              }
-              {
-                __unkeyed-1 = "<leader>aa";
-                __unkeyed-3 = "<CMD>AvanteShow<CR>";
-                desc = "Focus avante window";
-              }
-            ];
-          };
-        };
-        settings = {
-          provider = "copilot";
-          disabled_tools = [ "git_commit" ];
-          behaviour.auto_approve_tool_permissions = false;
-          providers.copilot.model = "claude-sonnet-4";
-        };
-      };
-
-      noice = {
-        enable = true;
-        settings = {
-          lsp = {
-            progress = {
-              enabled = true;
-              throttle = 100;
-            };
-            override = {
-              "vim.lsp.util.convert_input_to_markdown_lines" = true;
-              "vim.lsp.util.stylize_markdown" = true;
-            };
-          };
-          presets = {
-            bottom_search = true;
-            command_palette = true;
-            long_message_to_split = true;
-            inc_rename = true;
-          };
-        };
-      };
 
       floaterm = {
         enable = true;
@@ -440,7 +294,6 @@
       };
       which-key.enable = true;
 
-      web-devicons.enable = true; # Telescope & neo-tree dep
       lz-n.enable = true; # Lazy loading
     };
 
@@ -462,12 +315,6 @@
         command = "setlocal ts=2 sts=2 sw=2 expandtab";
         event = "FileType";
         pattern = builtins.concatStringsSep "," ["nix" "hcl" "tf" "yml" "yaml"];
-      }
-      {
-        desc = "Rust-specific keymaps for rustaceanvim";
-        command = "lua vim.keymap.set('n', '<C-.>', function() vim.cmd.RustLsp('codeAction') end, { silent = true, buffer = true })";
-        event = "FileType";
-        pattern = "rust";
       }
     ];
 
@@ -528,6 +375,7 @@
       { key = "gr"; action = "<CMD>lua vim.lsp.buf.references()<CR>"; }
       { key = "<C-]>"; action = "<CMD>lua vim.lsp.buf.definition()<CR>"; }
       { key = "<C-.>"; action = "<CMD>lua vim.lsp.buf.code_action()<CR>"; }
+      { key = "<leader>m"; action = "<CMD>NoiceAll<CR>"; }
       { key = "<leader>w"; action = "<CMD>lua vim.lsp.buf.format({ async = false })<CR>"; }
 
       # Ctrl-backspace delete word
@@ -537,6 +385,8 @@
     ];
 
     extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ];
+
+    extraConfigLua = builtins.readFile ./copilot-state.lua;
 
     clipboard = {
       providers.wl-copy.enable = true;
@@ -575,8 +425,9 @@
       # When scrolling, always have 3 lines of buffer
       scrolloff = 3;
 
-      # Tab width shows as 4 characters
+      # Default indentation config
       tabstop = 4;
+      expandtab = true;
 
       # Never wrap
       wrap = false;

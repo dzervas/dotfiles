@@ -13,7 +13,7 @@
     ./flatpak.nix
     ./git.nix
     ./ghostty.nix
-    ./neovim.nix
+    ./neovim
     ./options.nix
     ./recording-sign.nix
     ./starship.nix
