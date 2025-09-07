@@ -108,6 +108,10 @@
       };
     };
 
+    notify = {
+      enable = true; # Noice
+      settings.background_colour = "#000000";
+    };
     web-devicons.enable = true; # Telescope, trouble & neo-tree dep
   };
 }

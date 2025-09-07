@@ -47,7 +47,6 @@ function M.show_copilot_enable_menu()
   vim.ui.select(
     {
       "Temporarily (this session only)",
-      "For current buffer only", 
       "For this project (saves to global config)"
     },
     {
@@ -56,40 +55,29 @@ function M.show_copilot_enable_menu()
         return item
       end,
     },
-    function(choice, idx)
-      if idx == 2 then
-        vim.b.copilot_enabled = true
-      elseif idx == 3 then
+    function(_choice, idx)
+      if idx == 1 then
+        vim.cmd("Copilot enable")
+      elseif idx == 2 then
         local project_root = M.get_project_root()
         local state = M.load_copilot_state()
         state.projects[project_root] = true
         M.save_copilot_state(state)
+        vim.cmd("Copilot enable")
       end
-
-      vim.cmd("Copilot enable")
     end
   )
 end
 
 -- Auto-enable copilot based on saved state
+local aug = vim.api.nvim_create_augroup("CopilotManager", { clear = true })
 vim.api.nvim_create_autocmd("VimEnter", {
+  group = aug,
   callback = function()
-    vim.defer_fn(function()
-      local project_root = M.get_project_root()
-      if M.is_copilot_enabled_for_project(project_root) then
-        vim.notify("Copilot enabled for the project")
-        vim.cmd("Copilot enable")
-      end
-    end, 100) -- Delay to allow plugins to load
-  end,
-})
-
--- Auto-enable copilot for buffers that had it enabled
-vim.api.nvim_create_autocmd("BufEnter", {
-  callback = function()
-    if M.is_copilot_enabled_for_buffer() then
-        vim.notify("Copilot enabled for the buffer")
-        vim.cmd("Copilot enable")
+    local project_root = M.get_project_root()
+    if M.is_copilot_enabled_for_project(project_root) then
+      vim.notify("Copilot enabled for the project")
+      vim.cmd("Copilot enable")
     end
   end,
 })

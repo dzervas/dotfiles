@@ -24,7 +24,7 @@
         AgentModeOnboardingBlockShown = "true";
         HasAutoOpenedWelcomeFolder = "true";
         WarpDriveSharingOnboardingBlockShown = "true";
-        AgentModeOnboardingBlockShown = "2";
+        # AgentModeOnboardingBlockShown = "2";
       };
     };
   };

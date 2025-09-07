@@ -21,6 +21,7 @@
 
   imports = [
     ./ai.nix
+    ./neovide.nix
     ./rust.nix
     ./ui.nix
   ];
@@ -118,7 +119,6 @@
             ansiblelint.enable = true;
             checkmake.enable = true;
             codespell.enable = true;
-            commitlint.enable = true;
             deadnix.enable = true;
             dotenv_linter.enable = true;
             fish.enable = true;
@@ -129,7 +129,7 @@
             revive.enable = true; # Golang
             selene.enable = true; # Lua
             sqruff.enable = true; # SQL
-            statix.enable = true; # SQL
+            statix.enable = true;
             terraform_validate.enable = true;
             terragrunt_validate.enable = true;
             tfsec.enable = true;
@@ -166,7 +166,6 @@
               enable = true;
               package = pkgs.nixfmt-rfc-style;
             };
-            nix_flake_fmt.enable = true;
             # opentofu_fmt.enable = true;
             prettier.enable = true; # HTML/CSS/JS/TS/JSON/Astro
             rustywind.enable = true; # Tailwind classes
@@ -404,9 +403,7 @@
       { key = "<leader>pd"; action = "<CMD>MoltenDelete<CR>"; }
     ];
 
-    extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ];
-
-    extraConfigLua = builtins.readFile ./copilot-state.lua;
+    extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes satellite-nvim codewindow-nvim ];
 
     clipboard = {
       providers.wl-copy.enable = true;
