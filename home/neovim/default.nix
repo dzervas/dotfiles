@@ -1,23 +1,24 @@
 { lib, pkgs, ... }: {
-# Issues:
-# - Run python script with args/env (nvim-iron?)
-# - Set up nvim-neotest
-# - Better git diff view when `:G d`
-# - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
-# - Command to edit nix/neovim config
-# - vscode-like runner (run this test/function/etc.)
-# - Fix right-click menu
-# - v within floaterm uses the floaterm command instead
-# - conform-nvim for formatting
-# - Better which-key config
-# - Fix neo-tree vs bdelete issue
-# - fish completion within floaterm (e.g. % expands to current file)
-# - Fix multiline prompt in floaterm
-# - ctrl-tab like firefox for buffers
-# - ctrl-tab like firefox for jumps
-# - Telescope fuzzy finder
-# - blink-cmp fix cmdline and disable on treesitter-rename
-# - Set up kagi search with avante - https://github.com/yetone/avante.nvim?tab=readme-ov-file#web-search-engines
+  # Issues:
+  # - Run python script with args/env (nvim-iron?)
+  # - Set up nvim-neotest
+  # - Better git diff view when `:G d`
+  # - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
+  # - Command to edit nix/neovim config
+  # - vscode-like runner (run this test/function/etc.)
+  # - Fix right-click menu
+  # - v within floaterm uses the floaterm command instead
+  # - conform-nvim for formatting
+  # - Better which-key config
+  # - Fix neo-tree vs bdelete issue
+  # - fish completion within floaterm (e.g. % expands to current file)
+  # - Fix multiline prompt in floaterm
+  # - ctrl-tab like firefox for buffers
+  # - ctrl-tab like firefox for jumps
+  # - Telescope fuzzy finder
+  # - blink-cmp fix cmdline and disable on treesitter-rename
+  # - Set up kagi search with avante - https://github.com/yetone/avante.nvim?tab=readme-ov-file#web-search-engines
+  # - More null-ls code actions
 
   imports = [
     ./ai.nix
@@ -96,7 +97,10 @@
 
       # Documents (markdown)
       markdown-preview.enable = true;
-      render-markdown.enable = true;
+      render-markdown = {
+        enable = true;
+        settings.latex.enabled = false;
+      };
 
       # Lint/Code actions
       none-ls = {
@@ -109,9 +113,9 @@
             gitsigns.enable = true;
             gomodifytags.enable = true;
             impl.enable = true;
-            refactoring.enable = true;
+            # refactoring.enable = true; # Does not support rust and needs a binary?
             statix.enable = true;
-            ts_node_action.enable = true; # Tree sitter
+            # ts_node_action.enable = true; # Tree sitter - can't find the binary?
           };
           # No completion, it's taken care of by blink-cmp
           diagnostics = {
@@ -240,6 +244,16 @@
           enter_output_behavior = "open_and_enter";
           tick_time = 150;
         };
+        python3Dependencies = lib.mkAfter (p: with p; [
+          cairosvg
+          jupyter-client
+          kaleido
+          nbformat
+          pillow
+          plotly
+          pnglatex
+          pyperclip
+        ]);
       };
 
       lspconfig.enable = true;
@@ -304,6 +318,7 @@
       which-key.enable = true;
 
       lz-n.enable = true; # Lazy loading
+      nui.enable = true; # Neo-tree
     };
 
     autoCmd = [
@@ -338,7 +353,7 @@
 
     keymaps =
       # Alt-<number> selects buffer number
-      (lib.map (n: { key = "<A-${toString n}>"; action = "<CMD>BufferLineGoToBuffer ${toString n}<CR>"; }) (lib.range 1 9)) ++
+      (lib.map (n: { key = "<A-${toString n}>"; action = "<CMD>BufferLineGoToBuffer ${toString n}<CR>"; options.desc = "Go to buffer ${toString n}"; }) (lib.range 1 9)) ++
     [
       # Buffer manipulation
       { key = "<A-c>"; action = "<CMD>bdelete<CR>"; }
@@ -404,6 +419,13 @@
     ];
 
     extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes satellite-nvim codewindow-nvim ];
+    extraPackagesAfter = with pkgs; [
+      # None-ls packages
+      gomodifytags
+      impl
+
+      ncurses # infocmp bin
+    ];
 
     clipboard = {
       providers.wl-copy.enable = true;
@@ -464,10 +486,10 @@
 
     performance = {
       byteCompileLua = {
-        enable = true;
-        nvimRuntime = true;
-        luaLib = true;
-        plugins = true;
+        # enable = true;
+        # nvimRuntime = true;
+        # luaLib = true;
+        # plugins = true;
       };
     };
   };

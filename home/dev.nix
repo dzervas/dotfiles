@@ -99,6 +99,7 @@
     oci-cli
     terraform
     k2tf
+    tfautomv
     hurl
     # krr
     openssl

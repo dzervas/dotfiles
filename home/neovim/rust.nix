@@ -19,6 +19,8 @@
       event = "FileType";
       pattern = "rust";
     }];
+
+    extraPackagesAfter = [pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter];
   };
 
   # Global rustfmt configuration for hard tabs and 120 character line width
