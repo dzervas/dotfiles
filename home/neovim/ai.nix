@@ -57,6 +57,6 @@
       };
     };
 
-    # extraConfigLuaPost = lib.mkAfter (builtins.readFile ./copilot-state.lua);
+    extraConfigLuaPost = lib.mkAfter (builtins.readFile ./copilot-state.lua);
   };
 }

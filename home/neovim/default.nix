@@ -23,6 +23,7 @@
   imports = [
     ./ai.nix
     ./neovide.nix
+    ./python.nix
     ./rust.nix
     ./ui.nix
   ];
@@ -215,6 +216,11 @@
             "<C-space>" = ["show" "show_documentation" "fallback"];
           };
 
+          cmdline = {
+            keymap.preset = "inherit";
+            completion.menu.auto_show = true;
+          };
+
           completion = {
             documentation.auto_show = true;
             ghost_text.enabled = true;
@@ -229,32 +235,8 @@
         enable = true;
         # TODO: Signs https://nix-community.github.io/nixvim/search/?option_scope=0&option=plugins.dap.signs.dapBreakpoint.text&query=dap.
       };
-      dap-python.enable = true;
       dap-virtual-text.enable = true;
       dap-ui.enable = true;
-
-      # Python interactive development
-      molten = {
-        enable = true;
-        settings = {
-          auto_image_popup = true;
-          auto_init_behavior = "init";
-          auto_open_output = true;
-          output_win_max_height = 20;
-          enter_output_behavior = "open_and_enter";
-          tick_time = 150;
-        };
-        python3Dependencies = lib.mkAfter (p: with p; [
-          cairosvg
-          jupyter-client
-          kaleido
-          nbformat
-          pillow
-          plotly
-          pnglatex
-          pyperclip
-        ]);
-      };
 
       lspconfig.enable = true;
 
@@ -356,66 +338,56 @@
       (lib.map (n: { key = "<A-${toString n}>"; action = "<CMD>BufferLineGoToBuffer ${toString n}<CR>"; options.desc = "Go to buffer ${toString n}"; }) (lib.range 1 9)) ++
     [
       # Buffer manipulation
-      { key = "<A-c>"; action = "<CMD>bdelete<CR>"; }
-      { key = "<A-c>"; action = "<CMD>FloatermKill<CR>"; mode = "t"; }
-      { key = "<A-C>"; action = "<CMD>close<CR>"; }
-      { key = "<A-o>"; action = "<CMD>only<CR>"; }
-      { key = "<A-O>"; action = "<CMD>BufferLineCloseOthers<CR>"; }
-      { key = "<A-Left>"; action = "<CMD>BufferLineCyclePrev<CR>"; }
-      { key = "<A-Left>"; action = "<CMD>FloatermPrev<CR>"; mode = "t"; }
-      { key = "<A-S-Left>"; action = "<CMD>BufferLineMovePrev<CR>"; }
-      { key = "<A-Right>"; action = "<CMD>BufferLineCycleNext<CR>"; }
-      { key = "<A-Right>"; action = "<CMD>FloatermNext<CR>"; mode = "t"; }
-      { key = "<A-S-Right>"; action = "<CMD>BufferLineMoveNext<CR>"; }
+      { key = "<A-c>"; action = "<CMD>close<CR>"; options.desc = "Close window"; }
+      { key = "<A-c>"; action = "<CMD>FloatermKill<CR>"; mode = "t"; options.desc = "Kill terminal session"; }
+      { key = "<A-C>"; action = "<CMD>bdelete<CR>"; options.desc = "Kill buffer"; }
+      { key = "<A-o>"; action = "<CMD>only<CR>"; options.desc = "Close other windows"; }
+      { key = "<A-O>"; action = "<CMD>BufferLineCloseOthers<CR>"; options.desc = "Kill all other buffers"; }
+      { key = "<A-Left>"; action = "<CMD>BufferLineCyclePrev<CR>"; options.desc = "Select previous buffer"; }
+      { key = "<A-Left>"; action = "<CMD>FloatermPrev<CR>"; mode = "t"; options.desc = "Select previous terminal"; }
+      { key = "<A-S-Left>"; action = "<CMD>BufferLineMovePrev<CR>"; options.desc = "Move buffer to the left"; }
+      { key = "<A-Right>"; action = "<CMD>BufferLineCycleNext<CR>"; options.desc = "Select next buffer"; }
+      { key = "<A-Right>"; action = "<CMD>FloatermNext<CR>"; mode = "t"; options.desc = "Select next terminal"; }
+      { key = "<A-S-Right>"; action = "<CMD>BufferLineMoveNext<CR>"; options.desc = "Move buffer to the right"; }
 
       # Window navigation
-      { key = "<A-Up>"; action = "<C-W>w"; }
-      { key = "<A-Down>"; action = "<C-W>W"; }
+      { key = "<A-Up>"; action = "<C-W>w"; options.desc = "Cycle to the next window"; }
+      { key = "<A-Down>"; action = "<C-W>W"; options.desc = "Cycle to the previous window"; }
 
       # Split management
-      { key = "<A-Return>"; action = "<CMD>vsplit<CR>"; }
-      { key = "<A-S-Return>"; action = "<CMD>split<CR>"; }
-      { key = "<A-Return>"; action = "<CMD>FloatermNew<CR>"; mode = "t"; }
+      { key = "<A-Return>"; action = "<CMD>vsplit<CR><C-W>w"; options.desc = "Open a window to the right"; }
+      { key = "<A-S-Return>"; action = "<CMD>split<CR><C-W>w"; options.desc = "Open a window to the bottom"; }
+      { key = "<A-Return>"; action = "<CMD>FloatermNew<CR>"; mode = "t"; options.desc = "Open a new terminal"; }
 
       # Spell checking toggle
-      { key = "<A-s>"; action = "<CMD>set spell!<CR>"; }
+      { key = "<A-s>"; action = "<CMD>set spell!<CR>"; options.desc = "Toggle spell checking"; }
 
       # Disable search highlight
-      { key = "<C-l>"; action = "<CMD>nohlsearch<CR>"; }
+      { key = "<C-l>"; action = "<CMD>nohlsearch<CR>"; options.desc = "Stop highlighting search results"; }
 
       # Move a line
-      { key = "<C-Up>"; action = "<CMD>move -2<CR>"; }
-      { key = "<C-Down>"; action = "<CMD>move +1<CR>"; }
+      { key = "<C-Up>"; action = "<CMD>move -2<CR>"; options.desc = "Move the current line up"; }
+      { key = "<C-Down>"; action = "<CMD>move +1<CR>"; options.desc = "Move the current line down"; }
 
       # Show the filesystem tree
-      { key = "<leader>f"; action = "<CMD>Neotree toggle<CR>"; }
-      { key = "<leader>F"; action = "<CMD>Neotree reveal<CR>"; }
+      { key = "<leader>f"; action = "<CMD>Neotree toggle<CR>"; options.desc = "Toggle the file explorer"; }
+      { key = "<leader>F"; action = "<CMD>Neotree reveal<CR>"; options.desc = "Reveal the current file in the explorer"; }
 
       # LSP navigation and actions
-      { key = "K"; action = "<CMD>lua vim.lsp.buf.hover()<CR>"; }
-      { key = "gd"; action = "<CMD>lua vim.lsp.buf.definition()<CR>"; }
-      { key = "gD"; action = "<CMD>lua vim.lsp.buf.declaration()<CR>"; }
-      { key = "gi"; action = "<CMD>lua vim.lsp.buf.implementation()<CR>"; }
-      { key = "gr"; action = "<CMD>lua vim.lsp.buf.references()<CR>"; }
-      { key = "<C-]>"; action = "<CMD>lua vim.lsp.buf.definition()<CR>"; }
-      { key = "<C-.>"; action = "<CMD>lua vim.lsp.buf.code_action()<CR>"; }
-      { key = "<leader>m"; action = "<CMD>NoiceAll<CR>"; }
-      { key = "<leader>w"; action = "<CMD>lua vim.lsp.buf.format({ async = false })<CR>"; }
+      { key = "K"; action = "<CMD>lua vim.lsp.buf.hover()<CR>"; options.desc = "Show the hover info"; }
+      { key = "gd"; action = "<CMD>lua vim.lsp.buf.definition()<CR>"; options.desc = "Go to definition"; }
+      { key = "gD"; action = "<CMD>lua vim.lsp.buf.declaration()<CR>"; options.desc = "Go to declaration"; }
+      { key = "gi"; action = "<CMD>lua vim.lsp.buf.implementation()<CR>"; options.desc = "Go to implementation"; }
+      { key = "gr"; action = "<CMD>lua vim.lsp.buf.references()<CR>"; options.desc = "Go to references"; }
+      { key = "<C-]>"; action = "<CMD>lua vim.lsp.buf.definition()<CR>"; options.desc = "Go to definition"; }
+      { key = "<C-.>"; action = "<CMD>lua vim.lsp.buf.code_action()<CR>"; options.desc = "Open the code actions menu"; }
+      { key = "<leader>m"; action = "<CMD>NoiceAll<CR>"; options.desc = "Show all the editor messages"; }
+      { key = "<leader>w"; action = "<CMD>lua vim.lsp.buf.format({ async = false })<CR>"; options.desc = "Format the current file";  }
 
       # Ctrl-backspace delete word
-      { key = "<C-BS>"; action = "<C-w>"; mode = "i"; }
-      { key = "<C-BS>"; action = "<C-w>"; mode = "c"; }
-      { key = "<C-BS>"; action = "<C-w>"; mode = "t"; }
-
-      # Python development - Molten (Jupyter-like)
-      { key = "<leader>pi"; action = "<CMD>MoltenInit python3<CR>"; }
-      { key = "<leader>pe"; action = "<CMD>MoltenEvaluateOperator<CR>"; }
-      { key = "<leader>pl"; action = "<CMD>MoltenEvaluateLine<CR>"; }
-      { key = "<leader>pr"; action = "<CMD>MoltenReevaluateCell<CR>"; }
-      { key = "<leader>pv"; action = ":<C-u>MoltenEvaluateVisual<CR>gv"; mode = "v"; }
-      { key = "<leader>ph"; action = "<CMD>MoltenHideOutput<CR>"; }
-      { key = "<leader>ps"; action = "<CMD>MoltenShowOutput<CR>"; }
-      { key = "<leader>pd"; action = "<CMD>MoltenDelete<CR>"; }
+      { key = "<C-BS>"; action = "<C-w>"; mode = "i"; options.desc = "Delete word backwards"; }
+      { key = "<C-BS>"; action = "<C-w>"; mode = "c"; options.desc = "Delete word backwards"; }
+      { key = "<C-BS>"; action = "<C-w>"; mode = "t"; options.desc = "Delete word backwards"; }
     ];
 
     extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes satellite-nvim codewindow-nvim ];

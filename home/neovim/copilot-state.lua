@@ -1,13 +1,16 @@
 -- Copilot per-project management
 local M = {}
 
+print("Running file")
 function M.get_config_file()
   local config_dir = vim.fn.stdpath("config")
+  print("Running get_config_file")
   return config_dir .. "/copilot-state.json"
 end
 
 function M.get_project_root()
   local git_root = vim.fn.systemlist("git rev-parse --show-toplevel 2>/dev/null")[1]
+  print("Running get_project_root")
   if vim.v.shell_error == 0 then
     return git_root
   end
@@ -16,6 +19,7 @@ end
 
 function M.load_copilot_state()
   local config_file = M.get_config_file()
+  print("Running load_copilot_state")
   if vim.fn.filereadable(config_file) == 1 then
     local content = vim.fn.readfile(config_file)
     if #content > 0 then
@@ -29,21 +33,25 @@ function M.load_copilot_state()
 end
 
 function M.save_copilot_state(state)
+  print("Running save_copilot_state")
   local config_file = M.get_config_file()
   local json_content = vim.json.encode(state)
   vim.fn.writefile(vim.split(json_content, "\n"), config_file)
 end
 
 function M.is_copilot_enabled_for_project(project_root)
+  print("Running is_copilot_enabled_for_project")
   local state = M.load_copilot_state()
-  return state.projects[project_root] == true
+  return state.projects[project_root]
 end
 
 function M.is_copilot_enabled_for_buffer()
+  print("Running is_copilot_enabled_for_buffer")
   return vim.b.copilot_enabled == true
 end
 
 function M.show_copilot_enable_menu()
+  print("Running show_copilot_enable_menu")
   vim.ui.select(
     {
       "Temporarily (this session only)",
@@ -70,10 +78,10 @@ function M.show_copilot_enable_menu()
 end
 
 -- Auto-enable copilot based on saved state
-local aug = vim.api.nvim_create_augroup("CopilotManager", { clear = true })
 vim.api.nvim_create_autocmd("VimEnter", {
-  group = aug,
+  once = true,
   callback = function()
+    print("Running VimEnter callback")
     local project_root = M.get_project_root()
     if M.is_copilot_enabled_for_project(project_root) then
       vim.notify("Copilot enabled for the project")
