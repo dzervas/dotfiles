@@ -20,6 +20,7 @@
     ./ssh.nix
     ./tools.nix
     ./thumbnailers.nix
+    # ./warp.nix
     ./xdg.nix
   ];
 

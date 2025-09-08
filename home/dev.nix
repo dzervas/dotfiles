@@ -54,43 +54,32 @@
     gnuplot
 
     # C/C++
-    gcc
     pkg-config
-    openssl.dev
+    openssl
     sqlite-interactive
 
     # Python
-    pipenv
-    (python3.withPackages (p: with p; [
-      ipython
-      requests
-      pyserial
-      python-dotenv
-      frida-python
-
-      pip magic # BinaryNinja needs these
-      mcp # AI
-    ]))
-    uv
+    # (python3.withPackages (p: with p; [
+    #   ipython
+    #   requests
+    #   pyserial
+    #   python-dotenv
+    #   frida-python
+    #
+    #   pip magic # BinaryNinja needs these
+    #   mcp # AI
+    # ]))
 
     # Rust
     cargo-edit
     cargo-expand
-    rustup
-    probe-rs-tools
-    watchexec
+    # rustup
+    # probe-rs-tools
+    # watchexec
     strace
 
-    # JS
-    pnpm
-    nodejs
-    yarn-berry
-
     # Cloud stuff
-    argocd
-    krew
     kubectl
-    kubectl-doctor
     kubectx
     kubescape
     (wrapHelm kubernetes-helm {
@@ -102,7 +91,6 @@
     tfautomv
     hurl
     # krr
-    openssl
 
     foundry # cast eth chain testing tool
   ];
