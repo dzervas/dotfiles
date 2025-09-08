@@ -7,7 +7,6 @@
   # - Command to edit nix/neovim config
   # - vscode-like runner (run this test/function/etc.)
   # - Fix right-click menu
-  # - v within floaterm uses the floaterm command instead
   # - conform-nvim for formatting
   # - Better which-key config
   # - Fix neo-tree vs bdelete issue
@@ -284,7 +283,10 @@
 
       floaterm = {
         enable = true;
-        settings.keymap_toggle = "<A-Esc>";
+        settings = {
+          keymap_toggle = "<A-Esc>";
+          opener = "edit"; # Use 'edit' when opening files from floaterm
+        };
       };
 
       neo-tree = {
@@ -400,6 +402,7 @@
       impl
 
       ncurses # infocmp bin
+      vimPlugins.vim-floaterm # provides the 'floaterm' helper script on PATH
     ];
 
     clipboard = {

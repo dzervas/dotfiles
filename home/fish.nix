@@ -13,6 +13,17 @@
       bind \e\[3\;6~ __forget
       export FLAKE_URL="/home/dzervas/Lab/dotfiles?submodules=1&lfs=1"
 
+      # If running inside a Floaterm terminal, leverage floaterm's opener
+      # so `nvim` opens in the already running Neovim instance.
+      if set -q FLOATERM
+        set -x FLOATERM_OPENER edit
+        if type -q floaterm
+          alias nvim 'floaterm'
+          set -x EDITOR 'floaterm'
+          set -x VISUAL 'floaterm'
+        end
+      end
+
       # Watch command completions
       complete -c watchf -s n -l interval -d "Set update interval in seconds"
       complete -c watchf -s d -l differences -d "Highlight differences between updates"
