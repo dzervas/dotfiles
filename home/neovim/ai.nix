@@ -57,6 +57,19 @@
       };
     };
 
-    extraConfigLuaPost = lib.mkAfter (builtins.readFile ./copilot-state.lua);
+    autoCmd = [
+      {
+        event = "BufEnter";
+        once = true;
+        desc = "Try enabling Copilot once per session";
+        callback.__raw =  "CopilotManager.copilot_try_load";
+      }
+      {
+        event = "DirChanged";
+        desc = "CopilotManager: clear cwd->root cache on :cd";
+        callback.__raw =  "function() M._cwd_root_cache = {} end";
+      }
+    ];
+    extraConfigLua = lib.mkAfter (builtins.readFile ./copilot-state.lua);
   };
 }
