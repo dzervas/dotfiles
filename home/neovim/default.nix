@@ -93,6 +93,7 @@
       multicursors.enable = true;
       nvim-surround.enable = true;
       guess-indent.enable = true;
+      direnv.enable = true;
 
       # Documents (markdown)
       markdown-preview.enable = true;
