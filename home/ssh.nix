@@ -1,4 +1,4 @@
-_: {
+{ pkgs, ... }: {
   programs.ssh = {
     enable = true;
     includes = ["~/.ssh/local.ssh.cfg"];
@@ -44,4 +44,8 @@ _: {
       RemoteCommand hash tmux 2>/dev/null && exec tmux new-session -As dzervas \; send-keys 'sudo -i' C-m || hash screen 2>/dev/null && TERM=vt100 exec screen -adRRS dzervas sudo -i || exec sudo -i
     '';
   };
+
+  home.packages = with pkgs; [
+    yubikey-manager
+  ];
 }

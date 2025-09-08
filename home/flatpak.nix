@@ -11,8 +11,8 @@
       "com.spotify.Client"
       "org.telegram.desktop"
       "im.riot.Riot"
-    ] ++ (if !config.setup.isLaptop then [
       "dev.vencord.Vesktop"
+    ] ++ (if !config.setup.isLaptop then [
       "com.github.skylot.jadx"
       "io.github.ryubing.Ryujinx"
     ] else []);

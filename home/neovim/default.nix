@@ -8,7 +8,6 @@
   # - vscode-like runner (run this test/function/etc.)
   # - Fix right-click menu
   # - conform-nvim for formatting
-  # - Better which-key config
   # - Fix neo-tree vs bdelete issue
   # - fish completion within floaterm (e.g. % expands to current file)
   # - Fix multiline prompt in floaterm
@@ -444,7 +443,7 @@
 
       # Default indentation config
       tabstop = 4;
-      expandtab = true;
+      expandtab = false;
 
       # Never wrap
       wrap = false;
