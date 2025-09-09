@@ -59,16 +59,14 @@
     sqlite-interactive
 
     # Python
-    # (python3.withPackages (p: with p; [
-    #   ipython
-    #   requests
-    #   pyserial
-    #   python-dotenv
-    #   frida-python
-    #
-    #   pip magic # BinaryNinja needs these
-    #   mcp # AI
-    # ]))
+    (python3.withPackages (p: with p; [
+      requests
+      pyserial
+      frida-python
+
+      # pip magic # BinaryNinja needs these
+      # mcp # AI
+    ]))
 
     # Rust
     cargo-edit
