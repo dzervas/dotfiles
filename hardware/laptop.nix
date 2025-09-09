@@ -18,8 +18,18 @@ in {
 
   boot = {
     # Add kernel parameters to better support suspend (i.e., "sleep" feature)
-    kernelParams = [ "mem_sleep_default=s2idle" "amdgpu.dcdebugmask=0x10" "acpi_mask_gpe=0x1A" "rtc_cmos.use_acpi_alarm=1" ];
+    kernelParams = [
+      "mem_sleep_default=s2idle"
+      "amdgpu.dcdebugmask=0x10"
+      "acpi_mask_gpe=0x1A"
+      "rtc_cmos.use_acpi_alarm=1"
+      # /swapfile offset - found with:
+      # sudo btrfs inspect-internal map-swapfile -r /swapfile
+      "resume_offset=23903603"
+    ];
     initrd.luks.devices.cryptroot.device = cryptroot_part;
+
+    resumeDevice = system_fs;
   };
 
   fileSystems = {

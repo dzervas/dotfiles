@@ -14,7 +14,6 @@
       IdleAction = "lock";
       IdleActionSec = "5m";
 
-      HibernateDelaySec = 3600;
       KillUserProcesses = true;
 
       LidSwitchIgnoreInhibited = true;
@@ -27,6 +26,11 @@
     flatpak.enable = true;
     accounts-daemon.enable = true; # Flatpak needs this
   };
+
+  systemd.sleep.extraConfig = ''
+    HibernateDelaySec=1h
+    HibernateOnACPower=false
+  '';
 
   security.polkit.enable = true;
 }
