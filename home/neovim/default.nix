@@ -512,23 +512,17 @@
 
 
     # Treesitter language injections without Lua: drop query files into runtimepath
-    extraFiles = {
-      # - YAML: inject highlighting into block scalars based on key hints
-      "after/queries/yaml/injections.scm".text = ''
-        ; extends
-        ; Inject language into block scalars based on key names
-        ; Values like `values: |` or `manifest: |` will be treated as YAML.
-        ; From https://github.com/nvim-treesitter/nvim-treesitter/blob/master/queries/yaml/injections.scm
-        (block_mapping_pair
-           key: (flow_node) @_yaml
-           (#any-of? @_yaml "yaml" "manifest" "values")
-           value: (block_node
-                    (block_scalar) @injection.content
-                    (#set! injection.language "yaml")
-                    (#set! injection.include-children)
-                    (#offset! @injection.content 0 1 0 0)))
-      '';
-    };
+    # Transform files in ./queries (e.g. myfile.scm) into attrset entries like:
+    # { "queries/myfile/injections.scm".source = ./queries/myfile.scm; }
+    extraFiles = let
+      files = builtins.attrNames (builtins.readDir ./queries);
+    in builtins.listToAttrs (map (name: let
+      match = builtins.match "^([a-z0-9]+)\.scm$" name;
+      base = if match == null then name else builtins.elemAt match 0;
+    in {
+      name = "queries/${base}/injections.scm";
+      value = { source = ./queries + "/${name}"; };
+    }) files);
   };
 
   stylix.targets.nixvim.enable = false;
