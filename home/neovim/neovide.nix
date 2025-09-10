@@ -14,8 +14,7 @@
       vim.g.neovide_scroll_animation_far_lines = 3
       vim.g.neovide_normal_opacity = 0.9
 
-      vim.keymap.set({ "x" }, "<C-S-C>", '"+y', { desc = "Copy system clipboard" })
-      vim.keymap.set({ "x" }, "<C-S-V>", '"+p', { desc = "Paste system clipboard" })
+      vim.keymap.set({ "n", "v", "s", "x", "o", "i", "l", "c", "t" }, "<C-S-V>", function() vim.api.nvim_paste(vim.fn.getreg('+'), true, -1) end, { desc = "Copy system clipboard", noremap = true, silent = true })
     end
   '';
 }
