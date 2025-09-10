@@ -7,14 +7,12 @@
   # - Command to edit nix/neovim config
   # - vscode-like runner (run this test/function/etc.)
   # - Fix right-click menu
-  # - conform-nvim for formatting
   # - Fix neo-tree vs bdelete issue
   # - fish completion within floaterm (e.g. % expands to current file)
   # - Fix multiline prompt in floaterm
   # - ctrl-tab like firefox for buffers
   # - ctrl-tab like firefox for jumps
   # - Telescope fuzzy finder
-  # - blink-cmp fix cmdline and disable on treesitter-rename
   # - Set up kagi search with avante - https://github.com/yetone/avante.nvim?tab=readme-ov-file#web-search-engines
   # - More null-ls code actions
 
@@ -190,6 +188,24 @@
         setupLspCapabilities = true;
 
         settings = {
+          enabled.__raw = ''
+            function()
+              local disabled_bts = {
+                "prompt",
+                "nofile",
+              }
+              local disabled_fts = {
+                "TelescopePrompt",
+                "noice",
+                "noice_input",
+                "markdown",
+              }
+
+              return not vim.tbl_contains(disabled_bts, vim.bo.buftype)
+                and not vim.tbl_contains(disabled_fts, vim.bo.filetype)
+                and vim.b.completion ~= false
+            end
+          '';
           keymap = {
             "<Tab>" = [
               { __raw = ''
@@ -224,6 +240,7 @@
           };
 
           completion = {
+            menu.draw.treesitter = ["lsp"];
             documentation.auto_show = true;
             ghost_text.enabled = true;
           };
@@ -244,6 +261,8 @@
 
       treesitter = {
         enable = true;
+
+        folding = true;
         settings = {
           highlight.enable = true;
           indent.enable = true;
@@ -277,7 +296,20 @@
           enable = true;
           keymaps.smartRename = "<F2>";
         };
+        highlightCurrentScope.enable = true;
+        highlightDefinitions.enable = true;
+        navigation = {
+          enable = true;
+
+          keymaps = {
+            gotoDefinitionLspFallback = "<C-]>";
+            gotoNextUsage = "g<Down>";
+            gotoPreviousUsage = "g<Up>";
+            listDefinitions = "gl";
+          };
+        };
       };
+      treesitter-context.enable = true;
 
       nvim-autopairs.enable = true;
 
@@ -395,7 +427,7 @@
       { key = "<C-BS>"; action = "<C-w>"; mode = "t"; options.desc = "Delete word backwards"; }
     ];
 
-    extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes satellite-nvim codewindow-nvim ];
+    extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes satellite-nvim ];
     extraPackagesAfter = with pkgs; [
       # None-ls packages
       gomodifytags
@@ -451,6 +483,11 @@
 
       # Time to fire the `CursorHold` event
       updatetime = 1500;
+
+      # Default folds
+      foldenable = true;
+      foldlevelstart = 7;
+      # tree-sitter defines the foldmethod
 
       # Show whitespace characters
       list = true;
