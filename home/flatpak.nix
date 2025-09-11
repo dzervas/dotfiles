@@ -15,6 +15,7 @@
     ] ++ (if !config.setup.isLaptop then [
       "com.github.skylot.jadx"
       "io.github.ryubing.Ryujinx"
+      "com.bambulab.BambuStudio"
     ] else []);
 
     overrides = {
@@ -51,6 +52,7 @@
       "dev.vencord.Vesktop".Context.sockets = [ "wayland" "pulseaudio" ];
 
       "org.telegram.desktop".Context.sockets = [ "wayland" "pulseaudio" ];
+      "com.bambulab.BambuStudio".Context.sockets = [ "x11" ];
     };
   };
 

@@ -488,7 +488,7 @@
 
       # Default folds
       foldenable = true;
-      foldlevelstart = 7;
+      foldlevelstart = 10;
       # tree-sitter defines the foldmethod
 
       # Show whitespace characters

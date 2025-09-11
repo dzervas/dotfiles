@@ -77,7 +77,6 @@
       trilium-desktop
 
       (lib.mkIf config.setup.isLaptop powertop)
-      (lib.mkIf (!config.setup.isLaptop) bambu-studio)
       (lib.mkIf (!config.setup.isLaptop) plasticity)
     ];
 
