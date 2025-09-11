@@ -45,13 +45,8 @@
   };
 
   home.packages = with pkgs; [
+    (tree-sitter.withPlugins (p: builtins.attrValues p)) # Install all grammars
     go
-
-    # Nix
-    nixpkgs-fmt # Used by the Nix IDE extension
-    nix-du
-    nil # Nix language server
-    gnuplot
 
     # C/C++
     pkg-config
@@ -71,9 +66,6 @@
     # Rust
     cargo-edit
     cargo-expand
-    # rustup
-    # probe-rs-tools
-    # watchexec
     strace
 
     # Cloud stuff
