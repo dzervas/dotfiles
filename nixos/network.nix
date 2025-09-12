@@ -34,6 +34,8 @@
 
     tailscale = {
       enable = true;
+      # Bug workaround: https://github.com/NixOS/nixpkgs/issues/438765
+      package = pkgs.tailscale.overrideAttrs { doCheck = false; };
       openFirewall = true;
     };
   };
