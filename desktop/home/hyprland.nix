@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: let
+{ config, inputs, lib, pkgs, ... }: let
   mkRule = { rules, class ? null, title ? null }:
     map (rule:
       let
@@ -30,6 +30,7 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
+
     settings = {
       general = {
         gaps_in = 2;
@@ -194,6 +195,7 @@ in {
           natural_scroll = true;
           tap-to-click = true;
           clickfinger_behavior = true;
+          drag_3fg = 1; # 3 finger drag (?)
         };
       };
 
@@ -203,7 +205,17 @@ in {
       #cursor.no_hardware_cursors = true;
 
       debug.disable_logs = false;
+
+      plugin = {
+        dynamic-cursors = {
+
+        };
+      };
     };
+
+    plugins = [
+      inputs.hyprland-dynamic-cursors.packages.${pkgs.system}.hypr-dynamic-cursors
+    ];
 
     # set the Hyprland and XDPH packages to null to use the ones from the NixOS module
     package = null;

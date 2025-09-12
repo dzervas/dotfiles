@@ -107,6 +107,8 @@
     hyprland.url = "github:hyprwm/Hyprland";
     hyprland-plugins.url = "github:hyprwm/hyprland-plugins";
     hyprland-plugins.inputs.hyprland.follows = "hyprland";
+    hyprland-dynamic-cursors.url = "github:VirtCode/hypr-dynamic-cursors";
+    hyprland-dynamic-cursors.inputs.hyprland.follows = "hyprland";
 
     rose-pine-hyprcursor = {
       url = "github:ndom91/rose-pine-hyprcursor";
