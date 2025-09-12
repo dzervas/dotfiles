@@ -22,7 +22,6 @@
     nh
     p7zip
     podman-compose
-    python3Full
     readline
     ripgrep
     socat
