@@ -523,33 +523,23 @@
         "type": "github"
       }
     },
-    "hyprland-plugins": {
+    "hyprland-hy3": {
       "inputs": {
         "hyprland": [
           "hyprland"
-        ],
-        "nixpkgs": [
-          "hyprland-plugins",
-          "hyprland",
-          "nixpkgs"
-        ],
-        "systems": [
-          "hyprland-plugins",
-          "hyprland",
-          "systems"
         ]
       },
       "locked": {
-        "lastModified": 1756806479,
-        "narHash": "sha256-+RLX4BmuMw4c97npsBcjjEuy+s83POX9Yp8Nkj499lA=",
-        "owner": "hyprwm",
-        "repo": "hyprland-plugins",
-        "rev": "b8d6d369618078b2dbb043480ca65fe3521f273b",
+        "lastModified": 1757056725,
+        "narHash": "sha256-vQ98fvqZAVbT+WARDPSzLopABtLITtmGip2LFA38tbM=",
+        "owner": "outfoxxed",
+        "repo": "hy3",
+        "rev": "4c9b9bf72274fe2ce61c84e4d6223cf7d99a0654",
         "type": "github"
       },
       "original": {
-        "owner": "hyprwm",
-        "repo": "hyprland-plugins",
+        "owner": "outfoxxed",
+        "repo": "hy3",
         "type": "github"
       }
     },
@@ -1021,7 +1011,7 @@
         "home-manager": "home-manager",
         "hyprland": "hyprland",
         "hyprland-dynamic-cursors": "hyprland-dynamic-cursors",
-        "hyprland-plugins": "hyprland-plugins",
+        "hyprland-hy3": "hyprland-hy3",
         "lanzaboote": "lanzaboote",
         "nix-private": "nix-private",
         "nixos-hardware": "nixos-hardware",

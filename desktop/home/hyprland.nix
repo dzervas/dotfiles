@@ -35,6 +35,7 @@ in {
       general = {
         gaps_in = 2;
         gaps_out = 5;
+        layout = "hy3";
       };
 
       exec-once = [
@@ -62,7 +63,7 @@ in {
         "$mod+Shift, C, forcekillactive"
         "$mod, E, exec, hyprctl keyword general:layout 'dwindle'"
         "$mod, E, exec, hyprctl keyword general:layout 'dwindle'"
-        "$mod, T, exec, hyprctl keyword general:layout 'master'"
+        "$mod, T, hy3:changegroup, toggletab"
         "$mod, F, fullscreen"
         "$mod, G, togglegroup"
         "$mod+Shift, G, moveoutofgroup"
@@ -207,14 +208,16 @@ in {
       debug.disable_logs = false;
 
       plugin = {
-        dynamic-cursors = {
-
+        hy3 = {
+          no_gaps_when_only = 1;
+          autotile.enable = true;
         };
       };
     };
 
     plugins = [
       inputs.hyprland-dynamic-cursors.packages.${pkgs.system}.hypr-dynamic-cursors
+      inputs.hyprland-hy3.packages.${pkgs.system}.hy3
     ];
 
     # set the Hyprland and XDPH packages to null to use the ones from the NixOS module
