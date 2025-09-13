@@ -41,7 +41,7 @@ in {
       exec-once = [
         "${pkgs.hyprland-per-window-layout}/bin/hyprland-per-window-layout"
 
-        # Spawn inital windows
+        # Spawn initial windows
         # TODO: Fix this
         # "com.slack.Slack; hyprctl dispatch movetoworkspacesilent 4"
         # "code; hyprctl dispatch movetoworkspacesilent 3"
@@ -207,12 +207,7 @@ in {
 
       debug.disable_logs = false;
 
-      plugin = {
-        hy3 = {
-          no_gaps_when_only = 1;
-          autotile.enable = true;
-        };
-      };
+      plugin.hy3.autotile.enable = true;
     };
 
     plugins = [

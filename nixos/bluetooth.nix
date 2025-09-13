@@ -1,8 +1,11 @@
-_: {
+{ config, ... }: {
   hardware.bluetooth = {
     enable = true;
-    powerOnBoot = true;
-    settings.General.Experimental = true;
+    powerOnBoot = config.networking.hostName != "laptop";
+    settings.General = {
+      # ControllerMode = "le";
+      Experimental = true;
+    };
   };
 
   boot.kernelParams = [ "btusb.enable_autosuspend=n" ];

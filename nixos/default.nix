@@ -17,7 +17,10 @@
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
   # TODO: Mark all partitions as noexec apart from /nix/store/
-  hardware.enableAllFirmware = true;
+  hardware = {
+    enableAllFirmware = true;
+    enableRedistributableFirmware = true;
+  };
 
   # Flake is used, it's irrelevant - copies the configuration.nix in /etc
   system.copySystemConfiguration = false;
