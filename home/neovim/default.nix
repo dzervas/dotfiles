@@ -1,7 +1,6 @@
 { lib, pkgs, ... }: {
   # Issues:
   # - Run python script with args/env (nvim-iron?)
-  # - Set up nvim-neotest
   # - Better git diff view when `:G d`
   # - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
   # - Command to edit nix/neovim config
@@ -13,14 +12,15 @@
   # - ctrl-tab like firefox for buffers
   # - ctrl-tab like firefox for jumps
   # - Telescope fuzzy finder
-  # - Set up kagi search with avante - https://github.com/yetone/avante.nvim?tab=readme-ov-file#web-search-engines
   # - More null-ls code actions
+  # - Type annotations as end hints (not inlay)
 
   imports = [
     ./ai.nix
     ./neovide.nix
     ./python.nix
     ./rust.nix
+    ./runner.nix
     ./ui.nix
   ];
 
