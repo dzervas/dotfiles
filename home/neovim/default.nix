@@ -1,9 +1,7 @@
 { lib, pkgs, ... }: {
   # Issues:
   # - Run python script with args/env (nvim-iron?)
-  # - Better git diff view when `:G d`
   # - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
-  # - Command to edit nix/neovim config
   # - vscode-like runner (run this test/function/etc.)
   # - Fix right-click menu
   # - Fix neo-tree vs bdelete issue
@@ -74,10 +72,25 @@
 
     plugins = {
       # Git helper
-      fugitive.enable = true;
       gitsigns.enable = true;
       illuminate.enable = true;
       repeat.enable = true;
+      neogit = {
+        enable = true;
+        lazyLoad = {
+          enable = true;
+          settings = {
+            cmd = "Neogit";
+            keys = [{
+              __unkeyed-1 = "<leader>g";
+              __unkeyed-3 = "<CMD>:Neogit cwd=%:p:h<CR>";
+              desc = "Enable Copilot (with options)";
+            }];
+          };
+        };
+
+        settings.kind = "floating";
+      };
 
       # Editing helpers
       comment = {
