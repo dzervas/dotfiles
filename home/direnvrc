@@ -119,3 +119,5 @@ function use_mcp() {
 		echo "mcp: No valid servers found"
 	fi
 }
+
+eval "$(devenv direnvrc)"

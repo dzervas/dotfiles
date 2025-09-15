@@ -493,6 +493,10 @@
       tabstop = 4;
       expandtab = false;
 
+      # Comment formatting
+      # For more: https://neovim.io/doc/user/change.html#fo-table
+      formatoptions = "tcqjr";
+
       # Never wrap
       wrap = false;
 

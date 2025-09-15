@@ -6,9 +6,10 @@
     inherit (lib) mkForce;
   in {
     enable = true;
+
     location = "center";
-    package = pkgs.rofi-wayland;
     plugins = with pkgs; [ (rofi-calc.override { rofi-unwrapped = rofi-wayland-unwrapped; }) ];
+
     theme = lib.mkAfter {
       "*" = {
         background-color = mkForce (mkLiteral "transparent");

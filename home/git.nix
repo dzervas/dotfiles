@@ -69,6 +69,8 @@
         "*.swp"
         ".envrc"
         ".direnv"
+        ".devenv"
+        ".devenv.flake.nix"
         ".shell.nix"
         ".claude"
         ".claude.json"

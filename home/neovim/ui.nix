@@ -15,7 +15,7 @@
       enable = true;
       luaConfig.post = ''
         vim.api.nvim_set_hl(0, "TabDirActive", { bold = true, fg = "red" })
-        vim.api.nvim_set_hl(0, "TabDir", {})
+        vim.api.nvim_set_hl(0, "TabDir", { fg = "green" })
       '';
       settings = {
         options.globalstatus = true;
@@ -47,7 +47,7 @@
                   end
 
                   dir = vim.fn.fnamemodify(dir, ":~")
-                  parts[#parts + 1] = string.format("  %%#%s#%s%%*", hl_group, truncate(dir))
+                  parts[#parts + 1] = string.format("%%#%s#%s%%*", hl_group, truncate(dir))
                 end
 
                 return table.concat(parts, " | ")
