@@ -8,7 +8,7 @@
     enable = true;
 
     location = "center";
-    plugins = with pkgs; [ (rofi-calc.override { rofi-unwrapped = rofi-wayland-unwrapped; }) ];
+    plugins = with pkgs; [ rofi-calc ];
 
     theme = lib.mkAfter {
       "*" = {
