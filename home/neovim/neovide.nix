@@ -15,6 +15,8 @@
       vim.g.neovide_normal_opacity = 0.9
 
       vim.keymap.set({ "n", "v", "s", "x", "o", "i", "l", "c", "t" }, "<C-S-V>", function() vim.api.nvim_paste(vim.fn.getreg('+'), true, -1) end, { desc = "Copy system clipboard", noremap = true, silent = true })
+    else
+      vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
     end
   '';
 }
