@@ -4,8 +4,8 @@
 
   src = pkgs.fetchurl {
     # gha-updater: DLURL=$(curl https://cursor.com/install -fsS | grep -E '^DOWNLOAD_URL' | grep -Eo "https://.+.tar.gz" | sed 's#\${OS}/\${ARCH}#linux/x64#') && echo -n "$DLURL $(nix-prefetch-url $DLURL)"
-    url = "https://downloads.cursor.com/lab/2025.09.18-39624ef/linux/x64/agent-cli-package.tar.gz";
-    sha256 = "0yf42iv66prl64yc8zbn3vidvskywnid6wmca11brck05hk29drd";
+    url = "https://downloads.cursor.com/lab/2025.09.18-7ae6800/linux/x64/agent-cli-package.tar.gz";
+    sha256 = "0kbs3v3rbgmx74wib6xv67svb2zzqxbdhs10x0q0qxybyzx7ksmp";
   };
   version = "latest";
 
