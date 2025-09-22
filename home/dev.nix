@@ -85,5 +85,13 @@
     foundry # cast eth chain testing tool
   ];
 
-  home.sessionPath = [ "$HOME/.krew/bin" ];
+
+  home = {
+    sessionPath = [ "$HOME/.krew/bin" ];
+    file.".yarnrc.yaml".text = ''
+      enableScripts = false;
+      enableTelemetry = 0;
+      npmMinimalAgeGate = 60 * 24 * 7; # 1 week in minutes
+    '';
+  };
 }

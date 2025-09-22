@@ -46,8 +46,7 @@
       enable = true;
       dockerCompat = true;
       autoPrune.enable = true;
-      dockerSocket.enable = true;
-      # Allow podman-compose containers to talk to eachother
+      # Allow podman-compose containers to talk to each other
       defaultNetwork.settings.dns_enabled = true;
     };
   };

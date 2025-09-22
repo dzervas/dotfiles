@@ -11,7 +11,7 @@ in {
     codex = {
       enable = true;
       settings = {
-        model = "gpt-5";
+        model = "gpt-5-codex";
         model_reasoning_effort = "high";
         approval_policy = "untrusted";
         tools.web_search = true;
