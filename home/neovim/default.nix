@@ -440,7 +440,7 @@
       { key = "<C-BS>"; action = "<C-w>"; mode = "t"; options.desc = "Delete word backwards"; }
     ];
 
-    extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes satellite-nvim ];
+    extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ]; # satellite-nvim is fucking everything up
     extraPackagesAfter = with pkgs; [
       # None-ls packages
       gomodifytags

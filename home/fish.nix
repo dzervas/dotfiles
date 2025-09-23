@@ -37,7 +37,6 @@
       { name = "puffer"; inherit (pkgs.fishPlugins.puffer) src; }
     ];
 
-    # TODO: Add a flake-init function that generates a flake shell with whatever is in the env from use and checks for common lang files
     functions = {
       backup = {
         body = builtins.readFile ./fish-functions/backup.fish;
@@ -60,6 +59,10 @@
         body = builtins.readFile ./fish-functions/crest.fish;
         description = "A curl wrapper with enhanced features tailored for REST APIs";
         wraps = "curl";
+      };
+      direnv-sync = {
+        body = builtins.readFile ./fish-functions/direnv-sync.fish;
+        description = ".envrc manager";
       };
       kubelog = {
         body = builtins.readFile ./fish-functions/kubelog.fish;
