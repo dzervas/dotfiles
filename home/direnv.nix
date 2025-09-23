@@ -3,7 +3,7 @@
 
   programs.direnv = {
     enable = true;
-    nix-direnv.enable = true;
+    # nix-direnv.enable = true; # Still breaks
 
     stdlib = builtins.readFile ./direnvrc;
 
