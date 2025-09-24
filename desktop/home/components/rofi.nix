@@ -41,7 +41,6 @@
       message = {
         margin = mkLiteral "12px 0 0";
         border-radius = mkLiteral "16px";
-        background-color = mkLiteral "@separatorcolor";
       };
 
       textbox.padding = mkLiteral "8px 24px";
