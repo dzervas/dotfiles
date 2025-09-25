@@ -75,6 +75,7 @@
         ".claude"
         ".claude.json"
         ".mcp.json"
+        ".aider.*"
       ];
     };
 
