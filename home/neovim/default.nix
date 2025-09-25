@@ -1,20 +1,20 @@
-{ lib, pkgs, ... }: {
+{ inputs, lib, pkgs, ... }: let
+  inherit (inputs.nixvim.lib.nixvim) utils;
+in {
   # Issues:
   # - Run python script with args/env (nvim-iron?)
-  # - Some kind of multi-project support (windows? tabs?) and/or "open as project" default
   # - vscode-like runner (run this test/function/etc.)
   # - Fix right-click menu
-  # - Fix neo-tree vs bdelete issue
   # - fish completion within floaterm (e.g. % expands to current file)
   # - Fix multiline prompt in floaterm
   # - ctrl-tab like firefox for buffers
   # - ctrl-tab like firefox for jumps
-  # - Telescope fuzzy finder
-  # - More null-ls code actions
   # - Type annotations as end hints (not inlay)
 
   imports = [
     ./ai.nix
+    ./completion.nix
+    ./lint.nix
     ./neovide.nix
     ./python.nix
     ./rust.nix
@@ -81,11 +81,9 @@
           enable = true;
           settings = {
             cmd = "Neogit";
-            keys = [{
-              __unkeyed-1 = "<leader>g";
-              __unkeyed-3 = "<CMD>:Neogit cwd=%:p:h<CR>";
-              desc = "Enable Copilot (with options)";
-            }];
+            keys = [
+              (utils.listToUnkeyedAttrs ["<leader>g" "<CMD>:Neogit cwd=%:p:h<CR>"] // { desc = "Neogit"; })
+            ];
           };
         };
 
@@ -105,161 +103,7 @@
       nvim-surround.enable = true;
       guess-indent.enable = true;
       direnv.enable = true;
-
-      # Documents (markdown)
-      markdown-preview.enable = true;
-      render-markdown = {
-        enable = true;
-        settings.latex.enabled = false;
-      };
-
-      # Lint/Code actions
-      none-ls = {
-        enable = true;
-
-        # Check https://github.com/nvimtools/none-ls.nvim/blob/main/doc/BUILTINS.md
-        sources = {
-          code_actions = {
-            gitrebase.enable = true;
-            gitsigns.enable = true;
-            gomodifytags.enable = true;
-            impl.enable = true;
-            # refactoring.enable = true; # Does not support rust and needs a binary?
-            statix.enable = true;
-            # ts_node_action.enable = true; # Tree sitter - can't find the binary?
-          };
-          # No completion, it's taken care of by blink-cmp
-          diagnostics = {
-            actionlint.enable = true;
-            ansiblelint.enable = true;
-            checkmake.enable = true;
-            codespell.enable = true;
-            deadnix.enable = true;
-            dotenv_linter.enable = true;
-            fish.enable = true;
-            ltrs.enable = true; # Rust
-            markdownlint.enable = true;
-            # opentofu_validate.enable = true; # Fights with terraform_validate
-            pylint.enable = true;
-            revive.enable = true; # Golang
-            selene.enable = true; # Lua
-            sqruff.enable = true; # SQL
-            statix.enable = true;
-            terraform_validate.enable = true;
-            terragrunt_validate.enable = true;
-            tfsec.enable = true;
-            tidy.enable = true; # HTML & XML
-            todo_comments.enable = true; # todo comments - is it good?
-            trivy.enable = true; # Terraform vulns
-            yamllint = {
-              enable = true;
-              settings = {
-                extra_args = [
-                  "-d"
-                  (builtins.toJSON {
-                    extends = "default";
-                    rules.line-length = "disable";
-                  })
-                ];
-                extra_filetypes = ["toml"];
-              };
-            };
-          };
-          formatting = {
-            # alejandra.enable = true; # Nix - nixfmt instead
-            # biome.enable = true; # HTML/CSS/JS/TS/JSON
-            black.enable = true; # Python
-            codespell.enable = true;
-            fish_indent.enable = true;
-            gofmt.enable = true;
-            goimports.enable = true;
-            goimports_reviser.enable = true; # Does it need goimports too?
-            hclfmt.enable = true;
-            isort.enable = true; # Python imports sorter
-            markdownlint.enable = true;
-            nixfmt = {
-              enable = true;
-              package = pkgs.nixfmt-rfc-style;
-            };
-            # opentofu_fmt.enable = true;
-            prettier.enable = true; # HTML/CSS/JS/TS/JSON/Astro
-            rustywind.enable = true; # Tailwind classes
-            shellharden.enable = true;
-            shfmt.enable = true;
-            stylua.enable = true;
-            terraform_fmt.enable = true;
-            terragrunt_fmt.enable = true;
-            tidy.enable = true; # HTML & XML
-            yamlfix.enable = true;
-          };
-        };
-      };
-
-      # Auto completion
-      blink-cmp = {
-        enable = true;
-        setupLspCapabilities = true;
-
-        settings = {
-          enabled.__raw = ''
-            function()
-              local disabled_bts = {
-                "prompt",
-                "nofile",
-              }
-              local disabled_fts = {
-                "TelescopePrompt",
-                "noice",
-                "noice_input",
-                "markdown",
-              }
-
-              return not vim.tbl_contains(disabled_bts, vim.bo.buftype)
-                and not vim.tbl_contains(disabled_fts, vim.bo.filetype)
-                and vim.b.completion ~= false
-            end
-          '';
-          keymap = {
-            "<Tab>" = [
-              { __raw = ''
-                function(cmp)
-                  -- If Copilot is loaded, accept the suggestion
-                  if package.loaded["copilot"] ~= nil and require("copilot.suggestion").is_visible() then
-                    require("copilot.suggestion").accept()
-                  elseif cmp.snippet_active() then return cmp.accept()
-                  else return cmp.select_and_accept()
-                  end
-                end'';}
-              "snippet_forward"
-              "fallback"
-            ];
-            "<S-Tab>" = ["snippet_backward" "fallback"];
-            "<CR>" = ["accept" "fallback"];
-
-            "<Up>" = ["select_prev" "fallback"];
-            "<Down>" = ["select_next" "fallback"];
-
-            "<C-e>" = ["hide" "fallback"];
-            "<C-k>" = ["show_signature" "hide_signature" "fallback"];
-            "<C-space>" = ["show" "show_documentation" "fallback"];
-          };
-
-          cmdline = {
-            completion.menu.auto_show = true;
-            keymap = {
-              preset = "inherit";
-              "<CR>" = false;
-            };
-          };
-
-          completion = {
-            menu.draw.treesitter = ["lsp"];
-            documentation.auto_show = true;
-            ghost_text.enabled = true;
-          };
-          signature.enabled = true;
-        };
-      };
+      scope.enable = true; # Scope buffers per-tab
 
       # Debugging
       # TODO: Lazy load
@@ -337,13 +181,11 @@
       neo-tree = {
         enable = true;
         addBlankLineAtTop = true;
-        # closeIfLastWindow = true;
 
         buffers.followCurrentFile.leaveDirsOpen = true;
 
         filesystem.filteredItems = {
           hideDotfiles = false;
-          # hideGitignored = false;
           visible = true;
         };
       };
@@ -362,7 +204,7 @@
       }
       {
         desc = "Auto-show diagnostics";
-        command = "lua vim.diagnostic.open_float()";
+        callback = utils.mkRaw "vim.diagnostic.open_float";
         event = "CursorHold";
         pattern = "*";
       }
@@ -374,35 +216,38 @@
       }
     ];
 
-    diagnostic.settings.signs = {
-      text = {
-        "__rawKey__vim.diagnostic.severity.ERROR" = "✘";
-        "__rawKey__vim.diagnostic.severity.WARN" = "";
-        "__rawKey__vim.diagnostic.severity.INFO" = "";
-        "__rawKey__vim.diagnostic.severity.HINT" = "󰌵";
-      };
+    diagnostic.settings.signs.text = utils.toRawKeys {
+      "vim.diagnostic.severity.ERROR" = "✘";
+      "vim.diagnostic.severity.WARN" = "";
+      "vim.diagnostic.severity.INFO" = "";
+      "vim.diagnostic.severity.HINT" = "󰌵";
     };
 
     keymaps =
       # Alt-<number> selects buffer number
-      (lib.map (n: { key = "<A-${toString n}>"; action = "<CMD>BufferLineGoToBuffer ${toString n}<CR>"; options.desc = "Go to buffer ${toString n}"; }) (lib.range 1 9)) ++
+      (lib.map (n: { key = "<A-${toString n}>"; action = "<CMD>BufferGoto ${toString n}<CR>"; options.desc = "Go to buffer ${toString n}"; }) (lib.range 1 9)) ++
     [
       # Buffer manipulation
-      { key = "<A-c>"; action = "<CMD>close<CR>"; options.desc = "Close window"; }
+      { key = "<A-c>"; action = "<CMD>BufferClose<CR>"; options.desc = "Kill buffer"; }
       { key = "<A-c>"; action = "<CMD>FloatermKill<CR>"; mode = "t"; options.desc = "Kill terminal session"; }
-      { key = "<A-C>"; action = "<CMD>bdelete<CR>"; options.desc = "Kill buffer"; }
+      { key = "<A-C>"; action = "<CMD>close<CR>"; options.desc = "Close window"; }
       { key = "<A-o>"; action = "<CMD>only<CR>"; options.desc = "Close other windows"; }
-      { key = "<A-O>"; action = "<CMD>BufferLineCloseOthers<CR>"; options.desc = "Kill all other buffers"; }
-      { key = "<A-Left>"; action = "<CMD>BufferLineCyclePrev<CR>"; options.desc = "Select previous buffer"; }
+      { key = "<A-O>"; action = "<CMD>BufferCloseAllButCurrent<CR>"; options.desc = "Kill all other buffers"; }
+      { key = "<A-Left>"; action = "<CMD>BufferPrevious<CR>"; options.desc = "Select previous buffer"; }
       { key = "<A-Left>"; action = "<CMD>FloatermPrev<CR>"; mode = "t"; options.desc = "Select previous terminal"; }
-      { key = "<A-S-Left>"; action = "<CMD>BufferLineMovePrev<CR>"; options.desc = "Move buffer to the left"; }
-      { key = "<A-Right>"; action = "<CMD>BufferLineCycleNext<CR>"; options.desc = "Select next buffer"; }
+      { key = "<A-S-Left>"; action = "<CMD>BufferMovePrevious<CR>"; options.desc = "Move buffer to the left"; }
+      { key = "<A-Right>"; action = "<CMD>BufferNext<CR>"; options.desc = "Select next buffer"; }
       { key = "<A-Right>"; action = "<CMD>FloatermNext<CR>"; mode = "t"; options.desc = "Select next terminal"; }
-      { key = "<A-S-Right>"; action = "<CMD>BufferLineMoveNext<CR>"; options.desc = "Move buffer to the right"; }
+      { key = "<A-S-Right>"; action = "<CMD>BufferMoveNext<CR>"; options.desc = "Move buffer to the right"; }
 
       # Window navigation
       { key = "<A-Up>"; action = "<C-W>w"; options.desc = "Cycle to the next window"; }
       { key = "<A-Down>"; action = "<C-W>W"; options.desc = "Cycle to the previous window"; }
+
+      # Tab navigation
+      { key = "<A-Tab>"; action = "<CMD>tabnext<CR>"; options.desc = "Cycle to the next tab"; }
+      { key = "<A-S-Tab>"; action = "<CMD>tabprevious<CR>"; options.desc = "Cycle to the previous tab"; }
+      { key = "<C-A-c>"; action = "<CMD>tabclose<CR>"; options.desc = "Cycle to the next tab"; }
 
       # Split management
       { key = "<A-Return>"; action = "<CMD>vsplit<CR><C-W>w"; options.desc = "Open a window to the right"; }
@@ -424,15 +269,15 @@
       { key = "<leader>F"; action = "<CMD>Neotree reveal<CR>"; options.desc = "Reveal the current file in the explorer"; }
 
       # LSP navigation and actions
-      { key = "K"; action = "<CMD>lua vim.lsp.buf.hover()<CR>"; options.desc = "Show the hover info"; }
-      { key = "gd"; action = "<CMD>lua vim.lsp.buf.definition()<CR>"; options.desc = "Go to definition"; }
-      { key = "gD"; action = "<CMD>lua vim.lsp.buf.declaration()<CR>"; options.desc = "Go to declaration"; }
-      { key = "gi"; action = "<CMD>lua vim.lsp.buf.implementation()<CR>"; options.desc = "Go to implementation"; }
-      { key = "gr"; action = "<CMD>lua vim.lsp.buf.references()<CR>"; options.desc = "Go to references"; }
-      { key = "<C-]>"; action = "<CMD>lua vim.lsp.buf.definition()<CR>"; options.desc = "Go to definition"; }
-      { key = "<C-.>"; action = "<CMD>lua vim.lsp.buf.code_action()<CR>"; options.desc = "Open the code actions menu"; }
-      { key = "<leader>m"; action = "<CMD>NoiceAll<CR>"; options.desc = "Show all the editor messages"; }
-      { key = "<leader>w"; action = "<CMD>lua vim.lsp.buf.format({ async = false })<CR>"; options.desc = "Format the current file";  }
+      { key = "K"; action = utils.mkRaw "vim.lsp.buf.hover"; options.desc = "Show the hover info"; }
+      { key = "gd"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
+      { key = "gD"; action = utils.mkRaw "vim.lsp.buf.declaration"; options.desc = "Go to declaration"; }
+      { key = "gi"; action = utils.mkRaw "vim.lsp.buf.implementation"; options.desc = "Go to implementation"; }
+      { key = "gr"; action = utils.mkRaw "vim.lsp.buf.references"; options.desc = "Go to references"; }
+      { key = "<C-]>"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
+      { key = "<C-.>"; action = utils.mkRaw "vim.lsp.buf.code_action"; options.desc = "Code actions menu"; }
+      { key = "<leader>m"; action = "<CMD>NoiceAll<CR>"; options.desc = "Show all messages"; }
+      { key = "<leader>w"; action = utils.mkRaw "function () vim.lsp.buf.format({ async = false }) end"; options.desc = "Format the current file";  }
 
       # Ctrl-backspace delete word
       { key = "<C-BS>"; action = "<C-w>"; mode = "i"; options.desc = "Delete word backwards"; }
@@ -518,13 +363,11 @@
       };
     };
 
-    performance = {
-      byteCompileLua = {
-        # enable = true;
-        # nvimRuntime = true;
-        # luaLib = true;
-        # plugins = true;
-      };
+    performance.byteCompileLua = {
+      # enable = true;
+      # nvimRuntime = true;
+      # luaLib = true;
+      # plugins = true;
     };
 
 
@@ -533,13 +376,18 @@
     # { "queries/myfile/injections.scm".source = ./queries/myfile.scm; }
     extraFiles = let
       files = builtins.attrNames (builtins.readDir ./queries);
-    in builtins.listToAttrs (map (name: let
-      match = builtins.match "^([a-z0-9]+)\.scm$" name;
-      base = if match == null then name else builtins.elemAt match 0;
-    in {
-      name = "queries/${base}/injections.scm";
-      value = { source = ./queries + "/${name}"; };
-    }) files);
+    in
+      builtins.listToAttrs (
+        map (name: let
+          match = builtins.match "^([a-z0-9]+)\.scm$" name;
+          base = if match == null then name else builtins.elemAt match 0;
+        in
+          {
+            name = "queries/${base}/injections.scm";
+            value = { source = ./queries + "/${name}"; };
+          }
+        )
+        files);
   };
 
   stylix.targets.nixvim.enable = false;
