@@ -110,5 +110,42 @@ in {
         };
       };
     };
+    opencode = {
+      enable = true;
+      settings = {
+        autoupdate = false;
+        share = "disabled";
+        instructions = ["CLAUDE.md" "CONTRIBUTING.md"];
+
+        formatter = {
+          cargo = {
+            command = "cargo fmt";
+            extensions = [".rs"];
+          };
+          terraform = {
+            command = "terraform fmt";
+            extensions = [".tf" ".hcl"];
+          };
+        };
+
+        permission = {
+          bash = {
+            "hurl *" = "allow";
+
+            "cargo build" = "allow";
+            "cargo check" = "allow";
+            "cargo test" = "allow";
+            "cargo run" = "allow";
+
+            "terraform *" = "deny";
+
+            "git commit *" = "deny";
+            "git push *" = "deny";
+
+            "*" = "ask";
+          };
+        };
+      };
+    };
   };
 }
