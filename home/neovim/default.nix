@@ -204,7 +204,7 @@ in {
       }
       {
         desc = "Auto-show diagnostics";
-        callback = utils.mkRaw "vim.diagnostic.open_float";
+        callback = utils.mkRaw "function() vim.diagnostic.open_float(nil, {}) end";
         event = "CursorHold";
         pattern = "*";
       }
@@ -216,11 +216,31 @@ in {
       }
     ];
 
-    diagnostic.settings.signs.text = utils.toRawKeys {
-      "vim.diagnostic.severity.ERROR" = "✘";
-      "vim.diagnostic.severity.WARN" = "";
-      "vim.diagnostic.severity.INFO" = "";
-      "vim.diagnostic.severity.HINT" = "󰌵";
+    diagnostic.settings = {
+      signs.text = utils.toRawKeys {
+        "vim.diagnostic.severity.ERROR" = "✘";
+        "vim.diagnostic.severity.WARN" = "";
+        "vim.diagnostic.severity.INFO" = "";
+        "vim.diagnostic.severity.HINT" = "󰌵";
+      };
+
+      float = {
+        focusable = false;
+        style = "minimal";
+        border = "rounded";
+        source = "always";
+        header = "";
+        prefix = "";
+      };
+
+      virtual_text = {
+        spacing = 4;
+        source = "if_many";
+      };
+
+      underline = true;
+      update_in_insert = false;
+      severity_sort = true;
     };
 
     keymaps =
@@ -270,6 +290,7 @@ in {
 
       # LSP navigation and actions
       { key = "K"; action = utils.mkRaw "vim.lsp.buf.hover"; options.desc = "Show the hover info"; }
+      { key = "?"; action = utils.mkRaw "vim.diagnostic.open_float"; options.desc = "Show diagnostic float"; }
       { key = "gd"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
       { key = "gD"; action = utils.mkRaw "vim.lsp.buf.declaration"; options.desc = "Go to declaration"; }
       { key = "gi"; action = utils.mkRaw "vim.lsp.buf.implementation"; options.desc = "Go to implementation"; }

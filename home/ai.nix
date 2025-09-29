@@ -5,6 +5,7 @@ in {
     inputs.claude-desktop.packages.${pkgs.system}.claude-desktop-with-fhs
     cursor-cli
     codex
+    mcp-gateway
   ];
 
   programs = {

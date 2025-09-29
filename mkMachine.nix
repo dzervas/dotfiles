@@ -1,5 +1,5 @@
 # flake.nix specific functions
-{ desktop, inputs, nixpkgs, lib }: {
+{ desktop, inputs, lib }: {
   # Function to generate a machine configuration
   mkMachine = {
     hostName,

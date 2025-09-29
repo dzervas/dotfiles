@@ -10,7 +10,7 @@
     inherit (nix-private) isPrivate;
     desktop = "hyprland";
 
-    inherit (import ./mkMachine.nix { inherit inputs lib desktop nixpkgs; }) mkMachine mkShellApp;
+    inherit (import ./mkMachine.nix { inherit inputs lib desktop; }) mkMachine mkShellApp;
   in rec {
     # System definition
     # If you're here to check how to make your own flake for nixos, only the following matters

@@ -1,7 +1,3 @@
 _: {
-  nixpkgs.overlays = [
-    (_final: prev: {
-      buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
-    })
-  ];
+  nixpkgs.overlays = [(import ./packages.nix)];
 }

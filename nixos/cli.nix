@@ -41,16 +41,21 @@
   };
 
   virtualisation = {
-    containers.enable = true;
+    containers = {
+      enable = true;
+      registries.search = [ "docker.io" ];
+    };
     podman = {
       enable = true;
-      dockerCompat = true;
       autoPrune.enable = true;
+
       # Allow podman-compose containers to talk to each other
       defaultNetwork.settings.dns_enabled = true;
+
+      dockerCompat = true;
+      dockerSocket.enable = true;
     };
   };
-  virtualisation.containers.registries.search = [ "docker.io" ];
 
   security = {
     pam.services.kwallet = {
