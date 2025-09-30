@@ -102,7 +102,10 @@ in {
       multicursors.enable = true;
       nvim-surround.enable = true;
       guess-indent.enable = true;
-      direnv.enable = true;
+      direnv = {
+        enable = true;
+        settings.direnv_silent_load = 1;
+      };
       scope.enable = true; # Scope buffers per-tab
 
       # Debugging
@@ -295,6 +298,9 @@ in {
       { key = "gD"; action = utils.mkRaw "vim.lsp.buf.declaration"; options.desc = "Go to declaration"; }
       { key = "gi"; action = utils.mkRaw "vim.lsp.buf.implementation"; options.desc = "Go to implementation"; }
       { key = "gr"; action = utils.mkRaw "vim.lsp.buf.references"; options.desc = "Go to references"; }
+      { key = "gt"; action = utils.mkRaw "function() vim.diagnostic.config({ virtual_text = not vim.diagnostic.config().virtual_text }) end"; options.desc = "Toggle diagnostic virtual_text"; }
+      { key = "g<Up>"; action = utils.mkRaw "vim.diagnostic.goto_prev"; options.desc = "Go to previous diagnostic"; }
+      { key = "g<Down>"; action = utils.mkRaw "vim.diagnostic.goto_next"; options.desc = "Go to next diagnostic"; }
       { key = "<C-]>"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
       { key = "<C-.>"; action = utils.mkRaw "vim.lsp.buf.code_action"; options.desc = "Code actions menu"; }
       { key = "<leader>m"; action = "<CMD>NoiceAll<CR>"; options.desc = "Show all messages"; }
