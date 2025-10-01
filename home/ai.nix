@@ -1,8 +1,7 @@
-{ inputs, pkgs, ... }: let
+{ pkgs, ... }: let
   tools = mcp: tools: builtins.map(t: "mcp__${mcp}__${t}") tools;
 in {
   home.packages = with pkgs; [
-    inputs.claude-desktop.packages.${pkgs.system}.claude-desktop-with-fhs
     cursor-cli
     codex
     mcp-gateway

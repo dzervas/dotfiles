@@ -20,6 +20,8 @@
       pattern = "rust";
     }];
 
+    globals.rust_recommended_style = 0;
+
     extraPackagesAfter = [pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter];
   };
 

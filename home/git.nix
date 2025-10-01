@@ -14,6 +14,7 @@
       difftastic = {
         enable = true;
         display = "side-by-side";
+        enableAsDifftool = true;
       };
 
       aliases = {

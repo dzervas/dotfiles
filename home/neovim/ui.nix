@@ -17,6 +17,7 @@ in {
       enable = true;
       settings = {
         change_to_vcs_root = true;
+        shortcut_type = "number";
         config = {
           mru.cwd_only = true;
           week_header.enable = true;

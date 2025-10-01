@@ -24,7 +24,7 @@
           fish.enable = true;
           ltrs.enable = true; # Rust
           # opentofu_validate.enable = true; # Fights with terraform_validate
-          pylint.enable = true;
+          # pylint.enable = true;
           revive.enable = true; # Golang
           selene.enable = true; # Lua
           sqruff.enable = true; # SQL
@@ -37,16 +37,17 @@
           trivy.enable = true; # Terraform vulns
           yamllint = {
             enable = true;
-            settings = {
-              extra_args = [
-                "-d"
-                (builtins.toJSON {
-                  extends = "default";
-                  rules.line-length = "disable";
-                })
-              ];
-              extra_filetypes = ["toml"];
-            };
+            settings.extra_args = [
+              "-d"
+              (builtins.toJSON {
+                extends = "default";
+                rules = {
+                  comments = "disable"; # 2 spaces before comment
+                  document-start = "disable"; # --- at the top of the doc
+                  line-length = "disable";
+                };
+              })
+            ];
           };
         };
         formatting = {

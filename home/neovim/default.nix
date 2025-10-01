@@ -10,6 +10,12 @@ in {
   # - ctrl-tab like firefox for buffers
   # - ctrl-tab like firefox for jumps
   # - Type annotations as end hints (not inlay)
+  # - TOML lints
+  # - Disable python line too long & fix imports
+  # - Add debugging commands and simplify workflow
+  # - Devenv treesitter
+  # - Nix code action to split/merge attr, add "with"
+  # - Rust workflow to disable formatting and better defaults
 
   imports = [
     ./ai.nix
@@ -74,20 +80,7 @@ in {
       gitsigns.enable = true;
       illuminate.enable = true;
       repeat.enable = true;
-      neogit = {
-        enable = true;
-        lazyLoad = {
-          enable = true;
-          settings = {
-            cmd = "Neogit";
-            keys = [
-              (utils.listToUnkeyedAttrs ["<leader>g" "<CMD>:Neogit cwd=%:p:h<CR>"] // { desc = "Neogit"; })
-            ];
-          };
-        };
-
-        settings.kind = "floating";
-      };
+      fugitive.enable = true;
 
       # Editing helpers
       comment = {
@@ -100,7 +93,17 @@ in {
       };
       multicursors.enable = true;
       nvim-surround.enable = true;
-      guess-indent.enable = true;
+      guess-indent = {
+        enable = true;
+        settings = {
+          auto_cmd = true;
+          on_tab_options = {
+            expandtab = false;
+            tabstop = 4;
+            shiftwidth = 4;
+          };
+        };
+      };
       direnv = {
         enable = true;
         settings.direnv_silent_load = 1;
@@ -361,6 +364,7 @@ in {
 
       # Default indentation config
       tabstop = 4;
+      shiftwidth = 4;
       expandtab = false;
 
       # Comment formatting
