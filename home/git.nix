@@ -19,7 +19,7 @@
       aliases = {
         aa = "!git add -A && git status";
         ac = "!git aa && git commit";
-        acp = ''!f(){ if test $# -gt 1; then git aa && git commit -m "$*" && git push; else git ac && git push; fi }'';
+        acp = ''!f(){ if test $# -gt 0; then git aa && git commit -m "$*" && git push; else git ac && git push; fi }; f'';
         bl = "!git reflog show --pretty=format:'%gs ~ %gd' --date=relative | grep 'checkout:' | grep -oE '[^ ]+ ~ .*' | awk -F~ '!seen[$1]++' | head -n 10 | awk -F' ~ HEAD@{' '{printf(\"  \\033[33m%s: \\033[37m %s\\033[0m\\n\", substr($2, 1, length($2)-1), $1)}'";
         c = "clone";
         co = "checkout";

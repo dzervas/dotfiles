@@ -167,40 +167,20 @@
           "services.sync.prefs.sync-seen.browser.newtabpage.activity-stream.showSponsored" = false;
           "services.sync.prefs.sync.browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
           "services.sync.prefs.sync-seen.browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+          "browser.newtabpage.activity-stream.topSitesRows" = 2;
           "browser.newtabpage.pinned" = builtins.toJSON [
-            {
-              url = "https://hass.dzerv.art/";
-              label = "HASS";
-            }
-            {
-              url = "https://search.nixos.org/packages?channel=unstable";
-              label = "NixOS Search";
-              customScreenshotURL = "https://search.nixos.org/images/nix-logo.png";
-            }
-            {
-              url = "https://home-manager-options.extranix.com/?query=&release=master";
-              label = "Home Manager Options";
-            }
-            {
-              url = "https://hackaday.com/";
-              label = "HackADay";
-            }
-            {
-              url = "https://news.ycombinator.com/";
-              label = "HackerNews";
-            }
-            {
-              url = "https://lobste.rs";
-              label = "Lobsters";
-            }
-            {
-              url = "https://github.com/";
-              label = "GitHub";
-            }
-            {
-              url = "https://www.skroutz.gr/";
-              label = "Skroutz";
-            }
+            { label = "NixOS Search"; url = "https://search.nixos.org/packages?channel=unstable"; customScreenshotURL = "https://search.nixos.org/images/nix-logo.png"; }
+            { label = "Home Manager"; url = "https://home-manager-options.extranix.com/?release=master"; }
+            { label = "DevEnv"; url = "https://devenv.sh/"; }
+            { label = "NixVim"; url = "https://nix-community.github.io/nixvim/search/"; customScreenshotURL = "https://github.com/nix-community/nixvim/raw/refs/heads/main/assets/nixvim_logo.svg"; }
+            { label = "HackADay"; url = "https://hackaday.com/"; }
+            { label = "HackerNews"; url = "https://news.ycombinator.com/"; }
+            { label = "Lobsters"; url = "https://lobste.rs"; }
+            { label = "Kagi News"; url = "https://kite.kagi.com"; customScreenshotURL = "https://kite.kagi.com/svg/kagi_news_icon.svg"; }
+            { label = "HASS"; url = "https://hass.dzerv.art/"; }
+            { label = "n8n"; url = "https://auto.dzerv.art/"; }
+            { label = "GitHub"; url = "https://github.com/"; }
+            { label = "Skroutz"; url = "https://www.skroutz.gr/"; }
           ];
         };
       };

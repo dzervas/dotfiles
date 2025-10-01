@@ -45,7 +45,6 @@ in {
       dockerls.enable = true;
       docker_compose_language_service.enable = true;
       helm_ls.enable = true;
-      marksman.enable = true;
       nil_ls.enable = true;
       statix.enable = true;
       terraformls.enable = true;
@@ -163,8 +162,8 @@ in {
 
           keymaps = {
             gotoDefinitionLspFallback = "<C-]>";
-            gotoNextUsage = "g<Down>";
-            gotoPreviousUsage = "g<Up>";
+            gotoNextUsage = "g<Right>";
+            gotoPreviousUsage = "g<Left>";
             listDefinitions = "gl";
           };
         };
@@ -318,7 +317,6 @@ in {
       gomodifytags
       impl
       yamllint
-      codespell
 
       ncurses # infocmp bin
       vimPlugins.vim-floaterm # provides the 'floaterm' helper script on PATH

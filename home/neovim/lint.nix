@@ -19,12 +19,10 @@
           actionlint.enable = true;
           ansiblelint.enable = true;
           checkmake.enable = true;
-          codespell.enable = true;
           deadnix.enable = true;
           dotenv_linter.enable = true;
           fish.enable = true;
           ltrs.enable = true; # Rust
-          markdownlint.enable = true;
           # opentofu_validate.enable = true; # Fights with terraform_validate
           pylint.enable = true;
           revive.enable = true; # Golang
@@ -55,14 +53,12 @@
           # alejandra.enable = true; # Nix - nixfmt instead
           # biome.enable = true; # HTML/CSS/JS/TS/JSON
           black.enable = true; # Python
-          codespell.enable = true;
           fish_indent.enable = true;
           gofmt.enable = true;
           goimports.enable = true;
           goimports_reviser.enable = true; # Does it need goimports too?
           hclfmt.enable = true;
           isort.enable = true; # Python imports sorter
-          markdownlint.enable = true;
           nixfmt = {
             enable = true;
             package = pkgs.nixfmt-rfc-style;
