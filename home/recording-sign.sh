@@ -38,13 +38,14 @@ check_status() {
 
 echo "Script started. Waiting for OPEN or CLOSE commands..."
 echo "Press Ctrl+C to exit."
+check_status
 
 # Main loop
 inotifywait -m /dev -e open,close --include "video[0-9]+" --format "%e" | while read -r line; do
-    current_time=$(date +%s)
-    time_diff=$((current_time - last_open_time))
+    current_time=$(python3 -c "import time; print(time.time())")
+    time_diff=$(python3 -c "print($current_time - $last_open_time > $DEBOUNCE_TIME)")
 
-    if [ $time_diff -lt $DEBOUNCE_TIME ]; then
+    if [[ $time_diff == "False" ]]; then
         { sleep $DEBOUNCE_TIME; check_status; } &
         continue
     fi
