@@ -76,6 +76,8 @@
 
       trilium-desktop
 
+      (tree-sitter.withPlugins (p: builtins.attrValues p))
+
       (lib.mkIf config.setup.isLaptop powertop)
       (lib.mkIf (!config.setup.isLaptop) plasticity)
     ];

@@ -51,6 +51,13 @@ in {
       dockerls.enable = true;
       docker_compose_language_service.enable = true;
       helm_ls.enable = true;
+      jsonnet_ls = {
+        enable = true;
+        settings.settings.formatting = {
+          PadArrays = true;
+          StringStyle = "double";
+        };
+      };
       nil_ls.enable = true;
       statix.enable = true;
       terraformls.enable = true;
@@ -306,6 +313,7 @@ in {
       { key = "<C-]>"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
       { key = "<C-.>"; action = utils.mkRaw "vim.lsp.buf.code_action"; options.desc = "Code actions menu"; }
       { key = "<leader>m"; action = "<CMD>NoiceAll<CR>"; options.desc = "Show all messages"; }
+      { key = "<leader>l"; action = "<CMD>NoiceDismiss<CR>"; options.desc = "Dismiss notification"; }
       { key = "<leader>w"; action = utils.mkRaw "function () vim.lsp.buf.format({ async = false }) end"; options.desc = "Format the current file";  }
 
       # Ctrl-backspace delete word

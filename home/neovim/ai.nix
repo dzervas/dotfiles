@@ -1,4 +1,7 @@
-{ lib, ... }: {
+{ inputs, lib, ... }: let
+  inherit (inputs.nixvim.lib.nixvim) utils;
+  listAndAttrs = key: cmd: desc: utils.listToUnkeyedAttrs [ key cmd ] // { inherit desc; };
+in {
   programs.nixvim = {
     plugins = {
       copilot-lua = {
@@ -8,11 +11,9 @@
           enable = true;
           settings = {
             cmd = "Copilot";
-            keys = [{
-              __unkeyed-1 = "<leader>cc";
-              __unkeyed-3 = "<CMD>lua _G.CopilotManager.show_copilot_enable_menu()<CR>";
-              desc = "Enable Copilot (with options)";
-            }];
+            keys = [
+              (listAndAttrs "<leader>cc" (utils.mkRaw "function() _G.CopilotManager.show_copilot_enable_menu() end") "Enable Copilot (with options)" )
+            ];
           };
         };
 
@@ -29,22 +30,14 @@
       };
 
       avante = {
-        enable = true;
+        enable = false;
         lazyLoad = {
           enable = true;
           settings = {
             cmd = "AvanteToggle";
             keys = [
-              {
-                __unkeyed-1 = "<leader>at";
-                __unkeyed-3 = "<CMD>AvanteToggle<CR>";
-                desc = "Toggle avante window";
-              }
-              {
-                __unkeyed-1 = "<leader>aa";
-                __unkeyed-3 = "<CMD>AvanteShow<CR>";
-                desc = "Focus avante window";
-              }
+              (listAndAttrs "<leader>at" "<CMD>AvanteToggle<CR>" "Toggle avante window")
+              (listAndAttrs "<leader>aa" "<CMD>AvanteShow<CR>" "Focus avante window")
             ];
           };
         };
@@ -55,6 +48,19 @@
           providers.copilot.model = "claude-sonnet-4";
         };
       };
+
+      opencode = {
+        enable = true;
+        #lazyLoad = {
+        #  enable = true;
+        #  settings.keys = [
+        #      (listAndAttrs "<leader>aa" (utils.mkRaw "require('opencode').toggle") "Toggle opencode window")
+        #      (listAndAttrs "<leader>an" (utils.mkRaw "require('opencode').session_new") "Start a new session")
+        #      (listAndAttrs "<leader>aC" (utils.mkRaw "require('opencode').session_compact") "Compact the current session")
+        #      (listAndAttrs "<leader>as" (utils.mkRaw "require('opencode').session_interrupt") "Interrupt the current session")
+        #    ];
+        #};
+      };
     };
 
     autoCmd = [
@@ -62,12 +68,12 @@
         event = "BufEnter";
         once = true;
         desc = "Try enabling Copilot once per session";
-        callback.__raw = "CopilotManager.copilot_try_load";
+        callback = utils.mkRaw "CopilotManager.copilot_try_load";
       }
       {
         event = "DirChanged";
         desc = "CopilotManager: clear cwd->root cache on :cd";
-        callback.__raw = "function() M._cwd_root_cache = {} end";
+        callback = utils.mkRaw "function() M._cwd_root_cache = {}; _G.CopilotManager.copilot_try_load(); end";
       }
     ];
     extraConfigLua = lib.mkAfter (builtins.readFile ./copilot-state.lua);

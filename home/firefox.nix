@@ -82,16 +82,24 @@
           "geo.enabled" = false;
           "network.captive-portal-service.enabled" = false;
           # This results in numerous issues - iframes don't work as expected, (skroutz), weird broken sites, etc.
-          # "network.http.sendRefererHeader" = 1; # 0 for no referer, 1 for only clicked links, 2 for everything
+          "network.http.sendRefererHeader" = 2; # 0 for no referer, 1 for only clicked links, 2 for everything
           "privacy.resistFingerprinting" = false; # Resets prefers-color-scheme to light :/
           "privacy.trackingprotection.enabled" = true;
+          "privacy.trackingprotection.socialtracking.enabled" = true;
           "privacy.globalprivacycontrol.enabled" = true; # Tell websites not to sell or share my data (lol)
+          "privacy.globalprivacycontrol.was_ever_enabled" = true;
           "privacy.donottrackheader.enabled" = true;
           "services.sync.prefs.sync.privacy.donottrackheader.enabled" = true;
           "browser.safebrowsing.malware.enabled" = false;
           "services.sync.prefs.sync.browser.safebrowsing.malware.enabled" = false;
           "browser.safebrowsing.phishing.enabled" = false;
           "services.sync.prefs.sync.browser.safebrowsing.phishing.enabled" = false;
+
+          # Enhanced Tracking Protection
+          "privacy.annotate_channels.strict_list.enabled" = true;
+          "privacy.bounceTrackingProtection.mode" = true;
+          "privacy.query_stripping.enabled" = true;
+          "privacy.query_stripping.enabled.pbmode" = true;
 
           # Sync
           "services.sync.declinedEngines" = "passwords,creditcards";
@@ -159,7 +167,7 @@
             newElementCount = 6;
           };
 
-          # Net tab page
+          # New tab page
           "browser.newtabpage.activity-stream.section.highlights.includePocket" = false;
           "services.sync.prefs.sync.browser.newtabpage.activity-stream.section.highlights.includePocket" = false;
           "services.sync.prefs.sync-seen.browser.newtabpage.activity-stream.section.highlights.includePocket" = false;
