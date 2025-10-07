@@ -1,6 +1,16 @@
 { config, pkgs, ... }: {
   networking = {
-    networkmanager.enable = true;
+    useNetworkd = true;
+    nameservers = [ "1.1.1.1" "1.0.0.1" ];
+    networkmanager = {
+      enable = true;
+      # Use systemd-resolved so that DNS can be split based on the domains:
+      # tailscale for its subdomains
+      # local dns for any search domains
+      # cloudflare for everything else
+      dns = "systemd-resolved";
+      unmanaged = ["zt+" "tailscale+" "tun+"];
+    };
     wireless.enable = false; # Can't use with networkmanager???
 
     firewall = {
@@ -12,40 +22,62 @@
     };
   };
 
-  systemd.services.NetworkManager-wait-online.enable = false;
+  systemd = {
+    # Use magic dns only for the tailscale subdomains
+    network = {
+      wait-online.enable = false;
+      networks."tailscale0" = {
+        matchConfig.Name = "tailscale0";
+        dns = [ "100.100.100.100" ];
+        domains = [ "~ts.dzerv.art" ];
+      };
+    };
 
-  time.timeZone = "Europe/Athens";
+    services.NetworkManager-wait-online.enable = false;
 
-  boot.extraModulePackages = with config.boot.kernelPackages; [
-    rtl88xxau-aircrack
-  ];
+    # Fix Tailscale connectivity after suspend/resume
+    services."tailscale-resume" = {
+      description = "Restart Tailscale after resume";
+      after = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
+      wantedBy = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.systemd}/bin/systemctl restart tailscaled.service";
+      };
+    };
+  };
 
   services = {
-    printing = {
+    resolved = {
       enable = true;
-      drivers = with pkgs; [ brlaser ];
-    };
-    avahi = {
-      enable = true;
-      nssmdns4 = true;
-      ipv6 = false;
-      denyInterfaces = ["zt+" "tailscale+"];
+      # Global fallback DNS
+      fallbackDns = config.networking.nameservers;
+      dnssec = "true";
+      dnsovertls = "opportunistic";
+      domains = [ "~." ]; # ensure systemd-resolved is the default resolver
     };
 
     tailscale = {
       enable = true;
       openFirewall = true;
     };
-  };
 
-  # Fix Tailscale connectivity after suspend/resume
-  systemd.services."tailscale-resume" = {
-    description = "Restart Tailscale after resume";
-    after = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
-    wantedBy = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.systemd}/bin/systemctl restart tailscaled.service";
+    printing = {
+      enable = true;
+      drivers = with pkgs; [ brlaser ];
+    };
+
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+      ipv6 = false;
+      denyInterfaces = ["zt+" "tailscale+" "tun+"];
     };
   };
+
+  boot.extraModulePackages = with config.boot.kernelPackages; [
+    rtl88xxau-aircrack
+  ];
+
+  time.timeZone = "Europe/Athens";
 }
