@@ -124,7 +124,7 @@
     };
 
     shellAliases = {
-      update = "sh (echo -n $FLAKE_URL | cut -d'?' -f1)/.github/scripts/gha-updater.sh && nix flake update --flake \"$FLAKE_URL\" && rebuild";
+      update = "grep --no-filename -r '# nix-update:' overlays/ | cut -d: -f2 | xargs -L1 nix-update -f overlays/update-shim.nix && nix flake update --flake \"$FLAKE_URL\" && rebuild";
       miniterm = "python3 -m serial.tools.miniterm";
       homelab = "nix run /home/dzervas/Lab/homelab/nixos";
       dd-img = "sudo dd bs=4M status=progress conv=fsync oflag=direct";

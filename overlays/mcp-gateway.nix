@@ -1,10 +1,10 @@
-# nix-update: --use-github-releases --version=unstable -vr 'v(.*)'
+# nix-update:mcp-gateway
 { lib
 , buildGoModule
 , fetchFromGitHub
 }: buildGoModule rec {
   pname = "mcp-gateway";
-  version = "0.20.0";
+  version = "0.22.0";
 
   src = fetchFromGitHub {
     owner = "docker";
@@ -12,7 +12,7 @@
 
     # gha-updater: DATA=$(curl "https://api.github.com/repos/docker/mcp-gateway/tags?per_page=1" | jq ".[]") DLURL=$(echo "$DATA" | jq -r .tarball_url) VERSION=$(echo "$DATA" | jq -r .name) echo -n "$VERSION $(nix-prefetch-url $DLURL)"
     rev   = "v${version}";
-    hash  = "sha256-K/ye+Y/5ywtKuhs8un4zUJ9dAstwsJb8qAqKVvjNlZg=";
+    hash  = "sha256-VQ4zfA5TwyJ1LoCrCl+ToGzVCx9ngWR6hkz5W7xTWv0=";
   };
 
   vendorHash = null;

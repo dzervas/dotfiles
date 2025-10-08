@@ -76,6 +76,8 @@
 
       trilium-desktop
 
+      nix-update
+
       (tree-sitter.withPlugins (p: builtins.attrValues p))
 
       (lib.mkIf config.setup.isLaptop powertop)
