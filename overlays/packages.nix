@@ -9,7 +9,7 @@ final: prev: {
   #     url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
   #     hash = "sha256-wazALudqwwYVCm7qCYIuOkOVcFxRTzLjkDnRXaHLFIQ=";
   #   };
-  #   npmDeps = null;
+  #   # npmDeps = null;
   # });
 
   # TODO: nix-update won't update the cargoHash :/

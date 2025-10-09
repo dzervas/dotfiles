@@ -124,7 +124,7 @@
     };
 
     shellAliases = {
-      update = "command grep --no-filename -r '# nix-update:' overlays/ | cut -d':' -f2 | xargs -L1 nix-update -f overlays/update-shim.nix && nix flake update --flake \"$FLAKE_URL\" && rebuild";
+      update = ''command grep --no-filename -r '# nix-update:' overlays/ | cut -d':' -f2 | xargs -L1 nix-update -f overlays/update-shim.nix && nix flake update --flake "$FLAKE_URL" --override-input nixpkgs github:NixOS/nixpkgs/$(curl -sL "https://monitoring.nixos.org/prometheus/api/v1/query?query=channel_revision" | jq -r ".data.result[] | select(.metric.channel==\"nixos-unstable\") | .metric.revision") && rebuild'';
       miniterm = "python3 -m serial.tools.miniterm";
       homelab = "nix run /home/dzervas/Lab/homelab/nixos";
       dd-img = "sudo dd bs=4M status=progress conv=fsync oflag=direct";
