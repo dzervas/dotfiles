@@ -82,7 +82,8 @@
     hurl
     # krr
 
-    foundry # cast eth chain testing tool
+    # Broken
+    # foundry # cast eth chain testing tool
   ];
 
 

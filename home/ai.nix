@@ -20,6 +20,7 @@ in {
 
     claude-code = {
       enable = true;
+      package = pkgs.claude-code;
       settings = {
         model = "opusplan";
         enableAllProjectMcpServers = false;

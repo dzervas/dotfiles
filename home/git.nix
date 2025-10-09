@@ -25,7 +25,6 @@
         c = "clone";
         co = "checkout";
         d = "diff";
-        # get-ignore = "!"f(){ curl -L --silent --fail "https://github.com/github/gitignore/raw/main/$1.gitignore" >> .gitignore && echo "Appended to .gitignore" || echo -e "No gitignore found for $1 - check out https://github.com/github/gitignore"; }; f"";
         get-ignore = "!gi(){ curl -fsL \"https://www.toptal.com/developers/gitignore/api/$1\" >> .gitignore && echo \"Appended to .gitignore\" || echo \"No gitignore found - check out gitignore.io\"; }; gi";
         ll = "log --graph --decorate --abbrev-commit --pretty='%C(auto)%h %d %s %Cgreen(%cr)%Creset [%C(bold blue)%an%Creset %G?]'";
         lla = "log --graph --decorate --abbrev-commit --pretty='%C(auto)%h %d %s %Cgreen(%cr)%Creset [%C(bold blue)%an%Creset  %G?]' --all";
@@ -94,7 +93,18 @@
     };
 
     jujutsu = {
-      enable = false;
+      enable = true;
+      # Workflow cheatsheet:
+      # Clone: `jj git clone <url> --colocate` or `jj hub <myrepo>`
+      # Migrate existing git repo: `jj git init --colocate`
+      # Git branches: `jj bookmark list`
+      # Feature branch: `jj new 'trunk()'` (start a change on top of main)
+      # Feature branch (update git branch after changes): `jj bookmark create my-new-branch -r @`
+      # Commit: `jj commit -m "Hello World"`
+      # Push (new branch): `jj git push --allow-new --bookmark my-new-branch`
+      # Fetch: `jj git fetch`
+      # Rebase on main: `jj rebase -d main@origin`
+      # Rebase changes on main: `jj git fetch && jj rebase -b main -d main@origin && jj edit main`
       settings = {
         user = {
           name = git.userName;
@@ -105,6 +115,25 @@
           d = ["diff"];
           s = ["status"];
           ll = ["log"];
+
+          acp = [
+            "util" "exec" "--" "bash" "-c"
+            # push whatever you're on: either the bookmark or just the change itself
+            # Using --change @ works even if you didn't name a bookmark yet.
+            ''test $# -gt 0 && jj commit -m "$*" || jj commit && jj git push --change @''
+          ];
+          get-ignore = [
+            "util" "exec" "--" "bash" "-c"
+            ''curl -fsL "https://www.toptal.com/developers/gitignore/api/$1" >> .gitignore && echo "Appended to .gitignore" || echo "No gitignore found - check out https://gitignore.io"; ''
+          ];
+          hub = [
+            "util" "exec" "--" "bash" "-c"
+            ''greq -q / <<< $1 && jj git clone git@github.com:$1 --colocate $2 || jj git clone git@github.com:dzervas/$1 --colocate $2''
+          ];
+          oops = [
+            "util" "exec" "--" "bash" "-c"
+            "jj ammend && jj git push --change @"
+          ];
         };
 
         git.auto-local-bookmark = true;
