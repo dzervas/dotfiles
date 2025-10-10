@@ -107,6 +107,8 @@
       # Rebase on main: `jj rebase -d main@origin`
       # Rebase changes on main: `jj git fetch && jj rebase -b main -d main@origin && jj edit main`
       # Squash (shove the current changes to the parent and create a new change with the same parent): `jj squash`
+      # *Delete* a commit: `jj abandon <revset>` - can use <revset>:: to abandon all the children as well
+      #   Part of the oplog so undo brings it back
       settings = {
         user = {
           name = git.userName;
@@ -121,9 +123,13 @@
 
           acp = [
             "util" "exec" "--" "bash" "-c"
-            # push whatever you're on: either the bookmark or just the change itself
-            # Using --change @ works even if you didn't name a bookmark yet.
-            ''{ test $# -gt 0 && jj commit -m "$*" || jj commit } && jj git push --change @''
+            ''{ test $# -gt 0 && jj commit -m "$*" || jj commit } && jj push''
+          ];
+          # Push to a new, auto-generated branch
+          # TODO: Allow for named branch
+          acp-new = [
+            "util" "exec" "--" "bash" "-c"
+            ''{ test $# -gt 0 && jj commit -m "$*" || jj commit } && jj git push --change @-''
           ];
           get-ignore = [
             "util" "exec" "--" "bash" "-c"
@@ -131,12 +137,16 @@
           ];
           hub = [
             "util" "exec" "--" "bash" "-c"
-            ''greq -q / <<< $1 && jj git clone git@github.com:$1 --colocate $2 || jj git clone git@github.com:dzervas/$1 --colocate $2''
+            ''grep -q / <<< $1 && jj git clone --colocate git@github.com:$1 $2 || jj git clone --colocate git@github.com:dzervas/$1 $2''
           ];
           init = ["git" "init" "--colocate"];
           oops = [
             "util" "exec" "--" "bash" "-c"
-            "jj squash && jj git push --change @"
+            "echo 'Going to squash on immutable and push. You sure?' && read && jj squash --ignore-immutable && jj push"
+          ];
+          push = [
+            "util" "exec" "--" "bash" "-c"
+            "jj bookmark move --from 'immutable_heads()' --to @- && jj git push"
           ];
         };
 
