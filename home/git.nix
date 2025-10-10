@@ -101,6 +101,7 @@
       # Feature branch: `jj new 'trunk()'` (start a change on top of main)
       # Feature branch (update git branch after changes): `jj bookmark create my-new-branch -r @`
       # Commit: `jj commit -m "Hello World"`
+      #   commit is essentially: `jj describe && jj new`
       # Push (new branch): `jj git push --allow-new --bookmark my-new-branch`
       # Fetch: `jj git fetch`
       # Rebase on main: `jj rebase -d main@origin`
@@ -120,7 +121,7 @@
             "util" "exec" "--" "bash" "-c"
             # push whatever you're on: either the bookmark or just the change itself
             # Using --change @ works even if you didn't name a bookmark yet.
-            ''test $# -gt 0 && jj commit -m "$*" || jj commit && jj git push --change @''
+            ''{ test $# -gt 0 && jj commit -m "$*" || jj commit } && jj git push --change @''
           ];
           get-ignore = [
             "util" "exec" "--" "bash" "-c"
@@ -130,6 +131,7 @@
             "util" "exec" "--" "bash" "-c"
             ''greq -q / <<< $1 && jj git clone git@github.com:$1 --colocate $2 || jj git clone git@github.com:dzervas/$1 --colocate $2''
           ];
+          init = ["git" "init" "--colocate"];
           oops = [
             "util" "exec" "--" "bash" "-c"
             "jj ammend && jj git push --change @"
