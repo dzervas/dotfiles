@@ -106,11 +106,13 @@
       # Fetch: `jj git fetch`
       # Rebase on main: `jj rebase -d main@origin`
       # Rebase changes on main: `jj git fetch && jj rebase -b main -d main@origin && jj edit main`
+      # Squash (shove the current changes to the parent and create a new change with the same parent): `jj squash`
       settings = {
         user = {
           name = git.userName;
           email = git.userEmail;
         };
+        # This is a jj test change
 
         aliases = {
           d = ["diff"];
@@ -134,7 +136,7 @@
           init = ["git" "init" "--colocate"];
           oops = [
             "util" "exec" "--" "bash" "-c"
-            "jj ammend && jj git push --change @"
+            "jj squash && jj git push --change @"
           ];
         };
 
