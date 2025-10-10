@@ -16,6 +16,8 @@ in {
   # - Devenv treesitter
   # - Nix code action to split/merge attr, add "with"
   # - Rust workflow to disable formatting and better defaults
+  # - Add snacks.nvim (and configure i for some plugins that support it)
+  # - JJ integration (lualine and maybe :Jj)
 
   imports = [
     ./ai.nix

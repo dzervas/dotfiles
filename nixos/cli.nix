@@ -24,6 +24,7 @@
     podman-compose
     readline
     ripgrep
+    sd
     socat
     statix # Lint nix files
     tree

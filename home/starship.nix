@@ -28,9 +28,11 @@
         "$sudo"
         "$direnv"
         "$directory"
-        "$git_branch"
-        "$git_status"
-        "$git_state"
+        "$\{custom.git_branch}"
+        "$\{custom.git_status}"
+        "$\{custom.git_state}"
+        "$\{custom.jj_branch}"
+        "$\{custom.jj}"
 
         "[ ](bg:${bgColorHex})"
         "[](fg:${bgColorHex})"
@@ -79,10 +81,10 @@
       direnv = {
         disabled = false;
         style = "fg:#00AFFF bg:${bgColorHex}";
-        format = "[ $symbol$loaded]($style)";
+        format = "[$symbol$loaded]($style) ";
         symbol = " ";
         loaded_msg = "";
-        unloaded_msg = " ✘";
+        unloaded_msg = "✘ ";
       };
 
       directory = {
@@ -102,30 +104,6 @@
           Pictures = " ";
           "Lab/dotfiles" = "󱄅 ";
         };
-      };
-
-      git_branch = {
-        style = "fg:#5FD700 bg:${bgColorHex}";
-        format = "${leftSepString}[$branch]($style)";
-      };
-
-      git_status = {
-        style = "fg:#D7AF00 bg:${bgColorHex}";
-        format = "[$all_status$ahead_behind]($style)";
-
-        ahead = "  $count";
-        behind = "  $count";
-        conflicted = " [ $count](fg:#FF0000 bg:${bgColorHex})";
-        deleted = " ✘ $count";
-        modified = " !$count";
-        renamed = "  $count";
-        staged = " +$count";
-        stashed = " [*$count](fg:#5FD700 bg:${bgColorHex})";
-        untracked = " ?$count";
-      };
-
-      git_state = {
-        style = "fg:#FF0000 bg:${bgColorHex}";
       };
 
       jobs = {
@@ -166,10 +144,99 @@
         style = frameStyle;
       };
 
-      custom.pin_bottom = {
-        command = "tput cup $COLUMNS 1";
-        format = "$output";
-        when = true;
+      git_branch = {
+        style = "fg:#5FD700 bg:${bgColorHex}";
+        format = "${leftSepString}[$branch]($style)";
+        disabled = true;
+      };
+
+      git_status = {
+        style = "fg:#D7AF00 bg:${bgColorHex}";
+        format = "[$all_status$ahead_behind]($style)";
+
+        ahead = "  $count";
+        behind = "  $count";
+        conflicted = " [ $count](fg:#FF0000 bg:${bgColorHex})";
+        deleted = " ✘ $count";
+        modified = " !$count";
+        renamed = "  $count";
+        staged = " +$count";
+        stashed = " [*$count](fg:#5FD700 bg:${bgColorHex})";
+        untracked = " ?$count";
+
+        disabled = true;
+      };
+
+      git_state = {
+        style = "fg:#FF0000 bg:${bgColorHex}";
+
+        disabled = true;
+      };
+
+      custom = let
+        # TODO: Find a faster way to understand if this is a jj repo
+        is-jj-repo = "jj --ignore-working-copy root";
+        jj-args = "--ignore-working-copy --color never --no-graph";
+      in {
+        jj_branch = {
+          # Take the revsets that exist in the prev working copy but not in the immutable heads (so after them)
+          # and only show the immutable's local bookmarks. If there is a change that is mutable, mark it as ahead (to be pushed)
+          # TODO: Show ahead number instead of copies of the symbol
+          # TODO: Show behind as well
+          command = ''jj log ${jj-args} -r '@- ~ immutable_heads()-' --template 'if(immutable, local_bookmarks.join("/"), " ")' '';
+          format = "${leftSepString}[󰠬 ](bg:${bgColorHex})[$output ]($style)";
+          style = "fg:#5FD700 bg:${bgColorHex}";
+          when = is-jj-repo;
+        };
+
+        # State & status equivalent of git
+        jj = let
+          status-map = {
+            added = "+";
+            removed = "✘ ";
+            modified = "!";
+            renamed = " ";
+            copied = " ";
+          };
+          diff-status = status: ''diff.files().filter(|e| e.status()=="${status}")'';
+          status-checks = lib.mapAttrsToList (status: icon: ''if(${diff-status status}, "${icon}" ++ ${diff-status status}.len())'') status-map;
+          status-line = builtins.concatStringsSep ", " status-checks;
+        in {
+          command = ''jj log ${jj-args} -n1 -r@  --template '
+            separate(" ",
+              ${status-line},
+              if(conflict, " "),
+              if(divergent, "⇕ "),
+              if(hidden, "󰘓 "),
+              surround("\"", "\"", truncate_end(24, description.first_line(), "…")),
+            )' '';
+          format = "[$output]($style)";
+          style = "fg:#D7AF00 bg:${bgColorHex}";
+          when = is-jj-repo;
+        };
+
+        # git fallback
+        git_branch = {
+          when = "! ${is-jj-repo}";
+          format = "$output";
+          command = "starship module git_branch";
+        };
+        git_status = {
+          when = "! ${is-jj-repo}";
+          format = "$output";
+          command = "starship module git_status";
+        };
+        git_state = {
+          when = "! ${is-jj-repo}";
+          format = "$output";
+          command = "starship module git_state";
+        };
+
+        # pin_bottom = {
+        #   command = "tput cup $COLUMNS 1";
+        #   format = "$output";
+        #   when = true;
+        # };
       };
     };
   };
