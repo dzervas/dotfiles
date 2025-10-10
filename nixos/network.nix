@@ -52,7 +52,8 @@
       enable = true;
       # Global fallback DNS
       fallbackDns = config.networking.nameservers;
-      dnssec = "true";
+      # Stuff break with forced dnssec :/
+      dnssec = "allow-downgrade";
       dnsovertls = "opportunistic";
       domains = [ "~." ]; # ensure systemd-resolved is the default resolver
     };
