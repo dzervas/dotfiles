@@ -11,7 +11,7 @@ in {
     codex = {
       enable = true;
       settings = {
-        model = "gpt-5-codex";
+        model = "gpt-5";
         model_reasoning_effort = "high";
         approval_policy = "untrusted";
         tools.web_search = true;
@@ -36,7 +36,7 @@ in {
         };
 
         extraKnownMarketplaces = {
-          "superpowers-marketplace" = {
+          "superpowers-marketplace".source = {
             source = "github";
             repo = "obra/superpowers-marketplace";
           };
@@ -52,10 +52,17 @@ in {
             "Bash(cargo build:*)"
             "Bash(cargo test:*)"
             "Bash(git diff:*)"
+            "Bash(git log:*)"
+            "Bash(git status:*)"
+            "Bash(jj diff:*)"
+            "Bash(jj log:*)"
+            "Bash(jj status:*)"
             "Bash(hurl:*)"
             "Bash(nix run .)"
             "Bash(yarn test)"
             "Bash(statix check:*)"
+
+            "Read(~/.claude/plugins/cache/superpowers/skills/*)"
 
             "WebSearch"
             "WebFetch(domain:docs.rs)"
@@ -109,11 +116,14 @@ in {
 
               "search_dashboards"
             ]);
-          ask = [
-            "Bash(git commit:*)"
-            "Bash(git push:*)"
-          ];
+          ask = [];
           deny = [
+            "Bash(git:*)"
+            "Bash(su:*)"
+            "Bash(sudo:*)"
+            "Bash(home-manager switch:*)"
+            "Bash(nixos-rebuild switch:*)"
+
             "Read(./.env)"
             "Read(./.envrc)"
             "Read(./.direnv)"

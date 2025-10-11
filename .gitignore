@@ -1,3 +1,5 @@
 /result
 *.iso
 .null-ls_*.nix
+.worktrees/
+/docs/plans

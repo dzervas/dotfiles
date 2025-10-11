@@ -77,6 +77,7 @@
         ".mcp.json"
         ".aider.*"
         ".jj"
+        ".worktrees"
       ];
     };
 

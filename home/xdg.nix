@@ -18,6 +18,13 @@
       createDirectories = true;
     };
 
+    autostart = {
+      enable = true;
+      entries = [
+        # TODO: Add auto-start entries
+      ];
+    };
+
     mimeApps = {
       enable = true; # Auto-populate default apps
       defaultApplications = let
