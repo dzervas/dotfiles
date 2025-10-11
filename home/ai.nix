@@ -31,6 +31,17 @@ in {
           type = "command";
         };
 
+        enabledPlugins = {
+          "superpowers@superpowers-marketplace" = true;
+        };
+
+        extraKnownMarketplaces = {
+          "superpowers-marketplace" = {
+            source = "github";
+            repo = "obra/superpowers-marketplace";
+          };
+        };
+
         permissions = {
           defaultMode = "acceptEdits";
           disableBypassPermissionsMode = "disable";

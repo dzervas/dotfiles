@@ -1,5 +1,6 @@
 { pkgs, ... }: {
   home.shell.enableFishIntegration = true; # Enable fish integration for everything
+  programs.carapace.enable = true;
 
   programs.fish = {
     enable = true;
