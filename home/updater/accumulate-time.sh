@@ -3,7 +3,7 @@
 
 set -euo pipefail
 
-STATE_DIR="${STATE_DIR:-/run/user/$UID/flake-updater}"
+STATE_DIR="${STATE_DIR:-$XDG_RUNTIME_DIR/flake-updater}"
 STATE_FILE="$STATE_DIR/accumulated-minutes"
 THRESHOLD="${IDLE_THRESHOLD:-15}"
 

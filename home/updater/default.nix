@@ -1,11 +1,8 @@
-{ config, pkgs, lib, ... }:
-
-let
+{ config, pkgs, ... }: let
   # Configuration variables
   checkInterval = "1"; # minutes
   idleThreshold = 15; # minutes
   niceLevel = 19;
-  stateDir = "$XDG_RUNTIME_DIR/flake-updater";
   dotfilesPath = "${config.home.homeDirectory}/Lab/dotfiles";
 
   # Script paths
@@ -13,8 +10,7 @@ let
   accumulateTime = "${scriptsDir}/accumulate-time.sh";
   buildFlake = "${scriptsDir}/build-flake.sh";
   monitorActivity = "${scriptsDir}/monitor-activity.sh";
-in
-{
+in {
   systemd.user = {
     services = {
       # Checks the system every interval to see if it's idle (or playing media).
@@ -25,7 +21,6 @@ in
         Service = {
           Type = "oneshot";
           Environment = [
-            "STATE_DIR=${stateDir}"
             "IDLE_THRESHOLD=${toString idleThreshold}"
           ];
           ExecStart = "${pkgs.bash}/bin/bash ${accumulateTime}";
@@ -60,7 +55,6 @@ in
         Service = {
           Type = "oneshot";
           Environment = [
-            "STATE_DIR=${stateDir}"
             "NICE_LEVEL=${toString niceLevel}"
           ];
           ExecStart = "${pkgs.bash}/bin/bash ${monitorActivity}";

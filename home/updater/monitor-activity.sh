@@ -4,7 +4,7 @@
 set -euo pipefail
 
 NICE_LEVEL="${NICE_LEVEL:-19}"
-STATE_DIR="${STATE_DIR:-/run/user/$UID/flake-updater}"
+STATE_DIR="${STATE_DIR:-$XDG_RUNTIME_DIR/flake-updater}"
 NICE_STATE_FILE="$STATE_DIR/is-niced"
 
 # Ensure state directory exists

@@ -34,7 +34,6 @@ in {
         enabledPlugins = {
           "superpowers@superpowers-marketplace" = true;
         };
-
         extraKnownMarketplaces = {
           "superpowers-marketplace".source = {
             source = "github";
@@ -124,6 +123,8 @@ in {
             "Bash(home-manager switch:*)"
             "Bash(nixos-rebuild switch:*)"
 
+            "Read(~/.aws)"
+            "Read(~/.ssh)"
             "Read(./.env)"
             "Read(./.envrc)"
             "Read(./.direnv)"

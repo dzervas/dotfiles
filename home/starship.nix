@@ -81,7 +81,7 @@
       direnv = {
         disabled = false;
         style = "fg:#00AFFF bg:${bgColorHex}";
-        format = "[$symbol$loaded]($style) ";
+        format = "[$symbol$loaded ]($style)";
         symbol = " ";
         loaded_msg = "";
         unloaded_msg = "✘ ";
