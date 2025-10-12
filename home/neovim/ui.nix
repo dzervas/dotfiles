@@ -67,17 +67,17 @@ in {
             __unkeyed-1 = utils.mkRaw ''
               function()
                 -- Check if CopilotManager exists and copilot is loaded
-                if _G.CopilotManager == nil or package.loaded["copilot"] == nil then
-                  return "";
-                end
+                -- if _G.CopilotManager == nil or !vim.call("copilot#Enabled") then
+                --   return "";
+                -- end
 
                 -- Check if copilot is enabled via our management system
-                local project_root = _G.CopilotManager.get_project_root()
-                local project_enabled =
-                _G.CopilotManager.is_copilot_enabled_for_project(project_root)
-                local buffer_enabled = _G.CopilotManager.is_copilot_enabled_for_buffer()
+                -- local project_root = _G.CopilotManager.get_project_root()
+                -- local project_enabled =
+                -- _G.CopilotManager.is_copilot_enabled_for_project(project_root)
+                -- local buffer_enabled = _G.CopilotManager.is_copilot_enabled_for_buffer()
 
-                if project_enabled or buffer_enabled then
+                if vim.call("copilot#Enabled") or vim.b.copilot_enabled then
                   return " "
                 end
 

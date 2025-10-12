@@ -116,7 +116,10 @@
           name = git.userName;
           email = git.userEmail;
         };
-        # This is a jj test change
+
+        revset-aliases = {
+          "closest_bookmark(to)" = "heads(::to & bookmarks())";
+        };
 
         aliases = {
           d = ["diff"];
@@ -125,13 +128,13 @@
 
           acp = [
             "util" "exec" "--" "bash" "-c"
-            ''{ test $# -gt 0 && jj commit -m "$*" || jj commit } && jj push''
+            ''test $# -gt 0 && jj commit -m "$*" || jj commit && jj push''
           ];
           # Push to a new, auto-generated branch
           # TODO: Allow for named branch
           acp-new = [
             "util" "exec" "--" "bash" "-c"
-            ''{ test $# -gt 0 && jj commit -m "$*" || jj commit } && jj git push --change @-''
+            ''test $# -gt 0 && jj commit -m "$*" || jj commit && jj git push --change @- --allow-new''
           ];
           get-ignore = [
             "util" "exec" "--" "bash" "-c"
@@ -148,8 +151,13 @@
           ];
           push = [
             "util" "exec" "--" "bash" "-c"
-            "jj bookmark move --from 'immutable_heads()' --to @- && jj git push"
+            "jj tug && jj git push"
           ];
+          statuslog = [
+            "util" "exec" "--" "bash" "-c"
+            "jj status && echo && jj log"
+          ];
+          tug = [ "bookmark" "move" "--from" "closest_bookmark(@-)" "--to" "@-"];
         };
 
         git.auto-local-bookmark = true;
@@ -158,7 +166,7 @@
         signing.behavior = "own";
         git.sign-on-push = true;
         ui = {
-          default-command = "log";
+          default-command = "statuslog";
           pager = ":builtin";
           show-cryptographic-signatures = true;
         };

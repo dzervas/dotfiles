@@ -14,5 +14,5 @@ Automatically updates and builds NixOS configurations in the background when the
 ```bash
 journalctl --user -u flake-accumulator -f    # Watch accumulator
 journalctl --user -u flake-builder -f        # Watch builds
-cat /run/user/$UID/flake-updater/accumulated-minutes  # Check counter
+cat $XDG_RUNTIME_DIR/flake-updater/accumulated-minutes  # Check counter
 ```

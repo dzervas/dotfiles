@@ -53,12 +53,12 @@ fi
 HOSTNAME=$(hostname)
 echo "Building system configuration for $HOSTNAME..." | systemd-cat -t flake-builder -p info
 
-if nixos-rebuild build --flake ".#$HOSTNAME" --override-input nix-private "path:.private" 2>&1 | systemd-cat -t flake-builder -p info; then
+if nixos-rebuild build --max-jobs 4 --flake ".#$HOSTNAME" --override-input nix-private "path:.private" 2>&1 | systemd-cat -t flake-builder -p info; then
     echo "Build successful!" | systemd-cat -t flake-builder -p info
 
     # Get generation number from result symlink
     if [[ -L "result" ]]; then
-        GENERATION=$(readlink result | grep -oP 'system-\K[0-9]+-link' || echo "unknown")
+        GENERATION=$(cat result/nixos-version)
     else
         GENERATION="unknown"
     fi

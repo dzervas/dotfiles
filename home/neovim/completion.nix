@@ -28,8 +28,9 @@ _: {
             { __raw = ''
                 function(cmp)
                   -- If Copilot is loaded, accept the suggestion
-                  if package.loaded["copilot"] ~= nil and require("copilot.suggestion").is_visible() then
-                    require("copilot.suggestion").accept()
+                  -- check for b:copilot_enabled too
+                  if vim.call("copilot#Enabled") and vim.b.copilot_enabled ~= false and vim.call("copilot#GetDisplayedSuggestion") ~= "" then
+                    vim.call("copilot#Accept")
                   elseif cmp.snippet_active() then return cmp.accept()
                   else return cmp.select_and_accept()
                   end

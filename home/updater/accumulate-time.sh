@@ -5,6 +5,7 @@ set -euo pipefail
 
 STATE_DIR="${STATE_DIR:-$XDG_RUNTIME_DIR/flake-updater}"
 STATE_FILE="$STATE_DIR/accumulated-minutes"
+LAST_RUN_FILE="$STATE_DIR/last-run"
 THRESHOLD="${IDLE_THRESHOLD:-15}"
 
 # Ensure state directory exists
@@ -18,6 +19,16 @@ fi
 # Read current accumulated time
 ACCUMULATED=$(cat "$STATE_FILE")
 
+# Check if we've already run today
+TODAY=$(date +%Y-%m-%d)
+if [[ -f "$LAST_RUN_FILE" ]]; then
+    LAST_RUN=$(cat "$LAST_RUN_FILE")
+    if [[ "$LAST_RUN" == "$TODAY" ]]; then
+        # Already ran today, just exit silently
+        exit 0
+    fi
+fi
+
 # Check conditions
 if bash "$(dirname "$0")/check-conditions.sh"; then
     # Low-impact state: increment counter
@@ -29,6 +40,7 @@ if bash "$(dirname "$0")/check-conditions.sh"; then
     if [[ $ACCUMULATED -ge $THRESHOLD ]]; then
         echo "Threshold reached! Triggering builder..." | systemd-cat -t flake-accumulator -p info
         echo "0" > "$STATE_FILE"  # Reset counter
+        echo "$TODAY" > "$LAST_RUN_FILE"  # Mark as run today
 
         # Check if builder is already running
         if systemctl --user is-active --quiet flake-builder.service; then

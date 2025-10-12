@@ -50,12 +50,13 @@ in {
       # DevOps
       ansiblels.enable = true;
       bashls.enable = true;
+      copilot.enable = true;
       dockerls.enable = true;
       docker_compose_language_service.enable = true;
       helm_ls.enable = true;
       jsonnet_ls = {
         enable = true;
-        settings.settings.formatting = {
+        config.formatting = {
           PadArrays = true;
           StringStyle = "double";
         };
@@ -74,7 +75,7 @@ in {
       # Web dev
       astro = {
         enable = true;
-        settings.init_options.typescript.tsdk = "${pkgs.typescript}/lib/node_modules/typescript/lib";
+        config.init_options.typescript.tsdk = "${pkgs.typescript}/lib/node_modules/typescript/lib";
       };
       cssls.enable = true;
       html.enable = true;
@@ -194,13 +195,15 @@ in {
 
       neo-tree = {
         enable = true;
-        addBlankLineAtTop = true;
 
-        buffers.followCurrentFile.leaveDirsOpen = true;
+        settings = {
+          add_blank_line_at_top = true;
+          buffers.follow_current_file.leave_dirs_open = true;
 
-        filesystem.filteredItems = {
-          hideDotfiles = false;
-          visible = true;
+          filesystem.filtered_items = {
+            hide_dotfiles = false;
+            visible = true;
+          };
         };
       };
       which-key.enable = true;
@@ -260,69 +263,71 @@ in {
     keymaps =
       # Alt-<number> selects buffer number
       (lib.map (n: { key = "<A-${toString n}>"; action = "<CMD>BufferGoto ${toString n}<CR>"; options.desc = "Go to buffer ${toString n}"; }) (lib.range 1 9)) ++
-    [
-      # Buffer manipulation
-      { key = "<A-c>"; action = "<CMD>BufferClose<CR>"; options.desc = "Kill buffer"; }
-      { key = "<A-c>"; action = "<CMD>FloatermKill<CR>"; mode = "t"; options.desc = "Kill terminal session"; }
-      { key = "<A-C>"; action = "<CMD>close<CR>"; options.desc = "Close window"; }
-      { key = "<A-o>"; action = "<CMD>only<CR>"; options.desc = "Close other windows"; }
-      { key = "<A-O>"; action = "<CMD>BufferCloseAllButCurrent<CR>"; options.desc = "Kill all other buffers"; }
-      { key = "<A-Left>"; action = "<CMD>BufferPrevious<CR>"; options.desc = "Select previous buffer"; }
-      { key = "<A-Left>"; action = "<CMD>FloatermPrev<CR>"; mode = "t"; options.desc = "Select previous terminal"; }
-      { key = "<A-S-Left>"; action = "<CMD>BufferMovePrevious<CR>"; options.desc = "Move buffer to the left"; }
-      { key = "<A-Right>"; action = "<CMD>BufferNext<CR>"; options.desc = "Select next buffer"; }
-      { key = "<A-Right>"; action = "<CMD>FloatermNext<CR>"; mode = "t"; options.desc = "Select next terminal"; }
-      { key = "<A-S-Right>"; action = "<CMD>BufferMoveNext<CR>"; options.desc = "Move buffer to the right"; }
+      [
+        # Buffer manipulation
+        { key = "<A-c>"; action = "<CMD>BufferClose<CR>"; options.desc = "Kill buffer"; }
+        { key = "<A-c>"; action = "<CMD>FloatermKill<CR>"; mode = "t"; options.desc = "Kill terminal session"; }
+        { key = "<A-C>"; action = "<CMD>close<CR>"; options.desc = "Close window"; }
+        { key = "<A-o>"; action = "<CMD>only<CR>"; options.desc = "Close other windows"; }
+        { key = "<A-O>"; action = "<CMD>BufferCloseAllButCurrent<CR>"; options.desc = "Kill all other buffers"; }
+        { key = "<A-Left>"; action = "<CMD>BufferPrevious<CR>"; options.desc = "Select previous buffer"; }
+        { key = "<A-Left>"; action = "<CMD>FloatermPrev<CR>"; mode = "t"; options.desc = "Select previous terminal"; }
+        { key = "<A-S-Left>"; action = "<CMD>BufferMovePrevious<CR>"; options.desc = "Move buffer to the left"; }
+        { key = "<A-Right>"; action = "<CMD>BufferNext<CR>"; options.desc = "Select next buffer"; }
+        { key = "<A-Right>"; action = "<CMD>FloatermNext<CR>"; mode = "t"; options.desc = "Select next terminal"; }
+        { key = "<A-S-Right>"; action = "<CMD>BufferMoveNext<CR>"; options.desc = "Move buffer to the right"; }
 
-      # Window navigation
-      { key = "<A-Up>"; action = "<C-W>w"; options.desc = "Cycle to the next window"; }
-      { key = "<A-Down>"; action = "<C-W>W"; options.desc = "Cycle to the previous window"; }
+        # Window navigation
+        { key = "<A-Up>"; action = "<C-W>w"; options.desc = "Cycle to the next window"; }
+        { key = "<A-Down>"; action = "<C-W>W"; options.desc = "Cycle to the previous window"; }
 
-      # Tab navigation
-      { key = "<A-Tab>"; action = "<CMD>tabnext<CR>"; options.desc = "Cycle to the next tab"; }
-      { key = "<A-S-Tab>"; action = "<CMD>tabprevious<CR>"; options.desc = "Cycle to the previous tab"; }
-      { key = "<C-A-c>"; action = "<CMD>tabclose<CR>"; options.desc = "Cycle to the next tab"; }
+        # Tab navigation
+        { key = "<A-Tab>"; action = "<CMD>tabnext<CR>"; options.desc = "Cycle to the next tab"; }
+        { key = "<A-S-Tab>"; action = "<CMD>tabprevious<CR>"; options.desc = "Cycle to the previous tab"; }
+        { key = "<C-A-c>"; action = "<CMD>tabclose<CR>"; options.desc = "Cycle to the next tab"; }
 
-      # Split management
-      { key = "<A-Return>"; action = "<CMD>vsplit<CR><C-W>w"; options.desc = "Open a window to the right"; }
-      { key = "<A-S-Return>"; action = "<CMD>split<CR><C-W>w"; options.desc = "Open a window to the bottom"; }
-      { key = "<A-Return>"; action = "<CMD>FloatermNew<CR>"; mode = "t"; options.desc = "Open a new terminal"; }
+        # Split management
+        { key = "<A-Return>"; action = "<CMD>vsplit<CR><C-W>w"; options.desc = "Open a window to the right"; }
+        { key = "<A-S-Return>"; action = "<CMD>split<CR><C-W>w"; options.desc = "Open a window to the bottom"; }
+        { key = "<A-Return>"; action = "<CMD>FloatermNew<CR>"; mode = "t"; options.desc = "Open a new terminal"; }
 
-      # Spell checking toggle
-      { key = "<A-s>"; action = "<CMD>set spell!<CR>"; options.desc = "Toggle spell checking"; }
+        # Spell checking toggle
+        { key = "<A-s>"; action = "<CMD>set spell!<CR>"; options.desc = "Toggle spell checking"; }
 
-      # Disable search highlight
-      { key = "<C-l>"; action = "<CMD>nohlsearch<CR>"; options.desc = "Stop highlighting search results"; }
+        # Disable search highlight
+        { key = "<C-l>"; action = "<CMD>nohlsearch<CR>"; options.desc = "Stop highlighting search results"; }
 
-      # Move a line
-      { key = "<C-Up>"; action = "<CMD>move -2<CR>"; options.desc = "Move the current line up"; }
-      { key = "<C-Down>"; action = "<CMD>move +1<CR>"; options.desc = "Move the current line down"; }
+        # Move a line
+        { key = "<C-Up>"; action = "<CMD>move -2<CR>"; options.desc = "Move the current line up"; }
+        { key = "<C-Down>"; action = "<CMD>move +1<CR>"; options.desc = "Move the current line down"; }
 
-      # Show the filesystem tree
-      { key = "<leader>f"; action = "<CMD>Neotree toggle<CR>"; options.desc = "Toggle the file explorer"; }
-      { key = "<leader>F"; action = "<CMD>Neotree reveal<CR>"; options.desc = "Reveal the current file in the explorer"; }
+        # Show the filesystem tree
+        { key = "<leader>f"; action = "<CMD>Neotree toggle<CR>"; options.desc = "Toggle the file explorer"; }
+        { key = "<leader>F"; action = "<CMD>Neotree reveal<CR>"; options.desc = "Reveal the current file in the explorer"; }
 
-      # LSP navigation and actions
-      { key = "K"; action = utils.mkRaw "vim.lsp.buf.hover"; options.desc = "Show the hover info"; }
-      { key = "?"; action = utils.mkRaw "vim.diagnostic.open_float"; options.desc = "Show diagnostic float"; }
-      { key = "gd"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
-      { key = "gD"; action = utils.mkRaw "vim.lsp.buf.declaration"; options.desc = "Go to declaration"; }
-      { key = "gi"; action = utils.mkRaw "vim.lsp.buf.implementation"; options.desc = "Go to implementation"; }
-      { key = "gr"; action = utils.mkRaw "vim.lsp.buf.references"; options.desc = "Go to references"; }
-      { key = "gt"; action = utils.mkRaw "function() vim.diagnostic.config({ virtual_text = not vim.diagnostic.config().virtual_text }) end"; options.desc = "Toggle diagnostic virtual_text"; }
-      { key = "g<Up>"; action = utils.mkRaw "vim.diagnostic.goto_prev"; options.desc = "Go to previous diagnostic"; }
-      { key = "g<Down>"; action = utils.mkRaw "vim.diagnostic.goto_next"; options.desc = "Go to next diagnostic"; }
-      { key = "<C-]>"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
-      { key = "<C-.>"; action = utils.mkRaw "vim.lsp.buf.code_action"; options.desc = "Code actions menu"; }
-      { key = "<leader>m"; action = "<CMD>NoiceAll<CR>"; options.desc = "Show all messages"; }
-      { key = "<leader>l"; action = "<CMD>NoiceDismiss<CR>"; options.desc = "Dismiss notification"; }
-      { key = "<leader>w"; action = utils.mkRaw "function () vim.lsp.buf.format({ async = false }) end"; options.desc = "Format the current file";  }
+        # LSP navigation and actions
+        { key = "K"; action = utils.mkRaw "vim.lsp.buf.hover"; options.desc = "Show the hover info"; }
+        { key = "?"; action = utils.mkRaw "vim.diagnostic.open_float"; options.desc = "Show diagnostic float"; }
+        { key = "gd"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
+        { key = "gD"; action = utils.mkRaw "vim.lsp.buf.declaration"; options.desc = "Go to declaration"; }
+        { key = "gi"; action = utils.mkRaw "vim.lsp.buf.implementation"; options.desc = "Go to implementation"; }
+        { key = "gr"; action = utils.mkRaw "vim.lsp.buf.references"; options.desc = "Go to references"; }
+        { key = "gt"; action = utils.mkRaw "function() vim.diagnostic.config({ virtual_text = not vim.diagnostic.config().virtual_text }) end"; options.desc = "Toggle diagnostic virtual_text"; }
+        { key = "g<Up>"; action = utils.mkRaw "vim.diagnostic.goto_prev"; options.desc = "Go to previous diagnostic"; }
+        { key = "g<Down>"; action = utils.mkRaw "vim.diagnostic.goto_next"; options.desc = "Go to next diagnostic"; }
+        { key = "<C-]>"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
+        { key = "<C-.>"; action = utils.mkRaw "vim.lsp.buf.code_action"; options.desc = "Code actions menu"; }
+        { key = "<leader>m"; action = "<CMD>NoiceAll<CR>"; options.desc = "Show all messages"; }
+        { key = "<leader>l"; action = "<CMD>NoiceDismiss<CR>"; options.desc = "Dismiss notification"; }
+        { key = "<leader>w"; action = utils.mkRaw "function () vim.lsp.buf.format({ async = false }) end"; options.desc = "Format the current file";  }
 
-      # Ctrl-backspace delete word
-      { key = "<C-BS>"; action = "<C-w>"; mode = "i"; options.desc = "Delete word backwards"; }
-      { key = "<C-BS>"; action = "<C-w>"; mode = "c"; options.desc = "Delete word backwards"; }
-      { key = "<C-BS>"; action = "<C-w>"; mode = "t"; options.desc = "Delete word backwards"; }
-    ];
+        # Ctrl-backspace delete word
+        { key = "<C-BS>"; action = "<C-w>"; mode = "i"; options.desc = "Delete word backwards"; }
+        { key = "<C-BS>"; action = "<C-w>"; mode = "c"; options.desc = "Delete word backwards"; }
+        { key = "<C-BS>"; action = "<C-w>"; mode = "t"; options.desc = "Delete word backwards"; }
+
+        { key = "<C-Right>"; action = "copilot#AcceptWord"; options.desc = "Accept the next word suggestion by copilot"; }
+      ];
 
     extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ]; # satellite-nvim is fucking everything up
     extraPackagesAfter = with pkgs; [
@@ -422,9 +427,9 @@ in {
           base = if match == null then name else builtins.elemAt match 0;
         in
           {
-            name = "queries/${base}/injections.scm";
-            value = { source = ./queries + "/${name}"; };
-          }
+          name = "queries/${base}/injections.scm";
+          value = { source = ./queries + "/${name}"; };
+        }
         )
         files);
   };

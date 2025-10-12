@@ -1,36 +1,19 @@
-{ inputs, lib, ... }: let
+{ inputs, lib, pkgs, ... }: let
   inherit (inputs.nixvim.lib.nixvim) utils;
   listAndAttrs = key: cmd: desc: utils.listToUnkeyedAttrs [ key cmd ] // { inherit desc; };
 in {
   programs.nixvim = {
     plugins = {
-      copilot-lua = {
+      copilot-vim = {
         enable = true;
-
-        lazyLoad = {
-          enable = true;
-          settings = {
-            cmd = "Copilot";
-            keys = [
-              (listAndAttrs "<leader>cc" (utils.mkRaw "function() _G.CopilotManager.show_copilot_enable_menu() end") "Enable Copilot (with options)" )
-            ];
-          };
-        };
-
         settings = {
-          suggestion = {
-            auto_trigger = false; # Disabled by default, enabled per-project/buffer
-            keymap = {
-              accept = "<Tab>";
-              accept_word = "<C-Right>";
-              accept_line = "<C-Down>";
-            };
-          };
+          filetypes.".envrc" = false;
+          node_command = lib.getExe pkgs.nodejs_22;
         };
       };
 
       avante = {
-        enable = false;
+        enable = true;
         lazyLoad = {
           enable = true;
           settings = {
@@ -47,19 +30,6 @@ in {
           behaviour.auto_approve_tool_permissions = false;
           providers.copilot.model = "claude-sonnet-4";
         };
-      };
-
-      opencode = {
-        enable = true;
-        #lazyLoad = {
-        #  enable = true;
-        #  settings.keys = [
-        #      (listAndAttrs "<leader>aa" (utils.mkRaw "require('opencode').toggle") "Toggle opencode window")
-        #      (listAndAttrs "<leader>an" (utils.mkRaw "require('opencode').session_new") "Start a new session")
-        #      (listAndAttrs "<leader>aC" (utils.mkRaw "require('opencode').session_compact") "Compact the current session")
-        #      (listAndAttrs "<leader>as" (utils.mkRaw "require('opencode').session_interrupt") "Interrupt the current session")
-        #    ];
-        #};
       };
     };
 
