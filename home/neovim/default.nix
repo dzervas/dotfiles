@@ -88,7 +88,7 @@ in {
 
     plugins = {
       # Git helper
-      # gitsigns.enable = true;
+      gitsigns.enable = true;
       illuminate.enable = true;
       repeat.enable = true;
       fugitive.enable = true;
@@ -103,6 +103,7 @@ in {
         };
       };
       multicursors.enable = true;
+      nvim-autopairs.enable = true;
       nvim-surround.enable = true;
       guess-indent = {
         enable = true;
@@ -163,57 +164,11 @@ in {
           };
         };
       };
-      treesitter-refactor = {
-        enable = true;
-        smartRename = {
-          enable = true;
-          keymaps.smartRename = "<F2>";
-        };
-        highlightCurrentScope.enable = true;
-        highlightDefinitions.enable = true;
-        navigation = {
-          enable = true;
-
-          keymaps = {
-            gotoDefinitionLspFallback = "<C-]>";
-            gotoNextUsage = "g<Right>";
-            gotoPreviousUsage = "g<Left>";
-            listDefinitions = "gl";
-          };
-        };
-      };
       treesitter-context.enable = true;
 
-      nvim-autopairs.enable = true;
-
-      # Replaced by snacks.terminal in snacks.nix
-      # floaterm = {
-      #   enable = true;
-      #   settings = {
-      #     keymap_toggle = "<A-Esc>";
-      #     opener = "edit"; # Use 'edit' when opening files from floaterm
-      #   };
-      # };
-
-      neo-tree = {
-        enable = true;
-
-        settings = {
-          add_blank_line_at_top = true;
-          buffers.follow_current_file.leave_dirs_open = true;
-          use_libuv_file_watcher = true;
-          window.width = 32;
-
-          filesystem.filtered_items = {
-            hide_dotfiles = false;
-            visible = true;
-          };
-        };
-      };
       which-key.enable = true;
 
       lz-n.enable = true; # Lazy loading
-      nui.enable = true; # Neo-tree
     };
 
     autoCmd = [
@@ -270,18 +225,12 @@ in {
       [
         # Buffer manipulation
         { key = "<A-c>"; action = "<CMD>BufferClose<CR>"; options.desc = "Kill buffer"; }
-        # Terminal kill handled by snacks.terminal now
-        # { key = "<A-c>"; action = "<CMD>FloatermKill<CR>"; mode = "t"; options.desc = "Kill terminal session"; }
         { key = "<A-C>"; action = "<CMD>close<CR>"; options.desc = "Close window"; }
         { key = "<A-o>"; action = "<CMD>only<CR>"; options.desc = "Close other windows"; }
         { key = "<A-O>"; action = "<CMD>BufferCloseAllButCurrent<CR>"; options.desc = "Kill all other buffers"; }
         { key = "<A-Left>"; action = "<CMD>BufferPrevious<CR>"; options.desc = "Select previous buffer"; }
-        # Terminal navigation handled by snacks.terminal now
-        # { key = "<A-Left>"; action = "<CMD>FloatermPrev<CR>"; mode = "t"; options.desc = "Select previous terminal"; }
         { key = "<A-S-Left>"; action = "<CMD>BufferMovePrevious<CR>"; options.desc = "Move buffer to the left"; }
         { key = "<A-Right>"; action = "<CMD>BufferNext<CR>"; options.desc = "Select next buffer"; }
-        # Terminal navigation handled by snacks.terminal now
-        # { key = "<A-Right>"; action = "<CMD>FloatermNext<CR>"; mode = "t"; options.desc = "Select next terminal"; }
         { key = "<A-S-Right>"; action = "<CMD>BufferMoveNext<CR>"; options.desc = "Move buffer to the right"; }
 
         # Window navigation
@@ -296,8 +245,6 @@ in {
         # Split management
         { key = "<A-Return>"; action = "<CMD>vsplit<CR><C-W>w"; options.desc = "Open a window to the right"; }
         { key = "<A-S-Return>"; action = "<CMD>split<CR><C-W>w"; options.desc = "Open a window to the bottom"; }
-        # New terminal handled by snacks.terminal now via <A-Esc>
-        # { key = "<A-Return>"; action = "<CMD>FloatermNew<CR>"; mode = "t"; options.desc = "Open a new terminal"; }
 
         # Spell checking toggle
         { key = "<A-s>"; action = "<CMD>set spell!<CR>"; options.desc = "Toggle spell checking"; }
@@ -316,10 +263,10 @@ in {
         # LSP navigation and actions
         { key = "K"; action = utils.mkRaw "vim.lsp.buf.hover"; options.desc = "Show the hover info"; }
         { key = "?"; action = utils.mkRaw "vim.diagnostic.open_float"; options.desc = "Show diagnostic float"; }
-        { key = "gd"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
-        { key = "gD"; action = utils.mkRaw "vim.lsp.buf.declaration"; options.desc = "Go to declaration"; }
-        { key = "gi"; action = utils.mkRaw "vim.lsp.buf.implementation"; options.desc = "Go to implementation"; }
-        { key = "gr"; action = utils.mkRaw "vim.lsp.buf.references"; options.desc = "Go to references"; }
+        # { key = "gd"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
+        # { key = "gD"; action = utils.mkRaw "vim.lsp.buf.declaration"; options.desc = "Go to declaration"; }
+        # { key = "gi"; action = utils.mkRaw "vim.lsp.buf.implementation"; options.desc = "Go to implementation"; }
+        # { key = "gr"; action = utils.mkRaw "vim.lsp.buf.references"; options.desc = "Go to references"; }
         { key = "gt"; action = utils.mkRaw "function() vim.diagnostic.config({ virtual_text = not vim.diagnostic.config().virtual_text }) end"; options.desc = "Toggle diagnostic virtual_text"; }
         { key = "g<Up>"; action = utils.mkRaw "vim.diagnostic.goto_prev"; options.desc = "Go to previous diagnostic"; }
         { key = "g<Down>"; action = utils.mkRaw "vim.diagnostic.goto_next"; options.desc = "Go to next diagnostic"; }
@@ -345,8 +292,6 @@ in {
       yamllint
 
       ncurses # infocmp bin
-      # floaterm replaced by snacks.terminal
-      # vimPlugins.vim-floaterm # provides the 'floaterm' helper script on PATH
     ];
 
     clipboard = {

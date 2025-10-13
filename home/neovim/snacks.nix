@@ -18,6 +18,11 @@ in {
           ];
         };
 
+        explorer = {
+          enabled = true;
+          replace_netrw = true;
+        };
+
         # Indent guides
         indent = {
           enabled = true;
@@ -42,6 +47,11 @@ in {
           timeout = 3000;
           style = "compact";
           top_down = true;
+        };
+
+        picker = {
+          enabled = true;
+          backend = "telescope";
         };
 
         # Quick file rendering
@@ -118,20 +128,19 @@ in {
       { key = "<A-Esc>"; action = utils.mkRaw "function() Snacks.terminal.toggle() end"; options.desc = "Toggle terminal"; }
       { key = "<A-Esc>"; action = utils.mkRaw "function() Snacks.terminal.toggle() end"; mode = "t"; options.desc = "Toggle terminal"; }
 
-      # Zen mode
-      { key = "<leader>z"; action = utils.mkRaw "function() Snacks.zen() end"; options.desc = "Toggle Zen mode"; }
-      { key = "<leader>Z"; action = utils.mkRaw "function() Snacks.zen.zoom() end"; options.desc = "Toggle Zoom"; }
-
-      # Scratch buffer
-      { key = "<leader>S"; action = utils.mkRaw "function() Snacks.scratch() end"; options.desc = "Toggle scratch buffer"; }
-      { key = "<leader>s"; action = utils.mkRaw "function() Snacks.scratch.select() end"; options.desc = "Select scratch buffer"; }
-
-      # Rename
-      { key = "<leader>r"; action = utils.mkRaw "function() Snacks.rename.rename_file() end"; options.desc = "Rename file"; }
+      # Explorer
+      { key = "<leader>f"; action = utils.mkRaw "function() Snacks.explorer() end"; options.desc = "Show file explorer"; }
 
       # Notifications
       { key = "<leader>n"; action = utils.mkRaw "function() Snacks.notifier.show_history() end"; options.desc = "Show notification history"; }
       { key = "<leader>N"; action = utils.mkRaw "function() Snacks.notifier.hide() end"; options.desc = "Dismiss notifications"; }
+
+      # Rename
+      { key = "<F2>"; action = utils.mkRaw "function() Snacks.rename.rename_file() end"; options.desc = "Rename file"; }
+
+      # Zen mode
+      { key = "<leader>z"; action = utils.mkRaw "function() Snacks.zen() end"; options.desc = "Toggle Zen mode"; }
+      { key = "<leader>Z"; action = utils.mkRaw "function() Snacks.zen.zoom() end"; options.desc = "Toggle Zoom"; }
     ];
   };
 }
