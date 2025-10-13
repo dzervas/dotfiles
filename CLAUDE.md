@@ -9,9 +9,6 @@ This is a comprehensive NixOS dotfiles configuration using Nix Flakes. The syste
 ## Key Commands
 
 ### System Management
-- `rebuild` - Custom fish function for system rebuilds with kernel version checking (located in `home/fish-functions/rebuild.fish`)
-- `nix build .#iso` - Build the live ISO image
-- `nix flake update` - Update all flake inputs
 - `statix check` - Lint Nix code (runs in pre-commit hook)
 
 ## Architecture
@@ -33,7 +30,7 @@ This is a comprehensive NixOS dotfiles configuration using Nix Flakes. The syste
 ### Key Technologies
 - **Primary DE**: Hyprland (Wayland compositor) with Waybar, rofi, swaylock
 - **Shell**: Fish with custom functions in `home/fish-functions/`
-- **Editor**: Neovim configured via NixVim with comprehensive LSP, AI assistance, and development tools
+- **Editor**: Neovim configured via NixVim in `home/neovim` with comprehensive LSP, AI assistance, and development tools
 - **Storage**: BTRFS with compression, deduplication, snapshots
 - **Security**: Secure boot (lanzaboote), LUKS encryption, AppArmor
 - **Theming**: Stylix with Rose Pine theme
@@ -55,13 +52,6 @@ Custom options defined in `home/options.nix` provide consistent configuration ac
 
 ### Private Configuration Support
 The system supports private configuration modules via `nix-private` input, with dummy fallback for public builds.
-
-## Security Configuration
-
-- **Secure Boot**: Full UEFI secure boot support with custom keys
-- **Disk Encryption**: LUKS full-disk encryption
-- **1Password**: System-wide integration requiring `/etc/opnix.env` setup
-- **AppArmor**: Security profiles enabled system-wide
 
 ## NixVim Editor Configuration
 
@@ -89,13 +79,6 @@ The Neovim configuration is fully declarative via NixVim and split across multip
 - **Rustaceanvim**: Advanced Rust development with dedicated LSP target directory
 - **Debugging**: LLDB integration via dap-lldb
 - **Custom Formatting**: Hard tabs, 4-space width, 100-character line limit
-
-### Key Bindings
-- **Buffer Navigation**: Alt+Number (1-9) for direct buffer access, Alt+Left/Right for cycling
-- **Window Management**: Alt+Up/Down for window navigation, Alt+Enter for splits
-- **Terminal**: Alt+Esc for floating terminal toggle
-- **File Operations**: Leader+f/F for file tree, Alt+f for fuzzy file finding
-- **LSP Actions**: F2 for rename, Ctrl+. for code actions, K for hover, gd for definition
 
 ## Development Guidelines
 

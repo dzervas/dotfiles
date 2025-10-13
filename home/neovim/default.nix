@@ -50,7 +50,7 @@ in {
       # DevOps
       ansiblels.enable = true;
       bashls.enable = true;
-      copilot.enable = true;
+      # copilot.enable = true; # issue: https://github.com/zbirenbaum/copilot.lua/issues/576
       dockerls.enable = true;
       docker_compose_language_service.enable = true;
       helm_ls.enable = true;

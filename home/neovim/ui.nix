@@ -1,4 +1,4 @@
-{ inputs, lib, ... }: let
+{ inputs, lib, pkgs, ... }: let
   inherit (inputs.nixvim.lib.nixvim) utils;
 in {
   programs.nixvim.plugins = {
@@ -63,29 +63,7 @@ in {
               '';
             })
           ];
-          lualine_z = lib.mkAfter [{
-            __unkeyed-1 = utils.mkRaw ''
-              function()
-                -- Check if CopilotManager exists and copilot is loaded
-                -- if _G.CopilotManager == nil or !vim.call("copilot#Enabled") then
-                --   return "";
-                -- end
-
-                -- Check if copilot is enabled via our management system
-                -- local project_root = _G.CopilotManager.get_project_root()
-                -- local project_enabled =
-                -- _G.CopilotManager.is_copilot_enabled_for_project(project_root)
-                -- local buffer_enabled = _G.CopilotManager.is_copilot_enabled_for_buffer()
-
-                if vim.call("copilot#Enabled") or vim.b.copilot_enabled then
-                  return " "
-                end
-
-                return " ";
-              end
-            '';
-            color.fg = "#ffffff";
-          }];
+          lualine_z = lib.mkAfter ["copilot"];
         };
       };
     };
@@ -167,4 +145,5 @@ in {
     };
     web-devicons.enable = true; # Telescope, trouble & neo-tree dep
   };
+  programs.nixvim.extraPlugins = with pkgs.vimPlugins; [ copilot-lualine ]; # satellite-nvim is fucking everything up
 }

@@ -3,3 +3,4 @@
 .null-ls_*.nix
 .worktrees/
 /docs/plans
+!.mcp.json

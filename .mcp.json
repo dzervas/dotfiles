@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "nixos": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "ghcr.io/utensils/mcp-nixos"
+      ]
+    },
+    "nixvim-docs": {
+      "type": "http",
+      "url": "https://gitmcp.io/nix-community/nixvim"
+    }
+  }
+}
