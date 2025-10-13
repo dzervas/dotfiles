@@ -5,8 +5,7 @@ in {
   # - Run python script with args/env (nvim-iron?)
   # - vscode-like runner (run this test/function/etc.)
   # - Fix right-click menu
-  # - fish completion within floaterm (e.g. % expands to current file)
-  # - Fix multiline prompt in floaterm
+  # - fish completion within terminal (e.g. % expands to current file)
   # - ctrl-tab like firefox for buffers
   # - ctrl-tab like firefox for jumps
   # - Type annotations as end hints (not inlay)
@@ -16,8 +15,8 @@ in {
   # - Devenv treesitter
   # - Nix code action to split/merge attr, add "with"
   # - Rust workflow to disable formatting and better defaults
-
   # - JJ integration (lualine and maybe :Jj)
+  # - todo-comments plugin and snacks integration https://github.com/folke/snacks.nvim/blob/main/docs/picker.md#todo_comments
 
   imports = [
     ./ai.nix

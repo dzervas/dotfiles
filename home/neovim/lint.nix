@@ -33,7 +33,6 @@
           terragrunt_validate.enable = true;
           tfsec.enable = true;
           tidy.enable = true; # HTML & XML
-          todo_comments.enable = true; # todo comments - is it good?
           trivy.enable = true; # Terraform vulns
           yamllint = {
             enable = true;

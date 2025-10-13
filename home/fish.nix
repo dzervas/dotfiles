@@ -14,15 +14,10 @@
       bind \e\[3\;6~ __forget
       export FLAKE_URL="/home/dzervas/Lab/dotfiles?submodules=1&lfs=1"
 
-      # If running inside a Floaterm terminal, leverage floaterm's opener
+      # If running inside a nvim terminal, leverage the remote opener
       # so `nvim` opens in the already running Neovim instance.
-      if set -q FLOATERM
-        set -x FLOATERM_OPENER edit
-        if type -q floaterm
-          alias nvim 'floaterm'
-          set -x EDITOR 'floaterm'
-          set -x VISUAL 'floaterm'
-        end
+      if set -q NVIM
+        alias nvim 'nvim --server $NVIM --remote-silent'
       end
 
       # Watch command completions
