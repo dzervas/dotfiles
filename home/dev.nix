@@ -1,6 +1,5 @@
 { pkgs, ... }: {
   programs = {
-    # awscli.enable = true;
     poetry.enable = true;
     pyenv.enable = true;
     kubecolor = {

@@ -31,15 +31,15 @@ in {
           type = "command";
         };
 
-        enabledPlugins = {
-          "superpowers@superpowers-marketplace" = true;
-        };
-        extraKnownMarketplaces = {
-          "superpowers-marketplace".source = {
-            source = "github";
-            repo = "obra/superpowers-marketplace";
-          };
-        };
+        # enabledPlugins = {
+        #   "superpowers@superpowers-marketplace" = true;
+        # };
+        # extraKnownMarketplaces = {
+        #   "superpowers-marketplace".source = {
+        #     source = "github";
+        #     repo = "obra/superpowers-marketplace";
+        #   };
+        # };
 
         permissions = {
           defaultMode = "acceptEdits";

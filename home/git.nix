@@ -119,6 +119,12 @@
 
         revset-aliases = {
           "closest_bookmark(to)" = "heads(::to & bookmarks())";
+          # Returns the revset that are the remote bookmarks that have `to` as an ancestor (to::) or as a descendant (::to)
+          "related_origin_bookmarks(to)" = "remote_bookmarks(remote=origin) & (to:: | ::to)";
+          # Return the revs that are after `to` but within a remote bookmark (so ahead)
+          "ahead_of_origin(to)" = "related_origin_bookmarks(to)..to";
+          # Return the revs that are before `to` but within a remote bookmark (so behind)
+          "behind_origin(to)" = "to..related_origin_bookmarks(to)";
         };
 
         aliases = {
@@ -155,7 +161,7 @@
           ];
           statuslog = [
             "util" "exec" "--" "bash" "-c"
-            "jj status && echo && jj log"
+            "jj status && echo && jj log --limit 5"
           ];
           tug = [ "bookmark" "move" "--from" "closest_bookmark(@-)" "--to" "@-"];
         };

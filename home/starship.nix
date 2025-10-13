@@ -179,11 +179,10 @@
         jj-args = "--ignore-working-copy --color never --no-graph";
       in {
         jj_branch = {
-          # Take the revsets that exist in the prev working copy but not in the immutable heads (so after them)
-          # and only show the immutable's local bookmarks. If there is a change that is mutable, mark it as ahead (to be pushed)
-          # TODO: Show ahead number instead of copies of the symbol
-          # TODO: Show behind as well
-          command = ''jj log ${jj-args} -r 'closest_bookmark(@-)' --template 'if(immutable, local_bookmarks.join("/"), " ")' '';
+          # TODO: Show ahead/behind - use the `ahead_of_origin` and `behind_origin` revsets
+
+          # Show the closest bookmark (branch) to the current change
+          command = ''jj log ${jj-args} -r 'closest_bookmark(@-)' --template 'bookmarks.join("/")' '';
           format = "${leftSepString}[󰠬 ](bg:${bgColorHex})[$output ]($style)";
           style = "fg:#5FD700 bg:${bgColorHex}";
           when = is-jj-repo;

@@ -13,6 +13,7 @@ in {
       };
     };
 
+    # TODO: Show jj status instead of git
     lualine = {
       enable = true;
       settings = {
