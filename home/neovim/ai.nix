@@ -61,10 +61,11 @@ in {
         };
         settings = {
           provider = "claude-code";
+          # providers.claude-code.model = "claude-sonnet-4.5";
+          # providers.copilot.model = "claude-sonnet-4";
+
           disabled_tools = [ "git_commit" ];
           behaviour.auto_approve_tool_permissions = false;
-          providers.claude-code.model = "claude-sonnet-4.5";
-          providers.copilot.model = "claude-sonnet-4";
         };
       };
     };

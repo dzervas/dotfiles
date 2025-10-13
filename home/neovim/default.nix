@@ -16,7 +16,7 @@ in {
   # - Devenv treesitter
   # - Nix code action to split/merge attr, add "with"
   # - Rust workflow to disable formatting and better defaults
-  # - Add snacks.nvim (and configure it for plugins that support it)
+
   # - JJ integration (lualine and maybe :Jj)
 
   imports = [
@@ -27,6 +27,7 @@ in {
     ./python.nix
     ./rust.nix
     ./runner.nix
+    ./snacks.nix
     ./ui.nix
   ];
 
@@ -87,7 +88,7 @@ in {
 
     plugins = {
       # Git helper
-      gitsigns.enable = true;
+      # gitsigns.enable = true;
       illuminate.enable = true;
       repeat.enable = true;
       fugitive.enable = true;
@@ -185,13 +186,14 @@ in {
 
       nvim-autopairs.enable = true;
 
-      floaterm = {
-        enable = true;
-        settings = {
-          keymap_toggle = "<A-Esc>";
-          opener = "edit"; # Use 'edit' when opening files from floaterm
-        };
-      };
+      # Replaced by snacks.terminal in snacks.nix
+      # floaterm = {
+      #   enable = true;
+      #   settings = {
+      #     keymap_toggle = "<A-Esc>";
+      #     opener = "edit"; # Use 'edit' when opening files from floaterm
+      #   };
+      # };
 
       neo-tree = {
         enable = true;
@@ -268,15 +270,18 @@ in {
       [
         # Buffer manipulation
         { key = "<A-c>"; action = "<CMD>BufferClose<CR>"; options.desc = "Kill buffer"; }
-        { key = "<A-c>"; action = "<CMD>FloatermKill<CR>"; mode = "t"; options.desc = "Kill terminal session"; }
+        # Terminal kill handled by snacks.terminal now
+        # { key = "<A-c>"; action = "<CMD>FloatermKill<CR>"; mode = "t"; options.desc = "Kill terminal session"; }
         { key = "<A-C>"; action = "<CMD>close<CR>"; options.desc = "Close window"; }
         { key = "<A-o>"; action = "<CMD>only<CR>"; options.desc = "Close other windows"; }
         { key = "<A-O>"; action = "<CMD>BufferCloseAllButCurrent<CR>"; options.desc = "Kill all other buffers"; }
         { key = "<A-Left>"; action = "<CMD>BufferPrevious<CR>"; options.desc = "Select previous buffer"; }
-        { key = "<A-Left>"; action = "<CMD>FloatermPrev<CR>"; mode = "t"; options.desc = "Select previous terminal"; }
+        # Terminal navigation handled by snacks.terminal now
+        # { key = "<A-Left>"; action = "<CMD>FloatermPrev<CR>"; mode = "t"; options.desc = "Select previous terminal"; }
         { key = "<A-S-Left>"; action = "<CMD>BufferMovePrevious<CR>"; options.desc = "Move buffer to the left"; }
         { key = "<A-Right>"; action = "<CMD>BufferNext<CR>"; options.desc = "Select next buffer"; }
-        { key = "<A-Right>"; action = "<CMD>FloatermNext<CR>"; mode = "t"; options.desc = "Select next terminal"; }
+        # Terminal navigation handled by snacks.terminal now
+        # { key = "<A-Right>"; action = "<CMD>FloatermNext<CR>"; mode = "t"; options.desc = "Select next terminal"; }
         { key = "<A-S-Right>"; action = "<CMD>BufferMoveNext<CR>"; options.desc = "Move buffer to the right"; }
 
         # Window navigation
@@ -291,7 +296,8 @@ in {
         # Split management
         { key = "<A-Return>"; action = "<CMD>vsplit<CR><C-W>w"; options.desc = "Open a window to the right"; }
         { key = "<A-S-Return>"; action = "<CMD>split<CR><C-W>w"; options.desc = "Open a window to the bottom"; }
-        { key = "<A-Return>"; action = "<CMD>FloatermNew<CR>"; mode = "t"; options.desc = "Open a new terminal"; }
+        # New terminal handled by snacks.terminal now via <A-Esc>
+        # { key = "<A-Return>"; action = "<CMD>FloatermNew<CR>"; mode = "t"; options.desc = "Open a new terminal"; }
 
         # Spell checking toggle
         { key = "<A-s>"; action = "<CMD>set spell!<CR>"; options.desc = "Toggle spell checking"; }
@@ -339,7 +345,8 @@ in {
       yamllint
 
       ncurses # infocmp bin
-      vimPlugins.vim-floaterm # provides the 'floaterm' helper script on PATH
+      # floaterm replaced by snacks.terminal
+      # vimPlugins.vim-floaterm # provides the 'floaterm' helper script on PATH
     ];
 
     clipboard = {

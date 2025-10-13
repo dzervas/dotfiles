@@ -13,18 +13,6 @@ in {
       };
     };
 
-    dashboard = {
-      enable = true;
-      settings = {
-        change_to_vcs_root = true;
-        shortcut_type = "number";
-        config = {
-          mru.cwd_only = true;
-          week_header.enable = true;
-        };
-      };
-    };
-
     lualine = {
       enable = true;
       settings = {
@@ -87,6 +75,10 @@ in {
           long_message_to_split = true;
           inc_rename = true;
         };
+        # Route vim.notify to snacks.notifier
+        routes = [
+          { view = "notify"; filter.event = "notify"; }
+        ];
       };
     };
 
