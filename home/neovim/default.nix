@@ -16,7 +16,7 @@ in {
   # - Devenv treesitter
   # - Nix code action to split/merge attr, add "with"
   # - Rust workflow to disable formatting and better defaults
-  # - Add snacks.nvim (and configure i for some plugins that support it)
+  # - Add snacks.nvim (and configure it for plugins that support it)
   # - JJ integration (lualine and maybe :Jj)
 
   imports = [
@@ -199,6 +199,8 @@ in {
         settings = {
           add_blank_line_at_top = true;
           buffers.follow_current_file.leave_dirs_open = true;
+          use_libuv_file_watcher = true;
+          window.width = 32;
 
           filesystem.filtered_items = {
             hide_dotfiles = false;

@@ -1,4 +1,6 @@
-_: {
+{ inputs, ... }: let
+  inherit (inputs.nixvim.lib.nixvim) utils;
+in {
   programs.nixvim.plugins = {
     blink-cmp = {
       enable = true;
@@ -25,16 +27,22 @@ _: {
         '';
         keymap = {
           "<Tab>" = [
-            { __raw = ''
-                function(cmp)
-                  -- If Copilot is loaded, accept the suggestion
-                  -- check for b:copilot_enabled too
-                  if package.loaded["copilot"] ~= nil and require("copilot.suggestion").is_visible() then
-                    require("copilot.suggestion").accept()
-                  elseif cmp.snippet_active() then return cmp.accept()
-                  else return cmp.select_and_accept()
-                  end
-                end'';}
+            (utils.mkRaw ''
+              function()
+                return require("sidekick").nes_jump_or_apply()
+              end
+            '')
+            (utils.mkRaw ''
+              function(cmp)
+                -- If Copilot is loaded, accept the suggestion
+                -- check for b:copilot_enabled too
+                if package.loaded["copilot"] ~= nil and require("copilot.suggestion").is_visible() then
+                  require("copilot.suggestion").accept()
+                elseif cmp.snippet_active() then return cmp.accept()
+                else return cmp.select_and_accept()
+                end
+              end
+            '')
             "snippet_forward"
             "fallback"
           ];

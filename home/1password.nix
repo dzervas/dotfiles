@@ -49,7 +49,7 @@ in {
       PartOf = [ "graphical-session.target" ];
     };
 
-    Service.ExecStart = "${pkgs._1password-gui}/bin/1password --silent";
+    Service.ExecStart = "${pkgs._1password-gui}/bin/1password --silent --ozone-platform=wayland";
     Install.WantedBy = [ "graphical-session.target" ];
   };
 }
