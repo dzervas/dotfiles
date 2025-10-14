@@ -163,6 +163,25 @@ in {
           };
         };
       };
+      treesitter-refactor = {
+        enable = true;
+        highlightCurrentScope.enable = true;
+        highlightDefinitions.enable = true;
+
+        smartRename = {
+          enable = true;
+          keymaps.smartRename = "<F2>";
+        };
+        navigation = {
+          enable = true;
+          keymaps = {
+            gotoDefinitionLspFallback = "<C-]>";
+            gotoNextUsage = "g<Right>";
+            gotoPreviousUsage = "g<Left>";
+            listDefinitions = "gl";
+          };
+        };
+      };
       treesitter-context.enable = true;
 
       which-key.enable = true;
@@ -262,10 +281,6 @@ in {
         # LSP navigation and actions
         { key = "K"; action = utils.mkRaw "vim.lsp.buf.hover"; options.desc = "Show the hover info"; }
         { key = "?"; action = utils.mkRaw "vim.diagnostic.open_float"; options.desc = "Show diagnostic float"; }
-        # { key = "gd"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
-        # { key = "gD"; action = utils.mkRaw "vim.lsp.buf.declaration"; options.desc = "Go to declaration"; }
-        # { key = "gi"; action = utils.mkRaw "vim.lsp.buf.implementation"; options.desc = "Go to implementation"; }
-        # { key = "gr"; action = utils.mkRaw "vim.lsp.buf.references"; options.desc = "Go to references"; }
         { key = "gt"; action = utils.mkRaw "function() vim.diagnostic.config({ virtual_text = not vim.diagnostic.config().virtual_text }) end"; options.desc = "Toggle diagnostic virtual_text"; }
         { key = "g<Up>"; action = utils.mkRaw "vim.diagnostic.goto_prev"; options.desc = "Go to previous diagnostic"; }
         { key = "g<Down>"; action = utils.mkRaw "vim.diagnostic.goto_next"; options.desc = "Go to next diagnostic"; }
