@@ -15,7 +15,7 @@ in {
           sections = [
             { section = "header"; }
             { section = "keys"; gap = 1; padding = 1; }
-            { pane = 2; icon = " "; title = "Projects"; section = "projects"; indent = 2; padding = 1; }
+            { pane = 2; icon = " "; title = "Projects"; section = "projects"; indent = 2; padding = 2; }
           ];
         };
 
@@ -84,44 +84,60 @@ in {
             border = "rounded";
             style = "terminal";
 
-            fixbuf = true;
+            # fixbuf = true;
             resize = true;
 
             height = default_size;
             width = default_size;
 
-            wo.winbar = ''(%{b:snacks_terminal.id}/%{luaeval('#require("snacks").terminal.list()')}) %{get(b:, 'term_title', 'No Title')}'';
+            wo.winbar = ''(%{b:snacks_terminal.id}/%{luaeval('#Snacks.terminal.list()')}) %{get(b:, 'term_title', 'No Title')}'';
 
             # TODO: These don't work :/
-            keys = let
-              keymap = { action, desc, mode ? "" }: utils.listToUnkeyedAttrs [ action ] // { inherit desc mode; };
-            in {
-              "<A-Return>" = keymap {
-                action = utils.mkRaw "function() Snacks.terminal.open(); return end";
-                desc = "Open another terminal";
-                mode = ["n" "t"];
-              };
-              "<A-Right>" = keymap {
-                action = utils.mkRaw "function() Snacks.terminal.next(); return end";
-                desc = "Go to next terminal";
-                mode = ["n" "t"];
-              };
-              "<A-Left>" = keymap {
-                action = utils.mkRaw "function() Snacks.terminal.prev(); return end";
-                desc = "Go to previous terminal";
-                mode = ["n" "t"];
-              };
-              "<A-S-F>" = keymap {
-                action = utils.mkRaw "function(self) self:maximize() end";
-                desc = "Toggle fullscreen";
-                mode = ["n" "t"];
-              };
-              "<A-f>" = keymap {
-                action = "<C-\\><C-n>";
-                desc = "Go to normal mode";
-                mode = "t";
-              };
-            };
+          };
+        };
+        styles.terminal.keys = let
+          keymap = { key, action, desc, mode ? "" }: utils.listToUnkeyedAttrs [ key action ] // { inherit desc mode; expr = true; };
+        in {
+          new = keymap {
+            key = "<A-Return>";
+            action = utils.mkRaw "function() Snacks.terminal.open() end";
+            desc = "Open another terminal";
+            mode = ["n" "t"];
+          };
+          next = keymap {
+            key = "<A-Right>";
+            action = utils.mkRaw "function() Snacks.terminal.next() end";
+            desc = "Go to next terminal";
+            mode = ["n" "t"];
+          };
+          prev = keymap {
+            key = "<A-Left>";
+            action = utils.mkRaw "function() Snacks.terminal.prev() end";
+            desc = "Go to previous terminal";
+            mode = ["n" "t"];
+          };
+          maximize = keymap {
+            key = "<A-S-F>";
+            action = utils.mkRaw "function(self) self:maximize() end";
+            desc = "Toggle fullscreen";
+            mode = ["n" "t"];
+          };
+          term_normal = keymap {
+            key = "<Esc>";
+            action = utils.mkRaw ''
+              function(self)
+                self.esc_timer = self.esc_timer or (vim.uv or vim.loop).new_timer()
+                if self.esc_timer:is_active() then
+                  self.esc_timer:stop()
+                  vim.cmd("stopinsert")
+                else
+                  self.esc_timer:start(200, 0, function() end)
+                  return "<esc>"
+                end
+              end
+            '';
+            desc = "Double escape to normal mode";
+            mode = "t";
           };
         };
 
@@ -188,6 +204,7 @@ in {
           local current_idx, terminals_count = Snacks.terminal.get_buf_id()
           if not current_idx then return end
           local next_idx = (current_idx % terminals_count) + 1
+          Snacks.terminal.get(current_idx):hide()
           Snacks.terminal.get(next_idx):show()
         end
 
@@ -195,6 +212,7 @@ in {
           local current_idx, terminals_count = Snacks.terminal.get_buf_id()
           if not current_idx then return end
           local prev_idx = ((current_idx - 2 + terminals_count) % terminals_count) + 1
+          Snacks.terminal.get(current_idx):hide()
           Snacks.terminal.get(prev_idx):show()
         end
       '';
