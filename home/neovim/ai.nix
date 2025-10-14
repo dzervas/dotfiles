@@ -70,6 +70,13 @@ in {
       };
     };
 
+    keymaps = [
+      { key = "<leader>cc"; action = utils.mkRaw "function() require('sidekick.cli').toggle({ name = 'claude'}) end"; options.desc = "Toggle claude window"; }
+      { key = "<leader>cs"; mode = "n"; action = utils.mkRaw "function() require('sidekick.cli').send({ msg = '{file}'}) end"; options.desc = "Send buffer to claude"; }
+      { key = "<leader>cs"; mode = "v"; action = utils.mkRaw "function() require('sidekick.cli').send({ msg = '{selection}'}) end"; options.desc = "Send selection to claude"; }
+      { key = "<leader>e"; action = utils.mkRaw "function() require('sidekick').nes_jump_or_apply() end"; options.desc = "Close tab"; }
+    ];
+
     autoCmd = [
       {
         event = "BufEnter";
@@ -83,6 +90,7 @@ in {
         callback = utils.mkRaw "function() M._cwd_root_cache = {}; _G.CopilotManager.copilot_try_load(); end";
       }
     ];
+
     extraConfigLua = lib.mkAfter (builtins.readFile ./copilot-state.lua);
   };
 }

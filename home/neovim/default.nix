@@ -258,7 +258,7 @@ in {
         # Tab navigation
         { key = "<A-Tab>"; action = "<CMD>tabnext<CR>"; options.desc = "Cycle to the next tab"; }
         { key = "<A-S-Tab>"; action = "<CMD>tabprevious<CR>"; options.desc = "Cycle to the previous tab"; }
-        { key = "<C-A-c>"; action = "<CMD>tabclose<CR>"; options.desc = "Cycle to the next tab"; }
+        { key = "<C-A-c>"; action = "<CMD>tabclose<CR>"; options.desc = "Close tab"; }
 
         # Split management
         { key = "<A-Return>"; action = "<CMD>vsplit<CR><C-W>w"; options.desc = "Open a window to the right"; }
@@ -274,10 +274,6 @@ in {
         { key = "<C-Up>"; action = "<CMD>move -2<CR>"; options.desc = "Move the current line up"; }
         { key = "<C-Down>"; action = "<CMD>move +1<CR>"; options.desc = "Move the current line down"; }
 
-        # Show the filesystem tree
-        { key = "<leader>f"; action = "<CMD>Neotree toggle<CR>"; options.desc = "Toggle the file explorer"; }
-        { key = "<leader>F"; action = "<CMD>Neotree reveal<CR>"; options.desc = "Reveal the current file in the explorer"; }
-
         # LSP navigation and actions
         { key = "K"; action = utils.mkRaw "vim.lsp.buf.hover"; options.desc = "Show the hover info"; }
         { key = "?"; action = utils.mkRaw "vim.diagnostic.open_float"; options.desc = "Show diagnostic float"; }
@@ -286,16 +282,10 @@ in {
         { key = "g<Down>"; action = utils.mkRaw "vim.diagnostic.goto_next"; options.desc = "Go to next diagnostic"; }
         { key = "<C-]>"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
         { key = "<C-.>"; action = utils.mkRaw "vim.lsp.buf.code_action"; options.desc = "Code actions menu"; }
-        { key = "<leader>m"; action = "<CMD>NoiceAll<CR>"; options.desc = "Show all messages"; }
-        { key = "<leader>l"; action = "<CMD>NoiceDismiss<CR>"; options.desc = "Dismiss notification"; }
         { key = "<leader>w"; action = utils.mkRaw "function () vim.lsp.buf.format({ async = false }) end"; options.desc = "Format the current file";  }
 
         # Ctrl-backspace delete word
-        { key = "<C-BS>"; action = "<C-w>"; mode = "i"; options.desc = "Delete word backwards"; }
-        { key = "<C-BS>"; action = "<C-w>"; mode = "c"; options.desc = "Delete word backwards"; }
-        { key = "<C-BS>"; action = "<C-w>"; mode = "t"; options.desc = "Delete word backwards"; }
-
-        { key = "<C-Right>"; action = "copilot#AcceptWord"; options.desc = "Accept the next word suggestion by copilot"; }
+        { key = "<C-BS>"; action = "<C-w>"; mode = ["i" "c" "t"]; options.desc = "Delete word backwards"; }
       ];
 
     extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ]; # satellite-nvim is fucking everything up

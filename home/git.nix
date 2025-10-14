@@ -134,21 +134,21 @@
 
           acp = [
             "util" "exec" "--" "bash" "-c"
-            ''test $# -gt 0 && jj commit -m "$*" || jj commit && jj push''
+            ''test $# -gt 0 && jj commit -m "$*" || jj commit && jj push'' ""
           ];
           # Push to a new, auto-generated branch
           # TODO: Allow for named branch
           acp-new = [
             "util" "exec" "--" "bash" "-c"
-            ''test $# -gt 0 && jj commit -m "$*" || jj commit && jj git push --change @- --allow-new''
+            ''test $# -gt 0 && jj commit -m "$*" || jj commit && jj git push --change @- --allow-new'' ""
           ];
           get-ignore = [
             "util" "exec" "--" "bash" "-c"
-            ''curl -fsL "https://www.toptal.com/developers/gitignore/api/$1" >> .gitignore && echo "Appended to .gitignore" || echo "No gitignore found - check out https://gitignore.io"; ''
+            ''curl -fsL "https://www.toptal.com/developers/gitignore/api/$1" >> .gitignore && echo "Appended to .gitignore" || echo "No gitignore found - check out https://gitignore.io"; '' ""
           ];
           hub = [
             "util" "exec" "--" "bash" "-c"
-            ''grep -q / <<< $1 && jj git clone --colocate git@github.com:$1 $2 || jj git clone --colocate git@github.com:dzervas/$1 $2''
+            ''grep -q / <<< $1 && jj git clone --colocate git@github.com:$1 $2 || jj git clone --colocate git@github.com:dzervas/$1 $2'' ""
           ];
           init = ["git" "init" "--colocate"];
           oops = [

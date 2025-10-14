@@ -75,11 +75,53 @@ in {
           };
         };
 
-        # Terminal management (replaces floaterm)
-        terminal = {
+        terminal = let
+          default_size = 0.8;
+        in {
           enabled = true;
           win = {
+            position = "float";
+            border = "rounded";
             style = "terminal";
+
+            fixbuf = true;
+            resize = true;
+
+            height = default_size;
+            width = default_size;
+
+            wo.winbar = ''(%{b:snacks_terminal.id}/%{luaeval('#require("snacks").terminal.list()')}) %{get(b:, 'term_title', 'No Title')}'';
+
+            # TODO: These don't work :/
+            keys = let
+              keymap = { action, desc, mode ? "" }: utils.listToUnkeyedAttrs [ action ] // { inherit desc mode; };
+            in {
+              "<A-Return>" = keymap {
+                action = utils.mkRaw "function() Snacks.terminal.open(); return end";
+                desc = "Open another terminal";
+                mode = ["n" "t"];
+              };
+              "<A-Right>" = keymap {
+                action = utils.mkRaw "function() Snacks.terminal.next(); return end";
+                desc = "Go to next terminal";
+                mode = ["n" "t"];
+              };
+              "<A-Left>" = keymap {
+                action = utils.mkRaw "function() Snacks.terminal.prev(); return end";
+                desc = "Go to previous terminal";
+                mode = ["n" "t"];
+              };
+              "<A-S-F>" = keymap {
+                action = utils.mkRaw "function(self) self:maximize() end";
+                desc = "Toggle fullscreen";
+                mode = ["n" "t"];
+              };
+              "<A-f>" = keymap {
+                action = "<C-\\><C-n>";
+                desc = "Go to normal mode";
+                mode = "t";
+              };
+            };
           };
         };
 
@@ -122,13 +164,46 @@ in {
           };
         };
       };
+
+      luaConfig.post = ''
+        function Snacks.terminal.get_buf_id()
+          local terminals = Snacks.terminal.list()
+          if #terminals <= 1 then return end
+
+          local current_buf = vim.api.nvim_get_current_buf()
+          local current_idx = nil
+          for i, term in ipairs(terminals) do
+            if term.buf == current_buf then
+              current_idx = i
+              break
+            end
+          end
+
+          if not current_idx then return nil, nil end
+
+          return current_idx, #terminals
+        end
+
+        function Snacks.terminal.next()
+          local current_idx, terminals_count = Snacks.terminal.get_buf_id()
+          if not current_idx then return end
+          local next_idx = (current_idx % terminals_count) + 1
+          Snacks.terminal.get(next_idx):show()
+        end
+
+        function Snacks.terminal.prev()
+          local current_idx, terminals_count = Snacks.terminal.get_buf_id()
+          if not current_idx then return end
+          local prev_idx = ((current_idx - 2 + terminals_count) % terminals_count) + 1
+          Snacks.terminal.get(prev_idx):show()
+        end
+      '';
     };
 
     # Keybindings for snacks functionality
     keymaps = [
       # Terminal (replaces floaterm keybinds)
-      { key = "<A-Esc>"; action = utils.mkRaw "function() Snacks.terminal.toggle() end"; options.desc = "Toggle terminal"; }
-      { key = "<A-Esc>"; action = utils.mkRaw "function() Snacks.terminal.toggle() end"; mode = "t"; options.desc = "Toggle terminal"; }
+      { key = "<A-Esc>"; mode = ["n" "t"]; action = utils.mkRaw "function() Snacks.terminal.toggle() end"; options.desc = "Toggle terminal"; }
 
       # Explorer
       { key = "<leader>f"; action = utils.mkRaw "function() Snacks.explorer() end"; options.desc = "Show file explorer"; }
@@ -138,8 +213,8 @@ in {
       { key = "<leader>N"; action = utils.mkRaw "function() Snacks.notifier.hide() end"; options.desc = "Dismiss notifications"; }
 
       # Picker
-      { key = "<leader>gm"; action = utils.mkRaw "function() Snacks.picker.man() end"; options.desc = "Go to definition"; }
-      { key = "<leader>gh"; action = utils.mkRaw "function() Snacks.picker.help() end"; options.desc = "Go to definition"; }
+      { key = "<leader>gm"; action = utils.mkRaw "function() Snacks.picker.man() end"; options.desc = "Man pages"; }
+      { key = "<leader>gh"; action = utils.mkRaw "function() Snacks.picker.help() end"; options.desc = "Help pages"; }
       { key = "gd"; action = utils.mkRaw "function() Snacks.picker.lsp_definitions() end"; options.desc = "Go to definition"; }
       { key = "gD"; action = utils.mkRaw "function() Snacks.picker.lsp_declarations() end"; options.desc = "Go to declaration"; }
       { key = "gi"; action = utils.mkRaw "function() Snacks.picker.lsp_implementations() end"; options.desc = "Go to implementation"; }
