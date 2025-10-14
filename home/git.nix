@@ -155,6 +155,28 @@
             "util" "exec" "--" "bash" "-c"
             "echo 'Going to squash on immutable and push. You sure?' && read && jj squash --ignore-immutable && jj push"
           ];
+          pr = [
+            "util" "exec" "--" "bash" "-c"
+            ''
+              export REVSET=''${1:-'@-'}
+              export HEAD_NAME=$(jj log -r "closest_bookmark($REVSET)" -T bookmarks --no-graph --color never)
+              [[ $HEAD_NAME == "main" || -z "$HEAD_NAME" ]] && { echo "Cannot create PR for main or unnamed branch"; exit 1; }
+              export PR_URL=$(gh pr list -H "$HEAD_NAME" --json url | jq -r 'first.url')
+
+              if [[ "$PR_URL" == "null" ]]; then
+                echo "No PR found for $HEAD_NAME, createing..."
+                gh pr create --head "$HEAD_NAME" --web
+              else
+                if [ -t 1 ]; then
+                  echo "Opening existing PR for $HEAD_NAME:"
+                  echo "$PR_URL"
+                  xdg-open "$PR_URL"
+                else
+                  echo "$PR_URL"
+                fi
+              fi
+            '' ""
+          ];
           push = [
             "util" "exec" "--" "bash" "-c"
             "jj tug && jj git push"
