@@ -1,7 +1,7 @@
 { config, pkgs, ... }: {
   # TODO: Somehow integrate [includeIf "hasconfig:remote.*.url:git@github.com:<organisation>/**"] in a safe way
 
-  home.packages = with pkgs; [git-lfs lazyjj];
+  home.packages = with pkgs; [git-lfs gnupg];
   programs = rec {
     git = {
       enable = true;
@@ -130,7 +130,7 @@
         aliases = {
           d = ["diff"];
           s = ["status"];
-          ll = ["log"];
+          ll = ["log" "-r" "::"];
 
           acp = [
             "util" "exec" "--" "bash" "-c"
@@ -188,14 +188,20 @@
           tug = [ "bookmark" "move" "--from" "closest_bookmark(@-)" "--to" "@-"];
         };
 
-        git.auto-local-bookmark = true;
+        git = {
+          auto-local-bookmark = true;
+          sign-on-push = true;
+        };
 
         # Sign all commits owned by us
-        signing.behavior = "own";
-        git.sign-on-push = true;
+        signing = {
+          behavior = "own";
+          backend = "ssh";
+          backends.ssh.allowed-signers = config.programs.git.extraConfig.gpg.ssh.allowedSignersFile;
+        };
         ui = {
-          default-command = "statuslog";
           pager = ":builtin";
+          default-command = "statuslog";
           show-cryptographic-signatures = true;
         };
       };

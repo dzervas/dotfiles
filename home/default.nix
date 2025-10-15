@@ -3,6 +3,7 @@
     ./1password.nix
     ./ai.nix
     ./atuin.nix
+    ./camera.nix
     ./chromium.nix
     ./dev.nix
     ./direnv.nix
@@ -64,8 +65,6 @@
     packages = with pkgs; [
       man-pages
 
-      # TODO: cameractrls nix defined presets
-      cameractrls-gtk4
       brightnessctl
       playerctl
       rclone
