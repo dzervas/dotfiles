@@ -90,6 +90,9 @@
     };
   };
 
+  # Disable gnome-keyring's ssh component to avoid conflicts with ssh-agent
+  services.gnome-keyring.components = [ "secrets" ];
+
   stylix = {
     enable = true;
     autoEnable = true;

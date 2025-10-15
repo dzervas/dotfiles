@@ -11,6 +11,7 @@
         controlPersist = "no";
         forwardAgent = false;
         hashKnownHosts = false;
+        # identityAgent = "/run/user/1000/ssh-agent"; # Default for the ssh-agent service, defaults to gnome-keyring if not set
         serverAliveInterval = 60;
         serverAliveCountMax = 30;
         userKnownHostsFile = "~/.ssh/known_hosts";
@@ -36,16 +37,17 @@
 
       # NOTE: To force order use lib.hm.dag.entryBefore ["entry"] { newstuff }
     };
-    # TODO: Finish this
-    extraConfig = ''
-    Match tagged sessioned exec "ps --pid %%self -o ppid --no-headers | xargs -r ps ww --pid | grep -q '%n$'"
-      RequestTTY yes
-      SendEnv SESSIONED_SHELL
-      RemoteCommand hash tmux 2>/dev/null && exec tmux new-session -As dzervas \; send-keys 'sudo -i' C-m || hash screen 2>/dev/null && TERM=vt100 exec screen -adRRS dzervas sudo -i || exec sudo -i
-    '';
   };
+
+  services.ssh-agent.enable = true;
 
   home.packages = with pkgs; [
     yubikey-manager
+    pinentry-qt
+    gcr
   ];
+
+  # To set up a new yubikey:
+  # ssh-keygen -t ed25519-sk -O resident -O verify-required -C "$(g config user.email)" -f ~/.ssh/yubikey_<name>
+  # To retrieve the resident private keys (stubs that include metadata): ssh-keygen -K
 }

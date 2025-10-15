@@ -78,6 +78,10 @@ xkb-options=grp:alt_space_toggle,caps:escape
     };
 
     # YubiKey support
-    udev.packages = [ pkgs.yubikey-personalization ];
+    udev.packages = [ pkgs.yubikey-personalization pkgs.libu2f-host ];
+
+    # Disable Gnome Keyring for SSH keys,
+    # conflicts with the home-manager ssh-agent service
+    gnome.gcr-ssh-agent.enable = false;
   };
 }

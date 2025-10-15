@@ -5,6 +5,7 @@ in {
   setup.passwordManagerLock = "${pkgs._1password-gui}/bin/1password --lock --silent";
 
   programs = {
+    # TODO: Finish the migration to yubikey ssh
     ssh = {
       extraConfig = ''
       Host *
