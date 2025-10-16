@@ -35,7 +35,8 @@ in {
       general = {
         gaps_in = 2;
         gaps_out = 5;
-        layout = "hy3";
+        # layout = "hy3";
+        layout = "dwindle";
       };
 
       exec-once = [
@@ -56,12 +57,26 @@ in {
       ];
 
       "$mod" = "SUPER";
-      bind = [
+      bind = let
+        # Find the first/last window in the current workspace that is not the active window
+        cycle-focus = which: lib.replaceStrings [ "\n" "  " ] [ " " "" ] ''
+          hyprctl clients -j |
+          jq -r '
+            . as $all |
+            ($all[] | select(.focusHistoryID == 0) | .workspace.id) as $workspace_id |
+            [ $all[] | select(.workspace.id == $workspace_id) ] |
+            to_entries as $entries |
+            ($entries | map(select(.value.focusHistoryID == 0).key) | first) as $active |
+            $entries[($active ${which}) % ($entries | length)] |
+            "address:" + .value.address
+          ' |
+          xargs hyprctl dispatch focuswindow
+        '';
+      in [
         # To check if the active window is grouped: hyprctl clients -j | jq --exit-status '.[] | select(.focusHistoryID == 0 and (.grouped | length) > 0)'
         "$mod, Return, exec, ${config.setup.terminal}"
         "$mod, C, killactive"
         "$mod+Shift, C, forcekillactive"
-        "$mod, E, exec, hyprctl keyword general:layout 'dwindle'"
         "$mod, E, exec, hyprctl keyword general:layout 'dwindle'"
         "$mod, T, hy3:changegroup, toggletab"
         "$mod, F, fullscreen"
@@ -78,14 +93,10 @@ in {
         "$mod+Shift, Right, movetoworkspacesilent, m+1"
 
         # Window selection
-        "$mod, Up, cyclenext, tiled"
-        "$mod+Alt, Up, changegroupactive"
-        "$mod+Shift, Up, swapnext, tiled"
-        "$mod+Alt+Shift, Up, movegroupwindow"
-        "$mod, Down, cyclenext, tiled, prev"
-        "$mod+Alt, Down, changegroupactive, b"
-        "$mod+Shift, Down, swapnext, tiled, prev"
-        "$mod+Alt+Shift, Down, movegroupwindow, b"
+        "$mod, Up, exec, ${cycle-focus "+1"} focuswindow"
+        "$mod+Shift, Up, exec, ${cycle-focus "+1"} swapwindow"
+        "$mod, Down, exec, ${cycle-focus "-1"} focuswindow"
+        "$mod+Shift, Down, exec, ${cycle-focus "-1"} swapwindow"
 
         "$mod, Tab, workspace, previous"
         "$mod, Comma, focusmonitor, +1"
@@ -101,7 +112,7 @@ in {
             let ws = i + 1;
             in [
               "$mod, code:1${toString i}, workspace, ${toString ws}"
-              "$mod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
+              "$mod SHIFT, code:1${toString i}, movetoworkspacesilent, ${toString ws}"
             ]
           )
           9)
