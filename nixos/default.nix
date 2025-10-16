@@ -12,6 +12,7 @@
     # ./usb-kvm.nix
     ./user.nix
     ./vim.nix
+    ./yubikey.nix
   ];
 
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
@@ -66,8 +67,8 @@
       useXkbConfig = true;
       hwRender = true;
       extraConfig = ''
-xkb-layout=us,gr
-xkb-options=grp:alt_space_toggle,caps:escape
+        xkb-layout=us,gr
+        xkb-options=grp:alt_space_toggle,caps:escape
       '';
     };
 
@@ -76,12 +77,5 @@ xkb-options=grp:alt_space_toggle,caps:escape
       pulse.enable = true;
       wireplumber.enable = true;
     };
-
-    # YubiKey support
-    udev.packages = [ pkgs.yubikey-personalization pkgs.libu2f-host ];
-
-    # Disable Gnome Keyring for SSH keys,
-    # conflicts with the home-manager ssh-agent service
-    gnome.gcr-ssh-agent.enable = false;
   };
 }

@@ -5,13 +5,14 @@
     enableDefaultConfig = false;
     matchBlocks = rec {
       "*" = {
-        addKeysToAgent = "no";
+        addKeysToAgent = "confirm";
         compression = false;
         controlMaster = "no";
         controlPersist = "no";
         forwardAgent = false;
         hashKnownHosts = false;
-        # identityAgent = "/run/user/1000/ssh-agent"; # Default for the ssh-agent service, defaults to gnome-keyring if not set
+        # identitiesOnly = true;
+        # identityAgent = "none";
         serverAliveInterval = 60;
         serverAliveCountMax = 30;
         userKnownHostsFile = "~/.ssh/known_hosts";
@@ -30,16 +31,23 @@
         user = "pi";
       };
 
-      "*.dzerv.art" = {
-        user = "root";
-        # extraOptions.Tag = "sessioned";
-      };
+      "*.dzerv.art".user = "root";
 
       # NOTE: To force order use lib.hm.dag.entryBefore ["entry"] { newstuff }
     };
   };
 
   services.ssh-agent.enable = true;
+  systemd.user.services.ssh-agent.Service.Environment = [
+    "SSH_ASK_PASS=${pkgs.wayprompt}/bin/wayprompt-ssh-askpass"
+  ];
+  # services.yubikey-agent.enable = true;
+
+  # yubikey-agent uses the gpg-agent pinentry to ask for the PIN
+  # services.gpg-agent = {
+  #   enable = true;
+  #   pinentry.package = pkgs.pinentry-qt;
+  # };
 
   home.packages = with pkgs; [
     yubikey-manager
@@ -48,6 +56,6 @@
   ];
 
   # To set up a new yubikey:
-  # ssh-keygen -t ed25519-sk -O resident -O verify-required -C "$(g config user.email)" -f ~/.ssh/yubikey_<name>
+  # ssh-keygen -t ed25519-sk -O resident -O verify-required -O application=ssh:dzervas -C "dzervas@$(hostname)" -f ~/.ssh/yubikey_$(hostname)
   # To retrieve the resident private keys (stubs that include metadata): ssh-keygen -K
 }

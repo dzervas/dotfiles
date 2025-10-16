@@ -116,12 +116,6 @@ in {
             desc = "Go to previous terminal";
             mode = ["n" "t"];
           };
-          maximize = keymap {
-            key = "<A-S-F>";
-            action = utils.mkRaw "function(self) self:maximize() end";
-            desc = "Toggle fullscreen";
-            mode = ["n" "t"];
-          };
           term_normal = keymap {
             key = "<Esc>";
             action = utils.mkRaw ''

@@ -177,6 +177,10 @@
               fi
             '' ""
           ];
+          pull = [
+            "util" "exec" "--" "bash" "-c"
+            ''test "$(jj log -r @ -T empty --no-graph --color never)" = "true" || echo "Dirty working copy - commit or fetch & new manually" && jj git fetch && jj new "closest_bookmark(@-)"'' ""
+          ];
           push = [
             "util" "exec" "--" "bash" "-c"
             "jj tug && jj git push"
