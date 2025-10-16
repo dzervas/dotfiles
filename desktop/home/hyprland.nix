@@ -93,9 +93,9 @@ in {
         "$mod+Shift, Right, movetoworkspacesilent, m+1"
 
         # Window selection
-        "$mod, Up, exec, ${cycle-focus "+1"} focuswindow"
+        "$mod, Up, exec, ${cycle-focus "+1"}"
         "$mod+Shift, Up, exec, ${cycle-focus "+1"} swapwindow"
-        "$mod, Down, exec, ${cycle-focus "-1"} focuswindow"
+        "$mod, Down, exec, ${cycle-focus "-1"}"
         "$mod+Shift, Down, exec, ${cycle-focus "-1"} swapwindow"
 
         "$mod, Tab, workspace, previous"

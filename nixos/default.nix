@@ -3,6 +3,7 @@
     ./1password.nix
     ./apparmor.nix
     ./bluetooth.nix
+    ./camera.nix
     ./cli.nix
     ./ddc-ci.nix
     ./display.nix

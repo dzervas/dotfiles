@@ -3,7 +3,6 @@
     ./1password.nix
     ./ai.nix
     ./atuin.nix
-    ./camera.nix
     ./chromium.nix
     ./dev.nix
     ./direnv.nix
@@ -82,6 +81,8 @@
 
       (lib.mkIf config.setup.isLaptop powertop)
       (lib.mkIf (!config.setup.isLaptop) plasticity)
+
+      cameractrls-gtk4
     ];
 
     file = {
