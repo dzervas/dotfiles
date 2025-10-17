@@ -7,7 +7,7 @@
     packages = [
       "org.onlyoffice.desktopeditors"
       "org.signal.Signal"
-      "com.slack.Slack"
+      # "com.slack.Slack"
       "com.spotify.Client"
       "org.telegram.desktop"
       "im.riot.Riot"

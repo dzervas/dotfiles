@@ -12,7 +12,7 @@
         forwardAgent = false;
         hashKnownHosts = false;
         # identitiesOnly = true;
-        # identityAgent = "none";
+        # identityAgent = "/run/user/1000/ssh-agent";
         serverAliveInterval = 60;
         serverAliveCountMax = 30;
         userKnownHostsFile = "~/.ssh/known_hosts";
@@ -37,11 +37,10 @@
     };
   };
 
-  services.ssh-agent.enable = true;
+  services.yubikey-agent.enable = true;
   systemd.user.services.ssh-agent.Service.Environment = [
     "SSH_ASK_PASS=${pkgs.wayprompt}/bin/wayprompt-ssh-askpass"
   ];
-  # services.yubikey-agent.enable = true;
 
   # yubikey-agent uses the gpg-agent pinentry to ask for the PIN
   # services.gpg-agent = {
@@ -52,7 +51,6 @@
   home.packages = with pkgs; [
     yubikey-manager
     pinentry-qt
-    gcr
   ];
 
   # To set up a new yubikey:
