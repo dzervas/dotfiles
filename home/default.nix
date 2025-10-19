@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   imports = [
     ./1password.nix
     ./ai.nix
@@ -21,7 +21,6 @@
     ./tools.nix
     ./thumbnailers.nix
     ./updater
-    # ./warp.nix
     ./xdg.nix
   ];
 

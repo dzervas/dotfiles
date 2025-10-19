@@ -1,41 +1,38 @@
-{ config, hostName, pkgs, ... }: {
+{ config, pkgs, ... }: {
   # TODO: Somehow integrate [includeIf "hasconfig:remote.*.url:git@github.com:<organisation>/**"] in a safe way
 
   home.packages = with pkgs; [git-lfs gnupg];
-  programs = rec {
+  programs = {
+    difftastic.options.display = "side-by-side";
+
     git = {
       enable = true;
       lfs.enable = true;
 
-      userName = "Dimitris Zervas";
-      userEmail = "dzervas@dzervas.gr";
-      signing.signByDefault = true;
+      settings = {
+        alias = {
+          aa = "!git add -A && git status";
+          ac = "!git aa && git commit";
+          acp = ''!f(){ if test $# -gt 0; then git aa && git commit -m "$*" && git push; else git ac && git push; fi }; f'';
+          bl = "!git reflog show --pretty=format:'%gs ~ %gd' --date=relative | grep 'checkout:' | grep -oE '[^ ]+ ~ .*' | awk -F~ '!seen[$1]++' | head -n 10 | awk -F' ~ HEAD@{' '{printf(\"  \\033[33m%s: \\033[37m %s\\033[0m\\n\", substr($2, 1, length($2)-1), $1)}'";
+          c = "clone";
+          co = "checkout";
+          d = "diff";
+          get-ignore = "!gi(){ curl -fsL \"https://www.toptal.com/developers/gitignore/api/$1\" >> .gitignore && echo \"Appended to .gitignore\" || echo \"No gitignore found - check out gitignore.io\"; }; gi";
+          ll = "log --graph --decorate --abbrev-commit --pretty='%C(auto)%h %d %s %Cgreen(%cr)%Creset [%C(bold blue)%an%Creset %G?]'";
+          lla = "log --graph --decorate --abbrev-commit --pretty='%C(auto)%h %d %s %Cgreen(%cr)%Creset [%C(bold blue)%an%Creset  %G?]' --all";
+          # Parse positional params
+          hub = "!f() { grep -q '/' <<< $1 && git clone git@github.com:$1 || git clone git@github.com:dzervas/$1; }; f";
+          oops = "!echo 'Going to amend and force push. You sure?' && read && git add -A && git commit --amend --no-edit && git push --force-with-lease";
+          s = "status";
+          undo = "reset HEAD~";
+        };
 
-      difftastic = {
-        enable = true;
-        options.display = "side-by-side";
-        enableAsDifftool = true;
-      };
+        user = {
+          name = "Dimitris Zervas";
+          email = "dzervas@dzervas.gr";
+        };
 
-      aliases = {
-        aa = "!git add -A && git status";
-        ac = "!git aa && git commit";
-        acp = ''!f(){ if test $# -gt 0; then git aa && git commit -m "$*" && git push; else git ac && git push; fi }; f'';
-        bl = "!git reflog show --pretty=format:'%gs ~ %gd' --date=relative | grep 'checkout:' | grep -oE '[^ ]+ ~ .*' | awk -F~ '!seen[$1]++' | head -n 10 | awk -F' ~ HEAD@{' '{printf(\"  \\033[33m%s: \\033[37m %s\\033[0m\\n\", substr($2, 1, length($2)-1), $1)}'";
-        c = "clone";
-        co = "checkout";
-        d = "diff";
-        get-ignore = "!gi(){ curl -fsL \"https://www.toptal.com/developers/gitignore/api/$1\" >> .gitignore && echo \"Appended to .gitignore\" || echo \"No gitignore found - check out gitignore.io\"; }; gi";
-        ll = "log --graph --decorate --abbrev-commit --pretty='%C(auto)%h %d %s %Cgreen(%cr)%Creset [%C(bold blue)%an%Creset %G?]'";
-        lla = "log --graph --decorate --abbrev-commit --pretty='%C(auto)%h %d %s %Cgreen(%cr)%Creset [%C(bold blue)%an%Creset  %G?]' --all";
-        # Parse positional params
-        hub = "!f() { grep -q '/' <<< $1 && git clone git@github.com:$1 || git clone git@github.com:dzervas/$1; }; f";
-        oops = "!echo 'Going to amend and force push. You sure?' && read && git add -A && git commit --amend --no-edit && git push --force-with-lease";
-        s = "status";
-        undo = "reset HEAD~";
-      };
-
-      extraConfig = {
         checkout.defaultRemote = "origin";
         init.defaultBranch = "main";
 
@@ -62,7 +59,14 @@
         };
 
         difftool.prompt = false;
+
+        difftastic = {
+          enable = true;
+          enableAsDifftool = true;
+        };
       };
+
+      signing.signByDefault = true;
 
       ignores = [
         "*~"
@@ -112,10 +116,7 @@
       # *Delete* a commit: `jj abandon <revset>` - can use <revset>:: to abandon all the children as well
       #   Part of the oplog so undo brings it back
       settings = {
-        user = {
-          name = git.userName;
-          email = git.userEmail;
-        };
+        inherit (config.programs.git.settings) user;
 
         revset-aliases = {
           "closest_bookmark(to)" = "heads(::to & bookmarks())";
@@ -201,7 +202,7 @@
         signing = {
           behavior = "own";
           backend = "ssh";
-          backends.ssh.allowed-signers = config.programs.git.extraConfig.gpg.ssh.allowedSignersFile;
+          backends.ssh.allowed-signers = config.programs.git.settings.gpg.ssh.allowedSignersFile;
         };
         ui = {
           pager = ":builtin";
@@ -212,5 +213,5 @@
     };
   };
 
-  home.file."${config.programs.git.extraConfig.gpg.ssh.allowedSignersFile}".text = "dzervas@dzervas.gr ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj Dimitris Zervas";
+  home.file."${config.programs.git.settings.gpg.ssh.allowedSignersFile}".text = "dzervas@dzervas.gr ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj Dimitris Zervas";
                        }
