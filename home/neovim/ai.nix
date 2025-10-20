@@ -4,38 +4,8 @@
 in {
   programs.nixvim = {
     plugins = {
-      supermaven = {
-        enable = true;
-        settings = {
-
-          keymaps = {
-            accept = "<C-l>";
-            accept_word = "<C-Right>";
-            clear_suggestion = "<C-e><C-e>";
-          };
-
-          ignore_filetypes = {
-            gitcommit = true;
-            gitrebase = true;
-            help = true;
-            markdown = true;
-            envrc = true;
-            yaml = true;
-
-            sh = utils.mkRaw ''
-              function()
-                if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(0)), '^%.env.*') then
-                  return true
-                end
-                return false
-              end
-            '';
-          };
-        };
-      };
-
       copilot-lua = {
-        enable = false;
+        enable = true;
         settings = {
           filetypes = {
             "." = false;
@@ -90,9 +60,9 @@ in {
           };
         };
         settings = {
-          provider = "claude-code";
-          # providers.claude-code.model = "claude-sonnet-4.5";
-          # providers.copilot.model = "claude-sonnet-4";
+          # provider = "claude-code";
+          provider = "copilot";
+          providers.copilot.model = "claude-sonnet-4.5";
 
           disabled_tools = [ "git_commit" ];
           behaviour.auto_approve_tool_permissions = false;

@@ -39,8 +39,6 @@ in {
               function(cmp)
                 if package.loaded["copilot"] ~= nil and require("copilot.suggestion").is_visible() then
                   require("copilot.suggestion").accept()
-                elseif package.loaded["supermaven-nvim"] ~= nil and require("supermaven-nvim.completion_preview").has_suggestion() then
-                  require("supermaven-nvim.completion_preview").on_accept_suggestion()
                 elseif cmp.snippet_active() then return cmp.accept()
                 else return cmp.select_and_accept()
                 end
