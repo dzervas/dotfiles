@@ -6,19 +6,12 @@ in {
 
   programs = {
     # TODO: Finish the migration to yubikey ssh
-    ssh = {
-      extraConfig = ''
-      Host *
-          IdentityAgent ~/.1password/agent.sock
-      '';
-    };
+    ssh.matchBlocks."*".identityAgent = "~/.1password/agent.sock";
 
     git = {
-      extraConfig = {
-        gpg = {
-          format = "ssh";
-          "ssh".program = "${pkgs._1password-gui}/bin/op-ssh-sign";
-        };
+      settings.gpg = {
+        format = "ssh";
+        ssh.program = "${pkgs._1password-gui}/bin/op-ssh-sign";
       };
       signing = {
         key = ssh-key;

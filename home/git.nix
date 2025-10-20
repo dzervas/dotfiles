@@ -126,6 +126,8 @@
           "ahead_of_origin(to)" = "related_origin_bookmarks(to)..to";
           # Return the revs that are before `to` but within a remote bookmark (so behind)
           "behind_origin(to)" = "to..related_origin_bookmarks(to)";
+
+          "stash()" = ''bookmarks(glob:"stash/*") | tags(glob:"stash/*") | description(glob:"Stash: *")'';
         };
 
         aliases = {

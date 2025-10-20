@@ -1,11 +1,41 @@
-{ inputs, lib, ... }: let
+{ config, inputs, ... }: let
   inherit (inputs.nixvim.lib.nixvim) utils;
   listAndAttrs = key: cmd: desc: utils.listToUnkeyedAttrs [ key cmd ] // { inherit desc; };
 in {
   programs.nixvim = {
     plugins = {
-      copilot-lua = {
+      supermaven = {
         enable = true;
+        settings = {
+
+          keymaps = {
+            accept = "<C-l>";
+            accept_word = "<C-Right>";
+            clear_suggestion = "<C-e><C-e>";
+          };
+
+          ignore_filetypes = {
+            gitcommit = true;
+            gitrebase = true;
+            help = true;
+            markdown = true;
+            envrc = true;
+            yaml = true;
+
+            sh = utils.mkRaw ''
+              function()
+                if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(0)), '^%.env.*') then
+                  return true
+                end
+                return false
+              end
+            '';
+          };
+        };
+      };
+
+      copilot-lua = {
+        enable = false;
         settings = {
           filetypes = {
             "." = false;
@@ -44,7 +74,7 @@ in {
       };
 
       # Copilot Next Edit Suggestion (NES)
-      sidekick.enable = true;
+      sidekick.enable = config.programs.nixvim.plugins.copilot-lua.enable;
 
       # Maybe https://codecompanion.olimorris.dev/ instead?
       avante = {
@@ -70,27 +100,11 @@ in {
       };
     };
 
-    keymaps = [
+    keymaps = if config.programs.nixvim.plugins.sidekick.enable then [
       { key = "<leader>cc"; action = utils.mkRaw "function() require('sidekick.cli').toggle({ name = 'claude'}) end"; options.desc = "Toggle claude window"; }
       { key = "<leader>cs"; mode = "n"; action = utils.mkRaw "function() require('sidekick.cli').send({ msg = '{file}'}) end"; options.desc = "Send buffer to claude"; }
       { key = "<leader>cs"; mode = "v"; action = utils.mkRaw "function() require('sidekick.cli').send({ msg = '{selection}'}) end"; options.desc = "Send selection to claude"; }
       { key = "<Tab>"; mode = "n"; action = utils.mkRaw "function() require('sidekick').nes_jump_or_apply() end"; options.desc = "Accept Next Edit Suggestion"; }
-    ];
-
-    autoCmd = [
-      {
-        event = "BufEnter";
-        once = true;
-        desc = "Try enabling Copilot once per session";
-        callback = utils.mkRaw "CopilotManager.copilot_try_load";
-      }
-      {
-        event = "DirChanged";
-        desc = "CopilotManager: clear cwd->root cache on :cd";
-        callback = utils.mkRaw "function() M._cwd_root_cache = {}; _G.CopilotManager.copilot_try_load(); end";
-      }
-    ];
-
-    extraConfigLua = lib.mkAfter (builtins.readFile ./copilot-state.lua);
+    ] else [];
   };
 }

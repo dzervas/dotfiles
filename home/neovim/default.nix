@@ -50,7 +50,6 @@ in {
       # DevOps
       ansiblels.enable = true;
       bashls.enable = true;
-      # copilot.enable = true; # issue: https://github.com/zbirenbaum/copilot.lua/issues/576
       dockerls.enable = true;
       docker_compose_language_service.enable = true;
       helm_ls.enable = true;
@@ -165,20 +164,22 @@ in {
       };
       treesitter-refactor = {
         enable = true;
-        highlightCurrentScope.enable = true;
-        highlightDefinitions.enable = true;
 
-        smartRename = {
-          enable = true;
-          keymaps.smartRename = "<F2>";
-        };
-        navigation = {
-          enable = true;
-          keymaps = {
-            gotoDefinitionLspFallback = "<C-]>";
-            gotoNextUsage = "g<Right>";
-            gotoPreviousUsage = "g<Left>";
-            listDefinitions = "gl";
+        settings = {
+          highlight_current_scope.enable = true;
+          highlight_definitions.enable = true;
+          smart_rename = {
+            enable = true;
+            keymaps.smart_rename = "<F2>";
+          };
+          navigation = {
+            enable = true;
+            keymaps = {
+              goto_definition_lsp_fallback = "<C-]>";
+              goto_next_usage = "g<Right>";
+              goto_previous_usage = "g<Left>";
+              list_definitions = "gl";
+            };
           };
         };
       };
