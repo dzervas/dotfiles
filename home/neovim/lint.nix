@@ -75,7 +75,7 @@
           terraform_fmt.enable = true;
           terragrunt_fmt.enable = true;
           tidy.enable = true; # HTML & XML
-          yamlfix.enable = true;
+          # yamlfix.enable = true; # Broken
         };
       };
     };

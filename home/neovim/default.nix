@@ -72,6 +72,10 @@ in {
       gopls.enable = true;
       pyright.enable = true;  # Full Python language server
       ruff.enable = true;     # Python linter/formatter
+      rust_analyzer = {
+        enable = true;
+        config.settings.cargo.targetDir = "target/lsp";
+      };
 
       # Web dev
       astro = {

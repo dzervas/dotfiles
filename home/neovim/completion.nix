@@ -1,4 +1,4 @@
-{ config, inputs, ... }: let
+{ inputs, ... }: let
   inherit (inputs.nixvim.lib.nixvim) utils;
 in {
   programs.nixvim.plugins = {
@@ -26,23 +26,30 @@ in {
           end
         '';
         keymap = {
-          "<Tab>" =
-            (if config.programs.nixvim.plugins.sidekick.enable then [(utils.mkRaw ''
+          "<Tab>" = [
+            # Prefer assistants over completions
+            (utils.mkRaw ''
               function()
+                -- Apart from copilot, suggestion engines need to get deferred
+                -- otherwise they throw a "can't edit buffer" error.
                 if package.loaded["sidekick"] ~= nil then
                   return require("sidekick").nes_jump_or_apply()
-                end
-              end
-            '')] else []) ++
-          [
-            (utils.mkRaw ''
-              function(cmp)
-                if package.loaded["copilot"] ~= nil and require("copilot.suggestion").is_visible() then
+                elseif package.loaded["copilot"] ~= nil and require("copilot.suggestion").is_visible() then
                   return require("copilot.suggestion").accept()
+                elseif package.loaded["supermaven-nvim"] ~= nil and require("supermaven-nvim.completion_preview").has_suggestion() then
+                  vim.schedule(require("supermaven-nvim.completion_preview").on_accept_suggestion)
+                  return true
                 elseif package.loaded["avante"] ~= nil and require("avante.suggestion").is_visible() then
                   local _, _, sg = require("avante").get()
-                  return sg:accept()
-                elseif cmp.snippet_active() then return cmp.accept()
+                  vim.schedule(function() sg:accept() end)
+                  return true
+                end
+              end
+            '')
+            # Super-Tab preset (https://cmp.saghen.dev/configuration/keymap.html#super-tab)
+            (utils.mkRaw ''
+              function(cmp)
+                if cmp.snippet_active() then return cmp.accept()
                 else return cmp.select_and_accept()
                 end
               end

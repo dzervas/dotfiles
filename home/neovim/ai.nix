@@ -1,6 +1,5 @@
 { config, inputs, ... }: let
   inherit (inputs.nixvim.lib.nixvim) utils;
-  listAndAttrs = key: cmd: desc: utils.listToUnkeyedAttrs [ key cmd ] // { inherit desc; };
 in {
   programs.nixvim = {
     plugins = {
@@ -46,6 +45,34 @@ in {
       # Copilot Next Edit Suggestion (NES)
       sidekick.enable = config.programs.nixvim.plugins.copilot-lua.enable;
 
+      supermaven = {
+        enable = true;
+        settings = {
+          keymaps = {
+            accept = "<Tab>";
+            accept_word = "<C-Right>";
+            clear_suggestion = "<C-e><C-e>";
+          };
+
+          ignore_filetypes = {
+            gitcommit = true;
+            gitrebase = true;
+            help = true;
+            markdown = true;
+            envrc = true;
+            yaml = true;
+            sh = utils.mkRaw ''
+              function()
+                if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(0)), '^%.env.*') then
+                  return true
+                end
+                return false
+              end
+            '';
+          };
+        };
+      };
+
       # Maybe https://codecompanion.olimorris.dev/ instead?
       avante = {
         enable = true;
@@ -57,15 +84,14 @@ in {
           provider = "zai";
           auto_suggestions_provider = "zai-suggest";
 
-          providers = {
+          providers = rec {
             zai = {
               __inherited_from = "openai";
               endpoint = "https://api.z.ai/api/coding/paas/v4";
               model = "GLM-4.6";
+              api_key_name = "cmd:cat ~/.avante_zai_api_key";
             };
-            zai-suggest = {
-              __inherited_from = "openai";
-              endpoint = "https://api.z.ai/api/coding/paas/v4";
+            zai-suggest = zai // {
               model = "GLM-4.5-Air";
             };
           };
@@ -74,9 +100,8 @@ in {
           input.provider = "snacks";
 
           behaviour = {
-            auto_suggestions = true;
+            auto_suggestions = false;
             auto_approve_tool_permissions = false;
-            # confirmation_ui_style = "popup";
           };
 
           suggestion = {

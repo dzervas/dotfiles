@@ -65,8 +65,7 @@
 
     printing = {
       enable = true;
-      # Broken
-      # drivers = with pkgs; [ brlaser ];
+      drivers = with pkgs; [ brlaser ];
     };
 
     avahi = {
