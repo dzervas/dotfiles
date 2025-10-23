@@ -5,7 +5,7 @@ in {
   programs.nixvim = {
     plugins = {
       copilot-lua = {
-        enable = true;
+        enable = false;
         settings = {
           filetypes = {
             "." = false;
@@ -49,23 +49,46 @@ in {
       # Maybe https://codecompanion.olimorris.dev/ instead?
       avante = {
         enable = true;
-        lazyLoad = {
-          enable = true;
-          settings = {
-            cmd = "AvanteToggle";
-            keys = [
-              (listAndAttrs "<leader>at" "<CMD>AvanteToggle<CR>" "Toggle avante window")
-              (listAndAttrs "<leader>aa" "<CMD>AvanteShow<CR>" "Focus avante window")
-            ];
-          };
-        };
         settings = {
           # provider = "claude-code";
-          provider = "copilot";
-          providers.copilot.model = "claude-sonnet-4.5";
+          # provider = "copilot";
+          # providers.copilot.model = "claude-sonnet-4.5";
+
+          provider = "zai";
+          auto_suggestions_provider = "zai-suggest";
+
+          providers = {
+            zai = {
+              __inherited_from = "openai";
+              endpoint = "https://api.z.ai/api/coding/paas/v4";
+              model = "GLM-4.6";
+            };
+            zai-suggest = {
+              __inherited_from = "openai";
+              endpoint = "https://api.z.ai/api/coding/paas/v4";
+              model = "GLM-4.5-Air";
+            };
+          };
 
           disabled_tools = [ "git_commit" ];
-          behaviour.auto_approve_tool_permissions = false;
+          input.provider = "snacks";
+
+          behaviour = {
+            auto_suggestions = true;
+            auto_approve_tool_permissions = false;
+            # confirmation_ui_style = "popup";
+          };
+
+          suggestion = {
+            # in ms
+            debounce = 250;
+            throttle = 500;
+          };
+
+          mappings.suggestion = {
+            accept = "<Tab>";
+            dismiss = "<C-e><C-e>";
+          };
         };
       };
     };

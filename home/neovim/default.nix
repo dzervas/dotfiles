@@ -17,6 +17,8 @@ in {
   # - Rust workflow to disable formatting and better defaults
   # - JJ integration (lualine and maybe :Jj)
   # - todo-comments plugin and snacks integration https://github.com/folke/snacks.nvim/blob/main/docs/picker.md#todo_comments
+  # - Mouse front/back navigation
+  # - Better Ctrl-O/Ctrl-I navigation (jump list?)
 
   imports = [
     ./ai.nix
@@ -378,19 +380,21 @@ in {
     # Transform files in ./queries (e.g. myfile.scm) into attrset entries like:
     # { "queries/myfile/injections.scm".source = ./queries/myfile.scm; }
     extraFiles = let
+      # List of files
       files = builtins.attrNames (builtins.readDir ./queries);
     in
       builtins.listToAttrs (
         map (name: let
-          match = builtins.match "^([a-z0-9]+)\.scm$" name;
-          base = if match == null then name else builtins.elemAt match 0;
-        in
-          {
-          name = "queries/${base}/injections.scm";
-          value = { source = ./queries + "/${name}"; };
-        }
-        )
-        files);
+            match = builtins.match "^([a-z0-9]+)\.scm$" name;
+            base = if match == null then name else builtins.elemAt match 0;
+          in {
+            # Map each file to a name/value list
+            name = "after/queries/${base}/injections.scm";
+            value.source = ./queries + "/${name}";
+          }
+        ) files
+        # Make that list into an attrset in the form of "<name>" = "<value>" (value has the .source attrset)
+      );
   };
 
   stylix.targets.nixvim.enable = false;

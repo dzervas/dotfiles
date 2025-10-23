@@ -1,4 +1,4 @@
-{ config, inputs, lib, ... }: let
+{ config, inputs, ... }: let
   inherit (inputs.nixvim.lib.nixvim) utils;
 in {
   programs.nixvim.plugins = {
@@ -38,7 +38,10 @@ in {
             (utils.mkRaw ''
               function(cmp)
                 if package.loaded["copilot"] ~= nil and require("copilot.suggestion").is_visible() then
-                  require("copilot.suggestion").accept()
+                  return require("copilot.suggestion").accept()
+                elseif package.loaded["avante"] ~= nil and require("avante.suggestion").is_visible() then
+                  local _, _, sg = require("avante").get()
+                  return sg:accept()
                 elseif cmp.snippet_active() then return cmp.accept()
                 else return cmp.select_and_accept()
                 end

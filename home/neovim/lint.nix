@@ -27,6 +27,9 @@
           # pylint.enable = true;
           revive.enable = true; # Golang
           selene.enable = true; # Lua
+          # TODO: Disable indentation rule
+          # TODO: Format align AS statements: https://github.com/quarylabs/sqruff/blob/main/docs/sample_configurations.md
+          # TODO: Add a function to generate config files
           sqruff.enable = true; # SQL
           statix.enable = true;
           terraform_validate.enable = true;

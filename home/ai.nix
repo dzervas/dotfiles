@@ -23,7 +23,7 @@ in {
       enable = true;
       package = pkgs.claude-code;
       settings = {
-        model = "opusplan";
+        model = "GLM-4.6";
         enableAllProjectMcpServers = false;
         includeCoAuthoredBy = false;
         statusLine = {
@@ -32,20 +32,9 @@ in {
           type = "command";
         };
 
-        # enabledPlugins = {
-        #   "superpowers@superpowers-marketplace" = true;
-        # };
-        # extraKnownMarketplaces = {
-        #   "superpowers-marketplace".source = {
-        #     source = "github";
-        #     repo = "obra/superpowers-marketplace";
-        #   };
-        # };
-
         permissions = {
           defaultMode = "acceptEdits";
           disableBypassPermissionsMode = "disable";
-          # additionalDirectories = [];
 
           allow = [
             "Bash(cargo check:*)"
@@ -130,6 +119,11 @@ in {
             "Read(./.envrc)"
             "Read(./.direnv)"
           ];
+        };
+
+        env = {
+          ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+          API_TIMEOUT_MS = "3000000";
         };
       };
     };

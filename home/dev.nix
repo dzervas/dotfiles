@@ -44,7 +44,16 @@
   };
 
   home.packages = with pkgs; [
-    (tree-sitter.withPlugins (p: builtins.attrValues p)) # Install all grammars
+    # Still doesn't work! No languages detected!
+    (
+      (
+        tree-sitter.overrideAttrs (_: let
+          grammars = tree-sitter.withPlugins (_: tree-sitter.allGrammars);
+        in { postPatch = "ln -s ${grammars} parser"; }
+        )
+      ).override { webUISupport = true; }
+    )
+
     go
 
     # C/C++
@@ -79,10 +88,6 @@
     k2tf
     tfautomv
     hurl
-    # krr
-
-    # Broken
-    # foundry # cast eth chain testing tool
   ];
 
 

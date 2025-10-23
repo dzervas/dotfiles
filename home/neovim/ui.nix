@@ -53,7 +53,7 @@ in {
                 '';
               })
             ];
-            lualine_z = lib.mkAfter ["copilot"];
+            # lualine_z = lib.mkAfter ["copilot"];
           };
         };
       };
@@ -145,6 +145,6 @@ in {
       { key = "<leader>l"; action = "<CMD>NoiceDismiss<CR>"; options.desc = "Dismiss notification"; }
     ];
 
-    extraPlugins = with pkgs.vimPlugins; [ copilot-lualine ]; # satellite-nvim is fucking everything up
+    # extraPlugins = with pkgs.vimPlugins; [ copilot-lualine ]; # satellite-nvim is fucking everything up
   };
 }
