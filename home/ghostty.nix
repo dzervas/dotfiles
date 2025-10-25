@@ -6,7 +6,7 @@
     enable = true;
     installVimSyntax = true;
     settings = {
-      background-opacity = 0.85;
+      background-opacity = 0.90;
       cursor-style = "block";
       cursor-style-blink = false;
       font-family = config.stylix.fonts.monospace.name;

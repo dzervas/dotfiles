@@ -3,13 +3,25 @@ final: prev: {
   mcp-gateway = prev.callPackage ./mcp-gateway.nix {};
 
   # nix-update:claude-code
-  claude-code = prev.claude-code.overrideAttrs (_new: _old: rec {
-    version = "2.0.25";
+  claude-code = prev.claude-code.overrideAttrs rec {
+    version = "2.0.27";
     src = final.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-ix/JSPBLnvCPtyqJ6beAaOpuimphpkrkIw5HCdeeGkM=";
+      hash = "sha256-ZxwEnUWCtgrGhgtUjcWcMgLqzaajwE3pG7iSIfaS3ic=";
     };
-  });
+  };
+
+  # nix-update:snacks-nvim-stable
+  snacks-nvim-stable = prev.vimPlugins.snacks-nvim.overrideAttrs rec {
+    version = "2.26.0";
+    src = final.fetchFromGitHub {
+      owner = "folke";
+      repo = "snacks.nvim";
+      rev = "v${version}";
+      hash = "sha256-7Fqfr8/5kjGDM9j8IY+YBOuz45bXUNLbJxY+BGt4oPY=";
+    };
+    doCheck = false; # Fails in explorer.init
+  };
 
   # tree-sitter-cli = prev.tree-sitter.overrideAttrs (_new: _old: let
   #     grammars = prev.tree-sitter.withPlugins (_: prev.tree-sitter.allGrammars);

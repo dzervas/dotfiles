@@ -5,13 +5,13 @@ in {
     plugins.treesitter.settings.parsers.norg_meta.enable = true; # picker likes it
     plugins.snacks = {
       enable = true;
+      package = pkgs.snacks-nvim-stable;
 
       settings = {
         # Handle large files efficiently
         bigfile.enabled = true;
 
         dashboard = {
-          enabled = true;
           sections = [
             { section = "header"; }
             { section = "keys"; gap = 1; padding = 1; }
@@ -20,8 +20,8 @@ in {
         };
 
         explorer = {
-          enabled = true;
           replace_netrw = true;
+          trash = false;
         };
 
         # Indent guides
@@ -39,14 +39,11 @@ in {
           };
         };
 
-        # Better vim.ui.input
-        input.enabled = true;
-
         # Notification system (integrates with vim.notify)
         notifier = {
           enabled = true;
           timeout = 3000;
-          style = "compact";
+          style = "minimal";
           top_down = true;
         };
 
@@ -218,13 +215,18 @@ in {
       { key = "<A-Esc>"; mode = ["n" "t"]; action = utils.mkRaw "function() Snacks.terminal.toggle() end"; options.desc = "Toggle terminal"; }
 
       # Explorer
-      { key = "<leader>f"; action = utils.mkRaw "function() Snacks.explorer() end"; options.desc = "Show file explorer"; }
+      { key = "<leader>f"; action = utils.mkRaw "function() Snacks.explorer({ hidden = true, ignored = true }) end"; options.desc = "Show file explorer"; }
 
       # Notifications
       { key = "<leader>n"; action = utils.mkRaw "function() Snacks.notifier.show_history() end"; options.desc = "Show notification history"; }
       { key = "<leader>N"; action = utils.mkRaw "function() Snacks.notifier.hide() end"; options.desc = "Dismiss notifications"; }
 
       # Picker
+      { key = "<C-F>"; action = utils.mkRaw "function() Snacks.picker.grep() end"; options.desc = "Grep files"; }
+      { key = "<C-Z>"; action = utils.mkRaw "function() Snacks.picker.undo() end"; options.desc = "Undo history"; }
+      { key = "<A-f>"; action = utils.mkRaw "function() Snacks.picker.files({ hidden = true }) end"; options.desc = "Find files"; }
+      { key = "<A-r>"; action = utils.mkRaw "function() Snacks.picker.commands() end"; options.desc = "Commands"; }
+      { key = "<A-z>"; action = utils.mkRaw "function() Snacks.picker.zoxide() end"; options.desc = "Projects (zoxide)"; }
       { key = "<leader>gm"; action = utils.mkRaw "function() Snacks.picker.man() end"; options.desc = "Man pages"; }
       { key = "<leader>gh"; action = utils.mkRaw "function() Snacks.picker.help() end"; options.desc = "Help pages"; }
       { key = "gd"; action = utils.mkRaw "function() Snacks.picker.lsp_definitions() end"; options.desc = "Go to definition"; }
@@ -233,6 +235,7 @@ in {
       { key = "gp"; action = utils.mkRaw "function() Snacks.picker.diagnostics() end"; options.desc = "Go to problems (diagnostics)"; }
       { key = "gr"; action = utils.mkRaw "function() Snacks.picker.lsp_references() end"; options.desc = "Go to reference"; }
       { key = "gs"; action = utils.mkRaw "function() Snacks.picker.lsp_symbols() end"; options.desc = "Go to symbol"; }
+      { key = "gS"; action = utils.mkRaw "function() Snacks.picker.lsp_symbols() end"; options.desc = "Go to workspace symbol"; }
       { key = "gy"; action = utils.mkRaw "function() Snacks.picker.lsp_type_definitions() end"; options.desc = "Go to t[y]pe definition"; }
 
       # Rename

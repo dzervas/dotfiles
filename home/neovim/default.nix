@@ -19,6 +19,8 @@ in {
   # - todo-comments plugin and snacks integration https://github.com/folke/snacks.nvim/blob/main/docs/picker.md#todo_comments
   # - Mouse front/back navigation
   # - Better Ctrl-O/Ctrl-I navigation (jump list?)
+  # - inc-replace.nvim
+  # - Code-overview thingy, satellite-nvim is fucking everything up
 
   imports = [
     ./ai.nix
@@ -46,7 +48,40 @@ in {
     withRuby = false;
     withPython3 = true;
 
-    colorschemes.vscode.enable = true;
+    colorschemes.vscode = {
+      enable = true;
+      settings = {
+        transparent = true;
+        italic_comments = true;
+        italic_inlayhints = true;
+        underline_links = true;
+        terminal_colors = true;
+      };
+    };
+    # colorschemes.catppuccin = {
+    #   enable = true;
+    #   settings = {
+    #     flavour = "mocha";
+    #     transparent_background = true;
+    #     auto_integrations = true;
+    #     integrations = {
+    #       barbar = true;
+    #       notify = true;
+    #       noice = true;
+    #       dap = true;
+    #       dap_ui = true;
+    #       nvim_surround = true;
+    #       snacks.enabled = true;
+    #       lsp_trouble = true;
+    #       treesitter_context = true;
+    #       illuminate = {
+    #         enabled = true;
+    #         lsp = true;
+    #       };
+    #       which_key = true;
+    #     };
+    #   };
+    # };
 
     lsp.servers = {
       # DevOps
@@ -72,10 +107,6 @@ in {
       gopls.enable = true;
       pyright.enable = true;  # Full Python language server
       ruff.enable = true;     # Python linter/formatter
-      rust_analyzer = {
-        enable = true;
-        config.settings.cargo.targetDir = "target/lsp";
-      };
 
       # Web dev
       astro = {
@@ -131,6 +162,23 @@ in {
       dap = {
         enable = true;
         # TODO: Signs https://nix-community.github.io/nixvim/search/?option_scope=0&option=plugins.dap.signs.dapBreakpoint.text&query=dap.
+        # By catppuccin:
+        signs = let
+          no-line-num = { linehl = ""; numhl = ""; };
+        in {
+          dapBreakpoint = {
+            text = "●";
+            texthl = "DapBreakpoint";
+          } // no-line-num;
+          dapBreakpointCondition = {
+            text = "●";
+            texthl = "DapBreakpointCondition";
+          } // no-line-num;
+          dapLogPoint = {
+            text = "◆";
+            texthl = "DapLogPoint";
+          } // no-line-num;
+        };
       };
       dap-virtual-text.enable = true;
       dap-ui.enable = true;
@@ -142,7 +190,10 @@ in {
 
         folding = true;
         settings = {
-          highlight.enable = true;
+          highlight = {
+            enable = true;
+            additional_vim_regex_highlighting = false; # Breaks catppuccin
+          };
           indent.enable = true;
           parsers = {
             astro.enable = true;
@@ -295,7 +346,7 @@ in {
         { key = "<C-BS>"; action = "<C-w>"; mode = ["i" "c" "t"]; options.desc = "Delete word backwards"; }
       ];
 
-    extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ]; # satellite-nvim is fucking everything up
+    # extraPlugins = with pkgs.vimPlugins; [ vim-airline-themes ];
     extraPackagesAfter = with pkgs; [
       # None-ls packages
       gomodifytags

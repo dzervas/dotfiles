@@ -27,7 +27,10 @@ in {
             "trouble"
           ];
 
-          options.globalstatus = true;
+          options = {
+            globalstatus = true;
+            theme = "vscode";
+          };
           sections = {
             lualine_c = [
               (utils.listToUnkeyedAttrs ["filename"] // {
@@ -62,64 +65,23 @@ in {
         enable = true;
         settings = {
           lsp = {
-            progress = {
-              enabled = true;
-              throttle = 100;
-            };
             override = {
               "vim.lsp.util.convert_input_to_markdown_lines" = true;
               "vim.lsp.util.stylize_markdown" = true;
+              "cmp.entry.get_documentation" = true;
             };
           };
           presets = {
-            bottom_search = true;
+            # bottom_search = true;
             command_palette = true;
-            long_message_to_split = true;
             inc_rename = true;
+            long_message_to_split = true;
+            lsp_doc_border = true;
           };
           # Route vim.notify to snacks.notifier
           routes = [
             { view = "notify"; filter.event = "notify"; }
           ];
-        };
-      };
-
-      telescope = {
-        enable = true;
-        keymaps = {
-          "<A-a>" = "project";
-          "<A-f>" = "find_files";
-          "<A-j>" = "lsp_document_symbols";
-          "<A-r>" = "commands";
-          "<A-z>" = "zoxide list";
-          "<C-F>" = "live_grep";
-          "<C-Z>" = "undo";
-        };
-
-        extensions = {
-          fzf-native.enable = true;
-          zoxide = {
-            enable = true;
-            # Do tcd instead of cd
-            settings.mappings = {
-              default.action = utils.mkRaw "function(selection) vim.cmd.tcd(selection.path) end";
-              "<C-t>".action = utils.mkRaw "function(selection) vim.cmd('tabnew'); vim.cmd.tcd(selection.path) end";
-            };
-          };
-          project = {
-            enable = true;
-            settings = {
-              base_dirs = ["~/Lab" "~/Lab/plasma"];
-              hidden_files = true;
-              sync_with_nvim_tree = true;
-              cd_scope = ["tab"];
-            };
-          };
-          ui-select = {
-            enable = true;
-            settings.specific_opts.codeactions = false; # Keep LSP code actions in the default UI
-          };
-          undo.enable = true;
         };
       };
 
@@ -133,10 +95,10 @@ in {
         };
       };
 
-      notify = {
-        enable = true; # Noice
-        settings.background_colour = "#000000";
-      };
+      # notify = {
+      #   enable = true; # Noice
+      #   settings.background_colour = "#000000";
+      # };
       web-devicons.enable = true; # Telescope, trouble & neo-tree dep
     };
 

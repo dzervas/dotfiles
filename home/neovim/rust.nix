@@ -13,12 +13,12 @@
       };
     };
 
-    autoCmd = [{
-      desc = "Rust-specific keymaps for rustaceanvim";
-      command = "lua vim.keymap.set('n', '<C-.>', function() vim.cmd.RustLsp('codeAction') end, { silent = true, buffer = true })";
-      event = "FileType";
-      pattern = "rust";
-    }];
+    # autoCmd = [{
+    #   desc = "Rust-specific keymaps for rustaceanvim";
+    #   command = "lua vim.keymap.set('n', '<C-.>', function() vim.cmd.RustLsp('codeAction') end, { silent = true, buffer = true })";
+    #   event = "FileType";
+    #   pattern = "rust";
+    # }];
 
     globals.rust_recommended_style = 0;
 

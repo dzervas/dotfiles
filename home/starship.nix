@@ -43,11 +43,11 @@
         "[](fg:${bgColorHex})"
         "[ ](bg:${bgColorHex})"
 
-        "$jobs"
         "$aws"
         "$kubernetes"
         "$python"
         "$time"
+        "$jobs"
 
         "[ ](bg:${bgColorHex})"
         "[](fg:${bgColorHex})"
@@ -107,8 +107,9 @@
       };
 
       jobs = {
-        format = "[$symbol( $number)]($style)";
+        format = "[ $symbol( $number)]($style)";
         style = "bg:${bgColorHex} bold blue";
+        symbol = "󰒲 ";
       };
 
       aws = {
