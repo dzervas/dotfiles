@@ -12,7 +12,6 @@ in {
   # - TOML lints
   # - Disable python line too long & fix imports
   # - Add debugging commands and simplify workflow
-  # - Devenv treesitter
   # - Nix code action to split/merge attr, add "with"
   # - Rust workflow to disable formatting and better defaults
   # - JJ integration (lualine and maybe :Jj)
@@ -21,6 +20,9 @@ in {
   # - Better Ctrl-O/Ctrl-I navigation (jump list?)
   # - inc-replace.nvim
   # - Code-overview thingy, satellite-nvim is fucking everything up
+  # - Add debugging commands and simplify workflow - a LOT of work (lualine and overseer config, etc.)
+  # - Define what A-c does - if it's not a normal buffers, close the view, if it's a normal buffer, close it with barbar, if it's the last buffer, open the file finder as well
+  # - Snacks terminal config (tabs n all) - https://github.com/folke/snacks.nvim/discussions/2268#discussioncomment-14685823
 
   imports = [
     ./ai.nix
@@ -163,25 +165,25 @@ in {
         enable = true;
         # TODO: Signs https://nix-community.github.io/nixvim/search/?option_scope=0&option=plugins.dap.signs.dapBreakpoint.text&query=dap.
         # By catppuccin:
-        signs = let
-          no-line-num = { linehl = ""; numhl = ""; };
-        in {
+        signs = {
           dapBreakpoint = {
             text = "●";
             texthl = "DapBreakpoint";
-          } // no-line-num;
+          };
           dapBreakpointCondition = {
             text = "●";
             texthl = "DapBreakpointCondition";
-          } // no-line-num;
+          };
           dapLogPoint = {
             text = "◆";
             texthl = "DapLogPoint";
-          } // no-line-num;
+          };
         };
       };
       dap-virtual-text.enable = true;
       dap-ui.enable = true;
+      # dap-view.enable = true;
+      overseer.enable = true;
 
       lspconfig.enable = true;
 

@@ -3,8 +3,10 @@
     plugins = {
       rustaceanvim = {
         enable = true;
-        # Build the code for LSP on a different path to avoid blocking
-        settings.server.default_settings.rust-analyzer.cargo.targetDir = "target/lsp";
+        settings = {
+          # Build the code for LSP on a different path to avoid blocking
+          server.default_settings.rust-analyzer.cargo.targetDir = "target/lsp";
+        };
       };
 
       dap-lldb = {
