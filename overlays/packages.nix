@@ -4,21 +4,21 @@ final: prev: {
 
   # nix-update:claude-code
   claude-code = prev.claude-code.overrideAttrs rec {
-    version = "2.0.27";
+    version = "2.0.28";
     src = final.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-ZxwEnUWCtgrGhgtUjcWcMgLqzaajwE3pG7iSIfaS3ic=";
+      hash = "sha256-S8Qp6xzbEnU0GOx8BfblHMsjmOZkPuTvSeCAHEZN8+E=";
     };
   };
 
   # nix-update:snacks-nvim-stable
   snacks-nvim-stable = prev.vimPlugins.snacks-nvim.overrideAttrs rec {
-    version = "2.26.0";
+    version = "2.27.0";
     src = final.fetchFromGitHub {
       owner = "folke";
       repo = "snacks.nvim";
       rev = "v${version}";
-      hash = "sha256-7Fqfr8/5kjGDM9j8IY+YBOuz45bXUNLbJxY+BGt4oPY=";
+      hash = "sha256-QkcOKPgiJeA5LmQvC7DZ6ddjaoW8AE5I08Gm8jlEkT8=";
     };
     doCheck = false; # Fails in explorer.init
   };

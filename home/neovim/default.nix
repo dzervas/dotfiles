@@ -53,7 +53,7 @@ in {
     colorschemes.vscode = {
       enable = true;
       settings = {
-        transparent = true;
+        transparent = utils.mkRaw "vim.g.neovide == nil";
         italic_comments = true;
         italic_inlayhints = true;
         underline_links = true;
