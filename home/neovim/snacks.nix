@@ -51,6 +51,13 @@ in {
           enabled = true;
           # TODO: Not working :/
           db.sqlite3_path = "${pkgs.sqlite}/lib/libsqlite3.so";
+
+          # sources.select.layout.preset = "dropdown";
+          sources.select.layout.layout = {
+            relative = "cursor";
+            # row = 1;
+            # col = 0;
+          };
         };
 
         # Quick file rendering

@@ -7,7 +7,7 @@
       sources = {
         code_actions = {
           # gitrebase.enable = true;
-          gitsigns.enable = true;
+          # gitsigns.enable = true;
           gomodifytags.enable = true;
           impl.enable = true;
           # refactoring.enable = true; # Does not support rust and needs a binary?
