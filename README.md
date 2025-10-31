@@ -148,6 +148,14 @@ sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos
 sudo nix-channel --update
 ```
 
+### If a package fails to build (insecure/whatever)
+
+To find who uses it:
+
+```bash
+nixos-rebuild build --show-trace 2>/dev/stdout | grep 'while evaluating derivation'
+```
+
 ### Secure boot
 
 ```bash

@@ -15,6 +15,10 @@
       vim.g.neovide_normal_opacity = 0.87
 
       vim.keymap.set({ "n", "v", "s", "x", "o", "i", "l", "c", "t" }, "<C-S-V>", function() vim.api.nvim_paste(vim.fn.getreg('+'), true, -1) end, { desc = "Copy system clipboard", noremap = true, silent = true })
+
+      vim.api.nvim_set_keymap("n", "<C-+>", ":lua vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + 0.1<CR>", { silent = true })
+      vim.api.nvim_set_keymap("n", "<C-->", ":lua vim.g.neovide_scale_factor = vim.g.neovide_scale_factor - 0.1<CR>", { silent = true })
+      vim.api.nvim_set_keymap("n", "<C-0>", ":lua vim.g.neovide_scale_factor = 1<CR>", { silent = true })
     end
   '';
 }

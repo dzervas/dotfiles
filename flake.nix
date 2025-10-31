@@ -86,7 +86,10 @@
 
     # Secure boot
     lanzaboote.url = "github:nix-community/lanzaboote";
-    lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
+    lanzaboote.inputs = {
+      nixpkgs.follows = "nixpkgs";
+      rust-overlay.follows = "rust-overlay";
+    };
 
     # Home stuff
     stylix.url = "github:danth/stylix";
@@ -125,6 +128,13 @@
       # inputs.nixpkgs.follows = "nixpkgs";
       # inputs.home-manager.follows = "home-manager";
     # };
+
+    # Lanzaboote fix:
+    # https://github.com/nix-community/lanzaboote/pull/485
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   nixConfig.ssh-auth-sock = "env:SSH_AUTH_SOCK";

@@ -51,6 +51,11 @@
         description = "Bring up GitHub CoPilot";
         wraps = "gh copilot explain";
       };
+      committer = {
+        body = builtins.readFile ./fish-functions/committer.fish;
+        description = "Prompt-based commit helper";
+        wraps = "git commit";
+      };
       crest = {
         body = builtins.readFile ./fish-functions/crest.fish;
         description = "A curl wrapper with enhanced features tailored for REST APIs";
