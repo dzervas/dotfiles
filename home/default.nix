@@ -82,6 +82,7 @@
       (lib.mkIf (!config.setup.isLaptop) plasticity)
 
       cameractrls-gtk4
+      lmstudio
     ];
 
     file = {

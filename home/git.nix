@@ -136,14 +136,14 @@
           ll = ["log" "-r" "::"];
 
           acp = [
-            "util" "exec" "--" "bash" "-c"
-            ''test $# -gt 0 && jj commit -m "$*" || committer && jj push'' ""
+            "util" "exec" "--" "fish" "-c"
+            ''test (count $argv) -gt 0 && jj commit -m "$argv" || committer && jj push'' ""
           ];
           # Push to a new, auto-generated branch
           # TODO: Allow for named branch
           acp-new = [
-            "util" "exec" "--" "bash" "-c"
-            ''test $# -gt 0 && jj commit -m "$*" || committer && jj git push --change @- --allow-new'' ""
+            "util" "exec" "--" "fish" "-c"
+            ''test (count $argv) -gt 0 && jj commit -m "$argv" || committer && jj git push --change @- --allow-new'' ""
           ];
           get-ignore = [
             "util" "exec" "--" "bash" "-c"

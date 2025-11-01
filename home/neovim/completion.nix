@@ -43,6 +43,9 @@ in {
                   local _, _, sg = require("avante").get()
                   vim.schedule(function() sg:accept() end)
                   return true
+                elseif package.loaded["llm"] ~= nil and require("llm.completion").suggestion then
+                  vim.schedule(require("llm.completion").complete)
+                  return true
                 end
               end
             '')

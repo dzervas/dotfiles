@@ -89,11 +89,25 @@ in {
               __inherited_from = "openai";
               endpoint = "https://api.z.ai/api/coding/paas/v4";
               model = "GLM-4.6";
-              api_key_name = "cmd:cat ~/.avante_zai_api_key";
+              # api_key_name = "cmd:cat ~/.avante_zai_api_key";
             };
             zai-suggest = zai // {
               model = "GLM-4.5-Air";
             };
+            # ollama = {
+            #   api_key_name = "";
+            #   endpoint = "http://localhost:1234";
+            #   model = "deepseek-coder-6.7b-instruct";
+            #   # endpoint = "http://localhost:11434";
+            #   # model = "Malicus7862/deepseekcoder-6.7b-jarvis-gguf";
+            #   stream = true;
+            #   extra_request_body.options = {
+            #     num_ctx = 16384;
+            #     temperature = 0;
+            #     max_tokens = 1024;
+            #   };
+            #   is_env_set = utils.mkRaw "function() return true end";
+            # };
           };
 
           disabled_tools = [ "git_commit" ];
@@ -114,6 +128,18 @@ in {
             accept = "<Tab>";
             dismiss = "<C-e><C-e>";
           };
+        };
+      };
+
+      llm = {
+        enable = true;
+        settings = {
+          backend = "openai";
+          url = "http://localhost:1234/v1";
+          # model = "qwen2.5-coder-3b-instruct";
+          model = "starcoder2-3b";
+          context_window = 16384;
+          enable_suggestions_on_startup = false;
         };
       };
     };

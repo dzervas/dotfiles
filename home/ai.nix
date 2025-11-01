@@ -165,4 +165,13 @@ in {
       };
     };
   };
+
+  services.ollama = {
+    enable = false;
+    acceleration = "rocm";
+    environmentVariables = {
+      OLLAMA_GPU_OVERHEAD = "2147483648"; # Force load on GPU
+      HSA_OVERRIDE_GFX_VERSION = "10.3.0";
+    };
+  };
 }
