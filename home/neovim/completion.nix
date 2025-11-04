@@ -46,6 +46,9 @@ in {
                 elseif package.loaded["llm"] ~= nil and require("llm.completion").suggestion then
                   vim.schedule(require("llm.completion").complete)
                   return true
+                elseif package.loaded["minuet"] ~= nil and require("minuet.virtualtext").action.is_visible then
+                  vim.schedule(require("minuet.virtualtext").action.accept)
+                  return true
                 end
               end
             '')

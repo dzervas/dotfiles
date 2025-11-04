@@ -46,7 +46,7 @@ in {
       sidekick.enable = config.programs.nixvim.plugins.copilot-lua.enable;
 
       supermaven = {
-        enable = true;
+        enable = false;
         settings = {
           keymaps = {
             accept = "<Tab>";
@@ -131,15 +131,43 @@ in {
         };
       };
 
-      llm = {
+      # llm = {
+      #   enable = true;
+      #   settings = {
+      #     backend = "openai";
+      #     url = "http://localhost:1234/v1";
+      #     # model = "qwen2.5-coder-3b-instruct";
+      #     model = "starcoder2-3b";
+      #     context_window = 16384;
+      #     enable_suggestions_on_startup = false;
+      #   };
+      # };
+
+      minuet = {
         enable = true;
         settings = {
-          backend = "openai";
-          url = "http://localhost:1234/v1";
-          # model = "qwen2.5-coder-3b-instruct";
-          model = "starcoder2-3b";
-          context_window = 16384;
-          enable_suggestions_on_startup = false;
+          provider = "openai_fim_compatible";
+          n_completions = 1;
+          context_window = 512;
+
+          provider_options.openai_fim_compatible = {
+            api_key = "TERM";
+            name = "Ollama";
+            end_point = "http://localhost:1234/v1/completions";
+            model = "qwen2.5-coder-1.5b-instruct";
+            optional = {
+              max_tokens = 256;
+              top_p = 0.9;
+            };
+          };
+
+          cmp.enable_auto_complete = false;
+          blink.enable_auto_complete = false;
+          virtualtext = {
+            auto_trigger_ft = ["*"];
+            show_on_completion_menu = true;
+            keymap.accept_line = "<C-Down>";
+          };
         };
       };
     };
