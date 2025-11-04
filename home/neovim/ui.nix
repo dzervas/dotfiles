@@ -1,4 +1,4 @@
-{ inputs, lib, pkgs, ... }: let
+{ inputs, ... }: let
   inherit (inputs.nixvim.lib.nixvim) utils;
 in {
   programs.nixvim = {

@@ -1,5 +1,6 @@
 { inputs, pkgs, ... }: let
   inherit (inputs.nixvim.lib.nixvim) utils;
+  listAndAttrs = action: attrs: utils.listToUnkeyedAttrs [ action ] // attrs;
 in {
   programs.nixvim = {
     plugins.treesitter.settings.parsers.norg_meta.enable = true; # picker likes it
@@ -53,10 +54,37 @@ in {
           db.sqlite3_path = "${pkgs.sqlite}/lib/libsqlite3.so";
 
           # sources.select.layout.preset = "dropdown";
-          sources.select.layout.layout = {
-            relative = "cursor";
+          # sources.select.layout.layout = {
+            # relative = "cursor";
             # row = 1;
             # col = 0;
+          # };
+
+          # Close the picker on <Esc>
+          win.input.keys."<Esc>" = listAndAttrs "close" { mode = utils.listToUnkeyedAttrs [ "n" "i" ]; };
+
+          # Do not replace the default select UI
+          ui_select = false;
+
+          sources = {
+            zoxide = {
+              confirm = utils.mkRaw ''
+                function(picker, item)
+                  picker:close()
+                  vim.cmd.tcd(item.file)
+                  vim.defer_fn(Snacks.picker.files, 100)
+                end
+              '';
+
+              # Ctrl-t to open in a new tab
+              # TODO: the picker (first arg) is not a "normal" picker and it doesn't have a way to get the current item
+              win.input.keys."<c-t>" = listAndAttrs (utils.mkRaw ''
+                function(_)
+                  vim.cmd("tabnew")
+                end
+              '') { mode = utils.listToUnkeyedAttrs [ "n" "i" ]; };
+            };
+            files.hidden = true;
           };
         };
 
@@ -217,12 +245,17 @@ in {
     };
 
     # Keybindings for snacks functionality
+    # toTable = x: "{" + (
+    #   lib.strings.concatStringsSep "," (
+    #     lib.attrsets.mapAttrsToList (k: v: "${k}=${v}") x
+    #   )
+    # ) + "}" ;
     keymaps = [
       # Terminal (replaces floaterm keybinds)
       { key = "<A-Esc>"; mode = ["n" "t"]; action = utils.mkRaw "function() Snacks.terminal.toggle() end"; options.desc = "Toggle terminal"; }
 
       # Explorer
-      { key = "<leader>f"; action = utils.mkRaw "function() Snacks.explorer({ hidden = true, ignored = true }) end"; options.desc = "Show file explorer"; }
+      { key = "<leader>f"; action = utils.mkRaw "function() Snacks.explorer() end"; options.desc = "Show file explorer"; }
 
       # Notifications
       { key = "<leader>n"; action = utils.mkRaw "function() Snacks.notifier.show_history() end"; options.desc = "Show notification history"; }
@@ -231,7 +264,7 @@ in {
       # Picker
       { key = "<C-F>"; action = utils.mkRaw "function() Snacks.picker.grep() end"; options.desc = "Grep files"; }
       { key = "<C-Z>"; action = utils.mkRaw "function() Snacks.picker.undo() end"; options.desc = "Undo history"; }
-      { key = "<A-f>"; action = utils.mkRaw "function() Snacks.picker.files({ hidden = true }) end"; options.desc = "Find files"; }
+      { key = "<A-f>"; action = utils.mkRaw "function() Snacks.picker.files() end"; options.desc = "Find files"; }
       { key = "<A-r>"; action = utils.mkRaw "function() Snacks.picker.commands() end"; options.desc = "Commands"; }
       { key = "<A-z>"; action = utils.mkRaw "function() Snacks.picker.zoxide() end"; options.desc = "Projects (zoxide)"; }
       { key = "<leader>gm"; action = utils.mkRaw "function() Snacks.picker.man() end"; options.desc = "Man pages"; }

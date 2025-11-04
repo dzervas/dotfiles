@@ -46,7 +46,7 @@ in {
       sidekick.enable = config.programs.nixvim.plugins.copilot-lua.enable;
 
       supermaven = {
-        enable = false;
+        enable = true;
         settings = {
           keymaps = {
             accept = "<Tab>";
@@ -131,20 +131,8 @@ in {
         };
       };
 
-      # llm = {
-      #   enable = true;
-      #   settings = {
-      #     backend = "openai";
-      #     url = "http://localhost:1234/v1";
-      #     # model = "qwen2.5-coder-3b-instruct";
-      #     model = "starcoder2-3b";
-      #     context_window = 16384;
-      #     enable_suggestions_on_startup = false;
-      #   };
-      # };
-
       minuet = {
-        enable = true;
+        enable = false;
         settings = {
           provider = "openai_fim_compatible";
           n_completions = 1;
