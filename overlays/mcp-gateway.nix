@@ -4,7 +4,7 @@
 , fetchFromGitHub
 }: buildGoModule rec {
   pname = "mcp-gateway";
-  version = "0.25.0";
+  version = "0.26.0";
 
   src = fetchFromGitHub {
     owner = "docker";
@@ -12,7 +12,7 @@
 
     # gha-updater: DATA=$(curl "https://api.github.com/repos/docker/mcp-gateway/tags?per_page=1" | jq ".[]") DLURL=$(echo "$DATA" | jq -r .tarball_url) VERSION=$(echo "$DATA" | jq -r .name) echo -n "$VERSION $(nix-prefetch-url $DLURL)"
     rev   = "v${version}";
-    hash  = "sha256-zrCkr1enBJuZx+gO38SAj3GVTzLNP3ap/jPDPdDNcKo=";
+    hash  = "sha256-Lg+Irro/YpuI7dc6Eque1Gm87qPbapVp4HQSRoOvrlU=";
   };
 
   vendorHash = null;

@@ -48,6 +48,7 @@ in {
           top_down = true;
         };
 
+        # TODO: How to put all entries in quickfix?
         picker = {
           enabled = true;
           # TODO: Not working :/

@@ -1,6 +1,7 @@
 { pkgs, ... }: let
-  lock = "${pkgs._1password-gui}/bin/1password --lock --silent || true";
   ssh-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj";
+  _1password-gui = pkgs._1password-gui-beta;
+  lock = "${_1password-gui}/bin/1password --lock --silent || true";
 in {
   setup.passwordManagerLock = "${pkgs._1password-gui}/bin/1password --lock --silent";
 
@@ -11,7 +12,7 @@ in {
     git = {
       settings.gpg = {
         format = "ssh";
-        ssh.program = "${pkgs._1password-gui}/bin/op-ssh-sign";
+        ssh.program = "${_1password-gui}/bin/op-ssh-sign";
       };
       signing = {
         key = ssh-key;
@@ -22,7 +23,7 @@ in {
     jujutsu.settings.signing = {
       backend = "ssh";
       key = ssh-key;
-      backends.ssh.program = "${pkgs._1password-gui}/bin/op-ssh-sign";
+      backends.ssh.program = "${_1password-gui}/bin/op-ssh-sign";
     };
   };
 
@@ -43,7 +44,7 @@ in {
       PartOf = [ "graphical-session.target" ];
     };
 
-    Service.ExecStart = "${pkgs._1password-gui}/bin/1password --silent --ozone-platform=wayland";
+    Service.ExecStart = "${_1password-gui}/bin/1password --silent --ozone-platform=wayland";
     Install.WantedBy = [ "graphical-session.target" ];
   };
 }
