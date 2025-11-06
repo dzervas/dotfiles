@@ -22,6 +22,7 @@
     ./thumbnailers.nix
     ./updater
     ./xdg.nix
+    ./zed.nix
   ];
 
   programs = {
@@ -29,50 +30,7 @@
     mpv.enable = true;
     nix-index.enable = true;
     zoxide.enable = true;
-    # TODO: Split to its own module and add config & keymaps
-    zed-editor = {
-      enable = true;
-      # https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking
-      extensions = [
-        "vscode-dark-modern" # Theme
-
-        # Language support
-        "astro"
-        "basher"
-        "comment" # Highlights TODO/FIXME/etc.
-        "dockerfile"
-        "fish"
-        "html"
-        "jsonnet"
-        "nix"
-        "svelte"
-        "toml"
-        "tombi" # Toml LSP
-        "tree-sitter-query"
-
-        # Snippets
-        "html-snippets"
-        "javascript-snippets"
-        "python-snippets"
-        "rust-snippets"
-        "svelte-snippets"
-        "typescript-snippets"
-
-        "probe-rs"
-
-        # MCP
-        "mcp-server-sequential-thinking"
-        "mcp-server-github"
-        "svelte-mcp"
-      ];
-      extraPackages = with pkgs; [
-        nil
-        nixd
-      ];
-    };
   };
-
-  stylix.targets.zed.enable = false;
 
   services = {
     keybase.enable = true;
