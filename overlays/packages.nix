@@ -3,13 +3,13 @@ final: prev: {
   mcp-gateway = prev.callPackage ./mcp-gateway.nix {};
 
   # nix-update:claude-code
-  # claude-code = prev.claude-code.overrideAttrs rec {
-  #   version = "2.0.34";
-  #   src = final.fetchzip {
-  #     url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-  #     hash = "sha256-GYykbpvkFTsj7tlsAimDrNbN9kP1+8AtfG+Boch8eSk=";
-  #   };
-  # };
+  claude-code = prev.claude-code.overrideAttrs rec {
+    version = "2.0.34";
+    src = final.fetchzip {
+      url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
+      hash = "sha256-GYykbpvkFTsj7tlsAimDrNbN9kP1+8AtfG+Boch8eSk=";
+    };
+  };
 
   # nix-update:snacks-nvim-stable
   snacks-nvim-stable = prev.vimPlugins.snacks-nvim.overrideAttrs rec {

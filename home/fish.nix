@@ -78,6 +78,10 @@
         body = builtins.readFile ./fish-functions/needs-update.fish;
         description = "Check if a newer nixpkgs version is available";
       };
+      qq = {
+        body = builtins.readFile ./fish-functions/qq.fish;
+        description = "Quick question towards the local AI";
+      };
       rebuild = {
         body = builtins.readFile ./fish-functions/rebuild.fish;
         description = "Rebuild the system";
