@@ -33,6 +33,8 @@ end
 set -l LMS_OUTPUT (lms chat -s "$SYSTEM_PROMPT" -p "$argv" "$MODEL")
 
 # Colorize the output
+# TODO: Use lmstudio structured output instead:
+# https://lmstudio.ai/docs/developer/openai-compat/structured-output
 echo -e $LMS_OUTPUT | sed \
 	-e "s|<cmd>|$(set_color blue)|g" -e "s|</cmd>|$(set_color normal)|g" \
 	-e "s|<warn>|$(set_color --bold bryellow)|g" -e "s|</warn>|$(set_color normal)|g" \
