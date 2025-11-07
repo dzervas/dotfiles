@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: {
+{ pkgs, ... }: {
   programs.zed-editor = {
     enable = true;
     # https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking
@@ -16,6 +16,7 @@
       "jsonnet"
       "nix"
       "svelte"
+      "sql"
       "toml"
       "tombi" # Toml LSP
       "tree-sitter-query"
@@ -46,6 +47,8 @@
       theme = "VSCode Dark Modern";
 
       # Behavior & UI
+      buffer_line_height = "standard";
+      indent_guides.coloring = "indent_aware";
       preferred_line_length = 100;
       wrap_guides = [100];
       auto_update = false;
@@ -112,7 +115,7 @@
           {
             name = "GLM-4.6";
             display_name = "GLM 4.6";
-            max_tokens = 200000;
+            max_tokens = 204800;
             max_output_tokens = 128000;
             capabilities = {
               tools = true;
