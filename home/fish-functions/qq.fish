@@ -21,8 +21,18 @@ USER: convert an mp4 to mp3
 ASSISTANT: <cmd>ffmpeg -i input.mp4 output.mp3</cmd>
 '
 
-set -l LMS_OUTPUT (lms chat -s "$SYSTEM_PROMPT" -p "$argv" qwen2.5-coder-1.5b-instruct)
+if test -z "$argv"
+	echo "$(set_color red)qq: missing argument$(set_color normal)"
+	return 1
+end
 
+set -l MODEL "qwen2.5-coder-1.5b-instruct"
+if test -n "$QQ_MODEL"
+	set MODEL "$QQ_MODEL"
+end
+set -l LMS_OUTPUT (lms chat -s "$SYSTEM_PROMPT" -p "$argv" "$MODEL")
+
+# Colorize the output
 echo -e $LMS_OUTPUT | sed \
 	-e "s|<cmd>|$(set_color blue)|g" -e "s|</cmd>|$(set_color normal)|g" \
 	-e "s|<warn>|$(set_color --bold bryellow)|g" -e "s|</warn>|$(set_color normal)|g" \
@@ -30,3 +40,15 @@ echo -e $LMS_OUTPUT | sed \
 	-e "s|<bold>|$(set_color --bold white)|g" -e "s|</bold>|$(set_color normal)|g" \
 	-e "s|<file>|$(set_color --dim green)|g" -e "s|</file>|$(set_color normal)|g" \
 	-e "s|<br/>|\n|g"
+
+read -l -n1 -P "Complete (enter)/Retry (r): " choice
+
+# Prepare the output for the commandline
+set -l CMD_LMS_OUTPUT (echo $LMS_OUTPUT | sed "s|<br/>|\n|g" | rg -o '<cmd>.*</cmd>' | sed -E -e "s|<cmd>||g" -e "s|</cmd>|\n|" | string trim -l -r -c "\n")
+
+if test -z "$choice"
+	commandline -r "$CMD_LMS_OUTPUT"
+	commandline -f repaint
+else if test "$choice" = 'r'
+	qq $argv
+end
