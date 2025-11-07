@@ -40,11 +40,16 @@
     userSettings = {
       # Theme
       buffer_font_family = "Iosevka Nerd Font";
-      buffer_font_size = if config.setup.isLaptop then 18.0 else 16.0;
+      # buffer_font_size = if config.setup.isLaptop then 18.0 else 16.0;
+      buffer_font_size = 18;
       icon_theme = "Colored Zed Icons Theme Dark";
       theme = "VSCode Dark Modern";
 
       # Behavior & UI
+      preferred_line_length = 100;
+      wrap_guides = [100];
+      auto_update = false;
+      base_keymap = "VSCode";
       autoscroll_on_clicks = true;
       expand_excerpt_lines = 3;
       double_click_in_multibuffer = "open";
@@ -62,15 +67,24 @@
         file_icons = true;
       };
 
-      # Diagnostics
+      load_direnv = "direct";
+
+      # Languages
+      hard_tabs = true;
+      file_types = {
+        shellscript = [".envrc"];
+      };
+
       languages = {
         Rust = {
           format_on_save = "off";
           preferred_line_length = 100;
-          hard_tabs = true;
         };
       };
 
+      private_files = [".envrc" ".env" ".direnv"];
+
+      # Diagnostics
       diagnostics.inline.enabled = true;
       inlay_hints = {
         show_parameter_hints = false;
@@ -87,6 +101,10 @@
       agent = {
         play_sound_when_agent_done = true;
         enable_feedback = false;
+        inline_assistant_model = {
+            model = "GLM-4.5-Air";
+            provider = "Z.AI";
+        };
       };
       language_models.openai_compatible."Z.AI" = {
         api_url = "https://api.z.ai/api/coding/paas/v4";
@@ -123,6 +141,107 @@
         metrics = false;
       };
     };
+
+    mutableUserKeymaps = false;
+    userKeymaps = [
+      {
+        bindings = {
+          alt-right = "pane::ActivateNextItem";
+          alt-shift-right = "pane::SwapItemRight";
+          alt-left = "pane::ActivatePreviousItem";
+          alt-shift-left = "pane::SwapItemLeft";
+
+          # TODO: Cycle docks as well
+          alt-up = "workspace::ActivateNextPane";
+          alt-down = "workspace::ActivatePreviousPane";
+
+          alt-c = ["pane::CloseActiveItem" { close_pinned = false; }];
+          alt-f = "file_finder::Toggle";
+          alt-shift-f = "workspace::ToggleZoom";
+          alt-shift-o = "pane::CloseOtherItems";
+          alt-r = "command_palette::Toggle";
+          alt-z = "projects::OpenRecent";
+
+          ctrl-f = "pane::DeploySearch";
+        };
+      }
+
+      {
+        context = "Workspace";
+        bindings = {
+          alt-escape = "terminal_panel::Toggle";
+          alt-s = "project_symbols::Toggle";
+        };
+      }
+      {
+        # TODO: Double escape goes to "normal" mode
+        context = "Terminal";
+        bindings = {
+          alt-enter = "workspace::NewTerminal";
+          ctrl-f = "buffer_search::Deploy";
+        };
+      }
+      # TODO: Maybe keymap to run the tests and show a small notification or smth?
+      # TODO: ctrl-shift- to open the definition in a split
+      # TODO: Breakpoint & debugging keymaps
+      {
+        context = "Editor";
+        bindings = {
+          # TODO: ctrl-down accept the next completion line
+          ctrl-up = "editor::MoveLineUp";
+          ctrl-down = "editor::MoveLineDown";
+          alt-enter = "pane::SplitVertical";
+        };
+      }
+      # TODO: If no search is initiated and in visual mode, n & N should search for the selection
+      {
+        context = "vim_mode == normal";
+        bindings = {
+          # TODO: If no search is initiated, n & N should search for the word under the cursor
+          # TODO: If another dock is shown, select the project dock
+          "space f" = "workspace::ToggleLeftDock";
+          "space w" = "editor::Format";
+          "space a a" = "workspace::ToggleRightDock";
+        };
+      }
+      {
+        context = "Editor && vim_mode == normal";
+        bindings = {
+          "g up" = "editor::GoToPreviousDiagnostic";
+          "g down" = "editor::GoToDiagnostic";
+        };
+      }
+      {
+        context = "(Editor && edit_prediction)";
+        bindings = {
+          ctrl-right = "editor::AcceptPartialEditPrediction";
+        };
+      }
+      {
+        context = "(Editor && edit_prediction_conflict)";
+        bindings = {
+          ctrl-right = "editor::AcceptPartialEditPrediction";
+        };
+      }
+      {
+        # TODO: Escape in normal mode should exit
+        # TODO: Ctrl-s should focus replace?
+        context = "BufferSearchBar || ProjectSearchView || ProjectSearchBar";
+        bindings = {
+          ctrl-s = "search::ToggleReplace";
+        };
+      }
+      {
+        context = "ProjectPanel && not_editing";
+        bindings = {
+          a = "project_panel::NewFile";
+          d = "project_panel::Delete";
+          r = "project_panel::Rename";
+          "g up" = "project_panel::SelectPrevDiagnostic";
+          "g down" = "project_panel::SelectNextDiagnostic";
+        };
+      }
+    ];
 
     extraPackages = with pkgs; [
       nil
