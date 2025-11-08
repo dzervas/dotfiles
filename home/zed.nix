@@ -80,6 +80,9 @@
         shellscript = [ ".envrc" ];
       };
 
+      # Use `target/rust-analyzer` to avoid blocking
+      lsp.rust-analyzer.initialization_options.rust.analyzerTargetDir = true;
+
       languages = {
         Rust = {
           format_on_save = "off";
