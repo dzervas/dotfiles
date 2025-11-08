@@ -2,6 +2,7 @@
   programs = {
     poetry.enable = true;
     pyenv.enable = true;
+    uv.enable = true;
     kubecolor = {
       enable = true;
       enableAlias = true;

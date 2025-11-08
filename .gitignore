@@ -4,3 +4,5 @@
 .worktrees/
 /docs/plans
 !.mcp.json
+uv.lock
+.python-version

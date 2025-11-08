@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   programs.zed-editor = {
     enable = true;
     # https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking
@@ -50,7 +51,7 @@
       buffer_line_height = "standard";
       indent_guides.coloring = "indent_aware";
       preferred_line_length = 100;
-      wrap_guides = [100];
+      wrap_guides = [ 100 ];
       auto_update = false;
       base_keymap = "VSCode";
       autoscroll_on_clicks = true;
@@ -74,8 +75,9 @@
 
       # Languages
       hard_tabs = true;
+      format_on_save = "off";
       file_types = {
-        shellscript = [".envrc"];
+        shellscript = [ ".envrc" ];
       };
 
       languages = {
@@ -83,9 +85,14 @@
           format_on_save = "off";
           preferred_line_length = 100;
         };
+        Python.language_servers = ["ty" "!basedpyright"];
       };
 
-      private_files = [".envrc" ".env" ".direnv"];
+      private_files = [
+        ".envrc"
+        ".env"
+        ".direnv"
+      ];
 
       # Diagnostics
       diagnostics.inline.enabled = true;
@@ -105,8 +112,8 @@
         play_sound_when_agent_done = true;
         enable_feedback = false;
         inline_assistant_model = {
-            model = "GLM-4.5-Air";
-            provider = "Z.AI";
+          model = "GLM-4.5-Air";
+          provider = "Z.AI";
         };
       };
       language_models.openai_compatible."Z.AI" = {
@@ -158,7 +165,10 @@
           alt-up = "workspace::ActivateNextPane";
           alt-down = "workspace::ActivatePreviousPane";
 
-          alt-c = ["pane::CloseActiveItem" { close_pinned = false; }];
+          alt-c = [
+            "pane::CloseActiveItem"
+            { close_pinned = false; }
+          ];
           alt-f = "file_finder::Toggle";
           alt-shift-f = "workspace::ToggleZoom";
           alt-shift-o = "pane::CloseOtherItems";
