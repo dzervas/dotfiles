@@ -22,7 +22,6 @@
     ./thumbnailers.nix
     ./updater
     ./xdg.nix
-    ./zed.nix
   ];
 
   programs = {
@@ -30,6 +29,20 @@
     mpv.enable = true;
     nix-index.enable = true;
     zoxide.enable = true;
+    zed-editor = {
+      enable = true;
+      extraPackages = with pkgs; [
+        nil
+        nixd
+      ];
+    };
+  };
+
+  xdg.configFile = {
+    "zed/settings.json".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/zed/settings.json";
+    "zed/keymap.json".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/zed/keymap.json";
+    "nixpkgs/config.nix".text = "{ allowUnfree = true; }";
+    katerc.source = ./katerc;
   };
 
   services = {
@@ -86,10 +99,6 @@
       lmstudio
     ];
 
-    file = {
-      "${config.xdg.configHome}/katerc".source = ./katerc;
-      "${config.xdg.configHome}/nixpkgs/config.nix".text = "{ allowUnfree = true; }";
-    };
   };
 
   # Disable gnome-keyring's ssh component to avoid conflicts with ssh-agent
@@ -104,5 +113,7 @@
       light = "rose-pine-dawn";
       dark = "rose-pine";
     };
+
+    targets.zed.enable = false;
   };
 }

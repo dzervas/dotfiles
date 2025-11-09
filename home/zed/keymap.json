@@ -1,0 +1,89 @@
+[
+  {
+    "bindings": {
+      "alt-c": [
+        "pane::CloseActiveItem",
+        {
+          "close_pinned": false
+        }
+      ],
+      "alt-down": "workspace::ActivatePreviousPane",
+      "alt-f": "file_finder::Toggle",
+      "alt-left": "pane::ActivatePreviousItem",
+      "alt-r": "command_palette::Toggle",
+      "alt-right": "pane::ActivateNextItem",
+      "alt-shift-f": "workspace::ToggleZoom",
+      "alt-shift-left": "pane::SwapItemLeft",
+      "alt-shift-o": "pane::CloseOtherItems",
+      "alt-shift-right": "pane::SwapItemRight",
+      "alt-up": "workspace::ActivateNextPane",
+      "alt-z": "projects::OpenRecent",
+      "ctrl-f": "pane::DeploySearch"
+    }
+  },
+  {
+    "bindings": {
+      "alt-escape": "terminal_panel::Toggle",
+      "alt-s": "project_symbols::Toggle"
+    },
+    "context": "Workspace"
+  },
+  {
+    "bindings": {
+      "alt-enter": "workspace::NewTerminal",
+      "ctrl-f": "buffer_search::Deploy"
+    },
+    "context": "Terminal"
+  },
+  {
+    "bindings": {
+      "alt-enter": "pane::SplitVertical",
+      "ctrl-down": "editor::MoveLineDown",
+      "ctrl-up": "editor::MoveLineUp"
+    },
+    "context": "Editor"
+  },
+  {
+    "bindings": {
+      "space a a": "workspace::ToggleRightDock",
+      "space f": "workspace::ToggleLeftDock",
+      "space w": "editor::Format"
+    },
+    "context": "vim_mode == normal"
+  },
+  {
+    "bindings": {
+      "g down": "editor::GoToDiagnostic",
+      "g up": "editor::GoToPreviousDiagnostic"
+    },
+    "context": "Editor && vim_mode == normal"
+  },
+  {
+    "bindings": {
+      "ctrl-right": "editor::AcceptPartialEditPrediction"
+    },
+    "context": "(Editor && edit_prediction)"
+  },
+  {
+    "bindings": {
+      "ctrl-right": "editor::AcceptPartialEditPrediction"
+    },
+    "context": "(Editor && edit_prediction_conflict)"
+  },
+  {
+    "bindings": {
+      "ctrl-s": "search::ToggleReplace"
+    },
+    "context": "BufferSearchBar || ProjectSearchView || ProjectSearchBar"
+  },
+  {
+    "bindings": {
+      "a": "project_panel::NewFile",
+      "d": "project_panel::Delete",
+      "g down": "project_panel::SelectNextDiagnostic",
+      "g up": "project_panel::SelectPrevDiagnostic",
+      "r": "project_panel::Rename"
+    },
+    "context": "ProjectPanel && not_editing"
+  }
+]
