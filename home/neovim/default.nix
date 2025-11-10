@@ -28,7 +28,7 @@ in {
     ./debug.nix
     ./lint.nix
     ./lsp.nix
-    ./neovide.nix
+    # ./neovide.nix
     ./python.nix
     ./rust.nix
     ./runner.nix

@@ -1,89 +1,125 @@
+// To debug context: `dev: open key context view`
 [
-  {
-    "bindings": {
-      "alt-c": [
-        "pane::CloseActiveItem",
-        {
-          "close_pinned": false
-        }
-      ],
-      "alt-down": "workspace::ActivatePreviousPane",
-      "alt-f": "file_finder::Toggle",
-      "alt-left": "pane::ActivatePreviousItem",
-      "alt-r": "command_palette::Toggle",
-      "alt-right": "pane::ActivateNextItem",
-      "alt-shift-f": "workspace::ToggleZoom",
-      "alt-shift-left": "pane::SwapItemLeft",
-      "alt-shift-o": "pane::CloseOtherItems",
-      "alt-shift-right": "pane::SwapItemRight",
-      "alt-up": "workspace::ActivateNextPane",
-      "alt-z": "projects::OpenRecent",
-      "ctrl-f": "pane::DeploySearch"
-    }
-  },
-  {
-    "bindings": {
-      "alt-escape": "terminal_panel::Toggle",
-      "alt-s": "project_symbols::Toggle"
-    },
-    "context": "Workspace"
-  },
-  {
-    "bindings": {
-      "alt-enter": "workspace::NewTerminal",
-      "ctrl-f": "buffer_search::Deploy"
-    },
-    "context": "Terminal"
-  },
-  {
-    "bindings": {
-      "alt-enter": "pane::SplitVertical",
-      "ctrl-down": "editor::MoveLineDown",
-      "ctrl-up": "editor::MoveLineUp"
-    },
-    "context": "Editor"
-  },
-  {
-    "bindings": {
-      "space a a": "workspace::ToggleRightDock",
-      "space f": "workspace::ToggleLeftDock",
-      "space w": "editor::Format"
-    },
-    "context": "vim_mode == normal"
-  },
-  {
-    "bindings": {
-      "g down": "editor::GoToDiagnostic",
-      "g up": "editor::GoToPreviousDiagnostic"
-    },
-    "context": "Editor && vim_mode == normal"
-  },
-  {
-    "bindings": {
-      "ctrl-right": "editor::AcceptPartialEditPrediction"
-    },
-    "context": "(Editor && edit_prediction)"
-  },
-  {
-    "bindings": {
-      "ctrl-right": "editor::AcceptPartialEditPrediction"
-    },
-    "context": "(Editor && edit_prediction_conflict)"
-  },
-  {
-    "bindings": {
-      "ctrl-s": "search::ToggleReplace"
-    },
-    "context": "BufferSearchBar || ProjectSearchView || ProjectSearchBar"
-  },
-  {
-    "bindings": {
-      "a": "project_panel::NewFile",
-      "d": "project_panel::Delete",
-      "g down": "project_panel::SelectNextDiagnostic",
-      "g up": "project_panel::SelectPrevDiagnostic",
-      "r": "project_panel::Rename"
-    },
-    "context": "ProjectPanel && not_editing"
-  }
+	{
+		"bindings": {
+			"alt-f": "file_finder::Toggle",
+			"alt-shift-f": "workspace::ToggleZoom",
+			"alt-shift-o": "pane::CloseOtherItems",
+			"alt-r": "command_palette::Toggle",
+			"alt-s": "project_symbols::Toggle",
+			"alt-z": "projects::OpenRecent",
+			"alt-escape": "terminal_panel::Toggle",
+
+			"alt-left": "pane::ActivatePreviousItem",
+			"alt-right": "pane::ActivateNextItem",
+			"alt-shift-left": "pane::SwapItemLeft",
+			"alt-shift-right": "pane::SwapItemRight"
+		}
+	},
+
+	// Pane/Dock navigation
+	{
+		"bindings": {
+			"alt-c": ["pane::CloseActiveItem", { "close_pinned": false }],
+			"alt-down": "workspace::ActivatePreviousPane",
+			"alt-up": "workspace::ActivateNextPane"
+		},
+		// Work around the precedence issue
+		// alt-<up|down> are mapped with Editor context so to overwrite them, `> Editor` is needed
+		"context": "Dock || (Dock > Editor) || Pane || (Pane > Editor)"
+	},
+	{
+		"bindings": {
+			"alt-down": "project_panel::ToggleFocus"
+		},
+		"context": "left_dock == ProjectPanel > (Pane || (Pane > Editor))"
+	},
+	{
+		"bindings": {
+			"alt-up": "agent::ToggleFocus"
+		},
+		"context": "right_dock == agent_panel > (Pane || (Pane > Editor))"
+	},
+	{
+		"bindings": {
+			"alt-c": "workspace::CloseActiveDock"
+		},
+		"context": "Dock"
+	},
+
+	// Terminal bindings
+	{
+		"bindings": {
+			"alt-enter": "workspace::NewTerminal",
+			"ctrl-f": "buffer_search::Deploy"
+		},
+		"context": "Terminal"
+	},
+
+	// Pane management and editor-specific stuff
+	{
+		"bindings": {
+			"alt-enter": "pane::SplitVertical",
+			"ctrl-down": "editor::MoveLineDown",
+			"ctrl-up": "editor::MoveLineUp",
+			"ctrl-f": "pane::DeploySearch",
+			"ctrl-l": "buffer_search::Dismiss"
+		},
+		"context": "Editor"
+	},
+	{
+		"bindings": {
+			"space w": "editor::Format",
+			"space a": "agent::ToggleFocus",
+			"space f": "project_panel::ToggleFocus",
+			"g down": "editor::GoToDiagnostic",
+			"g up": "editor::GoToPreviousDiagnostic"
+		},
+		"context": "Editor && vim_mode == normal"
+	},
+
+	// AI completion
+	{
+		"bindings": {
+			"ctrl-right": "editor::AcceptPartialEditPrediction"
+		},
+		"context": "Editor && (edit_prediction || edit_prediction_conflict)"
+	},
+
+	// Files dock
+	{
+		"bindings": {
+			"a": "project_panel::NewFile",
+			"d": "project_panel::Delete",
+			"g down": "project_panel::SelectNextDiagnostic",
+			"g up": "project_panel::SelectPrevDiagnostic",
+			"r": "project_panel::Rename"
+		},
+		"context": "ProjectPanel && not_editing"
+	},
+
+	// Global text-area stuff
+	{
+		"bindings": {
+			// Emacs-style bindings for the chat window
+			"ctrl-a": "editor::SelectAll",
+			"ctrl-c": "editor::Copy",
+			"ctrl-x": "vim::VisualDelete", // This is wrong but I assume that stuff are selected
+			"ctrl-v": "vim::Paste"
+		},
+		"context": "MessageEditor > Editor"
+	},
+
+	{
+		"bindings": {
+			"ctrl-s": "search::ToggleReplace"
+		},
+		"context": "BufferSearchBar || ProjectSearchView || ProjectSearchBar"
+	},
+	{
+		"bindings": {
+			"/": "search::FocusSearch"
+		},
+		"context": "KeymapEditor && !BufferSearchBar"
+	}
 ]
