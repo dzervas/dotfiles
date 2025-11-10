@@ -82,7 +82,7 @@
           "geo.enabled" = false;
           "geo.provider.use_geoclue" = false;
           # To fake location:
-          # "geo.provider.network.url" = ''data:application/json,{"location": {"lat": 35.309551, "lng": 25.084790}, "accuracy": 27000.0}'';
+          "geo.provider.network.url" = ''data:application/json,{"location": {"lat": 35.309551, "lng": 25.084790}, "accuracy": 27000.0}'';
           "network.captive-portal-service.enabled" = false;
           # This results in numerous issues - iframes don't work as expected, (skroutz), weird broken sites, etc.
           "network.http.sendRefererHeader" = 2; # 0 for no referer, 1 for only clicked links, 2 for everything

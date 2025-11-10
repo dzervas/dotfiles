@@ -27,6 +27,7 @@
   programs = {
     home-manager.enable = true;
     mpv.enable = true;
+    mullvad-vpn.enable = true;
     nix-index.enable = true;
     zoxide.enable = true;
     zed-editor = {
@@ -97,6 +98,7 @@
 
       cameractrls-gtk4
       lmstudio
+      copilot-cli
     ];
 
   };

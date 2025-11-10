@@ -68,12 +68,13 @@
       drivers = with pkgs; [ brlaser ];
     };
 
-    avahi = {
-      enable = true;
-      nssmdns4 = true;
-      ipv6 = false;
-      denyInterfaces = ["zt+" "tailscale+" "tun+"];
-    };
+    # resolved already handles this
+    # avahi = {
+    #   enable = true;
+    #   nssmdns4 = true;
+    #   ipv6 = false;
+    #   denyInterfaces = ["zt+" "tailscale+" "tun+"];
+    # };
   };
 
   boot.extraModulePackages = with config.boot.kernelPackages; [

@@ -69,7 +69,32 @@
 
 	// AI
 	"agent": {
+		"always_allow_tool_actions": true,
 		"profiles": {
+			"ask": {
+				"name": "Ask",
+				"tools": {
+					"diagnostics": true,
+					"fetch": true,
+					"list_directory": true,
+					"project_notifications": false,
+					"now": true,
+					"find_path": true,
+					"read_file": true,
+					"open": true,
+					"grep": true,
+					"thinking": true,
+					"web_search": true
+				},
+				"enable_all_context_servers": false,
+				"context_servers": {
+					"mcp-server-sequential-thinking": {
+						"tools": {
+							"sequentialthinking": true
+						}
+					}
+				}
+			},
 			"brainstorm": {
 				"name": "BrainStorm",
 				"tools": {},
@@ -83,7 +108,7 @@
 				}
 			}
 		},
-		"default_profile": "ask",
+		"default_profile": "write",
 		"commit_message_model": {
 			"model": "GLM-4.5-Air",
 			"provider": "Z.AI"
@@ -146,31 +171,42 @@
 
 	// Extensions
 	"auto_install_extensions": {
+		// Theme
+		"vscode-dark-modern": true,
+		"colored-zed-icons-theme": true,
+
+		// Languages
 		"astro": true,
 		"basher": true,
-		"colored-zed-icons-theme": true,
 		"comment": true,
 		"dockerfile": true,
 		"fish": true,
 		"html": true,
-		"html-snippets": true,
-		"javascript-snippets": true,
+		"hurl": true,
 		"jsonnet": true,
-		"mcp-server-github": true,
-		"mcp-server-sequential-thinking": true,
 		"nix": true,
-		"probe-rs": true,
-		"python-snippets": true,
-		"rust-snippets": true,
 		"sql": true,
 		"svelte": true,
-		"svelte-mcp": true,
-		"svelte-snippets": true,
 		"tombi": true,
 		"toml": true,
 		"tree-sitter-query": true,
+
+		// Snippets
+		"html-snippets": true,
+		"javascript-snippets": true,
+		"python-snippets": true,
+		"rust-snippets": true,
+		"svelte-mcp": true,
+		"svelte-snippets": true,
 		"typescript-snippets": true,
-		"vscode-dark-modern": true
+
+		// Debugging
+		"probe-rs": true,
+
+		// MCP
+		"kagimcp": true,
+		// "mcp-server-github": true,
+		"mcp-server-sequential-thinking": true
 	},
 
 	// UI & Behavior
