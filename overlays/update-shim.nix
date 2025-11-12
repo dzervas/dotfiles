@@ -1,4 +1,4 @@
 { system ? builtins.currentSystem }: import <nixpkgs> {
   inherit system;
-  overlays = [ (import ./packages.nix) ];
+  overlays = [ (import ./default.nix) ];
 }

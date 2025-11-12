@@ -11,12 +11,12 @@
 
     specialArgs = { inherit inputs; };
     modules = [
-      # Inject the overlays
-      ./overlays
-
       # Set some basic options
       {
         config = {
+          # Inject the overlays
+          # TODO: Define the overlays globally in flake.nix
+          nixpkgs.overlays = [(import ./overlays)];
           nixpkgs.config = {
             allowUnfree = true;
             segger-jlink.acceptLicense = true;

@@ -52,6 +52,9 @@
           drv = nixvim.legacyPackages.${system}.makeNixvim nixvimConfig;
         in mkApp { inherit drv; exePath = "/bin/nvim"; };
 
+        # TODO: Get rid of the update-shim
+        update = mkShellApp pkgs (builtins.readFile ./.github/scripts/flake-update.sh);
+
         # script to authenticate
         iso-auth = mkShellApp pkgs ''
           echo "Authenticating to github from oras"

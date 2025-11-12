@@ -1,22 +1,19 @@
 # nix-update:lmstudio-python
 { lib
 , python3
-, fetchFromGitHub
+, fetchPypi
 }: python3.pkgs.buildPythonPackage rec {
-  pname = "lmstudio";
-  version = "1.6.0b1";
-  pyproject = true;
+  pname = "lmstudio-python";
+  version = "1.5.0";
 
-  src = fetchFromGitHub {
-    owner = "lmstudio-ai";
-    repo = "lmstudio-python";
-    rev = version;
-    hash = "sha256-QJNVlkSmwinoJ/cMCDpYzYDmd6Q8AGiLHHdk36Fqtk8=";
+  format = "pyproject";
+  build-system = with python3.pkgs; [ pdm-backend ];
+
+  src = fetchPypi {
+    inherit version;
+    pname = "lmstudio";
+    hash = "sha256-RYw0/h+Up9zFIdQia0zugrivfqPajECzG72sVY2adNQ=";
   };
-
-  build-system = with python3.pkgs; [
-    pdm-backend
-  ];
 
   dependencies = with python3.pkgs; [
     httpx
@@ -32,6 +29,6 @@
     description = "LM Studio Python SDK";
     homepage = "https://github.com/lmstudio-ai/lmstudio-python";
     license = licenses.mit;
-    maintainers = [ ];
+    maintainers = [];
   };
 }

@@ -1,3 +1,53 @@
-_: {
-  nixpkgs.overlays = [(import ./packages.nix)];
+# To build a specific package:
+# nix-build -E 'with import <nixpkgs> {}; callPackage ./overlays/<file> {}'
+final: prev: {
+  buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
+  mcp-gateway = prev.callPackage ./mcp-gateway.nix {};
+  lmstudio-python = prev.callPackage ./lmstudio-python.nix {};
+
+  # nix-update:claude-code
+  claude-code = prev.claude-code.overrideAttrs rec {
+    version = "2.0.37";
+    src = final.fetchzip {
+      url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
+      hash = "sha256-x4nHkwTE6qcB2PH+WPC0VyJTGeV6VTzeiiAsiQWChoo=";
+    };
+  };
+
+  # nix-update:snacks-nvim-stable
+  snacks-nvim-stable = prev.vimPlugins.snacks-nvim.overrideAttrs rec {
+    version = "2.30.0";
+    src = final.fetchFromGitHub {
+      owner = "folke";
+      repo = "snacks.nvim";
+      rev = "v${version}";
+      hash = "sha256-5m65Gvc6DTE9v7noOfm0+iQjDrqnrXYYV9QPnmr1JGY=";
+    };
+    doCheck = false; # Fails in explorer.init
+  };
+
+  # tree-sitter-cli = prev.tree-sitter.overrideAttrs (_new: _old: let
+  #     grammars = prev.tree-sitter.withPlugins (_: prev.tree-sitter.allGrammars);
+  #   in {
+  #     postPatch = "ln -s ${grammars} parser";
+  #   }
+  # ).override { webUISupport = true; } ;
+
+  # nix- update:codex: --version-regex "rust-v(.*)"
+  # codex = prev.codex.overrideAttrs (new: old: rec {
+  #   version = "rust-v0.46.0";
+  #   src = prev.fetchFromGitHub {
+  #     owner = "openai";
+  #     repo = "codex";
+  #     tag = "rust-v${new.version}";
+  #     hash = "sha256-o898VjjPKevr1VRlRhJUNWsrHEGEn7jkdzWBj+DpbCs=";
+  #   };
+  #
+  #   cargoDeps = old.cargoDeps.overrideAttrs (prev.lib.const {
+  #     name = "codex-vendor";
+  #     inherit src;
+  #     # outputHash = "sha256-o898VjjPKevr1VRlRhJUNWsrHEGEn7jkdzWBj+DpbCs=";
+  #   });
+  #   cargoHash = "sha256-o898VjjPKevr1VRlRhJUNWsrHEGEn7jkdzWBj+DpbCs=";
+  # });
 }
