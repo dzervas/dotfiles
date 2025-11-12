@@ -5,6 +5,8 @@ in {
     cursor-cli
     codex
     mcp-gateway
+
+    lmstudio
   ];
 
   programs = {

@@ -67,6 +67,7 @@
       requests
       pyserial
       frida-python
+      lmstudio-python
 
       # pip magic # BinaryNinja needs these
       # mcp # AI
