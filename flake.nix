@@ -71,6 +71,15 @@
 
         default = nvim;
       };
+
+      # TODO: Expose the overlays as packages
+      # packages = eachDefaultSystemPassThrough (system: {
+      #   ${system} = let
+      #     pkgs = nixpkgs.legacyPackages.${system};
+      #     overlay = import ./overlays;
+      #     overlayPackages = overlay pkgs pkgs;
+      #   in overlayPackages;
+      # });
     });
   };
 

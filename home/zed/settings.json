@@ -1,5 +1,12 @@
 {
-	"vim_mode": true,
+	"context_servers": {
+  "svelte-mcp": {
+   "source": "extension",
+   "enabled": false,
+   "settings": {}
+  }
+ },
+ "vim_mode": true,
 
 	// Theme
 	"buffer_font_family": "Iosevka Nerd Font",
@@ -114,8 +121,8 @@
 			"provider": "Z.AI"
 		},
 		"default_model": {
-			"model": "GLM-4.6",
-			"provider": "Z.AI"
+			"model": "gpt-5-mini",
+			"provider": "copilot_chat"
 		},
 		"enable_feedback": false,
 		"inline_assistant_model": {

@@ -1,9 +1,17 @@
 # To build a specific package:
 # nix-build -E 'with import <nixpkgs> {}; callPackage ./overlays/<file> {}'
-final: prev: {
+final: prev: rec {
   buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
   mcp-gateway = prev.callPackage ./mcp-gateway.nix {};
   lmstudio-python = prev.callPackage ./lmstudio-python.nix {};
+
+  python = prev.python3.override {
+    self = python;
+    packageOverrides = pyfinal: pyprev: {
+      # lmstudio-python = pyprev.callPackage ./lmstudio-python.nix {};
+      openai-agents = pyprev.openai-agents.overridePythonAttrs { dependencies = [ pyfinal.litellm ] ++ pyprev.openai-agents.dependencies; };
+    };
+  };
 
   # nix-update:claude-code
   claude-code = prev.claude-code.overrideAttrs rec {

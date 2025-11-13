@@ -78,5 +78,31 @@
       pulse.enable = true;
       wireplumber.enable = true;
     };
+
+    # open-webui = {
+    #   enable = true;
+    #   port = 1111;
+    #   environment = {
+    #     ANONYMIZED_TELEMETRY = "False";
+    #     DO_NOT_TRACK = "True";
+    #     SCARF_NO_ANALYTICS = "True";
+    #
+    #     WEBUI_AUTH = "False";
+    #   };
+    # };
+    #
+    # ollama = {
+    #   enable = true;
+    #   models = "/home/dzervas/CryptVMs/ollama/models";
+    #   loadModels = [
+    #     # Tiny coder - for CLI agent mostly
+    #     "qwen2.5-coder:1.5b" # 3b?
+    #     # Tool focused
+    #     "ibm/granite4:tiny-h"
+    #
+    #     # General purpose
+    #     "gpt-oss:20b"
+    #   ];
+    # };
   };
 }
