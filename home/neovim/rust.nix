@@ -28,9 +28,9 @@
   };
 
   # Global rustfmt configuration for hard tabs and 120 character line width
-  home.file."${config.xdg.configHome}/rustfmt/rustfmt.toml".text = ''
-    hard_tabs = true
-    tab_spaces = 4
-    max_width = 100
-  '';
+  # home.file."${config.xdg.configHome}/rustfmt/rustfmt.toml".text = ''
+  #   hard_tabs = true
+  #   tab_spaces = 4
+  #   max_width = 100
+  # '';
 }

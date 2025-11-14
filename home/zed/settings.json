@@ -76,65 +76,9 @@
 
 	// AI
 	"agent": {
-		"always_allow_tool_actions": true,
-		"profiles": {
-			"ask": {
-				"name": "Ask",
-				"tools": {
-					"diagnostics": true,
-					"fetch": true,
-					"list_directory": true,
-					"project_notifications": false,
-					"now": true,
-					"find_path": true,
-					"read_file": true,
-					"open": true,
-					"grep": true,
-					"thinking": true,
-					"web_search": true
-				},
-				"enable_all_context_servers": false,
-				"context_servers": {
-					"mcp-server-sequential-thinking": {
-						"tools": {
-							"sequentialthinking": true
-						}
-					}
-				}
-			},
-			"brainstorm": {
-				"name": "BrainStorm",
-				"tools": {},
-				"enable_all_context_servers": false,
-				"context_servers": {
-					"mcp-server-sequential-thinking": {
-						"tools": {
-							"sequentialthinking": true
-						}
-					}
-				}
-			}
-		},
-		"default_profile": "write",
-		"commit_message_model": {
-			"model": "GLM-4.5-Air",
-			"provider": "Z.AI"
-		},
-		"default_model": {
-			"model": "gpt-5-mini",
-			"provider": "copilot_chat"
-		},
-		"enable_feedback": false,
-		"inline_assistant_model": {
-			"model": "GLM-4.5-Air",
-			"provider": "Z.AI"
-		},
-		"play_sound_when_agent_done": true,
-		"thread_summary_model": {
-			"model": "GLM-4.5-Air",
-			"provider": "Z.AI"
-		}
-	},
+  "default_profile": "ask",
+  "model_parameters": []
+ },
 	"features": {
 		"edit_prediction_provider": "supermaven"
 	},
