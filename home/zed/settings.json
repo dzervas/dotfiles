@@ -1,12 +1,17 @@
 {
-	"context_servers": {
-  "svelte-mcp": {
-   "source": "extension",
-   "enabled": false,
-   "settings": {}
+	"edit_predictions": {
+		"lmstudio": {
+   "model": "qwen2.5-coder-1.5b-instruct"
   }
- },
- "vim_mode": true,
+	},
+	"context_servers": {
+		"svelte-mcp": {
+			"source": "extension",
+			"enabled": false,
+			"settings": {}
+		}
+	},
+	"vim_mode": true,
 
 	// Theme
 	"buffer_font_family": "Iosevka Nerd Font",
@@ -15,7 +20,7 @@
 	"theme": "VSCode Dark Modern",
 
 	// Languages
-	"format_on_save": "off",
+	"format_on_save": "on",
 	"hard_tabs": true,
 	"load_direnv": "shell_hook",
 
@@ -76,11 +81,11 @@
 
 	// AI
 	"agent": {
-  "default_profile": "ask",
+  "always_allow_tool_actions": true,
   "model_parameters": []
  },
 	"features": {
-		"edit_prediction_provider": "supermaven"
+		"edit_prediction_provider": "lmstudio"
 	},
 	"language_models": {
 		"lmstudio": {
@@ -179,7 +184,7 @@
 		"show": "auto"
 	},
 	"preferred_line_length": 100,
-	"relative_line_numbers": true,
+	"relative_line_numbers": "enabled",
 	"search": {
 		"regex": true
 	},

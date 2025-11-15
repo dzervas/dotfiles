@@ -13,10 +13,14 @@ in {
     codex = {
       enable = true;
       settings = {
-        model = "gpt-5";
-        model_reasoning_effort = "high";
         approval_policy = "untrusted";
-        tools.web_search = true;
+        project_doc_fallback_filenames = ["CLAUDE.md" ".rules" "CONTRIBUTING.md"];
+        sandbox_mode = "workspace-write";
+        tui.notifications = true;
+        features = {
+          unified_exec = true;
+          web_search_request = true;
+        };
       };
     };
 
