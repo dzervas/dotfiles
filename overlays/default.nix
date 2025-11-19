@@ -15,10 +15,10 @@ final: prev: rec {
 
   # nix-update:claude-code
   claude-code = prev.claude-code.overrideAttrs rec {
-    version = "2.0.41";
+    version = "2.0.45";
     src = final.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-DvREOzNRzuR8ZsVePIYcAg+50JyEiIAclUDoIGmJqhk=";
+      hash = "sha256-m0kgfc8rwLO6kP/pXOlWCn850jGZtytyZ0oRy9pE0gE=";
     };
   };
 
@@ -43,7 +43,7 @@ final: prev: rec {
 
   # nix- update:codex: --version-regex "rust-v(.*)"
   # codex = prev.codex.overrideAttrs (new: old: rec {
-  #   version = "rust-v0.46.0";
+  #   version = "0.58.0";
   #   src = prev.fetchFromGitHub {
   #     owner = "openai";
   #     repo = "codex";

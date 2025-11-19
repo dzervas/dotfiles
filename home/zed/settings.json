@@ -1,16 +1,4 @@
 {
-	"edit_predictions": {
-		"lmstudio": {
-   "model": "qwen2.5-coder-1.5b-instruct"
-  }
-	},
-	"context_servers": {
-		"svelte-mcp": {
-			"source": "extension",
-			"enabled": false,
-			"settings": {}
-		}
-	},
 	"vim_mode": true,
 
 	// Theme
@@ -81,11 +69,11 @@
 
 	// AI
 	"agent": {
-  "always_allow_tool_actions": true,
-  "model_parameters": []
- },
+		"always_allow_tool_actions": true,
+		"model_parameters": []
+	},
 	"features": {
-		"edit_prediction_provider": "lmstudio"
+		"edit_prediction_provider": "supermaven"
 	},
 	"language_models": {
 		"lmstudio": {
@@ -137,6 +125,7 @@
 		"comment": true,
 		"dockerfile": true,
 		"fish": true,
+		"github-actions": true,
 		"html": true,
 		"hurl": true,
 		"jsonnet": true,
@@ -152,7 +141,6 @@
 		"javascript-snippets": true,
 		"python-snippets": true,
 		"rust-snippets": true,
-		"svelte-mcp": true,
 		"svelte-snippets": true,
 		"typescript-snippets": true,
 
@@ -160,9 +148,15 @@
 		"probe-rs": true,
 
 		// MCP
-		"kagimcp": true,
+		// "kagimcp": true,
 		// "mcp-server-github": true,
-		"mcp-server-sequential-thinking": true
+		// "svelte-mcp": true,
+		"mcp-server-sequential-thinking": true,
+
+		// ACP
+		"opencode": true,
+
+		"discord-presence": true
 	},
 
 	// UI & Behavior
@@ -184,11 +178,10 @@
 		"show": "auto"
 	},
 	"preferred_line_length": 100,
-	"relative_line_numbers": "enabled",
+	"relative_line_numbers": true,
 	"search": {
 		"regex": true
 	},
-	"snippet_sort_order": "top",
 	"tabs": {
 		"file_icons": true,
 		"show_diagnostics": "errors"

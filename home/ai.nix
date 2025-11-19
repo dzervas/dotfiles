@@ -2,26 +2,23 @@
   tools = mcp: tools: builtins.map(t: "mcp__${mcp}__${t}") tools;
 in {
   home.packages = with pkgs; [
-    cursor-cli
-    codex
-    mcp-gateway
-
+    github-copilot-cli
     lmstudio
   ];
 
   programs = {
     codex = {
       enable = true;
-      settings = {
-        approval_policy = "untrusted";
-        project_doc_fallback_filenames = ["CLAUDE.md" ".rules" "CONTRIBUTING.md"];
-        sandbox_mode = "workspace-write";
-        tui.notifications = true;
-        features = {
-          unified_exec = true;
-          web_search_request = true;
-        };
-      };
+      # settings = {
+      #   approval_policy = "untrusted";
+      #   project_doc_fallback_filenames = ["CLAUDE.md" ".rules" "CONTRIBUTING.md"];
+      #   sandbox_mode = "workspace-write";
+      #   tui.notifications = true;
+      #   features = {
+      #     unified_exec = true;
+      #     web_search_request = true;
+      #   };
+      # };
     };
 
     # TODO: Add skills: https://docs.claude.com/en/docs/claude-code/skills
@@ -134,6 +131,21 @@ in {
         apiKeyHelper = "cat ~/.avante_zai_api_key";
       };
     };
+
+    gemini-cli = {
+      enable = true;
+      settings = {
+        contextFileName = ["CLAUDE.md" "AGENTS.md" ".rules" "CONTRIBUTING.md"];
+        security.auth.selectedType = "oauth-personal";
+
+        fileFiltering.enableRecursiveFileSearch = true;
+        autoAccept = true;
+        checkpointing.enabled = true;
+        preferredEditor = "zeditor";
+        sandbox = true;
+      };
+    };
+
     opencode = {
       enable = true;
       settings = {

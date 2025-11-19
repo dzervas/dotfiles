@@ -99,7 +99,6 @@
       freecad
 
       cameractrls-gtk4
-      github-copilot-cli
     ];
 
   };
