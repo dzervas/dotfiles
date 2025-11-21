@@ -134,16 +134,16 @@ in {
 
     gemini-cli = {
       enable = true;
-      settings = {
-        contextFileName = ["CLAUDE.md" "AGENTS.md" ".rules" "CONTRIBUTING.md"];
-        security.auth.selectedType = "oauth-personal";
-
-        fileFiltering.enableRecursiveFileSearch = true;
-        autoAccept = true;
-        checkpointing.enabled = true;
-        preferredEditor = "zeditor";
-        sandbox = true;
-      };
+      # settings = {
+      #   contextFileName = ["CLAUDE.md" "AGENTS.md" ".rules" "CONTRIBUTING.md"];
+      #   security.auth.selectedType = "oauth-personal";
+      #
+      #   fileFiltering.enableRecursiveFileSearch = true;
+      #   autoAccept = true;
+      #   checkpointing.enabled = true;
+      #   preferredEditor = "zeditor";
+      #   sandbox = true;
+      # };
     };
 
     opencode = {

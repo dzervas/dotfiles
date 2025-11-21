@@ -46,7 +46,7 @@
       ];
     };
     # Thunar archive manager
-    file-roller.enable = true;
+    # file-roller.enable = true;
     # Save xfce settings
     xfconf.enable = true;
   };

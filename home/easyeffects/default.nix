@@ -1,5 +1,5 @@
 { config, ... }: let
-  baseDir = "${config.xdg.configHome}/easyeffects";
+  baseDir = "${config.xdg.dataHome}/easyeffects";
   mkPreset = { name, source, devices ? [], isInput ? true }: let
     dir = if isInput then "input" else "output";
   in {

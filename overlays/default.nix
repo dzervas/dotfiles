@@ -15,10 +15,10 @@ final: prev: rec {
 
   # nix-update:claude-code
   claude-code = prev.claude-code.overrideAttrs rec {
-    version = "2.0.45";
+    version = "2.0.50";
     src = final.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-m0kgfc8rwLO6kP/pXOlWCn850jGZtytyZ0oRy9pE0gE=";
+      hash = "sha256-mZQkqeL/F/9u5esy1j1pUjcyzeaShREx+vMuvZ5Zrz8=";
     };
   };
 
