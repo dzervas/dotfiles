@@ -164,6 +164,7 @@ in {
         { title = "atuin-desktop"; rules = ["float"]; }
         { class = "spotify"; rules = ["float" "center"]; }
         { class = "thunar"; title = ''^Rename ".*"$''; rules = ["float"]; }
+        { title = "Media viewer"; class = "org.telegram.desktop"; rules = ["float" "center"]; }
       ];
 
       # Layouts

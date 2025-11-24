@@ -72,6 +72,7 @@
 			"space w": "editor::Format",
 			"space a": "agent::ToggleFocus",
 			"space f": "project_panel::ToggleFocus",
+			"space s": "outline_panel::ToggleFocus",
 			"g down": "editor::GoToDiagnostic",
 			"g up": "editor::GoToPreviousDiagnostic"
 		},
@@ -96,6 +97,14 @@
 			"r": "project_panel::Rename"
 		},
 		"context": "ProjectPanel && not_editing"
+	},
+
+	// Agent dock
+	{
+		"bindings": {
+			"ctrl-n": "agent::NewExternalAgentThread"
+		},
+		"context": "AcpThread"
 	},
 
 	// Global text-area stuff

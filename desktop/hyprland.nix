@@ -5,7 +5,7 @@
   # - 1Password rules
   # - Podman crash
 
-  environment.systemPackages = [ pkgs.sddm-chili-theme ]; # SDDM theme
+  environment.systemPackages = [ pkgs.sddm-chili-theme pkgs.file-roller ];
 
   services = {
     # https://wiki.hyprland.org/Useful-Utilities/Systemd-start/#installation

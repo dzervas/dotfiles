@@ -4,12 +4,18 @@
 	// 	"enabled": true,
 	// 	"ai_provider": "Z.AI"
 	// },
-
+	"agent_ui_font_size": 18.0,
+	"agent_servers": {
+		"codex-debug": {
+			"command": "/home/dzervas/Lab/codex-acp/target/debug/codex-acp"
+		}
+	},
 	"vim_mode": true,
 
 	// Theme
 	"buffer_font_family": "Iosevka Nerd Font",
 	"buffer_font_size": 18,
+	"agent_buffer_font_size": 17,
 	"icon_theme": "Colored Zed Icons Theme Dark",
 	"theme": "VSCode Dark Modern",
 
@@ -143,6 +149,7 @@
 		"comment": true,
 		"dockerfile": true,
 		"fish": true,
+		"git-firefly": true,
 		"github-actions": true,
 		"html": true,
 		"hurl": true,
@@ -197,7 +204,7 @@
 		"show": "auto"
 	},
 	"preferred_line_length": 100,
-	"relative_line_numbers": true,
+	"relative_line_numbers": "enabled",
 	"search": {
 		"regex": true
 	},
