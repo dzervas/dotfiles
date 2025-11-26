@@ -4,6 +4,8 @@ final: prev: rec {
   buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
   mcp-gateway = prev.callPackage ./mcp-gateway.nix {};
   lmstudio-python = prev.callPackage ./lmstudio-python.nix {};
+  # openspec = prev.callPackage ./openspec.nix {};
+  # codex = prev.callPackage ./codex.nix {};
 
   python = prev.python3.override {
     self = python;
@@ -13,14 +15,14 @@ final: prev: rec {
     };
   };
 
-  # nix-update:claude-code
-  claude-code = prev.claude-code.overrideAttrs rec {
-    version = "2.0.51";
-    src = final.fetchzip {
-      url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-rfJZaACY+Kbm+0lWOPwAfl/x2yFxskLKZpJJhqlccSY=";
-    };
-  };
+  # nix- update:claude-code
+  # claude-code = prev.claude-code.overrideAttrs rec {
+  #   version = "2.0.51";
+  #   src = final.fetchzip {
+  #     url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
+  #     hash = "sha256-rfJZaACY+Kbm+0lWOPwAfl/x2yFxskLKZpJJhqlccSY=";
+  #   };
+  # };
 
   # nix-update:snacks-nvim-stable
   snacks-nvim-stable = prev.vimPlugins.snacks-nvim.overrideAttrs rec {

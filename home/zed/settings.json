@@ -71,7 +71,7 @@
 		"mute_on_join": true
 	},
 	"collaboration_panel": {
-		"button": false
+		"button": true
 	},
 	"git": {
 		"inline_blame": {
