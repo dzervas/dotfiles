@@ -166,6 +166,7 @@
 		"html-snippets": true,
 		"javascript-snippets": true,
 		"python-snippets": true,
+		"react-snippets": true,
 		"rust-snippets": true,
 		"svelte-snippets": true,
 		"typescript-snippets": true,
@@ -180,9 +181,7 @@
 		"mcp-server-sequential-thinking": true,
 
 		// ACP
-		"opencode": true,
-
-		"discord-presence": true
+		"opencode": true
 	},
 
 	// UI & Behavior

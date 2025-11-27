@@ -102,9 +102,9 @@
 	// Agent dock
 	{
 		"bindings": {
-			"ctrl-n": "agent::NewExternalAgentThread"
+			"alt-n": "agent::NewExternalAgentThread"
 		},
-		"context": "AcpThread"
+		"context": "AcpThread || (AcpThread && Editor)"
 	},
 
 	// Global text-area stuff
