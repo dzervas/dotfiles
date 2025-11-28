@@ -1,17 +1,25 @@
 # To build a specific package:
 # nix-build -E 'with import <nixpkgs> {}; callPackage ./overlays/<file> {}'
+# or
+# nix build --impure --expr 'let pkgs = import <nixpkgs> {}; in pkgs.callPackage /home/dzervas/Lab/dotfiles/overlays/<file> {}'
+# To find the nix store path of a package:
+# nix path-info --impure --expr 'let pkgs = import <nixpkgs> {}; in pkgs.callPackage /home/dzervas/Lab/dotfiles/overlays/<file> {}'
+# To remove the build output of a nix store path:
+# nix-store --delete /nix/store/hash
 final: prev: rec {
-  buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
-  mcp-gateway = prev.callPackage ./mcp-gateway.nix {};
-  lmstudio-python = prev.callPackage ./lmstudio-python.nix {};
-  # openspec = prev.callPackage ./openspec.nix {};
+  buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix { };
+  mcp-gateway = prev.callPackage ./mcp-gateway.nix { };
+  lmstudio-python = prev.callPackage ./lmstudio-python.nix { };
+  openspec = prev.callPackage ./openspec.nix { };
   # codex = prev.callPackage ./codex.nix {};
 
   python = prev.python3.override {
     self = python;
     packageOverrides = pyfinal: pyprev: {
       # lmstudio-python = pyprev.callPackage ./lmstudio-python.nix {};
-      openai-agents = pyprev.openai-agents.overridePythonAttrs { dependencies = [ pyfinal.litellm ] ++ pyprev.openai-agents.dependencies; };
+      openai-agents = pyprev.openai-agents.overridePythonAttrs {
+        dependencies = [ pyfinal.litellm ] ++ pyprev.openai-agents.dependencies;
+      };
     };
   };
 

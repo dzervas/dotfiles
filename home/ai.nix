@@ -4,7 +4,7 @@ in {
   home.packages = with pkgs; [
     github-copilot-cli
     lmstudio
-    # openspec
+    openspec
   ];
 
   programs = {

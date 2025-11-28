@@ -1,26 +1,58 @@
-{ lib
-, buildNpmPackage
-, fetchurl
+# nix-update:openspec
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  nodejs_22,
+  pnpm,
+  makeWrapper,
 }:
-
-buildNpmPackage rec {
+stdenv.mkDerivation rec {
   pname = "openspec";
   version = "0.16.0";
 
-  src = fetchurl {
-    url = "https://registry.npmjs.org/@fission-ai/openspec/-/openspec-${version}.tgz";
-    hash = "sha256-1YcXo8sNWamrCQld33PE/dyZr/vz0dZRWp8dkDjnzWA=";
+  src = fetchFromGitHub {
+    owner = "Fission-AI";
+    repo = "OpenSpec";
+    rev = "v${version}";
+    hash = "sha256-eBZvgjjEzhoO1Gt4B3lsgOvJ98uGq7gaqdXQ40i0SqY=";
   };
 
-  # Generate the lockfile inside the build so npmDepsHash stays stable without vendoring one.
-  postPatch = ''
-    npm install --package-lock-only --ignore-scripts
+  nativeBuildInputs = [
+    nodejs_22
+    pnpm
+    pnpm.configHook
+    makeWrapper
+  ];
+
+  # Download dependencies up-front for offline, reproducible installs.
+  pnpmDeps = pnpm.fetchDeps {
+    inherit pname version src;
+    fetcherVersion = 2;
+    hash = "sha256-qqIdSF41gv4EDxEKP0sfpW1xW+3SMES9oGf2ru1lUnE=";
+  };
+
+  buildPhase = ''
+    runHook preBuild
+    pnpm install --offline --frozen-lockfile
+    pnpm run build
+    runHook postBuild
   '';
 
-  npmDepsHash = "sha256-1YcXo8sNWamrCQld33PE/dyZr/vz0dZRWp8dkDjnzWA=";
+  installPhase = ''
+    runHook preInstall
+    mkdir -p $out/bin
+    cp -r dist bin package.json $out/
+    cp -r node_modules $out/
+    # Wrapper ensures we use the bundled Node version and can resolve deps.
+    makeWrapper ${nodejs_22}/bin/node $out/bin/openspec \
+      --set NODE_PATH $out/node_modules \
+      --add-flags $out/bin/openspec.js
+    runHook postInstall
+  '';
 
-  # The tarball ships pre-built JS in dist/, so skip running upstream build.
-  dontNpmBuild = true;
+  # Vitest isn't needed for the packaged CLI.
+  doCheck = false;
 
   meta = with lib; {
     description = "AI-native CLI for spec-driven development";
