@@ -1,25 +1,22 @@
 { pkgs, ... }: {
   # Issues:
   # - Can't install extensions defined below - see https://github.com/nix-community/home-manager/issues/2216
-  # - Can't defined chrome://flags
+  # - Can't define chrome://flags
   # - Can't change settings
-  # - Can't define custom search engine (google)
+  # - Can't define custom search engine (kagi)
 
-  # chrome://ungoogled-first-run/
+  # TODO: Make a new tab page with many things
   programs.chromium = {
     enable = true;
-    package = pkgs.ungoogled-chromium;
+    package = pkgs.brave;
 
     extensions = [
       { id = "aeblfdkhhhdcdjpifhhbdiojplfjncoa"; } # 1Password
 
       { id = "cjpalhdlnbpafiamejdnhcphjbkeiagm"; } # uBlock Origin
       { id = "mnjggcdmjocbbbhaepdhchncahnbgone"; } # SponsorBlock
-      { id = "pncfbmialoiaghdehhbnbhkkgmjanfhe"; } # uBlacklist
-      { id = "mdjildafknihdffpkfmmpnpoiajfjnjd"; } # Consent-O-Matic
       { id = "enamippconapkdmgfgjchkhakpfinmaj"; } # DeArrow
-
-      { id = "ocllfmhjhfmogablefmibmjcodggknml"; } # Recent Tabs (Ctrl-Tab)
+      { id = "cdglnehniifkbagbbombnjghhcihifij"; } # Kagi
     ];
 
     # https://github.com/ungoogled-software/ungoogled-chromium/blob/master/docs/flags.md
@@ -36,6 +33,9 @@
       # TODO: Move to wayland-fixes
       "--enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE,ReducedSystemInfo"
       "--ozone-platform=wayland"
+
+      # Most recent tab switcher
+      "--enable-features=CtrlTabMRU"
     ];
   };
 }
