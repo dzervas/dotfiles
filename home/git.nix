@@ -41,7 +41,7 @@
 
         color.ui = "auto";
         core.autocrlf = "input";
-        web.browser = "firefox";
+        web.browser = "brave";
         pull.rebase = true;
 
         # Output stuff
@@ -85,6 +85,8 @@
         ".aider.*"
         ".jj"
         ".worktrees"
+        ".gemini"
+        ".github/prompts"
       ];
     };
 

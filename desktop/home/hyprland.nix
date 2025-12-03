@@ -165,6 +165,8 @@ in {
         { class = "spotify"; rules = ["float" "center"]; }
         { class = "thunar"; title = ''^Rename ".*"$''; rules = ["float"]; }
         { title = "Media viewer"; class = "org.telegram.desktop"; rules = ["float" "center"]; }
+        { title = "File Operation Progress"; class = "Thunar"; rules = ["float" "center"]; }
+        { class = "xdg-desktop-portal-gtk"; rules = ["float" "center"]; }
       ];
 
       # Layouts

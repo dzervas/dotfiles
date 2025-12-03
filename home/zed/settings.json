@@ -4,9 +4,24 @@
 	// 	"enabled": true,
 	// 	"ai_provider": "Z.AI"
 	// },
-	"agent_ui_font_size": 18.0,
+	"context_servers": {
+  "some-mcp-server": {
+   "enabled": true,
+   "command": "mcp-server-playwright",
+   "args": [],
+   "env": {}
+  },
+  "mcp-server-sequential-thinking": {
+   "enabled": false,
+   "settings": {}
+  }
+ },
+ "agent_ui_font_size": 18.0,
 	"agent_servers": {
-		"codex-debug": {
+		"claude": {
+   "default_mode": "acceptEdits"
+  },
+  "codex-debug": {
 			"command": "/home/dzervas/Lab/codex-acp/target/debug/codex-acp"
 		}
 	},
@@ -91,13 +106,13 @@
 			"model": "gpt-5-mini"
 		},
 		"default_model": {
-			"provider": "openrouter",
-			"model": "openai/gpt-3.5-turbo-instruct"
+			"provider": "copilot_chat",
+			"model": "claude-haiku-4.5"
 		},
 		"model_parameters": [{ "provider": "Z.AI", "model": "GLM-4.6", "temperature": 0.3 }]
 	},
 	"features": {
-		"edit_prediction_provider": "supermaven"
+		"edit_prediction_provider": "zed"
 	},
 	"language_models": {
 		"lmstudio": {

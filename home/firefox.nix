@@ -2,7 +2,7 @@
   # Issues:
   # - Skroutz iframe is broken
 
-  setup.browser = "firefox";
+  # setup.browser = "firefox";
 
   stylix.targets.firefox.profileNames = ["default"];
   programs.firefox = {

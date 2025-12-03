@@ -5,6 +5,8 @@
   # - Can't change settings
   # - Can't define custom search engine (kagi)
 
+  setup.browser = "brave";
+
   # TODO: Make a new tab page with many things
   programs.chromium = {
     enable = true;
