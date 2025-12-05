@@ -2,8 +2,8 @@
   mkRule = { rules, class ? null, title ? null }:
     map (rule:
       let
-        classStr = if class != null then ",class:${class}" else "";
-        titleStr = if title != null then ",title:${title}" else "";
+        classStr = if class != null then ",match:class ${class}" else "";
+        titleStr = if title != null then ",match:title ${title}" else "";
       in "${rule}${classStr}${titleStr}") rules;
   mkRules = rules: builtins.concatLists (map mkRule rules);
 in {
@@ -154,19 +154,19 @@ in {
       windowrule = mkRules [
         # mkRule { title = "^1Password$"; class = "^1Password$"; rules = ["float" "center" "persistentsize" "pin" "stayfocused"]; }
         # mkRule { title = ".+— 1Password$"; rules = ["unset" "float" "center" "persistentsize"]; }
-        { title = "1Password"; class = "1Password"; rules = ["float" "center" ]; }
-        { class = "jadx-gui-JadxGUI"; rules = ["float"]; }
-        { class = "firefox"; title = "Picture-in-Picture"; rules = ["float" "center"]; }
-        { class = "Steam Settings"; rules = ["float"]; }
-        { class = "OrcaSlicer"; rules = ["suppressevent"]; }
-        { class = "org.pulseaudio.pavucontrol"; rules = ["float" "center"]; }
-        { title = "Ropuka's Idle Island"; rules = ["float" "persistentsize" "fullscreenstate 0 0"]; }
-        { title = "atuin-desktop"; rules = ["float"]; }
-        { class = "spotify"; rules = ["float" "center"]; }
-        { class = "thunar"; title = ''^Rename ".*"$''; rules = ["float"]; }
-        { title = "Media viewer"; class = "org.telegram.desktop"; rules = ["float" "center"]; }
-        { title = "File Operation Progress"; class = "Thunar"; rules = ["float" "center"]; }
-        { class = "xdg-desktop-portal-gtk"; rules = ["float" "center"]; }
+        { title = "1Password"; class = "1Password"; rules = ["float on" "center on" ]; }
+        { class = "jadx-gui-JadxGUI"; rules = ["float on"]; }
+        { class = "firefox"; title = "Picture-in-Picture"; rules = ["float on" "center on"]; }
+        { class = "Steam Settings"; rules = ["float on"]; }
+        { class = "OrcaSlicer"; rules = ["suppress_event on"]; }
+        { class = "org.pulseaudio.pavucontrol"; rules = ["float on" "center on"]; }
+        { title = "Ropuka's Idle Island"; rules = ["float on" "persistent_size on" "fullscreen_state 0 0"]; }
+        { title = "atuin-desktop"; rules = ["float on"]; }
+        { class = "spotify"; rules = ["float on" "center on"]; }
+        { class = "thunar"; title = ''^Rename ".*"$''; rules = ["float on"]; }
+        { title = "Media viewer"; class = "org.telegram.desktop"; rules = ["float on" "center on"]; }
+        { title = "File Operation Progress"; class = "Thunar"; rules = ["float on" "center on"]; }
+        { class = "xdg-desktop-portal-gtk"; rules = ["float on" "center on"]; }
       ];
 
       # Layouts
@@ -225,7 +225,7 @@ in {
     };
 
     plugins = [
-      inputs.hyprland-dynamic-cursors.packages.${pkgs.system}.hypr-dynamic-cursors
+      # inputs.hyprland-dynamic-cursors.packages.${pkgs.system}.hypr-dynamic-cursors
       # inputs.hyprland-hy3.packages.${pkgs.system}.hy3
     ];
 

@@ -114,8 +114,8 @@
 
     # HyprLand
     hyprland.url = "github:hyprwm/Hyprland";
-    hyprland-dynamic-cursors.url = "github:VirtCode/hypr-dynamic-cursors";
-    hyprland-dynamic-cursors.inputs.hyprland.follows = "hyprland";
+    # hyprland-dynamic-cursors.url = "github:VirtCode/hypr-dynamic-cursors";
+    # hyprland-dynamic-cursors.inputs.hyprland.follows = "hyprland";
     hyprland-hy3.url = "github:outfoxxed/hy3";
     hyprland-hy3.inputs.hyprland.follows = "hyprland";
 
