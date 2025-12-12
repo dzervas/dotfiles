@@ -8,28 +8,17 @@ in {
   ];
 
   programs = {
-    codex = {
-      enable = true;
-      # settings = {
-      #   approval_policy = "untrusted";
-      #   project_doc_fallback_filenames = ["CLAUDE.md" ".rules" "CONTRIBUTING.md"];
-      #   sandbox_mode = "workspace-write";
-      #   tui.notifications = true;
-      #   features = {
-      #     unified_exec = true;
-      #     web_search_request = true;
-      #   };
-      # };
-    };
+    codex.enable = true;
 
     # TODO: Add skills: https://docs.claude.com/en/docs/claude-code/skills
     claude-code = {
       enable = true;
       package = pkgs.claude-code;
       settings = {
-        model = "GLM-4.6";
+        model = "opusplan";
         enableAllProjectMcpServers = false;
         includeCoAuthoredBy = false;
+        alwaysThinkingEnabled = true;
         statusLine = {
           command = "input=$(cat); echo \"[$(echo \"$input\" | jq -r '.model.display_name')]  $(basename \"$(echo \"$input\" | jq -r '.workspace.current_dir')\")\"";
           padding = 0;
@@ -126,25 +115,16 @@ in {
         };
 
         env = {
-          ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+          ANTHROPIC_BASE_URL = "http://127.0.0.1:6666";
+          ANTHROPIC_AUTH_TOKEN = "sk-dummy";
           API_TIMEOUT_MS = "3000000";
-        };
-        apiKeyHelper = "cat ~/.avante_zai_api_key";
-      };
-    };
 
-    gemini-cli = {
-      enable = true;
-      # settings = {
-      #   contextFileName = ["CLAUDE.md" "AGENTS.md" ".rules" "CONTRIBUTING.md"];
-      #   security.auth.selectedType = "oauth-personal";
-      #
-      #   fileFiltering.enableRecursiveFileSearch = true;
-      #   autoAccept = true;
-      #   checkpointing.enabled = true;
-      #   preferredEditor = "zeditor";
-      #   sandbox = true;
-      # };
+          ANTHROPIC_DEFAULT_OPUS_MODEL = "gpt-5.2(high)";
+          ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.1-codex-max(medium)";
+          ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.6";
+          CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.1-codex-max(medium)";
+        };
+      };
     };
 
     opencode = {
