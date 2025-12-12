@@ -52,6 +52,16 @@
 
   profiles = {
     default = {};
+    high-light = {
+      controls = {
+        gain = 0;
+        backlight_compensation = 0;
+
+        auto_exposure = 3;
+        exposure_time_absolute = 200;
+        exposure_dynamic_framerate = 1;
+      };
+    };
     mid-light = {
       controls = {
         gain = 210;

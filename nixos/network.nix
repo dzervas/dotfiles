@@ -1,7 +1,7 @@
 { config, pkgs, ... }: {
   networking = {
     useNetworkd = true;
-    nameservers = [ "1.1.1.1" "1.0.0.1" ];
+    nameservers = [ "8.8.8.8" "1.1.1.1" ];
     networkmanager = {
       enable = true;
       # Use systemd-resolved so that DNS can be split based on the domains:
@@ -69,12 +69,7 @@
     };
 
     # resolved already handles this
-    # avahi = {
-    #   enable = true;
-    #   nssmdns4 = true;
-    #   ipv6 = false;
-    #   denyInterfaces = ["zt+" "tailscale+" "tun+"];
-    # };
+    avahi.enable = false;
   };
 
   boot.extraModulePackages = with config.boot.kernelPackages; [

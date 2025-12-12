@@ -200,10 +200,8 @@
           tug = [ "bookmark" "move" "--from" "closest_bookmark(@-)" "--to" "@-"];
         };
 
-        git = {
-          auto-local-bookmark = true;
-          sign-on-push = true;
-        };
+        git.sign-on-push = true;
+        remotes.origin.auto-track-bookmarks = "glob:*";
 
         # Sign all commits owned by us
         signing = {

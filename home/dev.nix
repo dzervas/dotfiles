@@ -46,14 +46,14 @@
 
   home.packages = with pkgs; [
     # Still doesn't work! No languages detected!
-    (
-      (
-        tree-sitter.overrideAttrs (_: let
-          grammars = tree-sitter.withPlugins (_: tree-sitter.allGrammars);
-        in { postPatch = "ln -s ${grammars} parser"; }
-        )
-      ).override { webUISupport = true; }
-    )
+    # (
+    #   (
+    #     tree-sitter.overrideAttrs (_: let
+    #       grammars = tree-sitter.withPlugins (_: tree-sitter.allGrammars);
+    #     in { postPatch = "ln -s ${grammars} parser"; }
+    #     )
+    #   ).override { webUISupport = true; }
+    # )
 
     go
 

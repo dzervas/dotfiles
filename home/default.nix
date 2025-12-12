@@ -46,11 +46,6 @@
     katerc.source = ./katerc;
   };
 
-  services = {
-    keybase.enable = true;
-    # flameshot.enable = true; # Requires grim!
-  };
-
   gtk = {
     enable = true;
 
@@ -91,7 +86,7 @@
 
       nix-update
 
-      (tree-sitter.withPlugins (p: builtins.attrValues p))
+      # (tree-sitter.withPlugins (p: builtins.attrValues p))
 
       (lib.mkIf config.setup.isLaptop powertop)
       (lib.mkIf (!config.setup.isLaptop) plasticity)
@@ -103,8 +98,26 @@
 
   };
 
-  # Disable gnome-keyring's ssh component to avoid conflicts with ssh-agent
-  services.gnome-keyring.components = [ "secrets" ];
+  services = {
+    keybase.enable = true;
+    # flameshot.enable = true; # Requires grim!
+
+    # Disable gnome-keyring's ssh component to avoid conflicts with ssh-agent
+    gnome-keyring.components = [ "secrets" ];
+
+    podman = {
+      enable = true;
+      containers.cli-proxy-api = {
+        image = "docker.io/eceasy/cli-proxy-api";
+        autoUpdate = "registry";
+        ports = [ "127.0.0.1:6666:8317" ];
+        volumes = [
+          "/home/dzervas/.cliproxyapi-docker/config.yaml:/CLIProxyAPI/config.yaml"
+          "/home/dzervas/.cliproxyapi-docker/auth:/root/.cli-proxy-api"
+        ];
+      };
+    };
+  };
 
   stylix = {
     enable = true;
