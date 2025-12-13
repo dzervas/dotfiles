@@ -119,10 +119,10 @@ in {
           ANTHROPIC_AUTH_TOKEN = "sk-dummy";
           API_TIMEOUT_MS = "3000000";
 
-          ANTHROPIC_DEFAULT_OPUS_MODEL = "gpt-5.2(high)";
-          ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.1-codex-max(medium)";
+          ANTHROPIC_DEFAULT_OPUS_MODEL = "gpt-5.2";
+          ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.1-codex-max";
           ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.6";
-          CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.1-codex-max(medium)";
+          CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.1-codex-max";
         };
       };
     };

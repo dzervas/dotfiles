@@ -23,14 +23,14 @@ final: prev: rec {
     };
   };
 
-  # nix- update:claude-code
-  # claude-code = prev.claude-code.overrideAttrs rec {
-  #   version = "2.0.51";
-  #   src = final.fetchzip {
-  #     url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-  #     hash = "sha256-rfJZaACY+Kbm+0lWOPwAfl/x2yFxskLKZpJJhqlccSY=";
-  #   };
-  # };
+  # nix-update:claude-code
+  claude-code = prev.claude-code.overrideAttrs rec {
+    version = "2.0.69";
+    src = final.fetchzip {
+      url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
+      hash = "sha256-iQ+iVv3sY0oxGCZuuatcl2LSWvBfqSA+/RmeFgiMDDY=";
+    };
+  };
 
   # nix-update:snacks-nvim-stable
   snacks-nvim-stable = prev.vimPlugins.snacks-nvim.overrideAttrs rec {
