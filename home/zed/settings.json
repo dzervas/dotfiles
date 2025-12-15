@@ -38,6 +38,9 @@
 		"Rust": {
 			"format_on_save": "off",
 			"preferred_line_length": 100
+		},
+		"Nix": {
+			"format_on_save": "off"
 		}
 	},
 	"lsp": {
@@ -99,7 +102,7 @@
 		},
 		"openai_compatible": {
 			"CLIProxyAPI": {
-				"api_url": "http://127.0.0.1:6666/v1",
+				"api_url": "http://127.0.0.1:6060/v1",
 				"available_models": [
 					{
 						"name": "gpt-5.1-codex-max",
@@ -181,11 +184,11 @@
 						}
 					},
 					{
-						"name": "gpt-5.1",
+						"name": "gpt-5.2",
 						"max_tokens": 400000,
 						"max_output_tokens": 128000,
 						"max_completion_tokens": 400000,
-						"display_name": "GPT 5.1",
+						"display_name": "GPT 5.2",
 						"capabilities": {
 							"tools": true,
 							"images": true,
@@ -301,7 +304,7 @@
 
 	// AI Nitpicks
 	"agent": {
-		"default_profile": "ask",
+		"default_profile": "write",
 		"play_sound_when_agent_done": true,
 		"always_allow_tool_actions": true,
 		"inline_assistant_model": {

@@ -8,12 +8,15 @@ in {
   ];
 
   programs = {
-    codex.enable = true;
+    codex = {
+      enable = true;
+      # package = pkgs.codex-latest;
+    };
 
     # TODO: Add skills: https://docs.claude.com/en/docs/claude-code/skills
     claude-code = {
       enable = true;
-      package = pkgs.claude-code;
+      package = pkgs.claude-code-latest;
       settings = {
         model = "opusplan";
         enableAllProjectMcpServers = false;
@@ -115,14 +118,14 @@ in {
         };
 
         env = {
-          ANTHROPIC_BASE_URL = "http://127.0.0.1:6666";
+          ANTHROPIC_BASE_URL = "http://127.0.0.1:6060";
           ANTHROPIC_AUTH_TOKEN = "sk-dummy";
           API_TIMEOUT_MS = "3000000";
 
-          ANTHROPIC_DEFAULT_OPUS_MODEL = "gpt-5.2";
-          ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.1-codex-max";
+          ANTHROPIC_DEFAULT_OPUS_MODEL = "gemini-claude-opus-4-5-thinking";
+          ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.1-codex-max(medium)";
           ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.6";
-          CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.1-codex-max";
+          CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.1-codex-max(high)";
         };
       };
     };

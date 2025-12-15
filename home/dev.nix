@@ -82,6 +82,7 @@
 
     # Cloud stuff
     kubectl
+    kubectl-linstor
     kubectx
     kubescape
     (wrapHelm kubernetes-helm {

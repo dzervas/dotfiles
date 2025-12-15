@@ -23,8 +23,8 @@ final: prev: rec {
     };
   };
 
-  # nix-update:claude-code
-  claude-code = prev.claude-code.overrideAttrs rec {
+  # nix-update:claude-code-latest
+  claude-code-latest = prev.claude-code.overrideAttrs rec {
     version = "2.0.69";
     src = final.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
@@ -51,21 +51,22 @@ final: prev: rec {
   #   }
   # ).override { webUISupport = true; } ;
 
-  # nix- update:codex: --version-regex "rust-v(.*)"
-  # codex = prev.codex.overrideAttrs (new: old: rec {
-  #   version = "0.58.0";
+  # nix -update:codex-latest: --version-regex "rust-v(.*)"
+  # codex-latest = prev.codex.overrideAttrs (new: old: rec {
+  #   version = "0.72.0";
   #   src = prev.fetchFromGitHub {
   #     owner = "openai";
   #     repo = "codex";
   #     tag = "rust-v${new.version}";
-  #     hash = "sha256-o898VjjPKevr1VRlRhJUNWsrHEGEn7jkdzWBj+DpbCs=";
+  #     hash = "sha256-rNol7k/CcAKJXZYsbORRqD+uJfN6TPfcEbkUXezpFkY=";
   #   };
   #
-  #   cargoDeps = old.cargoDeps.overrideAttrs (prev.lib.const {
-  #     name = "codex-vendor";
-  #     inherit src;
-  #     # outputHash = "sha256-o898VjjPKevr1VRlRhJUNWsrHEGEn7jkdzWBj+DpbCs=";
-  #   });
-  #   cargoHash = "sha256-o898VjjPKevr1VRlRhJUNWsrHEGEn7jkdzWBj+DpbCs=";
+  #   # cargoDeps = old.cargoDeps.overrideAttrs (prev.lib.const {
+  #   #   name = "codex-latest-vendor";
+  #   #   inherit src;
+  #   #   outputHash = "sha256-rNol7k/CcAKJXZYsbORRqD+uJfN6TPfcEbkUXezpFkY=";
+  #   # });
+  #   cargoHash = "";
+  #   # cargoLock.lockFile = src.out + "/Cargo.lock";
   # });
 }
