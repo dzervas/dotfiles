@@ -16,7 +16,7 @@ in {
     # TODO: Add skills: https://docs.claude.com/en/docs/claude-code/skills
     claude-code = {
       enable = true;
-      package = pkgs.claude-code-latest;
+      # package = pkgs.claude-code-latest;
       settings = {
         model = "opusplan";
         enableAllProjectMcpServers = false;
@@ -55,6 +55,8 @@ in {
             "WebFetch(domain:nix-community.github.io)"
             "WebFetch(domain:hurl.dev)"
             "WebFetch(domain:registry.terraform.io)"
+
+            "Search(path:. *)"
           ] ++ (tools "grafana" [
               "find_error_pattern_logs"
               "find_slow_requests"
@@ -103,7 +105,10 @@ in {
             ]);
           ask = [];
           deny = [
-            "Bash(git:*)"
+            "Bash(git add:*)"
+            "Bash(git commit:*)"
+            "Bash(git push:*)"
+            "Bash(git merge:*)"
             "Bash(su:*)"
             "Bash(sudo:*)"
             "Bash(home-manager switch:*)"
@@ -123,9 +128,9 @@ in {
           API_TIMEOUT_MS = "3000000";
 
           ANTHROPIC_DEFAULT_OPUS_MODEL = "gemini-claude-opus-4-5-thinking";
-          ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.1-codex-max(medium)";
+          ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.2-codex(medium)";
           ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.6";
-          CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.1-codex-max(high)";
+          CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.2-codex(high)";
         };
       };
     };

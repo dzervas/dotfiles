@@ -35,7 +35,8 @@ in {
     # daemon.enable = true;
     settings = {
       enter_accept = false;
-      sync_address = "http://127.0.0.1:${atuin-port}";
+      # sync_address = "http://127.0.0.1:${atuin-port}";
+      sync_address = "https://sh.ts.dzerv.art";
       sync_frequency = "5m";
       sync.records = true;
 

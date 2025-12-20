@@ -4,6 +4,7 @@
 		"bindings": {
 			"alt-f": "file_finder::Toggle",
 			"alt-shift-f": "workspace::ToggleZoom",
+			"alt-o": "workspace::CloseAllDocks",
 			"alt-shift-o": "pane::CloseOtherItems",
 			"alt-r": "command_palette::Toggle",
 			"alt-s": "project_symbols::Toggle",
