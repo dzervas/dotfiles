@@ -33,7 +33,6 @@
           sqruff.enable = true; # SQL
           statix.enable = true;
           terraform_validate.enable = true;
-          terragrunt_validate.enable = true;
           tfsec.enable = true;
           tidy.enable = true; # HTML & XML
           trivy.enable = true; # Terraform vulns
@@ -73,7 +72,6 @@
           shfmt.enable = true;
           stylua.enable = true;
           terraform_fmt.enable = true;
-          terragrunt_fmt.enable = true;
           tidy.enable = true; # HTML & XML
           # yamlfix.enable = true; # Broken
         };

@@ -150,7 +150,6 @@ in {
       settings = {
         autoupdate = false;
         share = "disabled";
-        instructions = ["CLAUDE.md" "CONTRIBUTING.md"];
         keybinds.leader = "alt";
 
         provider.dzervart = {
