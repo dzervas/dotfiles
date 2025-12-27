@@ -15,7 +15,7 @@
       shell-integration-features = "no-cursor"; # Fish sets cursor as bar
 
       keybind = [
-        "shift+enter=text:\n" # Claude Code fix
+        "shift+enter=text:\x1b\r" # Claude Code fix
       ];
     };
   };

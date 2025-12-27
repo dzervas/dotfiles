@@ -1,5 +1,15 @@
 { pkgs, ... }: let
   tools = mcp: tools: builtins.map(t: "mcp__${mcp}__${t}") tools;
+  models = {
+    "opus-4.5" = "gemini-claude-opus-4-5-thinking";
+    "gpt-5.2-codex" = "gpt-5.2-codex(medium)";
+    "glm-4.7" = "glm-4.7";
+    "sonnet-4.5" = "gemini-sonnet-claude-4-5-thinking";
+
+    "gpt-5.2" = "gpt-5.2(high)";
+    "gpt-5.2-codex-high" = "gpt-5.2-codex(high)";
+    "gemini-3-pro" = "gemini-3-pro-preview";
+  };
 in {
   home.packages = with pkgs; [
     github-copilot-cli
@@ -56,7 +66,7 @@ in {
             "WebFetch(domain:hurl.dev)"
             "WebFetch(domain:registry.terraform.io)"
 
-            "Search(path:. *)"
+            "Search"
           ] ++ (tools "grafana" [
               "find_error_pattern_logs"
               "find_slow_requests"
@@ -123,13 +133,13 @@ in {
         };
 
         env = {
-          ANTHROPIC_BASE_URL = "http://127.0.0.1:6060";
+          ANTHROPIC_BASE_URL = "https://ai.vpn.dzerv.art";
           ANTHROPIC_AUTH_TOKEN = "sk-dummy";
           API_TIMEOUT_MS = "3000000";
 
           ANTHROPIC_DEFAULT_OPUS_MODEL = "gemini-claude-opus-4-5-thinking";
           ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.2-codex(medium)";
-          ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.6";
+          ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7";
           CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.2-codex(high)";
         };
       };
@@ -141,6 +151,17 @@ in {
         autoupdate = false;
         share = "disabled";
         instructions = ["CLAUDE.md" "CONTRIBUTING.md"];
+        keybinds.leader = "alt";
+
+        provider.dzervart = {
+          npm = "@ai-sdk/openai-compatible";
+          name = "DZervArt";
+          options = {
+            baseURL = "https://ai.vpn.dzerv.art/v1";
+            apiKey = "sk-dummy";
+          };
+          models = builtins.mapAttrs (_: v: { name = v; }) models;
+        };
 
         formatter = {
           cargo = {

@@ -3,33 +3,35 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  fetchPnpmDeps,
   nodejs_22,
   pnpm,
+  pnpmConfigHook,
   makeWrapper,
 }:
 stdenv.mkDerivation rec {
   pname = "openspec";
-  version = "0.16.0";
+  version = "0.17.2";
 
   src = fetchFromGitHub {
     owner = "Fission-AI";
     repo = "OpenSpec";
     rev = "v${version}";
-    hash = "sha256-eBZvgjjEzhoO1Gt4B3lsgOvJ98uGq7gaqdXQ40i0SqY=";
+    hash = "sha256-BhbKhcJgM1WlePx9P6/9owZLosFmjL36cgKkZiBIqQM=";
   };
 
   nativeBuildInputs = [
     nodejs_22
     pnpm
-    pnpm.configHook
+    pnpmConfigHook
     makeWrapper
   ];
 
   # Download dependencies up-front for offline, reproducible installs.
-  pnpmDeps = pnpm.fetchDeps {
+  pnpmDeps = fetchPnpmDeps {
     inherit pname version src;
     fetcherVersion = 2;
-    hash = "sha256-qqIdSF41gv4EDxEKP0sfpW1xW+3SMES9oGf2ru1lUnE=";
+    hash = "sha256-k6SkpPk16csxJmj1Zct4wl6QnOYs5K47ecKXgW+PPAY=";
   };
 
   buildPhase = ''

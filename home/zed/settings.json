@@ -7,9 +7,14 @@
 	"colorize_brackets": true,
 	"agent_ui_font_size": 18.0,
 	"agent_servers": {
+		"OpenCode": {
+			"type": "custom",
+			"command": "opencode",
+			"args": ["acp"],
+		},
 		"claude": {
-			"default_mode": "acceptEdits"
-		}
+			"default_mode": "acceptEdits",
+		},
 	},
 	"vim_mode": true,
 
@@ -26,32 +31,32 @@
 	"load_direnv": "shell_hook",
 
 	"file_types": {
-		"shellscript": [".envrc"]
+		"shellscript": [".envrc"],
 	},
 	"languages": {
 		"Typst": {
-			"show_edit_predictions": false
+			"show_edit_predictions": false,
 		},
 		"Python": {
-			"language_servers": ["ty", "!basedpyright"]
+			"language_servers": ["ty", "!basedpyright"],
 		},
 		"Rust": {
 			"format_on_save": "off",
-			"preferred_line_length": 100
+			"preferred_line_length": 100,
 		},
 		"Nix": {
-			"format_on_save": "off"
-		}
+			"format_on_save": "off",
+		},
 	},
 	"lsp": {
 		"rust-analyzer": {
 			"initialization_options": {
 				"rust": {
 					// Use `target/rust-analyzer` to avoid blocking
-					"analyzerTargetDir": true
-				}
-			}
-		}
+					"analyzerTargetDir": true,
+				},
+			},
+		},
 	},
 	"private_files": [".envrc", ".env", ".direnv"],
 
@@ -60,33 +65,33 @@
 	"show_signature_help_after_edits": true,
 	"diagnostics": {
 		"inline": {
-			"enabled": true
-		}
+			"enabled": true,
+		},
 	},
 	"inlay_hints": {
 		"enabled": true,
 		"show_parameter_hints": false,
 		"show_type_hints": false,
-		"show_value_hints": true
+		"show_value_hints": true,
 	},
 
 	// Disable stuff
 	"calls": {
-		"mute_on_join": true
+		"mute_on_join": true,
 	},
 	"collaboration_panel": {
-		"button": true
+		"button": true,
 	},
 	"git": {
 		"inline_blame": {
-			"enabled": false
-		}
+			"enabled": false,
+		},
 	},
 	"git_panel": {
-		"button": false
+		"button": false,
 	},
 	"features": {
-		"edit_prediction_provider": "zed"
+		"edit_prediction_provider": "zed",
 	},
 	"language_models": {
 		"lmstudio": {
@@ -96,26 +101,26 @@
 					"max_tokens": 16384,
 					"name": "ibm/granite-4-h-tiny",
 					"supports_images": false,
-					"supports_tool_calls": true
-				}
-			]
+					"supports_tool_calls": true,
+				},
+			],
 		},
 		"openai_compatible": {
 			"CLIProxyAPI": {
-				"api_url": "http://127.0.0.1:6060/v1",
+				"api_url": "https://ai.vpn.dzerv.art/v1",
 				"available_models": [
 					{
-						"name": "gpt-5.1-codex-max",
+						"name": "gpt-5.2-codex-max",
 						"max_tokens": 400000,
 						"max_output_tokens": 128000,
 						"max_completion_tokens": 400000,
-						"display_name": "GPT 5.1 Codex Max",
+						"display_name": "GPT 5.2 Codex Max",
 						"capabilities": {
 							"tools": true,
 							"images": true,
 							"parallel_tool_calls": true,
-							"prompt_cache_key": true
-						}
+							"prompt_cache_key": true,
+						},
 					},
 					{
 						"name": "gemini-claude-opus-4-5-thinking",
@@ -127,8 +132,8 @@
 							"tools": true,
 							"images": true,
 							"parallel_tool_calls": true,
-							"prompt_cache_key": true
-						}
+							"prompt_cache_key": true,
+						},
 					},
 					{
 						"name": "gemini-3-pro-preview",
@@ -140,8 +145,8 @@
 							"tools": true,
 							"images": true,
 							"parallel_tool_calls": true,
-							"prompt_cache_key": true
-						}
+							"prompt_cache_key": true,
+						},
 					},
 					{
 						"name": "gemini-claude-sonnet-4-5-thinking",
@@ -153,8 +158,8 @@
 							"tools": true,
 							"images": true,
 							"parallel_tool_calls": true,
-							"prompt_cache_key": true
-						}
+							"prompt_cache_key": true,
+						},
 					},
 
 					{
@@ -167,8 +172,8 @@
 							"tools": true,
 							"images": true,
 							"parallel_tool_calls": true,
-							"prompt_cache_key": true
-						}
+							"prompt_cache_key": true,
+						},
 					},
 					{
 						"name": "gpt-5.1-codex",
@@ -180,8 +185,8 @@
 							"tools": true,
 							"images": true,
 							"parallel_tool_calls": true,
-							"prompt_cache_key": true
-						}
+							"prompt_cache_key": true,
+						},
 					},
 					{
 						"name": "gpt-5.2",
@@ -193,8 +198,8 @@
 							"tools": true,
 							"images": true,
 							"parallel_tool_calls": true,
-							"prompt_cache_key": true
-						}
+							"prompt_cache_key": true,
+						},
 					},
 
 					{
@@ -207,8 +212,8 @@
 							"tools": true,
 							"images": true,
 							"parallel_tool_calls": true,
-							"prompt_cache_key": true
-						}
+							"prompt_cache_key": true,
+						},
 					},
 					{
 						"name": "gemini-2.5-flash",
@@ -220,12 +225,12 @@
 							"tools": true,
 							"images": true,
 							"parallel_tool_calls": true,
-							"prompt_cache_key": true
-						}
-					}
-				]
-			}
-		}
+							"prompt_cache_key": true,
+						},
+					},
+				],
+			},
+		},
 	},
 
 	// Extensions
@@ -264,9 +269,6 @@
 
 		// Debugging
 		"probe-rs": true,
-
-		// ACP
-		"opencode": true
 	},
 
 	// UI & Behavior
@@ -278,26 +280,26 @@
 	"double_click_in_multibuffer": "open",
 	"expand_excerpt_lines": 3,
 	"gutter": {
-		"min_line_number_digits": 2
+		"min_line_number_digits": 2,
 	},
 	"hover_popover_enabled": true,
 	"indent_guides": {
-		"coloring": "indent_aware"
+		"coloring": "indent_aware",
 	},
 	"minimap": {
-		"show": "auto"
+		"show": "auto",
 	},
 	"preferred_line_length": 100,
 	"relative_line_numbers": "enabled",
 	"search": {
-		"regex": true
+		"regex": true,
 	},
 	"tabs": {
 		"file_icons": true,
-		"show_diagnostics": "errors"
+		"show_diagnostics": "errors",
 	},
 	"title_bar": {
-		"show_branch_icon": true
+		"show_branch_icon": true,
 	},
 	"use_smartcase_search": true,
 	"wrap_guides": [100],
@@ -309,11 +311,11 @@
 		"always_allow_tool_actions": true,
 		"inline_assistant_model": {
 			"provider": "CLIProxyAPI",
-			"model": "gpt-5.1-codex-mini"
+			"model": "gpt-5.1-codex-mini",
 		},
 		"default_model": {
 			"provider": "CLIProxyAPI",
-			"model": "gpt-5.1-codex-max"
+			"model": "gpt-5.1-codex-max",
 		},
 		"profiles": {
 			"minimal": {
@@ -324,17 +326,17 @@
 					"mcp-server-context7": {
 						"tools": {
 							"resolve-library-id": true,
-							"get-library-docs": true
-						}
+							"get-library-docs": true,
+						},
 					},
 					"kagimcp": {
 						"tools": {
 							"kagi_search_fetch": true,
 							"kagi_summarizer": true,
-							"kagi_fastgpt": true
-						}
-					}
-				}
+							"kagi_fastgpt": true,
+						},
+					},
+				},
 			},
 			"write": {
 				"name": "Write",
@@ -355,7 +357,7 @@
 					"grep": true,
 					"terminal": false,
 					"thinking": true,
-					"web_search": true
+					"web_search": true,
 				},
 				"enable_all_context_servers": true,
 				"context_servers": {
@@ -363,10 +365,10 @@
 						"tools": {
 							"kagi_summarizer": true,
 							"kagi_search_fetch": true,
-							"kagi_fastgpt": true
-						}
-					}
-				}
+							"kagi_fastgpt": true,
+						},
+					},
+				},
 			},
 			"ask": {
 				"name": "Ask",
@@ -381,25 +383,25 @@
 					"open": true,
 					"grep": true,
 					"thinking": true,
-					"web_search": true
+					"web_search": true,
 				},
 				"enable_all_context_servers": false,
 				"context_servers": {
 					"mcp-server-context7": {
 						"tools": {
 							"resolve-library-id": true,
-							"get-library-docs": true
-						}
+							"get-library-docs": true,
+						},
 					},
 					"kagimcp": {
 						"tools": {
 							"kagi_summarizer": true,
 							"kagi_search_fetch": true,
-							"kagi_fastgpt": true
-						}
-					}
-				}
-			}
-		}
-	}
+							"kagi_fastgpt": true,
+						},
+					},
+				},
+			},
+		},
+	},
 }
