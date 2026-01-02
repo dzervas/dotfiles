@@ -52,7 +52,10 @@
       "dev.vencord.Vesktop".Context.sockets = [ "wayland" "pulseaudio" ];
 
       "org.telegram.desktop".Context.sockets = [ "wayland" "pulseaudio" ];
-      "com.bambulab.BambuStudio".Context.sockets = [ "x11" ];
+      "com.bambulab.BambuStudio".Context = {
+        sockets = [ "x11" ];
+        filesystems = [ "home/Documents/3D Models" ];
+      };
     };
   };
 

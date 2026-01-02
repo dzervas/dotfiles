@@ -1,14 +1,14 @@
 { pkgs, ... }: let
   tools = mcp: tools: builtins.map(t: "mcp__${mcp}__${t}") tools;
   models = {
-    "opus-4.5" = "gemini-claude-opus-4-5-thinking";
-    "gpt-5.2-codex" = "gpt-5.2-codex(medium)";
+    "gemini-claude-opus-4-5-thinking" = "opus-4.5";
+    "gpt-5.2-codex(medium)" = "gpt-5.2-codex";
     "glm-4.7" = "glm-4.7";
-    "sonnet-4.5" = "gemini-sonnet-claude-4-5-thinking";
+    "gemini-sonnet-claude-4-5-thinking" = "sonnet-4.5";
 
-    "gpt-5.2" = "gpt-5.2(high)";
-    "gpt-5.2-codex-high" = "gpt-5.2-codex(high)";
-    "gemini-3-pro" = "gemini-3-pro-preview";
+    "gpt-5.2(high)" = "gpt-5.2";
+    "gpt-5.2-codex(high)" = "gpt-5.2-codex-high";
+    "gemini-3-pro-preview" = "gemini-3-pro";
   };
 in {
   home.packages = with pkgs; [
@@ -150,7 +150,7 @@ in {
       settings = {
         autoupdate = false;
         share = "disabled";
-        keybinds.leader = "alt";
+        # keybinds.leader = "space";
 
         provider.dzervart = {
           npm = "@ai-sdk/openai-compatible";

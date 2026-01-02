@@ -61,9 +61,9 @@
         "x-scheme-handler/http" = browser;
         "x-scheme-handler/https" = browser;
         "x-scheme-handler/chrome" = browser;
-        "x-scheme-handler/orcaslicer" = "OrcaSlicer.desktop";
-        "x-scheme-handler/prusaslicer" = "OrcaSlicer.desktop";
-        "x-scheme-handler/bambustudio" = "OrcaSlicer.desktop";
+        "x-scheme-handler/orcaslicer" = "BambuStudio.desktop";
+        "x-scheme-handler/prusaslicer" = "BambuStudio.desktop";
+        "x-scheme-handler/bambustudio" = "BambuStudio.desktop";
         "x-scheme-handler/slack" = "Slack.desktop";
         "x-scheme-handler/atuin" = "Atuin.desktop";
         "x-scheme-handler/tg" = "Telegram.desktop";

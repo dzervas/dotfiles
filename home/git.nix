@@ -202,6 +202,7 @@
 
         git.sign-on-push = true;
         remotes.origin.auto-track-bookmarks = "glob:*";
+        snapshot.max-new-file-size=4096000;
 
         # Sign all commits owned by us
         signing = {

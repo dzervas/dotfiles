@@ -104,21 +104,6 @@
 
     # Disable gnome-keyring's ssh component to avoid conflicts with ssh-agent
     gnome-keyring.components = [ "secrets" ];
-
-    podman = {
-      enable = true;
-      # To login to more stuff:
-      # p run --rm -v ~/.cliproxyapi-docker/config.yaml:/CLIProxyAPI/config.yaml -v ~/.cliproxyapi-docker/auth:/root/.cli-proxy-api -it -p 51121:51121 -p 8085:8085 -p 1455:1455 eceasy/cli-proxy-api
-      containers.cli-proxy-api = {
-        image = "docker.io/eceasy/cli-proxy-api";
-        autoUpdate = "registry";
-        ports = ["127.0.0.1:6060:8317"];
-        volumes = [
-          "/home/dzervas/.cliproxyapi-docker/config.yaml:/CLIProxyAPI/config.yaml"
-          "/home/dzervas/.cliproxyapi-docker/auth:/root/.cli-proxy-api"
-        ];
-      };
-    };
   };
 
   stylix = {

@@ -11,7 +11,6 @@
       dns = "systemd-resolved";
       unmanaged = ["zt+" "tailscale+" "tun+"];
     };
-    wireless.enable = false; # Can't use with networkmanager???
 
     firewall = {
       enable = true;

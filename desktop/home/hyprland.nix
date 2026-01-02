@@ -1,4 +1,4 @@
-{ config, inputs, lib, pkgs, ... }: let
+{ config, lib, pkgs, ... }: let
   mkRule = { rules, class ? null, title ? null }:
     map (rule:
       let
@@ -20,7 +20,7 @@ in {
 
   home.packages = with pkgs; [
     hyprshot
-    xfce.thunar # Needs to exist here too to be the default
+    thunar # Needs to exist here too to be the default
   ];
 
   gtk.enable = true;

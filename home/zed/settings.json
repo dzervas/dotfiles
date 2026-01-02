@@ -291,8 +291,8 @@
 			"model": "gpt-5.1-codex-mini",
 		},
 		"default_model": {
-			"provider": "CLIProxyAPI",
-			"model": "gpt-5.1-codex-max",
+			"provider": "copilot_chat",
+			"model": "gpt-5-mini",
 		},
 		"profiles": {
 			"minimal": {

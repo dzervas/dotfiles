@@ -80,7 +80,7 @@ else
         echo "Restored original flake.lock" | systemd-cat -t flake-builder -p info
     fi
 
-    notify-send -u critical "System Update Failed" "Build failed - check journal with: journalctl --user -u flake-builder"
+    notify-send -u normal "System Update Failed" "Build failed - check journal with: journalctl --user -u flake-builder"
     rm -f "$LOCK_BACKUP"
     exit 1
 fi

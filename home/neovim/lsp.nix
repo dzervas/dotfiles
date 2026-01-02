@@ -76,27 +76,28 @@ in {
           };
         };
       };
-      treesitter-refactor = {
-        enable = true;
-
-        settings = {
-          highlight_current_scope.enable = true;
-          highlight_definitions.enable = true;
-          smart_rename = {
-            enable = true;
-            keymaps.smart_rename = "<F2>";
-          };
-          navigation = {
-            enable = true;
-            keymaps = {
-              goto_definition_lsp_fallback = "<C-]>";
-              goto_next_usage = "g<Right>";
-              goto_previous_usage = "g<Left>";
-              list_definitions = "gl";
-            };
-          };
-        };
-      };
+      # Broken
+      # treesitter-refactor = {
+      #   enable = true;
+      #
+      #   settings = {
+      #     highlight_current_scope.enable = true;
+      #     highlight_definitions.enable = true;
+      #     smart_rename = {
+      #       enable = true;
+      #       keymaps.smart_rename = "<F2>";
+      #     };
+      #     navigation = {
+      #       enable = true;
+      #       keymaps = {
+      #         goto_definition_lsp_fallback = "<C-]>";
+      #         goto_next_usage = "g<Right>";
+      #         goto_previous_usage = "g<Left>";
+      #         list_definitions = "gl";
+      #       };
+      #     };
+      #   };
+      # };
       treesitter-context.enable = true;
 
       inc-rename.enable = true;
