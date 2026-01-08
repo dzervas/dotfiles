@@ -66,7 +66,9 @@ in {
             "WebFetch(domain:hurl.dev)"
             "WebFetch(domain:registry.terraform.io)"
 
-            "Search"
+            "Skill(openspec:*)"
+
+            "Search(*)"
           ] ++ (tools "grafana" [
               "find_error_pattern_logs"
               "find_slow_requests"

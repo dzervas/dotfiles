@@ -11,13 +11,13 @@
 }:
 stdenv.mkDerivation rec {
   pname = "openspec";
-  version = "0.17.2";
+  version = "0.18.0";
 
   src = fetchFromGitHub {
     owner = "Fission-AI";
     repo = "OpenSpec";
     rev = "v${version}";
-    hash = "sha256-BhbKhcJgM1WlePx9P6/9owZLosFmjL36cgKkZiBIqQM=";
+    hash = "sha256-OvD9i1MN5U9YqL+JmLETessvatI8Eu2Rwze3ONJqZXc=";
   };
 
   nativeBuildInputs = [
@@ -31,7 +31,7 @@ stdenv.mkDerivation rec {
   pnpmDeps = fetchPnpmDeps {
     inherit pname version src;
     fetcherVersion = 2;
-    hash = "sha256-k6SkpPk16csxJmj1Zct4wl6QnOYs5K47ecKXgW+PPAY=";
+    hash = "sha256-LCXEwhhvVyuJV/rBHoo4IMrfqMgbPrbdtT3U24CpzO0=";
   };
 
   buildPhase = ''
