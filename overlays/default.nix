@@ -7,10 +7,11 @@
 # To remove the build output of a nix store path:
 # nix-store --delete /nix/store/hash
 final: prev: rec {
-  buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix { };
-  mcp-gateway = prev.callPackage ./mcp-gateway.nix { };
-  lmstudio-python = prev.callPackage ./lmstudio-python.nix { };
-  openspec = prev.callPackage ./openspec.nix { };
+  buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
+  mcp-gateway = prev.callPackage ./mcp-gateway.nix {};
+  lmstudio-python = prev.callPackage ./lmstudio-python.nix {};
+  openspec = prev.callPackage ./openspec.nix {};
+  voxtype = prev.callPackage ./voxtype.nix {};
   # codex = prev.callPackage ./codex.nix {};
 
   python = prev.python3.override {
