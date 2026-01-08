@@ -26,7 +26,7 @@ in {
     # TODO: Add skills: https://docs.claude.com/en/docs/claude-code/skills
     claude-code = {
       enable = true;
-      # package = pkgs.claude-code-latest;
+      package = pkgs.claude-code-latest;
       settings = {
         model = "opusplan";
         enableAllProjectMcpServers = false;
