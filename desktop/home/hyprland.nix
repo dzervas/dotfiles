@@ -26,7 +26,10 @@ in {
   gtk.enable = true;
   qt.enable = true;
 
-  services.hyprpolkitagent.enable = true;
+  services = {
+    hyprpolkitagent.enable = true;
+    hyprpaper.enable = true;
+  };
 
   wayland.windowManager.hyprland = {
     enable = true;
