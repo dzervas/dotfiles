@@ -1,75 +1,79 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+NixOS dotfiles with Flakes. Supports 3 machines: desktop, laptop, iso.
 
-## Overview
+## Quick Commands
 
-This is a comprehensive NixOS dotfiles configuration using Nix Flakes. The system supports multiple machines (desktop, laptop, ISO) with modular, declarative configurations for everything from hardware to user applications.
+```bash
+# Build & deploy
+nixos-rebuild switch --flake .#desktop   # or laptop, iso
 
-## Key Commands
+# Lint (runs in pre-commit hook)
+statix check
 
-### System Management
+# Flake apps
+nix run .#nvim      # Standalone neovim
+nix run .#update    # Update flake + pinned overlays
+nix build .#iso     # Build live ISO
+```
 
-- `statix check` - Lint Nix code (runs in pre-commit hook)
+## Structure
 
-## Architecture
+```
+flake.nix          # Entry point, machine definitions
+mkMachine.nix      # Factory: combines nixos/ + hardware/ + desktop/ + home/
+nixos/             # System config (networking, display, services, security)
+home/              # User config via home-manager
+  options.nix      # Custom options: setup.{terminal,browser,locker,runner,windowManager,isLaptop}
+  neovim/          # Modular nixvim config (also exposed as standalone app)
+  fish-functions/  # Custom fish functions (rebuild, update, cop, use, etc.)
+  zed/             # Symlinked to ~/Lab/dotfiles/home/zed/ (not copied)
+hardware/          # Per-machine: desktop.nix, laptop.nix, iso.nix
+  components/      # Reusable: amd, secure-boot, fingerprint, steam, laptop, restic
+desktop/           # DE configs: hyprland (primary), kde, sway, cosmic
+  home/components/ # waybar, rofi, hyprlock, hypridle, swaync
+overlays/          # Custom packages + pinned versions
+```
 
-### Core Structure
+## Machines
 
-- **`flake.nix`** - Main entry point defining system configurations and apps
-- **`mkMachine.nix`** - Factory function for creating system configurations
-- **`nixos/`** - System-level configurations (networking, display, services)
-- **`home/`** - User-space configurations managed by home-manager
-- **`hardware/`** - Modular hardware support (AMD, secure boot, Steam, etc.)
-- **`desktop/`** - Desktop environment configurations (Hyprland primary, KDE/Sway/Cosmic supported)
-- **`overlays/`** - Custom package overlays
+| Machine | State | Key Features                                      |
+| ------- | ----- | ------------------------------------------------- |
+| desktop | 24.11 | AMD GPU, BTRFS RAID1, LUKS, beesd dedup, Steam    |
+| laptop  | 25.05 | Framework 13 AMD, fingerprint, power mgmt         |
+| iso     | 25.05 | Live installer, always public (no private config) |
 
-### Machine Types
+## Key Patterns
 
-- **desktop** - AMD-based system with BTRFS RAID1, LUKS encryption, secure boot
-- **laptop** - Framework 13 with fingerprint reader, power management
-- **iso** - Live ISO with full configuration for installation/recovery
+**Module flow:** `flake.nix` → `mkMachine.nix` → imports `nixos/` + `hardware/${host}.nix` + `desktop/${de}.nix` + home-manager with `home/`
 
-### Key Technologies
+**Private config:** `nix-private` input with dummy fallback at `.github/dummy/`. Pass `isPrivate = true` in mkMachine to enable.
 
-- **Primary DE**: Hyprland (Wayland compositor) with Waybar, rofi, swaylock
-- **Shell**: Fish with custom functions in `home/fish-functions/`
-- **Editor**: Zed editor with its config being softlinked to `home/zed/settings.json`
-- **Storage**: BTRFS with compression, deduplication, snapshots
-- **Security**: Secure boot (lanzaboote), LUKS encryption, AppArmor
-- **Theming**: Stylix with Rose Pine theme
+**Overlay updates:** Mark pinnable packages with `# nix-update:` comment. The `update` app/fish-function updates these automatically.
 
-## Configuration Patterns
+**Options system:** `home/options.nix` defines `setup.*` options used across desktop configs:
 
-### Modular Design
+- `terminal`, `browser`, `runner` (program paths)
+- `locker`, `lockerInstant` (screen lock commands)
+- `windowManager` (hyprland/sway/kde/cosmic)
+- `isLaptop` (boolean)
 
-Each directory contains a `default.nix` that imports component modules. Hardware and desktop features are broken into reusable components that can be mixed and matched per machine.
+## Key Fish Functions
 
-### Options System
+Located in `home/fish-functions/`:
 
-Custom options defined in `home/options.nix` provide consistent configuration across all machines and components.
+- `rebuild` - Rebuild NixOS
+- `update` - Full update: overlays + flake + rebuild
+- `use` - Quick `nix shell` wrapper
+- `cop` - GitHub Copilot CLI helper
+- `committer` - AI-assisted git commit
+- `mc` - mkdir + cd
+- `crest` - curl wrapper for REST APIs
 
-### Private Configuration Support
+## Development Notes
 
-The system supports private configuration modules via `nix-private` input, with dummy fallback for public builds.
-
-## Development Guidelines
-
-### Shell Scripting
-
-Prefer Fish shell for interactive scripts over Bash. Custom Fish functions are located in `home/fish-functions/` and provide better integration with the NixOS environment.
-
-### Neovim Development
-
-- Configuration is split across modular files in `home/neovim/`
-- Custom Copilot management system provides project-specific AI assistance control
-- LSP and formatting tools are extensively configured for consistent code quality
-- Rust development includes specialized tooling with separate build targets for LSP performance
-
-### Pre-commit Hooks
-
-The repository includes statix linting that runs automatically on commits. The hook is documented in the README and checks all Nix code for quality issues.
-
-## Updating This File
-
-When adding significant new functionality, architectural changes, or commonly-used commands to the repository, consider updating this CLAUDE.md file to help future Claude instances work more effectively with the codebase.
+- Prefer Fish over Bash for scripts
+- Zed config is symlinked from repo, not copied
+- Neovim config in `home/neovim/` is modular and also builds standalone via `nix run .#nvim`
+- Pre-commit runs `statix check`
+- Theming via Stylix (Rose Pine)
