@@ -110,7 +110,7 @@
   stylix = {
     enable = true;
     autoEnable = true;
-    iconTheme = {
+    icons = {
       enable = true;
       package = pkgs.rose-pine-icon-theme;
       light = "rose-pine-dawn";

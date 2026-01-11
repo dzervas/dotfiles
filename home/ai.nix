@@ -1,5 +1,5 @@
 { pkgs, ... }: let
-  tools = mcp: tools: builtins.map(t: "mcp__${mcp}__${t}") tools;
+  tools = mcp: tools: map(t: "mcp__${mcp}__${t}") tools;
   models = {
     "gemini-claude-opus-4-5-thinking" = "opus-4.5";
     "gpt-5.2-codex(medium)" = "gpt-5.2-codex";
@@ -60,59 +60,19 @@ in {
             "Read(~/.claude/plugins/cache/superpowers/skills/*)"
 
             "WebSearch"
-            "WebFetch(domain:docs.rs)"
-            "WebFetch(domain:github.com)"
             "WebFetch(domain:nix-community.github.io)"
             "WebFetch(domain:hurl.dev)"
-            "WebFetch(domain:registry.terraform.io)"
 
             "Skill(openspec:*)"
 
             "Search(*)"
           ] ++ (tools "grafana" [
-              "find_error_pattern_logs"
-              "find_slow_requests"
-              "fetch_pyroscope_profile"
-
-              "get_alert_rule_by_uid"
-              "get_dashboard_by_uid"
-              "get_dashboard_panel_queries"
-              "get_dashboard_property"
-              "get_dashboard_summary"
-              "get_datasource_by_uid"
-              "get_datasource_by_name"
-              "get_incident"
-              "get_oncall_shift"
-              "get_current_oncall_users"
-              "get_sift_investigation"
-              "get_sift_analysis"
-              "get_assertions"
+              "find_*"
+              "fetch_*"
+              "get_*"
               "generate_deeplink"
-
-              "list_alert_rules"
-              "list_contact_points"
-              "list_datasources"
-              "list_loki_label_names"
-              "list_loki_label_values"
-              "list_oncall_schedules"
-              "list_oncall_teams"
-              "list_oncall_users"
-              "list_prometheus_metric_metadata"
-              "list_prometheus_metric_names"
-              "list_prometheus_label_names"
-              "list_prometheus_label_values"
-              "list_prometheus_label_values"
-              "list_pyroscope_label_names"
-              "list_pyroscope_label_values"
-              "list_pyroscope_profile_types"
-              "list_sift_investigations"
-              "list_teams"
-              "list_users_by_org"
-
-              "query_loki_logs"
-              "query_loki_stats"
-              "query_prometheus"
-
+              "list_*"
+              "query_*"
               "search_dashboards"
             ]);
           ask = [];
@@ -143,6 +103,11 @@ in {
           ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.2-codex(medium)";
           ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7";
           CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.2-codex(high)";
+
+          CLAUDE_CODE_ENABLE_TELEMETRY = "1";
+          OTEL_METRICS_EXPORTER = "console,otlp";
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT = "https://metrics.vpn.dzerv.art/opentelemetry/";
+          OTEL_EXPORTER_OTLP_METRICS_PROTOCOL = "http/protobuf";
         };
       };
     };

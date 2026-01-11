@@ -63,7 +63,7 @@
           isort.enable = true; # Python imports sorter
           nixfmt = {
             enable = true;
-            package = pkgs.nixfmt-rfc-style;
+            package = pkgs.nixfmt;
           };
           # opentofu_fmt.enable = true;
           prettier.enable = true; # HTML/CSS/JS/TS/JSON/Astro

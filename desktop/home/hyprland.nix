@@ -20,7 +20,7 @@ in {
 
   home.packages = with pkgs; [
     hyprshot
-    thunar # Needs to exist here too to be the default
+    # thunar # Needs to exist here too to be the default
   ];
 
   gtk.enable = true;
