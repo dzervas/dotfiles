@@ -15,6 +15,7 @@ in {
     github-copilot-cli
     lmstudio
     openspec
+    claude-chrome
   ];
 
   programs = {
@@ -60,7 +61,6 @@ in {
             "Read(~/.claude/plugins/cache/superpowers/skills/*)"
 
             "WebSearch"
-            "WebFetch(domain:nix-community.github.io)"
             "WebFetch(domain:hurl.dev)"
 
             "Skill(openspec:*)"

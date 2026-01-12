@@ -8,6 +8,7 @@
 # nix-store --delete /nix/store/hash
 final: prev: rec {
   buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
+  claude-chrome = prev.callPackage ./claude-chrome.nix {};
   mcp-gateway = prev.callPackage ./mcp-gateway.nix {};
   lmstudio-python = prev.callPackage ./lmstudio-python.nix {};
   openspec = prev.callPackage ./openspec.nix {};
@@ -26,10 +27,10 @@ final: prev: rec {
 
   # nix-update:claude-code-latest
   claude-code-latest = prev.claude-code.overrideAttrs rec {
-    version = "2.1.3";
+    version = "2.1.5";
     src = final.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-IF0ZQ2ddjtoQ6J9lXaqrak9Wi6pCCIqnMu2l8woHZIs=";
+      hash = "sha256-hJECxkGC+nkQ6YCZpSZxRbuHaeYQDs2q7L5SYKSFVFc=";
     };
     npmDepsHash = "sha256-DNdRkN/rpCsN8fnZbz18r2KRUTl5HCur+GyrofH+T/Y=";
   };
