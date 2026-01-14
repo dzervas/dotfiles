@@ -115,12 +115,15 @@ in {
     opencode = {
       enable = true;
       settings = {
+        # Awesome stuff: https://github.com/safzanpirani/opencode-configs
+        # TODO: Oh-my-opencode
         autoupdate = false;
         share = "disabled";
+        small_model = "dzervart/glm-4.7";
         # keybinds.leader = "space";
 
         provider.dzervart = {
-          npm = "@ai-sdk/openai-compatible";
+          npm = "@ai-sdk/anthropic"; # openai-compatible makes claude models break after each tool call
           name = "DZervArt";
           options = {
             baseURL = "https://ai.vpn.dzerv.art/v1";

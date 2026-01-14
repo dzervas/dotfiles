@@ -38,10 +38,13 @@ set -g __watchf_active 1
 
 while true
 	# Capture output and status (script provides PTY for color output)
-	# Python filter removes OSC sequences (terminal palette setup) but keeps color codes
+	# rg filter removes OSC sequences (terminal palette setup) but keeps color codes
+	# Set PTY size via stty so commands see correct terminal dimensions
+	set -l cols (tput cols)
+	set -l rows (tput lines)
 	set -l output (
 		script --quiet --return --command "fish --private --interactive --command '$cmd' 2>&1" /dev/null | \
-		rg -U --replace '' '\x1b\][^\x07\x1b]*(?:\x07|\x1b\\\)|\r' || exit 1
+		rg -U --replace '' '\x1b\][^\x07\x1b]*(?:\x07|\x1b\\\\)|\x1b\[0m\r?$|\r' || exit 1
 	)
 	set -l retval $pipestatus[1]
 
@@ -74,16 +77,19 @@ while true
 	end
 
 	tput civis # Hide the cursor
-	set -l cols (tput cols)
 	printf '%s' "$buffer"
 	set -l el (tput el)
 	for line in $output
-		printf "%s$el\n" (string shorten -m $cols $line)
+		printf "%s\x1b[0m$el\n" (string shorten -m $cols $line)
 	end
 	tput cnorm # Show the cursor
 
-	if test $exit_on_error -eq 1 -a $retval -ne 0
-		break
+	set -l cmd_color (set_color green)
+	if test $retval -ne 0
+		if test $exit_on_error -eq 1
+			break
+		end
+		set cmd_color (set_color --bold red)
 	end
 
 	if test $exit_on_diff -eq 1 -a "$output" != "$prev_output"
@@ -92,10 +98,13 @@ while true
 
 	# Update previous output and line count (add 1 for the date line)
 	set prev_output "$output"
-	set prev_line_count (math $line_count + 1)
+	set prev_line_count $line_count
 
+	echo -n $cmd_color$cmd >&2
+	set_color normal
+	echo -n " - " >&2
 	set_color --bold cyan
-	echo (date) >&2
+	echo -n (date) >&2
 	set_color normal
 	tput ed # Clear the rest of the screen - in case the output got smaller
 
