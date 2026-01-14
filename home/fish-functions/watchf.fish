@@ -37,18 +37,16 @@ set -l prev_output
 set -g __watchf_active 1
 
 while true
-	# Capture output and status (faketty provides PTY for color output)
+	# Capture output and status (script provides PTY for color output)
 	# Python filter removes OSC sequences (terminal palette setup) but keeps color codes
-	set -l output "$(faketty fish --private --interactive --command "$cmd" 2>&1 | python3 -c '
-import sys, re
-data = sys.stdin.read()
-result = re.sub(r"\x1b\][^\x07\x1b]*(?:\x07|\x1b\x5c)", "", data)
-sys.stdout.write(result.replace("\r", ""))
-')"
+	set -l output (
+		script --quiet --return --command "fish --private --interactive --command '$cmd' 2>&1" /dev/null | \
+		rg -U --replace '' '\x1b\][^\x07\x1b]*(?:\x07|\x1b\\\)|\r' || exit 1
+	)
 	set -l retval $pipestatus[1]
 
 	# Calculate the number of lines in the output
-	set -l line_count (echo "$output" | wc -l)
+	set -l line_count (count $output)
 	set -l buffer ""
 
 	if test -n "$prev_output"
@@ -57,9 +55,6 @@ sys.stdout.write(result.replace("\r", ""))
 
 		# Move cursor to beginning of line
 		set buffer "$buffer"(printf "\r")
-
-		# Clear from cursor to end of screen
-		# set buffer "$buffer"(tput ed)
 	end
 
 	if test $diff_highlight -eq 1 -a (set -q prev_output)
@@ -78,11 +73,10 @@ sys.stdout.write(result.replace("\r", ""))
 		end
 	end
 
-	set -l el (tput el)
-	set -l cols (tput cols)
-
 	tput civis # Hide the cursor
+	set -l cols (tput cols)
 	printf '%s' "$buffer"
+	set -l el (tput el)
 	for line in $output
 		printf "%s$el\n" (string shorten -m $cols $line)
 	end
@@ -96,13 +90,12 @@ sys.stdout.write(result.replace("\r", ""))
 		break
 	end
 
-	# Update previous output and line count
+	# Update previous output and line count (add 1 for the date line)
 	set prev_output "$output"
-	# set prev_line_count (math $line_count + 1) # Account for the date line
-	set prev_line_count "$line_count"
+	set prev_line_count (math $line_count + 1)
 
 	set_color --bold cyan
-	echo -n (date) >&2
+	echo (date) >&2
 	set_color normal
 	tput ed # Clear the rest of the screen - in case the output got smaller
 
