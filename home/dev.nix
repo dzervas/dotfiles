@@ -82,6 +82,7 @@
 
     # Cloud stuff
     kubectl
+    kubectl-doctor
     kubectl-linstor
     calicoctl
     kubectx

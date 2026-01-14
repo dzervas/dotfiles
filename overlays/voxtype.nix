@@ -16,16 +16,16 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "voxtype";
-  version = "0.4.11";
+  version = "0.4.13";
 
   src = fetchFromGitHub {
     owner = "peteonrails";
     repo = pname;
     tag = "v${version}";
-    hash = "sha256-JOlnPGIzw+SBi6RnBZvKL5B63A3/gakPktD8f/s3h8M=";
+    hash = "sha256-8UjfqvPis1Ayc05zETNyKCxWHoNFsgur1gTDAKM4FbM=";
   };
 
-  cargoHash = "sha256-lA21RuNZWRjoWjnzBteC3s+1oEVKg9et/o/F4ZKLP7k=";
+  cargoHash = "sha256-f3JLh0R8F/1SE8SQx+7bxlWh+6UY2+1AASx4ZqGXrwo=";
   buildFeatures = [ "gpu-vulkan" ];
 
   cmakeFlags = [

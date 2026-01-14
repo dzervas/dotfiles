@@ -8,7 +8,7 @@
       set fish_greeting
       fzf_configure_bindings --directory=\ef --git_log=\eg --processes=\eq --variables=\ev
       bind \ea "cop (commandline); commandline -f repaint"
-      bind \ew "echo; watchf (commandline); echo; echo; commandline -f repaint"
+      bind \ew "__watchf_keybind"
       bind \e\` "__smart_help (commandline -p)"
       # Maps to Ctrl-Shift-Delete
       bind \e\[3\;6~ __forget
@@ -126,6 +126,17 @@
       # Internal
       __smart_help = builtins.readFile ./fish-functions/smart-help.fish;
       __forget = builtins.readFile ./fish-functions/forget.fish;
+      __watchf_keybind = ''
+        set -l cmd (commandline)
+        test -z "$cmd" && return
+        commandline ""
+        echo
+        watchf $cmd
+        echo
+        echo
+        builtin history append -- "$cmd"
+        commandline -f repaint
+      '';
     };
 
     shellAliases = {

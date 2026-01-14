@@ -33,6 +33,9 @@ end
 # Initialize previous output
 set -l prev_output
 
+# Flag to signal loop to exit on Ctrl+C
+set -g __watchf_active 1
+
 while true
 	# Capture output and status
 	set -l output "$(fish --private --interactive --command "$cmd" 2>&1)"
@@ -80,11 +83,11 @@ while true
 	tput cnorm # Show the cursor
 
 	if test $exit_on_error -eq 1 -a $retval -ne 0
-		return $retval
+		break
 	end
 
 	if test $exit_on_diff -eq 1 -a "$output" != "$prev_output"
-		return 0
+		break
 	end
 
 	# Update previous output and line count
@@ -98,4 +101,12 @@ while true
 	tput ed # Clear the rest of the screen - in case the output got smaller
 
 	sleep $interval
+	or break # Exit loop if sleep is interrupted (Ctrl+C)
 end
+
+# Cleanup
+tput cnorm 2>/dev/null
+tput ed 2>/dev/null
+echo
+set -e __watchf_active
+commandline -f repaint
