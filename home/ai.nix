@@ -119,10 +119,10 @@ in {
         # TODO: Oh-my-opencode
         autoupdate = false;
         share = "disabled";
-        small_model = "dzervart/glm-4.7";
+        small_model = "dz/glm-4.7";
         # keybinds.leader = "space";
 
-        provider.dzervart = {
+        provider.dz = {
           npm = "@ai-sdk/anthropic"; # openai-compatible makes claude models break after each tool call
           name = "DZervArt";
           options = {

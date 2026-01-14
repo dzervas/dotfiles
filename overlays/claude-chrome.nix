@@ -1,33 +1,44 @@
 { lib, stdenv, symlinkJoin, makeWrapper, ungoogled-chromium, fetchurl, writeTextFile, lndir, unzip }:
-
 let
-  extensionId = "fcoeoabgfenejglbffodgkkbkcdhcgfn";
-  extensionVersion = "1.0.36";
-
   icon = fetchurl {
-    url = "https://upload.wikimedia.org/wikipedia/commons/8/8a/Claude_AI_logo.svg";
-    hash = "sha256-jU40fVilK6GiHyn7GclKlVtL87jpVs5O6leU/bqnK4A=";
+    url = "https://browsermcp.io/_next/static/media/logo.396afc25.svg";
+    hash = "sha256-/KJnVKwKausWfQYYDxGoNpmn7sJXhb/y9POa7WcNmjQ=";
   };
 
-  # Download Claude extension CRX from Chrome Web Store update server
-  claudeExtensionCrx = fetchurl {
-    url = "https://clients2.google.com/service/update2/crx?response=redirect&acceptformat=crx2,crx3&prodversion=143.0.7499.169&x=id%3D${extensionId}%26uc";
-    hash = "sha256-oKtCxdMXgIqioAZ2EF1kSsp2YW/2U5IZuIAHdn4M0E0=";
+  extensions = {
+    # claude = {
+    #   id = "fcoeoabgfenejglbffodgkkbkcdhcgfn";
+    #   version = "1.0.39";
+    #   hash = "sha256-oKtCxdMXgIqioAZ2EF1kSsp2YW/2U5IZuIAHdn4M0E0=";
+    # };
+    browser-mcp = {
+      id = "bjfgambnhccakkhmkepdoekmckoijdlc";
+      version = "1.3.4";
+      hash = "sha256-ZhXxjXxP2ld9YtULD9ScZT3ZYZeZhhhJBIpw4tqC89k=";
+    };
   };
 
-  # Extract CRX to unpacked extension directory
-  claudeExtension = stdenv.mkDerivation {
-    name = "claude-extension-${extensionVersion}";
-    src = claudeExtensionCrx;
-    nativeBuildInputs = [ unzip ];
-    unpackPhase = "unzip -q $src || true";  # CRX3 has extra bytes, ignore warning
-    installPhase = ''
+  extensionsDer = lib.attrsets.mapAttrsToList (name: opts:
+    stdenv.mkDerivation {
+      name = "${name}-extension-${opts.version}";
+      inherit (opts) version;
+      src = fetchurl {
+        # TODO: Get the prodversion from the chromium package
+        url = "https://clients2.google.com/service/update2/crx?response=redirect&acceptformat=crx2,crx3&prodversion=143.0.7499.169&x=id%3D${opts.id}%26uc";
+        inherit (opts) hash;
+      };
+      nativeBuildInputs = [ unzip ];
+      unpackPhase = "unzip -q $src || true";  # CRX3 has extra bytes, ignore warning
+      installPhase = ''
       mkdir -p $out
       cp -r . $out/
       # Remove update_url from manifest to prevent unwanted updates
-      sed -i '/"update_url"/d' $out/manifest.json
-    '';
-  };
+      # sed -i '/"update_url"/d' $out/manifest.json
+      '';
+    }
+  ) extensions;
+
+  loadExtensions = builtins.map (der: ''--add-flags "--load-extension=${der}"'') extensionsDer;
 
   desktopFile = writeTextFile {
     name = "claude-chrome.desktop";
@@ -69,7 +80,7 @@ symlinkJoin {
     # Wrap chromium binary to load Claude extension
     rm $out/bin/chromium
     makeWrapper ${ungoogled-chromium}/bin/chromium $out/bin/chromium \
-      --add-flags "--load-extension=${claudeExtension}"
+      ${lib.concatStringsSep " " loadExtensions}
 
     # Update chromium-browser symlink
     rm $out/bin/chromium-browser
