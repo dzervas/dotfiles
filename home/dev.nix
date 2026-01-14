@@ -55,6 +55,7 @@
     #   ).override { webUISupport = true; }
     # )
 
+    faketty # For watchf color output
     go
 
     # C/C++

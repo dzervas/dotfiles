@@ -23,5 +23,7 @@
     wirelesstools
     wpscan
     xh
+
+    expect # Required by watchf
   ];
 }

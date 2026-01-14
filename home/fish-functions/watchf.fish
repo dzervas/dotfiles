@@ -37,9 +37,15 @@ set -l prev_output
 set -g __watchf_active 1
 
 while true
-	# Capture output and status
-	set -l output "$(fish --private --interactive --command "$cmd" 2>&1)"
-	set -l retval $status
+	# Capture output and status (faketty provides PTY for color output)
+	# Python filter removes OSC sequences (terminal palette setup) but keeps color codes
+	set -l output "$(faketty fish --private --interactive --command "$cmd" 2>&1 | python3 -c '
+import sys, re
+data = sys.stdin.read()
+result = re.sub(r"\x1b\][^\x07\x1b]*(?:\x07|\x1b\x5c)", "", data)
+sys.stdout.write(result.replace("\r", ""))
+')"
+	set -l retval $pipestatus[1]
 
 	# Calculate the number of lines in the output
 	set -l line_count (echo "$output" | wc -l)
