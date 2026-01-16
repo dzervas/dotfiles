@@ -120,7 +120,8 @@ in {
         autoupdate = false;
         share = "disabled";
         small_model = "dz/glm-4.7";
-        # keybinds.leader = "space";
+        # opencode-cursor-auth
+        # plugin = [];
 
         provider.dz = {
           npm = "@ai-sdk/anthropic"; # openai-compatible makes claude models break after each tool call
