@@ -188,3 +188,24 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 ```
+
+## Expose binary cache across machines
+
+Host side:
+
+```bash
+# Once:
+install -d -m 0700 /etc/nix/cache
+nix-store --generate-binary-cache-key desktop /etc/nix/cache/private-key.pem /etc/nix/cache/public-key.pem
+chmod 600 /etc/nix/cache/private-key.pem
+
+# To serve:
+NIX_SECRET_KEY_FILE=/etc/nix/cache/private-key.pem nix-serve-ng -- --host 0.0.0.0 --port 8181
+```
+
+Client side:
+```bash
+rebuild --option substituters 'http://<host>:8181 https://cache.nixos.org' --option trusted-public-keys '<public-key.pem contents>'
+```
+
+in case of failure to get the cache: `nix-collect-garbage`

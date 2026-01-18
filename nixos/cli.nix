@@ -31,6 +31,8 @@
     unzip
     usbutils
     wget
+
+    nix-serve-ng
   ];
 
   # Set fish as the default shell
