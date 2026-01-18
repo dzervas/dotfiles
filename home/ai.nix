@@ -1,10 +1,10 @@
 { pkgs, ... }: let
   tools = mcp: tools: map(t: "mcp__${mcp}__${t}") tools;
   models = {
-    "gemini-claude-opus-4-5-thinking" = "opus-4.5";
+    "claude-opus-4-5-thinking" = "opus-4.5";
     "gpt-5.2-codex(medium)" = "gpt-5.2-codex";
     "glm-4.7" = "glm-4.7";
-    "gemini-sonnet-claude-4-5-thinking" = "sonnet-4.5";
+    "claude-sonnet-4-5-thinking" = "sonnet-4.5";
 
     "gpt-5.2(high)" = "gpt-5.2";
     "gpt-5.2-codex(high)" = "gpt-5.2-codex-high";
@@ -19,17 +19,12 @@ in {
   ];
 
   programs = {
-    codex = {
-      enable = true;
-      # package = pkgs.codex-latest;
-    };
-
     # TODO: Add skills: https://docs.claude.com/en/docs/claude-code/skills
     claude-code = {
       enable = true;
       package = pkgs.claude-code-latest;
       settings = {
-        model = "opusplan";
+        model = "opus";
         enableAllProjectMcpServers = false;
         includeCoAuthoredBy = false;
         alwaysThinkingEnabled = true;
@@ -95,14 +90,14 @@ in {
         };
 
         env = {
-          # ANTHROPIC_BASE_URL = "https://ai.vpn.dzerv.art";
-          # ANTHROPIC_AUTH_TOKEN = "sk-dummy";
-          # API_TIMEOUT_MS = "3000000";
+          ANTHROPIC_BASE_URL = "https://ai.vpn.dzerv.art";
+          ANTHROPIC_AUTH_TOKEN = "sk-dummy";
+          API_TIMEOUT_MS = "3000000";
 
           # ANTHROPIC_DEFAULT_OPUS_MODEL = "gemini-claude-opus-4-5-thinking";
           # ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.2-codex(medium)";
-          # ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7";
-          # CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.2-codex(high)";
+          ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7";
+          CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.2-codex(high)";
 
           CLAUDE_CODE_ENABLE_TELEMETRY = "1";
           OTEL_METRICS_EXPORTER = "otlp";
@@ -112,6 +107,7 @@ in {
       };
     };
 
+    # TODO: OPENCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT env var
     opencode = {
       enable = true;
       settings = {

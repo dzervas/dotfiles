@@ -94,7 +94,7 @@
       freecad
 
       cameractrls-gtk4
-      voxtype
+      # voxtype
     ];
 
   };
