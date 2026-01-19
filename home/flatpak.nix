@@ -7,7 +7,7 @@
     packages = [
       "org.onlyoffice.desktopeditors"
       "org.signal.Signal"
-      # "com.slack.Slack"
+      "com.slack.Slack"
       "com.spotify.Client"
       "org.telegram.desktop"
       "im.riot.Riot"
@@ -51,7 +51,10 @@
       "com.slack.Slack".Context.sockets = [ "wayland" "pulseaudio" ];
       "dev.vencord.Vesktop".Context.sockets = [ "wayland" "pulseaudio" ];
 
-      "org.telegram.desktop".Context.sockets = [ "wayland" "pulseaudio" ];
+      "org.telegram.desktop" = {
+        Environment.TZ = "Europe/Athens";
+        Context.sockets = [ "wayland" "pulseaudio" ];
+      };
       "com.bambulab.BambuStudio".Context = {
         sockets = [ "x11" ];
         filesystems = [ "home/Documents/3D Models" ];
