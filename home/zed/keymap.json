@@ -14,17 +14,17 @@
 			"alt-left": "pane::ActivatePreviousItem",
 			"alt-right": "pane::ActivateNextItem",
 			"alt-shift-left": "pane::SwapItemLeft",
-			"alt-shift-right": "pane::SwapItemRight"
-		}
+			"alt-shift-right": "pane::SwapItemRight",
+		},
 	},
 
 	// Terminal bindings
 	{
 		"bindings": {
 			"alt-enter": "workspace::NewTerminal",
-			"ctrl-f": "buffer_search::Deploy"
+			"ctrl-f": "buffer_search::Deploy",
 		},
-		"context": "Terminal"
+		"context": "Terminal",
 	},
 
 	// Pane management and editor-specific stuff
@@ -34,9 +34,9 @@
 			"ctrl-down": "editor::MoveLineDown",
 			"ctrl-up": "editor::MoveLineUp",
 			"ctrl-f": "pane::DeploySearch",
-			"ctrl-l": "buffer_search::Dismiss"
+			"ctrl-l": "buffer_search::Dismiss",
 		},
-		"context": "Editor"
+		"context": "Editor",
 	},
 	{
 		"bindings": {
@@ -45,9 +45,9 @@
 			"space f": "project_panel::ToggleFocus",
 			"space s": "outline_panel::ToggleFocus",
 			"g down": "editor::GoToDiagnostic",
-			"g up": "editor::GoToPreviousDiagnostic"
+			"g up": "editor::GoToPreviousDiagnostic",
 		},
-		"context": "Editor && vim_mode == normal"
+		"context": "Editor && vim_mode == normal",
 	},
 
 	// Pane/Dock navigation
@@ -58,41 +58,44 @@
 			// Moves focus from dock to pane items
 			// TODO: Doesn't work for multiple panes - always chooses the next pane afte the one it should
 			"alt-down": "workspace::ActivatePreviousPane",
-			"alt-up": "workspace::ActivateNextPane"
+			"alt-up": "workspace::ActivateNextPane",
 		},
 		// Work around the precedence issue
 		// alt-<up|down> are mapped with Editor context so to overwrite them, `> Editor` is needed
-		"context": "Dock || (Dock > Editor) || Pane || (Pane > Editor)"
+		"context": "Dock || (Dock > Editor) || Pane || (Pane > Editor)",
 	},
 	{
 		"bindings": { "alt-c": "workspace::CloseActiveDock" },
-		"context": "Dock"
+		"context": "Dock",
 	},
 	// Bindings when inside the pane editor but a dock is open
 	{
 		// Move to files
 		"bindings": { "alt-down": "project_panel::ToggleFocus" },
-		"context": "left_dock == ProjectPanel > (Pane || (Pane > Editor))"
+		"context": "left_dock == ProjectPanel > (Pane || (Pane > Editor))",
 	},
 	{
 		// Move to agent
 		"bindings": { "alt-up": "agent::ToggleFocus" },
-		"context": "right_dock == agent_panel > (Pane || (Pane > Editor))"
+		"context": "right_dock == agent_panel > (Pane || (Pane > Editor))",
 	},
 	// Bindings to close the docks when pressing their keymap again when focusing them
 	{
 		"bindings": { "space f": "workspace::CloseActiveDock" },
-		"context": "left_dock == ProjectPanel > ProjectPanel"
+		"context": "left_dock == ProjectPanel > ProjectPanel",
 	},
 	{
 		"bindings": { "space a": "workspace::CloseActiveDock" },
-		"context": "right_dock == agent_panel > AgentPanel > (Editor && vim_mode == normal)"
+		"context": "right_dock == agent_panel > AgentPanel > (Editor && vim_mode == normal)",
 	},
 
 	// AI completion
 	{
-		"bindings": { "ctrl-right": "editor::AcceptPartialEditPrediction" },
-		"context": "Editor && (edit_prediction || edit_prediction_conflict)"
+		"bindings": {
+			"ctrl-right": "editor::AcceptNextWordEditPrediction",
+			"ctrl-down": "editor::AcceptNextLineEditPrediction",
+		},
+		"context": "Editor && (edit_prediction || edit_prediction_conflict)",
 	},
 
 	// Files dock
@@ -102,18 +105,19 @@
 			"d": "project_panel::Delete",
 			"g down": "project_panel::SelectNextDiagnostic",
 			"g up": "project_panel::SelectPrevDiagnostic",
-			"r": "project_panel::Rename"
+			"r": "project_panel::Rename",
 		},
-		"context": "ProjectPanel && not_editing"
+		"context": "ProjectPanel && not_editing",
 	},
 
 	// Agent dock
 	{
 		"bindings": {
 			"alt-n": "agent::NewExternalAgentThread",
-			"ctrl-tab": "agent::ToggleProfileSelector"
+			"alt-m": "agent::ToggleModelSelector",
+			"ctrl-tab": "agent::CycleModeSelector",
 		},
-		"context": "AcpThread || (AcpThread && Editor)"
+		"context": "AcpThread || (AcpThread && Editor)",
 	},
 
 	// Global text-area stuff
@@ -123,17 +127,17 @@
 			"ctrl-a": "editor::SelectAll",
 			"ctrl-c": "editor::Copy",
 			"ctrl-x": "vim::VisualDelete", // This is wrong but I assume that stuff are selected
-			"ctrl-v": "vim::Paste"
+			"ctrl-v": "vim::Paste",
 		},
-		"context": "MessageEditor > Editor"
+		"context": "MessageEditor > Editor",
 	},
 
 	{
 		"bindings": { "ctrl-s": "search::ToggleReplace" },
-		"context": "BufferSearchBar || ProjectSearchView || ProjectSearchBar"
+		"context": "BufferSearchBar || ProjectSearchView || ProjectSearchBar",
 	},
 	{
 		"bindings": { "/": "search::FocusSearch" },
-		"context": "KeymapEditor && !BufferSearchBar"
-	}
+		"context": "KeymapEditor && !BufferSearchBar",
+	},
 ]

@@ -7,11 +7,6 @@
 	"colorize_brackets": true,
 	"agent_ui_font_size": 18.0,
 	"agent_servers": {
-		"OpenCode": {
-			"type": "custom",
-			"command": "opencode",
-			"args": ["acp"],
-		},
 		"claude": {
 			"default_mode": "acceptEdits",
 		},
@@ -246,6 +241,8 @@
 
 		// Debugging
 		"probe-rs": true,
+
+		"opencode": true,
 	},
 
 	// UI & Behavior

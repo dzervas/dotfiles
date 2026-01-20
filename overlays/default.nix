@@ -9,7 +9,6 @@
 final: prev: rec {
   buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
   claude-chrome = prev.callPackage ./claude-chrome.nix {};
-  mcp-gateway = prev.callPackage ./mcp-gateway.nix {};
   lmstudio-python = prev.callPackage ./lmstudio-python.nix {};
   openspec = prev.callPackage ./openspec.nix {};
   voxtype = prev.callPackage ./voxtype.nix {};

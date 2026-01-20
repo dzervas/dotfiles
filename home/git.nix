@@ -104,6 +104,7 @@
     };
 
     jujutsu = {
+      # TODO: Check out https://shaddy.dev/notes/jj-tug/ and https://abhinavsarkar.net/posts/jj-usage/
       enable = true;
       # Workflow cheatsheet:
       # Clone: `jj git clone <url> --colocate` or `jj hub <myrepo>`

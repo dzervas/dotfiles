@@ -11,13 +11,13 @@
 }:
 stdenv.mkDerivation rec {
   pname = "openspec";
-  version = "0.20.0";
+  version = "0.21.0";
 
   src = fetchFromGitHub {
     owner = "Fission-AI";
     repo = "OpenSpec";
     rev = "v${version}";
-    hash = "sha256-79Xb1NLBk04V/WVPu+8m1br/rsWoYDARc3+YoQJ8LRg=";
+    hash = "sha256-bjHu3kNsFPGOAIZrcgiExS3xOamC58adXb+qFGQevY8=";
   };
 
   nativeBuildInputs = [
