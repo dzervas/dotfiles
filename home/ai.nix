@@ -119,6 +119,23 @@ in {
         # opencode-cursor-auth
         # plugin = [];
 
+        mode.read-only = {
+          model = "dz/gpt-5.2-codex(high)";
+          tools = {
+            bash = true;
+            edit = false;
+            write = false;
+            read = true;
+            grep = true;
+            glob = true;
+            list = true;
+            patch = false;
+            todowrite = true;
+            todoread = true;
+            webfetch = true;
+          };
+        };
+
         provider.dz = {
           npm = "@ai-sdk/anthropic"; # openai-compatible makes claude models break after each tool call
           name = "DZervArt";

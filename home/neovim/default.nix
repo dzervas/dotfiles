@@ -23,7 +23,7 @@ in {
   # - Open links to browser
 
   imports = [
-    ./ai.nix
+    # ./ai.nix
     ./completion.nix
     ./debug.nix
     ./lint.nix

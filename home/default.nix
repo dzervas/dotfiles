@@ -91,8 +91,6 @@
       (lib.mkIf config.setup.isLaptop powertop)
       (lib.mkIf (!config.setup.isLaptop) plasticity)
 
-      freecad
-
       cameractrls-gtk4
       # voxtype
     ];

@@ -1,19 +1,20 @@
-{ inputs, lib, pkgs, ... }: {
+{ config, inputs, lib, pkgs, ... }: {
   home-manager.sharedModules = [ ./home/hyprland.nix ];
 
   # Issues:
   # - 1Password rules
-  # - Podman crash
 
-  environment.systemPackages = [ pkgs.sddm-chili-theme pkgs.file-roller ];
+  environment.systemPackages = [ pkgs.file-roller ];
 
   services = {
     # https://wiki.hyprland.org/Useful-Utilities/Systemd-start/#installation
-    dbus.implementation = lib.mkForce "dbus";
+    dbus.implementation = "broker";
 
+    # Maybe greetd instead? https://github.com/XNM1/linux-nixos-hyprland-config-dotfiles/blob/main/nixos/display-manager.nix
     displayManager.sddm = {
       enable = true;
-      theme = "chili";
+      # theme = "chili";
+      # extraPackages = [ pkgs.sddm-chili-theme ]; # Broken
       wayland.enable = true;
     };
 
@@ -27,13 +28,11 @@
   };
 
   programs = {
-    uwsm.enable = true;
-
     hyprland = {
       enable = true;
       package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
       portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-      withUWSM = true;
+      # withUWSM = true; # Results in the podman-in-zed crash
     };
 
     thunar = {
@@ -52,4 +51,7 @@
   };
 
   security.pam.services.login.enableGnomeKeyring = true;
+
+  # https://wiki.hypr.land/Nix/Hyprland-on-Home-Manager/#using-the-home-manager-module-with-nixos
+  # xdg.configFile."uwsm/env".source = "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
 }

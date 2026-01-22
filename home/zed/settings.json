@@ -7,6 +7,12 @@
 	"colorize_brackets": true,
 	"agent_ui_font_size": 18.0,
 	"agent_servers": {
+		"opencode": {
+			"type": "extension",
+			"favorite_models": ["dz/claude-opus-4-5-thinking", "dz/glm-4.7", "dz/gpt-5.2-codex(medium)"],
+			"default_config_options": {},
+			"favorite_config_option_values": {},
+		},
 		"claude": {
 			"default_mode": "acceptEdits",
 		},
@@ -29,6 +35,9 @@
 		"shellscript": [".envrc"],
 	},
 	"languages": {
+		"Markdown": {
+			"show_edit_predictions": false,
+		},
 		"Typst": {
 			"show_edit_predictions": false,
 		},
@@ -112,7 +121,7 @@
 						"max_tokens": 400000,
 						"max_output_tokens": 128000,
 						"max_completion_tokens": 400000,
-						"display_name": "GPT 5.2 Codex Max",
+						"display_name": "GPT 5.2 Codex",
 						"capabilities": {
 							"tools": true,
 							"images": true,
@@ -121,7 +130,7 @@
 						},
 					},
 					{
-						"name": "gemini-claude-opus-4-5-thinking",
+						"name": "claude-opus-4-5-thinking",
 						"max_tokens": 200000,
 						"max_output_tokens": 64000,
 						"max_completion_tokens": 200000,
@@ -280,6 +289,16 @@
 
 	// AI Nitpicks
 	"agent": {
+		"favorite_models": [
+			{
+				"provider": "CLIProxyAPI",
+				"model": "gpt-5.2-codex",
+			},
+			{
+				"provider": "CLIProxyAPI",
+				"model": "claude-opus-4-5-thinking",
+			},
+		],
 		"default_profile": "write",
 		"play_sound_when_agent_done": true,
 		"always_allow_tool_actions": true,
@@ -292,6 +311,12 @@
 			"model": "gpt-5-mini",
 		},
 		"profiles": {
+			"test": {
+				"name": "Test",
+				"tools": {},
+				"enable_all_context_servers": false,
+				"context_servers": {},
+			},
 			"minimal": {
 				"name": "Minimal",
 				"tools": {},

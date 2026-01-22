@@ -48,6 +48,8 @@
       enable = true;
       registries.search = [ "docker.io" ];
     };
+    # Related pod exit session crash:
+    # https://groups.google.com/g/linux.debian.bugs.dist/c/tt4F3dLan1E
     podman = {
       enable = true;
       autoPrune.enable = true;
@@ -56,7 +58,7 @@
       defaultNetwork.settings.dns_enabled = true;
 
       dockerCompat = true;
-      dockerSocket.enable = true;
+      # dockerSocket.enable = true;
     };
   };
 

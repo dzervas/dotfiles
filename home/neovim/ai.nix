@@ -46,7 +46,7 @@ in {
       sidekick.enable = config.programs.nixvim.plugins.copilot-lua.enable;
 
       supermaven = {
-        enable = true;
+        enable = false;
         settings = {
           keymaps = {
             accept = "<Tab>";
@@ -75,7 +75,7 @@ in {
 
       # Maybe https://codecompanion.olimorris.dev/ instead?
       avante = {
-        enable = true;
+        enable = false;
         settings = {
           # provider = "claude-code";
           # provider = "copilot";

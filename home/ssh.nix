@@ -1,7 +1,7 @@
 { pkgs, ... }: {
   programs.ssh = {
     enable = true;
-    includes = ["~/.ssh/local.ssh.cfg"];
+    includes = ["~/.ssh/local.config"];
     enableDefaultConfig = false;
     matchBlocks = rec {
       "*" = {

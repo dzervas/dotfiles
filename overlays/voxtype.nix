@@ -16,7 +16,7 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "voxtype";
-  version = "0.4.16";
+  version = "untagged-00e098cd2b6c2baca59b";
 
   src = fetchFromGitHub {
     owner = "peteonrails";

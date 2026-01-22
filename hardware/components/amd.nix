@@ -18,7 +18,6 @@
     };
 
     cpu.amd.updateMicrocode = true;
-    enableRedistributableFirmware = true;
 
     graphics.extraPackages = with pkgs; [
       mesa

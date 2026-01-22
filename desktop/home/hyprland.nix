@@ -44,6 +44,7 @@ in {
 
       exec-once = [
         "${pkgs.hyprland-per-window-layout}/bin/hyprland-per-window-layout"
+        "dbus-update-activation-environment --systemd --all"
 
         # Spawn initial windows
         # TODO: Fix this
@@ -240,6 +241,7 @@ in {
       # https://wiki.hyprland.org/Useful-Utilities/Systemd-start/#installation
       enable = false;
       enableXdgAutostart = true;
+      variables = ["--all"];
     };
   };
 }
