@@ -1,15 +1,20 @@
 { pkgs, ... }: let
   tools = mcp: tools: map(t: "mcp__${mcp}__${t}") tools;
-  models = {
+  anthropic = {
     "claude-opus-4-5-thinking" = "opus-4.5";
-    "gpt-5.2-codex(medium)" = "gpt-5.2-codex";
-    "glm-4.7" = "glm-4.7";
     "claude-sonnet-4-5-thinking" = "sonnet-4.5";
-
-    "gpt-5.2(high)" = "gpt-5.2";
-    "gpt-5.2-codex(high)" = "gpt-5.2-codex-high";
-    "gemini-3-pro-preview" = "gemini-3-pro";
+    "glm-4.7" = "glm-4.7";
   };
+  openai = {
+    "gpt-5.2-codex(high)" = "gpt-5.2-codex-high";
+    "gpt-5.2-codex(medium)" = "gpt-5.2-codex";
+    "gpt-5.2(high)" = "gpt-5.2";
+  };
+  google = {
+    "gemini-3-pro-preview" = "gemini-3-pro";
+    "gemini-3-flash-preview" = "gemini-3-flash";
+  };
+  allModels = anthropic // openai // google;
 in {
   home.packages = with pkgs; [
     github-copilot-cli
@@ -115,12 +120,12 @@ in {
         # TODO: Oh-my-opencode
         autoupdate = false;
         share = "disabled";
-        small_model = "dz/glm-4.7";
+        small_model = "dz-anthropic/glm-4.7";
         # opencode-cursor-auth
         # plugin = [];
 
         mode.read-only = {
-          model = "dz/gpt-5.2-codex(high)";
+          model = "dz-openai/gpt-5.2-codex(high)";
           tools = {
             bash = true;
             edit = false;
@@ -136,14 +141,25 @@ in {
           };
         };
 
-        provider.dz = {
-          npm = "@ai-sdk/anthropic"; # openai-compatible makes claude models break after each tool call
-          name = "DZervArt";
-          options = {
-            baseURL = "https://ai.vpn.dzerv.art/v1";
-            apiKey = "sk-dummy";
+        provider = {
+          dz-anthropic = {
+            npm = "@ai-sdk/anthropic"; # openai-compatible makes claude models break after each tool call
+            name = "DZervArt (Anthropic)";
+            options = {
+              baseURL = "https://ai.vpn.dzerv.art/v1";
+              apiKey = "sk-dummy";
+            };
+            models = builtins.mapAttrs (_: v: { name = v; }) anthropic;
           };
-          models = builtins.mapAttrs (_: v: { name = v; }) models;
+          dz-openai = {
+            npm = "@ai-sdk/openai";
+            name = "DZervArt (OpenAI)";
+            options = {
+              baseURL = "https://ai.vpn.dzerv.art/v1";
+              apiKey = "sk-dummy";
+            };
+            models = builtins.mapAttrs (_: v: { name = v; }) (openai // google);
+          };
         };
 
         formatter = {
