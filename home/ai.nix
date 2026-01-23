@@ -99,8 +99,8 @@ in {
           ANTHROPIC_AUTH_TOKEN = "sk-dummy";
           API_TIMEOUT_MS = "3000000";
 
-          # ANTHROPIC_DEFAULT_OPUS_MODEL = "gemini-claude-opus-4-5-thinking";
-          # ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.2-codex(medium)";
+          ANTHROPIC_DEFAULT_OPUS_MODEL = "claude-opus-4-5-thinking";
+          ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.2-codex(medium)";
           ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7";
           CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.2-codex(high)";
 
