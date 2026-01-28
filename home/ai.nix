@@ -39,6 +39,12 @@ in {
           type = "command";
         };
 
+        extraKnownMarketplaces.anthropic.source = {
+          source = "github";
+          repo = "anthropics/skills";
+        };
+        enabledPlugins."document-skills@anthropic-agent-skills" = true;
+
         permissions = {
           defaultMode = "acceptEdits";
           disableBypassPermissionsMode = "disable";
@@ -65,7 +71,7 @@ in {
 
             "Skill(openspec:*)"
 
-            "Search(*)"
+            "Search(path: ., *)"
           ] ++ (tools "grafana" [
               "find_*"
               "fetch_*"
@@ -120,6 +126,7 @@ in {
         # TODO: Oh-my-opencode
         autoupdate = false;
         share = "disabled";
+        model = "dz-anthropic/opus-4.5";
         small_model = "dz-anthropic/glm-4.7";
         # opencode-cursor-auth
         # plugin = [];
@@ -143,6 +150,7 @@ in {
 
         provider = {
           dz-anthropic = {
+          # anthropic = {
             npm = "@ai-sdk/anthropic"; # openai-compatible makes claude models break after each tool call
             name = "DZervArt (Anthropic)";
             options = {
