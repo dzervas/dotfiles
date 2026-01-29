@@ -20,6 +20,7 @@ in {
 
   home.packages = with pkgs; [
     hyprshot
+    # grim # For flameshot
     # thunar # Needs to exist here too to be the default
   ];
 
@@ -171,6 +172,7 @@ in {
         { title = "Media viewer"; class = "org.telegram.desktop"; rules = ["float on" "center on"]; }
         { title = "File Operation Progress"; class = "Thunar"; rules = ["float on" "center on"]; }
         { class = "xdg-desktop-portal-gtk"; rules = ["float on" "center on"]; }
+        { class = "flameshot"; rules = ["no_anim on" "size (monitor_w*2) monitor_h"]; } # Does not work
       ];
 
       # Layouts

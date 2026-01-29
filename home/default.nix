@@ -99,7 +99,13 @@
 
   services = {
     keybase.enable = true;
-    # flameshot.enable = true; # Requires grim!
+    # flameshot = {
+    #   enable = true;
+    #   settings.General = {
+    #     disabledGrimWarning = true;
+    #     useGrimAdapter = true; # Requires grim!
+    #   };
+    # };
 
     # Disable gnome-keyring's ssh component to avoid conflicts with ssh-agent
     gnome-keyring.components = [ "secrets" ];
