@@ -35,6 +35,7 @@
 			"ctrl-up": "editor::MoveLineUp",
 			"ctrl-f": "pane::DeploySearch",
 			"ctrl-l": "buffer_search::Dismiss",
+			"ctrl-n": "search::SelectAllMatches",
 		},
 		"context": "Editor",
 	},
@@ -48,6 +49,12 @@
 			"g up": "editor::GoToPreviousDiagnostic",
 		},
 		"context": "Editor && vim_mode == normal",
+	},
+	{
+		"bindings": {
+			"n": "editor::SelectAllMatches",
+		},
+		"context": "Editor && vim_mode == visual",
 	},
 
 	// Pane/Dock navigation
@@ -139,5 +146,11 @@
 	{
 		"bindings": { "/": "search::FocusSearch" },
 		"context": "KeymapEditor && !BufferSearchBar",
+	},
+	{
+		"context": "Editor",
+		"bindings": {
+			"ctrl-n": "editor::SelectAllMatches",
+		},
 	},
 ]
