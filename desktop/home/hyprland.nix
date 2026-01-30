@@ -19,8 +19,7 @@ in {
   ];
 
   home.packages = with pkgs; [
-    hyprshot
-    # grim # For flameshot
+    grim # For flameshot
     # thunar # Needs to exist here too to be the default
   ];
 
@@ -30,6 +29,10 @@ in {
   services = {
     hyprpolkitagent.enable = true;
     hyprpaper.enable = true;
+    flameshot.settings.General = {
+      disabledGrimWarning = true;
+      useGrimAdapter = true; # Requires grim!
+    };
   };
 
   wayland.windowManager.hyprland = {
@@ -108,8 +111,8 @@ in {
         "$mod+Shift, Comma, movecurrentworkspacetomonitor, +1"
         "$mod, Period, focusmonitor, -1"
         "$mod+Shift, Period, movecurrentworkspacetomonitor, -1"
-        ", Print, exec, hyprshot -z -m region --clipboard-only"
-        "$mod, Print, exec, hyprshot -z -m output --clipboard-only"
+        ", Print, exec, flameshot gui"
+        # "$mod, Print, exec, flameshot screen"
       ] ++ (
         # workspaces
         # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
@@ -172,7 +175,9 @@ in {
         { title = "Media viewer"; class = "org.telegram.desktop"; rules = ["float on" "center on"]; }
         { title = "File Operation Progress"; class = "Thunar"; rules = ["float on" "center on"]; }
         { class = "xdg-desktop-portal-gtk"; rules = ["float on" "center on"]; }
-        { class = "flameshot"; rules = ["no_anim on" "size (monitor_w*2) monitor_h"]; } # Does not work
+
+        # https://github.com/hyprwm/Hyprland/discussions/12759
+        { title = "flameshot"; rules = ["no_anim on" "pin on" "float on" "fullscreen_state on" "move 0 0"]; }
       ];
 
       # Layouts
