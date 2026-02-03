@@ -176,6 +176,9 @@ in {
         { title = "File Operation Progress"; class = "Thunar"; rules = ["float on" "center on"]; }
         { class = "xdg-desktop-portal-gtk"; rules = ["float on" "center on"]; }
 
+        # Google Meet popup
+        { class = "brave-browser"; title = "^Meet - \w+$"; rules = ["no_initial_focus on" "border_size 0" "rounding 0" "decorate off" "no_shadow  off"]; }
+
         # https://github.com/hyprwm/Hyprland/discussions/12759
         { title = "flameshot"; rules = ["no_anim on" "pin on" "float on" "fullscreen_state on" "move 0 0"]; }
       ];

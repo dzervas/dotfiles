@@ -12,6 +12,7 @@
       "org.telegram.desktop"
       "im.riot.Riot"
       "dev.vencord.Vesktop"
+      "us.zoom.Zoom"
     ] ++ (if !config.setup.isLaptop then [
       "com.github.skylot.jadx"
       "io.github.ryubing.Ryujinx"
@@ -45,6 +46,7 @@
         SIGNAL_PASSWORD_STORE = "gnome-libsecret";
         SIGNAL_USE_WAYLAND = "1";
       };
+      "us.zoom.Zoom".Context.sockets = [ "x11" ];
       "org.onlyoffice.desktopeditors".Context.sockets = [ "x11" "cups" ];
       "md.obsidian.Obsidian".Context.filesystems = [ "xdg-documents/Obsidian" ];
 

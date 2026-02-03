@@ -83,6 +83,7 @@
     kubectl-doctor
     kubectl-linstor
     calicoctl
+    cilium-cli
     kubectx
     kubescape
     (wrapHelm kubernetes-helm {

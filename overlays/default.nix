@@ -26,10 +26,10 @@ final: prev: rec {
 
   # nix-update:claude-code-latest
   claude-code-latest = prev.claude-code.overrideAttrs rec {
-    version = "2.1.25";
+    version = "2.1.29";
     src = final.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-61tEjrW4WFAbichsQJwAUjEecMiDmYGvgeqAhuqs3IA=";
+      hash = "sha256-bRXULCl5F87SWEcsD9S8ZaBrEK2QtK/GEhpEFR1CMWQ=";
     };
     npmDepsHash = "sha256-DNdRkN/rpCsN8fnZbz18r2KRUTl5HCur+GyrofH+T/Y=";
   };
