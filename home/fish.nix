@@ -14,6 +14,15 @@
       bind \e\[3\;6~ __forget
       export FLAKE_URL="/home/dzervas/Lab/dotfiles?submodules=1&lfs=1"
 
+      # Agentty: inline agent mode
+      source ${./agentty/state.fish}
+      source ${./agentty/render.fish}
+      source ${./agentty/providers/claude.fish}
+      source ${./agentty/agentty.fish}
+      bind \ei "agentty_toggle; commandline -f repaint"
+      bind \em "agentty_mode_cycle; commandline -f repaint"
+      bind \en "agentty_new_session; commandline -f repaint"
+
       # If running inside a nvim terminal, leverage the remote opener
       # so `nvim` opens in the already running Neovim instance.
       if set -q NVIM

@@ -5,13 +5,14 @@
     enable = true;
     enableTransience = true;
     settings = let
-      leftSep = "";
-      rightSep = "";
+      leftSep = "";
+      rightSep = "";
 
       bgColorHex = "#303030"; # The "main" background color
 
       sepColor = "fg:#949494 bg:${bgColorHex}";
       frameStyle = "fg:#6C6C6C";
+      agentFrameStyle = "fg:#6E56CF";
 
       leftSepString = "[ ${leftSep} ](${sepColor})";
       rightSepString = "[ ${rightSep} ](${sepColor})";
@@ -20,14 +21,21 @@
         # TODO: Fix bottom pinning
         # "$\{custom.pin_bottom}"
 
-        # Top left
-        "[╭─](${frameStyle})"
-        "[](fg:${bgColorHex})"
+        # Top left — frame color changes when agentty is active
+        "$\{custom.frame_tl}"
+        "$\{custom.frame_tl_agent}"
+        "[](fg:${bgColorHex})"
         "[ ](bg:${bgColorHex})"
 
         "$sudo"
         "$direnv"
         "$directory"
+
+        # Agentty info (only visible when active)
+        "$\{env_var.AGENTTY_MODE}"
+        "$\{env_var.AGENTTY_SESSION}"
+        "$\{env_var.AGENTTY_MODEL}"
+
         "$\{custom.git_branch}"
         "$\{custom.git_status}"
         "$\{custom.git_state}"
@@ -35,12 +43,12 @@
         "$\{custom.jj}"
 
         "[ ](bg:${bgColorHex})"
-        "[](fg:${bgColorHex})"
+        "[](fg:${bgColorHex})"
 
         "$fill"
 
         # Top Right
-        "[](fg:${bgColorHex})"
+        "[](fg:${bgColorHex})"
         "[ ](bg:${bgColorHex})"
 
         "$aws"
@@ -50,25 +58,28 @@
         "$jobs"
 
         "[ ](bg:${bgColorHex})"
-        "[](fg:${bgColorHex})"
-        "[─╮](${frameStyle})"
+        "[](fg:${bgColorHex})"
+        "$\{custom.frame_tr}"
+        "$\{custom.frame_tr_agent}"
         "\n" # Prompt line
 
         # Prompt line
-        "[╰─](${frameStyle})"
+        "$\{custom.frame_bl}"
+        "$\{custom.frame_bl_agent}"
         "$character"
       ];
 
       right_format = lib.concatStrings [
         "$cmd_duration"
         "$\{env_var.IN_NIX_SHELL}"
-        "[─╯](${frameStyle})"
+        "$\{custom.frame_br}"
+        "$\{custom.frame_br_agent}"
       ];
 
       sudo = {
         disabled = false;
         format = "[$symbol]($style)";
-        symbol = " ";
+        symbol = " ";
         style = "bg:${bgColorHex} bold yellow";
       };
 
@@ -78,11 +89,24 @@
         symbol = "󱄅 ";
       };
 
+      # Agentty env_var modules — only render when the var is set
+      env_var.AGENTTY_MODE = {
+        format = "[${leftSepString} 󱞁 $env_value ](fg:#F6C177 bg:${bgColorHex})";
+      };
+
+      env_var.AGENTTY_SESSION = {
+        format = "[ 󰉖 $env_value ](fg:#C4A7E7 bg:${bgColorHex})";
+      };
+
+      env_var.AGENTTY_MODEL = {
+        format = "[ 󰘦 $env_value ](fg:#9CCFD8 bg:${bgColorHex})";
+      };
+
       direnv = {
         disabled = false;
         style = "fg:#00AFFF bg:${bgColorHex}";
         format = "[$symbol$loaded ]($style)";
-        symbol = " ";
+        symbol = " ";
         loaded_msg = "";
         unloaded_msg = "✘ ";
       };
@@ -99,9 +123,9 @@
 
         substitutions = {
           Documents = "󰈙 ";
-          Downloads = " ";
-          Music = " ";
-          Pictures = " ";
+          Downloads = " ";
+          Music = " ";
+          Pictures = " ";
           "Lab/dotfiles" = "󱄅 ";
         };
       };
@@ -116,7 +140,7 @@
         # TODO: Profile & region alias? https://starship.rs/config/#aws
         format = "[$symbol$profile${rightSepString}]($style)";
         style = "bg:#303030 bold orange";
-        symbol = " ";
+        symbol = " ";
         expiration_symbol = "󰌾 ";
       };
 
@@ -155,12 +179,12 @@
         style = "fg:#D7AF00 bg:${bgColorHex}";
         format = "[$all_status$ahead_behind]($style)";
 
-        ahead = "  $count";
-        behind = "  $count";
-        conflicted = " [ $count](fg:#FF0000 bg:${bgColorHex})";
+        ahead = "  $count";
+        behind = "  $count";
+        conflicted = " [ $count](fg:#FF0000 bg:${bgColorHex})";
         deleted = " ✘ $count";
         modified = " !$count";
-        renamed = "  $count";
+        renamed = "  $count";
         staged = " +$count";
         stashed = " [*$count](fg:#5FD700 bg:${bgColorHex})";
         untracked = " ?$count";
@@ -179,6 +203,58 @@
         is-jj-repo = "jj --ignore-working-copy root";
         jj-args = "--ignore-working-copy --color never --no-graph";
       in {
+        # Frame modules — normal (when AGENTTY_ACTIVE is not set)
+        frame_tl = {
+          command = "printf '╭─'";
+          format = "[$output](${frameStyle})";
+          when = "test -z \"$AGENTTY_ACTIVE\"";
+          shell = ["bash"];
+        };
+        frame_tr = {
+          command = "printf '─╮'";
+          format = "[$output](${frameStyle})";
+          when = "test -z \"$AGENTTY_ACTIVE\"";
+          shell = ["bash"];
+        };
+        frame_bl = {
+          command = "printf '╰─'";
+          format = "[$output](${frameStyle})";
+          when = "test -z \"$AGENTTY_ACTIVE\"";
+          shell = ["bash"];
+        };
+        frame_br = {
+          command = "printf '─╯'";
+          format = "[$output](${frameStyle})";
+          when = "test -z \"$AGENTTY_ACTIVE\"";
+          shell = ["bash"];
+        };
+
+        # Frame modules — agent mode (purple when AGENTTY_ACTIVE is set)
+        frame_tl_agent = {
+          command = "printf '╭─'";
+          format = "[$output](${agentFrameStyle})";
+          when = "test -n \"$AGENTTY_ACTIVE\"";
+          shell = ["bash"];
+        };
+        frame_tr_agent = {
+          command = "printf '─╮'";
+          format = "[$output](${agentFrameStyle})";
+          when = "test -n \"$AGENTTY_ACTIVE\"";
+          shell = ["bash"];
+        };
+        frame_bl_agent = {
+          command = "printf '╰─'";
+          format = "[$output](${agentFrameStyle})";
+          when = "test -n \"$AGENTTY_ACTIVE\"";
+          shell = ["bash"];
+        };
+        frame_br_agent = {
+          command = "printf '─╯'";
+          format = "[$output](${agentFrameStyle})";
+          when = "test -n \"$AGENTTY_ACTIVE\"";
+          shell = ["bash"];
+        };
+
         jj_branch = {
           # TODO: Show ahead/behind - use the `ahead_of_origin` and `behind_origin` revsets
 
@@ -195,8 +271,8 @@
             added = "+";
             removed = "✘ ";
             modified = "!";
-            renamed = " ";
-            copied = " ";
+            renamed = " ";
+            copied = " ";
           };
           diff-status = status: ''diff.files().filter(|e| e.status()=="${status}")'';
           status-checks = lib.mapAttrsToList (status: icon: ''if(${diff-status status}, "${icon}" ++ ${diff-status status}.len())'') status-map;
@@ -205,7 +281,7 @@
           command = ''jj log ${jj-args} -n1 -r@  --template '
             separate(" ",
               ${status-line},
-              if(conflict, " "),
+              if(conflict, " "),
               if(divergent, "⇕ "),
               if(hidden, "󰘓 "),
               surround("\"", "\"", truncate_end(24, description.first_line(), "…")),
