@@ -8,6 +8,7 @@ in {
     # ./components/libvirt.nix
     ./components/peripherals.nix
     ./components/secure-boot.nix
+    ./components/steam.nix
 
     # Laptop
     ./components/fingerprint.nix

@@ -6,9 +6,9 @@
     "glm-4.7" = "glm-4.7";
   };
   openai = {
-    "gpt-5.2-codex(high)" = "gpt-5.2-codex-high";
-    "gpt-5.2-codex(medium)" = "gpt-5.2-codex";
-    "gpt-5.2(high)" = "gpt-5.2";
+    "gpt-5.3-codex(high)" = "gpt-5.3-codex-high";
+    "gpt-5.3-codex(medium)" = "gpt-5.3-codex";
+    "gpt-5.3(high)" = "gpt-5.3";
   };
   google = {
     "gemini-3-pro-preview" = "gemini-3-pro";
@@ -24,6 +24,7 @@ in {
   ];
 
   programs = {
+    codex.enable = true;
     # TODO: Add skills: https://docs.claude.com/en/docs/claude-code/skills
     claude-code = {
       enable = true;
@@ -143,7 +144,7 @@ in {
         # plugin = [];
 
         mode.read-only = {
-          model = "dz-openai/gpt-5.2-codex(high)";
+          model = "dz-openai/gpt-5.3-codex(high)";
           tools = {
             bash = true;
             edit = false;
