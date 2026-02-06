@@ -2,7 +2,6 @@
   # setup.terminal = "warp-terminal";
   home = {
     packages = [ pkgs.warp-terminal ];
-    # sessionVariables.TERMINAL = "warp-terminal";
     # file."${config.xdg.configHome}/warp-terminal/user_preferences.json".text = builtins.toJSON {
     #   prefs = {
     #     HonorPS1 = "true";

@@ -21,6 +21,7 @@
     ./tools.nix
     ./thumbnailers.nix
     ./updater
+    ./warp.nix
     ./xdg.nix
   ];
 
@@ -95,6 +96,7 @@
       # voxtype
     ];
 
+    sessionVariables.TERMINAL = config.setup.terminal;
   };
 
   services = {

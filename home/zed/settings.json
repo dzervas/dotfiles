@@ -9,7 +9,7 @@
 	"agent_servers": {
 		"opencode": {
 			"type": "extension",
-			"favorite_models": ["dz/claude-opus-4-5-thinking", "dz/glm-4.7", "dz/gpt-5.2-codex(medium)"],
+			"favorite_models": ["dz/claude-opus-4-6", "dz/glm-4.7", "dz/gpt-5.3-codex(medium)"],
 			"default_config_options": {},
 			"favorite_config_option_values": {},
 		},
@@ -49,7 +49,9 @@
 			"preferred_line_length": 100,
 		},
 		"Nix": {
-			"format_on_save": "off",
+			"tab_size": 3,
+   "hard_tabs": false,
+   "format_on_save": "off",
 		},
 	},
 	"lsp": {
@@ -117,11 +119,11 @@
 						},
 					},
 					{
-						"name": "gpt-5.2-codex",
+						"name": "gpt-5.3-codex",
 						"max_tokens": 400000,
 						"max_output_tokens": 128000,
 						"max_completion_tokens": 400000,
-						"display_name": "GPT 5.2 Codex",
+						"display_name": "GPT 5.3 Codex",
 						"capabilities": {
 							"tools": true,
 							"images": true,
@@ -130,11 +132,11 @@
 						},
 					},
 					{
-						"name": "claude-opus-4-5-thinking",
+						"name": "claude-opus-4-6",
 						"max_tokens": 200000,
 						"max_output_tokens": 64000,
 						"max_completion_tokens": 200000,
-						"display_name": "Claude Opus 4.5 Thinking (gemini)",
+						"display_name": "Claude Opus 4.6",
 						"capabilities": {
 							"tools": true,
 							"images": true,
