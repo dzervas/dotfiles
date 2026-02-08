@@ -5,8 +5,8 @@
     enable = true;
     enableTransience = true;
     settings = let
-      leftSep = "";
-      rightSep = "";
+      leftSep = "";
+      rightSep = "";
 
       bgColorHex = "#303030"; # The "main" background color
 
@@ -23,8 +23,8 @@
 
         # Top left — frame color changes when agentty is active
         "$\{custom.frame_tl}"
-        "$\{custom.frame_tl_agent}"
-        "[](fg:${bgColorHex})"
+        # "$\{custom.frame_tl_agent}"
+        "[](fg:${bgColorHex})"
         "[ ](bg:${bgColorHex})"
 
         "$sudo"
@@ -43,12 +43,12 @@
         "$\{custom.jj}"
 
         "[ ](bg:${bgColorHex})"
-        "[](fg:${bgColorHex})"
+        "[](fg:${bgColorHex})"
 
         "$fill"
 
         # Top Right
-        "[](fg:${bgColorHex})"
+        "[](fg:${bgColorHex})"
         "[ ](bg:${bgColorHex})"
 
         "$aws"
@@ -58,14 +58,14 @@
         "$jobs"
 
         "[ ](bg:${bgColorHex})"
-        "[](fg:${bgColorHex})"
+        "[](fg:${bgColorHex})"
         "$\{custom.frame_tr}"
-        "$\{custom.frame_tr_agent}"
+        # "$\{custom.frame_tr_agent}"
         "\n" # Prompt line
 
         # Prompt line
         "$\{custom.frame_bl}"
-        "$\{custom.frame_bl_agent}"
+        # "$\{custom.frame_bl_agent}"
         "$character"
       ];
 
@@ -73,13 +73,13 @@
         "$cmd_duration"
         "$\{env_var.IN_NIX_SHELL}"
         "$\{custom.frame_br}"
-        "$\{custom.frame_br_agent}"
+        # "$\{custom.frame_br_agent}"
       ];
 
       sudo = {
         disabled = false;
         format = "[$symbol]($style)";
-        symbol = " ";
+        symbol = " ";
         style = "bg:${bgColorHex} bold yellow";
       };
 
@@ -106,7 +106,7 @@
         disabled = false;
         style = "fg:#00AFFF bg:${bgColorHex}";
         format = "[$symbol$loaded ]($style)";
-        symbol = " ";
+        symbol = " ";
         loaded_msg = "";
         unloaded_msg = "✘ ";
       };
@@ -123,9 +123,9 @@
 
         substitutions = {
           Documents = "󰈙 ";
-          Downloads = " ";
-          Music = " ";
-          Pictures = " ";
+          Downloads = " ";
+          Music = " ";
+          Pictures = " ";
           "Lab/dotfiles" = "󱄅 ";
         };
       };
@@ -140,7 +140,7 @@
         # TODO: Profile & region alias? https://starship.rs/config/#aws
         format = "[$symbol$profile${rightSepString}]($style)";
         style = "bg:#303030 bold orange";
-        symbol = " ";
+        symbol = " ";
         expiration_symbol = "󰌾 ";
       };
 
@@ -179,12 +179,12 @@
         style = "fg:#D7AF00 bg:${bgColorHex}";
         format = "[$all_status$ahead_behind]($style)";
 
-        ahead = "  $count";
-        behind = "  $count";
-        conflicted = " [ $count](fg:#FF0000 bg:${bgColorHex})";
+        ahead = "  $count";
+        behind = "  $count";
+        conflicted = " [ $count](fg:#FF0000 bg:${bgColorHex})";
         deleted = " ✘ $count";
         modified = " !$count";
-        renamed = "  $count";
+        renamed = "  $count";
         staged = " +$count";
         stashed = " [*$count](fg:#5FD700 bg:${bgColorHex})";
         untracked = " ?$count";
@@ -271,8 +271,8 @@
             added = "+";
             removed = "✘ ";
             modified = "!";
-            renamed = " ";
-            copied = " ";
+            renamed = " ";
+            copied = " ";
           };
           diff-status = status: ''diff.files().filter(|e| e.status()=="${status}")'';
           status-checks = lib.mapAttrsToList (status: icon: ''if(${diff-status status}, "${icon}" ++ ${diff-status status}.len())'') status-map;
@@ -281,7 +281,7 @@
           command = ''jj log ${jj-args} -n1 -r@  --template '
             separate(" ",
               ${status-line},
-              if(conflict, " "),
+              if(conflict, " "),
               if(divergent, "⇕ "),
               if(hidden, "󰘓 "),
               surround("\"", "\"", truncate_end(24, description.first_line(), "…")),

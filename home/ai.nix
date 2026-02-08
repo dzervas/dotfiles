@@ -46,16 +46,16 @@ in {
         };
         enabledPlugins."document-skills@anthropic-agent-skills" = true;
 
-        hooks = {
-          PreToolUse = [{
-            matcher = "";
-            hooks = [{
-              type = "command";
-              command = toString ./agentty/hooks/pretooluse.sh;
-              timeout = 60;
-            }];
-          }];
-        };
+        # hooks = {
+        #   PreToolUse = [{
+        #     matcher = "";
+        #     hooks = [{
+        #       type = "command";
+        #       command = toString ./agentty/hooks/pretooluse.sh;
+        #       timeout = 60;
+        #     }];
+        #   }];
+        # };
 
         permissions = {
           defaultMode = "acceptEdits";
