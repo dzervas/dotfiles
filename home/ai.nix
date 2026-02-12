@@ -3,7 +3,7 @@
   anthropic = {
     "claude-opus-4-5-thinking" = "opus-4.5";
     "claude-sonnet-4-5-thinking" = "sonnet-4.5";
-    "glm-4.7" = "glm-4.7";
+    "glm-5" = "glm-5";
   };
   openai = {
     "gpt-5.3-codex(high)" = "gpt-5.3-codex-high";
@@ -14,21 +14,19 @@
     "gemini-3-pro-preview" = "gemini-3-pro";
     "gemini-3-flash-preview" = "gemini-3-flash";
   };
-  allModels = anthropic // openai // google;
+  # allModels = anthropic // openai // google;
 in {
   home.packages = with pkgs; [
-    github-copilot-cli
+    # github-copilot-cli
     lmstudio
-    openspec
-    claude-chrome
+    # claude-chrome
   ];
 
   programs = {
-    codex.enable = true;
     # TODO: Add skills: https://docs.claude.com/en/docs/claude-code/skills
     claude-code = {
       enable = true;
-      package = pkgs.claude-code-latest;
+      # package = pkgs.claude-code-latest;
       settings = {
         model = "opus";
         enableAllProjectMcpServers = false;
@@ -113,14 +111,14 @@ in {
         };
 
         env = {
-          ANTHROPIC_BASE_URL = "https://ai.vpn.dzerv.art:7443";
-          ANTHROPIC_AUTH_TOKEN = "sk-dummy";
+          # ANTHROPIC_BASE_URL = "https://ai.vpn.dzerv.art:7443";
+          # ANTHROPIC_AUTH_TOKEN = "sk-dummy";
           # API_TIMEOUT_MS = "3000000";
 
-          ANTHROPIC_DEFAULT_OPUS_MODEL = "claude-opus-4-6";
-          ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.3-codex(medium)";
-          ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7";
-          CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.3-codex(high)";
+          # ANTHROPIC_DEFAULT_OPUS_MODEL = "claude-opus-4-6";
+          # ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.3-codex(medium)";
+          # ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7";
+          # CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.3-codex(high)";
 
           CLAUDE_CODE_ENABLE_TELEMETRY = "1";
           OTEL_METRICS_EXPORTER = "otlp";
@@ -139,7 +137,7 @@ in {
         autoupdate = false;
         share = "disabled";
         model = "dz-anthropic/opus-4.5";
-        small_model = "dz-anthropic/glm-4.7";
+        small_model = "dz-anthropic/glm-5";
         # opencode-cursor-auth
         # plugin = [];
 

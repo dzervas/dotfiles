@@ -35,6 +35,10 @@
 		"shellscript": [".envrc"],
 	},
 	"languages": {
+		"YAML": {
+			"hard_tabs": false,
+			"tab_size": 2,
+		},
 		"Markdown": {
 			"show_edit_predictions": false,
 		},
@@ -49,9 +53,9 @@
 			"preferred_line_length": 100,
 		},
 		"Nix": {
-			"tab_size": 3,
-   "hard_tabs": false,
-   "format_on_save": "off",
+			"tab_size": 2,
+			"hard_tabs": false,
+			"format_on_save": "on",
 		},
 	},
 	"lsp": {

@@ -1,4 +1,10 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   imports = [
     ./1password.nix
     ./ai.nix
@@ -21,7 +27,6 @@
     ./tools.nix
     ./thumbnailers.nix
     ./updater
-    ./warp.nix
     ./xdg.nix
   ];
 
@@ -41,8 +46,10 @@
   };
 
   xdg.configFile = {
-    "zed/settings.json".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/zed/settings.json";
-    "zed/keymap.json".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/zed/keymap.json";
+    "zed/settings.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/zed/settings.json";
+    "zed/keymap.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/zed/keymap.json";
     "nixpkgs/config.nix".text = "{ allowUnfree = true; }";
     katerc.source = ./katerc;
   };
@@ -80,7 +87,8 @@
 
       kooha # Screen recording
 
-      gtk3 gtk4 # Install to fix some inconsistencies (cursor, DPI, theme, etc.)
+      gtk3
+      gtk4 # Install to fix some inconsistencies (cursor, DPI, theme, etc.)
       gvfs
 
       trilium-desktop
@@ -120,3 +128,8 @@
     targets.zed.enable = false;
   };
 }
+
+# ZMK building
+# p run -it --rm -v $(pwd):/config --workdir /config zmkfirmware/zmk-build-arm:stable
+# west init -l config
+# west update --fetch-opt=--filter=tree:0
