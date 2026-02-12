@@ -4,6 +4,9 @@
 	// 	"enabled": true,
 	// 	"ai_provider": "Z.AI"
 	// },
+	"which_key": {
+		"enabled": true,
+	},
 	"colorize_brackets": true,
 	"agent_ui_font_size": 18.0,
 	"agent_servers": {
@@ -109,6 +112,19 @@
 			"CLIProxyAPI": {
 				"api_url": "https://ai.vpn.dzerv.art/v1",
 				"available_models": [
+					{
+						"name": "glm-4.7-flashx",
+						"max_tokens": 400000,
+						"max_output_tokens": 128000,
+						"max_completion_tokens": 400000,
+						"display_name": "GLM 4.7 FlashX",
+						"capabilities": {
+							"tools": true,
+							"images": true,
+							"parallel_tool_calls": true,
+							"prompt_cache_key": true,
+						},
+					},
 					{
 						"name": "glm-4.7",
 						"max_tokens": 400000,
@@ -298,11 +314,11 @@
 		"favorite_models": [
 			{
 				"provider": "CLIProxyAPI",
-				"model": "gpt-5.2-codex",
+				"model": "gpt-5.3-codex",
 			},
 			{
 				"provider": "CLIProxyAPI",
-				"model": "claude-opus-4-5-thinking",
+				"model": "claude-opus-4-6-thinking",
 			},
 		],
 		"default_profile": "write",
@@ -310,11 +326,11 @@
 		"always_allow_tool_actions": true,
 		"inline_assistant_model": {
 			"provider": "CLIProxyAPI",
-			"model": "gpt-5.1-codex-mini",
+			"model": "glm-4.7-flashx",
 		},
 		"default_model": {
-			"provider": "copilot_chat",
-			"model": "gpt-5-mini",
+			"provider": "CLIProxyAPI",
+			"model": "gpt-5.3-codex",
 		},
 		"profiles": {
 			"test": {

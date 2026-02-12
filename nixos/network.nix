@@ -73,9 +73,10 @@
     avahi.enable = false;
   };
 
-  boot.extraModulePackages = with config.boot.kernelPackages; [
-    rtl88xxau-aircrack
-  ];
+  # Broken package
+  # boot.extraModulePackages = with config.boot.kernelPackages; [
+  #   rtl88xxau-aircrack
+  # ];
 
   time.timeZone = "Europe/Athens";
 }
