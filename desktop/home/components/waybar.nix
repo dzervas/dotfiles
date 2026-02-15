@@ -44,6 +44,7 @@ in {
         modules-center = [
           (mkIf (cfg.windowManager == "sway") "sway/window")
           (mkIf (cfg.windowManager == "hyprland") "hyprland/window")
+          (mkIf (cfg.windowManager == "niri") "niri/window")
         ];
         modules-right = [
           "mpris"
@@ -56,6 +57,7 @@ in {
           # "bluetooth"
           (mkIf (cfg.windowManager == "sway") "sway/language")
           (mkIf (cfg.windowManager == "hyprland") "hyprland/language")
+          (mkIf (cfg.windowManager == "niri") "niri/language")
           "clock"
           "idle_inhibitor"
           "custom/notifications"
@@ -87,6 +89,16 @@ in {
           tooltip = false;
           format = "{icon}";
           format-icons = "";
+        };
+        "niri/window" = {
+          icon = true;
+          separate-outputs = true;
+          rewrite = {
+            "(.*) — Mozilla Firefox" = "$1";
+          };
+        };
+        "niri/language" = {
+          format = "{shortDescription}";
         };
         "hyprland/window" = {
           icon = true;
