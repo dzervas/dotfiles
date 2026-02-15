@@ -73,6 +73,16 @@
         "XF86AudioMicMute".action.spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ toggle";
         "XF86MonBrightnessUp".action.spawn-sh = "brightnessctl s 10%+";
         "XF86MonBrightnessDown".action.spawn-sh = "brightnessctl s 10%-";
+
+        "Mod+1".action.focus-column = 1;
+        "Mod+2".action.focus-column = 2;
+        "Mod+3".action.focus-column = 3;
+        "Mod+4".action.focus-column = 4;
+        "Mod+5".action.focus-column = 5;
+        "Mod+6".action.focus-column = 6;
+        "Mod+7".action.focus-column = 7;
+        "Mod+8".action.focus-column = 8;
+        "Mod+9".action.focus-column = 9;
       };
 
       input = {
