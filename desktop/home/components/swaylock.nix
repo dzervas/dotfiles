@@ -1,8 +1,12 @@
-{ config, lib, options, pkgs, ... }: let
-  locker = "swaylock -f";
-in {
-  setup.locker = "${options.setup.locker.default}; ${locker}";
+{
+  config,
+  lib,
+  ...
+}:
+{
+  setup.locker = "swaylock -f";
   setup.lockerInstant = config.setup.locker;
+
   programs.swaylock = {
     enable = true;
 
@@ -22,6 +26,6 @@ in {
 
   wayland.windowManager.sway = lib.mkIf config.wayland.windowManager.sway.enable {
     # Why does this not work in config.startup?
-    extraConfig = "exec ${locker}";
+    extraConfig = "exec ${config.setup.locker}";
   };
 }

@@ -40,7 +40,7 @@ in
   # Build the swayidle config
   home.file."${configFile}".text = let
     lines = map (e: ''${e.event} "${e.command}"'') config.services.swayidle.events ++
-            map (t: if builtins.isNull t.resumeCommand then
+            map (t: if isNull t.resumeCommand then
                 ''timeout ${toString t.timeout} "${t.command}"''
               else
                 ''timeout ${toString t.timeout} "${t.command}" resume "${t.resumeCommand}"''

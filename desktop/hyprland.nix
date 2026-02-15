@@ -1,4 +1,5 @@
-{ config, inputs, lib, pkgs, ... }: {
+{ inputs, pkgs, ... }:
+{
   home-manager.sharedModules = [ ./home/hyprland.nix ];
 
   # Issues:
@@ -31,7 +32,8 @@
     hyprland = {
       enable = true;
       package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-      portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+      portalPackage =
+        inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
       # withUWSM = true; # Results in the podman-in-zed crash
     };
 

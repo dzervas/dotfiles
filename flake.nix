@@ -8,7 +8,7 @@
     # "Private build" mode. If enabled the private nix files will be used.
     # Disabled to be able to build the ISO and initial installation
     inherit (nix-private) isPrivate;
-    desktop = "hyprland";
+    desktop = "niri";
 
     inherit (import ./mkMachine.nix { inherit inputs lib desktop; }) mkMachine mkShellApp;
   in rec {
@@ -41,7 +41,7 @@
           # Pull out only the nixvim config (not home.* or whatever)
           nixvimConfigFull = nixvimConfigFile.programs.nixvim;
           # The "standalone" mode nixvim doesn't have some keys so we filter them out
-          nixvimConfig = builtins.removeAttrs nixvimConfigFull [
+          nixvimConfig = removeAttrs nixvimConfigFull [
             "enable"
             "defaultEditor"
             "viAlias"
@@ -118,7 +118,6 @@
     # hyprland-dynamic-cursors.inputs.hyprland.follows = "hyprland";
     hyprland-hy3.url = "github:outfoxxed/hy3";
     hyprland-hy3.inputs.hyprland.follows = "hyprland";
-
     rose-pine-hyprcursor = {
       url = "github:ndom91/rose-pine-hyprcursor";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -140,6 +139,9 @@
       # inputs.nixpkgs.follows = "nixpkgs";
       # inputs.home-manager.follows = "home-manager";
     # };
+    
+    # Niri
+    niri.url = "github:sodiboo/niri-flake";
 
     # Lanzaboote fix:
     # https://github.com/nix-community/lanzaboote/pull/485
