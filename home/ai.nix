@@ -38,11 +38,11 @@ in {
           type = "command";
         };
 
-        extraKnownMarketplaces.anthropic.source = {
-          source = "github";
-          repo = "anthropics/skills";
-        };
-        enabledPlugins."document-skills@anthropic-agent-skills" = true;
+        # extraKnownMarketplaces.anthropic.source = {
+        #   source = "github";
+        #   repo = "anthropics/skills";
+        # };
+        # enabledPlugins."document-skills@anthropic-agent-skills" = true;
 
         # hooks = {
         #   PreToolUse = [{

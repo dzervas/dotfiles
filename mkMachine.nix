@@ -16,7 +16,10 @@
         config = {
           # Inject the overlays
           # TODO: Define the overlays globally in flake.nix
-          nixpkgs.overlays = [(import ./overlays)];
+          nixpkgs.overlays = [
+            (import ./overlays)
+            inputs.niri.overlays.niri
+          ];
           nixpkgs.config = {
             allowUnfree = true;
             segger-jlink.acceptLicense = true;

@@ -7,7 +7,7 @@
 {
   setup.windowManager = "niri";
   imports = [
-    # ./components/swayidle.nix
+    ./components/swayidle.nix
     ./components/swaylock.nix
     ./components/rofi.nix
     ./components/swaync.nix
@@ -31,6 +31,11 @@
   programs.niri = {
     settings = {
       prefer-no-csd = true;
+      cursor.size = config.stylix.cursor.size;
+      xwayland-satellite = {
+        enable = true;
+        path = lib.getExe pkgs.xwayland-satellite-unstable;
+      };
 
       binds = {
         "Mod+Return".action.spawn-sh = config.setup.terminal;
@@ -56,6 +61,18 @@
         "Mod+Shift+Tab".action.move-window-to-monitor-previous = [];
 
         "Print".action.spawn-sh = "flameshot gui";
+
+        "XF86AudioPlay".action.spawn-sh = "playerctl play-pause";
+        "XF86AudioPause".action.spawn-sh = "playerctl play-pause";
+        "XF86AudioNext".action.spawn-sh = "playerctl next";
+        "XF86AudioPrev".action.spawn-sh = "playerctl previous";
+
+        "XF86AudioRaiseVolume".action.spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+";
+        "XF86AudioLowerVolume".action.spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
+        "XF86AudioMute".action.spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SINK@ toggle";
+        "XF86AudioMicMute".action.spawn-sh = "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ toggle";
+        "XF86MonBrightnessUp".action.spawn-sh = "brightnessctl s 10%+";
+        "XF86MonBrightnessDown".action.spawn-sh = "brightnessctl s 10%-";
       };
 
       input = {

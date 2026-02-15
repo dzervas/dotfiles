@@ -1,7 +1,6 @@
 { pkgs, ... }: let
   ssh-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj";
   _1password-gui = pkgs._1password-gui-beta;
-  lock = "${_1password-gui}/bin/1password --lock --silent || true";
 in {
   setup.passwordManagerLock = "${pkgs._1password-gui}/bin/1password --lock --silent";
 
@@ -25,15 +24,6 @@ in {
       key = ssh-key;
       backends.ssh.program = "${_1password-gui}/bin/op-ssh-sign";
     };
-  };
-
-  services.swayidle = {
-    events = [
-      { event = "before-sleep"; command = lock;}
-    ];
-    timeouts = [
-      { timeout = 300; command = lock;}
-    ];
   };
 
   systemd.user.services._1password-tray = {

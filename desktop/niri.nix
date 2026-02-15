@@ -5,7 +5,7 @@
   niri-flake.cache.enable = false;
   programs.niri = {
     enable = true;
-    package = pkgs.niri;
+    package = pkgs.niri-unstable;
   };
   services = {
     dbus.implementation = "broker";
