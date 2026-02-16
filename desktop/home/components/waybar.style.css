@@ -19,6 +19,16 @@ window#waybar {
 #custom-power,
 #custom-launcher,
 #custom-notifications,
+#custom-niri-column-1,
+#custom-niri-column-2,
+#custom-niri-column-3,
+#custom-niri-column-4,
+#custom-niri-column-5,
+#custom-niri-column-6,
+#custom-niri-column-7,
+#custom-niri-column-8,
+#custom-niri-column-9,
+#custom-niri-column-10,
 #disk,
 #idle_inhibitor,
 #keyboard-state,
@@ -38,6 +48,19 @@ window#waybar {
 #wireplumber,
 #wireplumber.muted {
     padding: 0 5px;
+}
+
+#custom-niri-column-1.active,
+#custom-niri-column-2.active,
+#custom-niri-column-3.active,
+#custom-niri-column-4.active,
+#custom-niri-column-5.active,
+#custom-niri-column-6.active,
+#custom-niri-column-7.active,
+#custom-niri-column-8.active,
+#custom-niri-column-9.active,
+#custom-niri-column-10.active {
+    border-bottom: 3px solid @base05;
 }
 
 /* Button hover */

@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ pkgs, ... }:
 {
   home-manager.sharedModules = [ ./home/niri.nix ];
 
@@ -26,6 +26,9 @@
   };
 
   security.pam.services.login.enableGnomeKeyring = true;
-  environment.systemPackages = with pkgs; [ file-roller nautilus];
+  environment.systemPackages = with pkgs; [
+    file-roller
+    nautilus
+  ];
   services.gnome.sushi.enable = true;
 }
