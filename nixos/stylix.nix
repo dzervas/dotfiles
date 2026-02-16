@@ -18,7 +18,8 @@ in
     image = lib.mkDefault pkgs.nixos-artwork.wallpapers.gear.gnomeFilePath;
 
     cursor = {
-      package = inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default;
+      # package = inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default;
+      package = lib.mkDefault pkgs.rose-pine-cursor;
       name = "BreezX-RosePine-Linux";
       size = 32;
     };

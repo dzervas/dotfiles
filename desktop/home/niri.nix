@@ -39,6 +39,7 @@
 
       binds = {
         "Mod+Return".action.spawn-sh = config.setup.terminal;
+
         "Mod+C".action.close-window = [ ];
         "Mod+F".action.fullscreen-window = [ ];
         "Mod+Shift+F".action.toggle-window-floating = [ ];
@@ -46,18 +47,19 @@
         "Mod+Shift+M".action.maximize-window-to-edges = [ ];
         "Mod+L".action.spawn-sh = config.setup.lockerInstant;
         "Mod+P".action.spawn-sh = "1password --quick-access";
+        "Mod+Shift+R".action.spawn-sh = "niri msg action load-config-file";
         "Mod+R".action.spawn-sh = config.setup.runner;
 
         "Mod+Left".action.focus-column-left = [];
-        "Mod+Shift+Left".action.move-column-left = [];
         "Mod+Right".action.focus-column-right = [];
+        "Mod+Shift+Left".action.move-column-left = [];
         "Mod+Shift+Right".action.move-column-right = [];
 
         "Mod+Comma".action.focus-monitor-left = [];
-        "Mod+Shift+Comma".action.move-window-to-monitor-left = [];
         "Mod+Period".action.focus-monitor-right = [];
-        "Mod+Shift+Period".action.move-window-to-monitor-right = [];
         "Mod+Tab".action.focus-monitor-previous = [];
+        "Mod+Shift+Comma".action.move-window-to-monitor-left = [];
+        "Mod+Shift+Period".action.move-window-to-monitor-right = [];
         "Mod+Shift+Tab".action.move-window-to-monitor-previous = [];
 
         "Print".action.spawn-sh = "flameshot gui";

@@ -56,4 +56,6 @@
 
   # https://wiki.hypr.land/Nix/Hyprland-on-Home-Manager/#using-the-home-manager-module-with-nixos
   # xdg.configFile."uwsm/env".source = "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
+
+  stylix.cursor.package = inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default;
 }

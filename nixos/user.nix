@@ -43,12 +43,13 @@
   # services.udev.packages = with pkgs; [ platformio-core.udev ];
 
   security = {
-    audit.enable = true;
-    auditd.enable = true;
-    pam.services = {
-      root.ttyAudit.enable = true;
-      dzervas.ttyAudit.enable = true;
-    };
+    # Broken
+    # audit.enable = true;
+    # auditd.enable = true;
+    # pam.services = {
+    #   root.ttyAudit.enable = true;
+    #   dzervas.ttyAudit.enable = true;
+    # };
     sudo.execWheelOnly = true;
   };
 
