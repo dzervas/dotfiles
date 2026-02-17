@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   programs = {
     uv.enable = true;
     kubecolor = {
@@ -12,7 +13,7 @@
         debug = {
           description = "Add debug container";
           shortCut = "Shift-D";
-          scopes = ["all"];
+          scopes = [ "all" ];
 
           confirm = true;
           dangerous = true;
@@ -27,7 +28,7 @@
         watch-events = {
           description = "Get Events";
           shortCut = "Shift-E";
-          scopes = ["all"];
+          scopes = [ "all" ];
 
           confirm = false;
           background = false;
@@ -52,6 +53,7 @@
     #     )
     #   ).override { webUISupport = true; }
     # )
+    vial
 
     go
 
@@ -61,17 +63,19 @@
     sqlite-interactive
 
     # Python
-    (python3.withPackages (p: with p; [
-      requests
-      pyserial
-      frida-python
+    (python3.withPackages (
+      p: with p; [
+        requests
+        pyserial
+        frida-python
 
-      lmstudio-python
-      openai-agents
+        lmstudio-python
+        openai-agents
 
-      # pip magic # BinaryNinja needs these
-      # mcp # AI
-    ]))
+        # pip magic # BinaryNinja needs these
+        # mcp # AI
+      ]
+    ))
 
     # Rust
     cargo-edit
@@ -95,7 +99,6 @@
     tfautomv
     hurl
   ];
-
 
   home = {
     sessionPath = [ "$HOME/.krew/bin" ];

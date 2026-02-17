@@ -29,6 +29,16 @@ window#waybar {
 #custom-niri-column-8,
 #custom-niri-column-9,
 #custom-niri-column-10,
+#custom-niri-column-11,
+#custom-niri-column-12,
+#custom-niri-column-13,
+#custom-niri-column-14,
+#custom-niri-column-15,
+#custom-niri-column-16,
+#custom-niri-column-17,
+#custom-niri-column-18,
+#custom-niri-column-19,
+#custom-niri-column-20,
 #disk,
 #idle_inhibitor,
 #keyboard-state,
@@ -59,7 +69,17 @@ window#waybar {
 #custom-niri-column-7.active,
 #custom-niri-column-8.active,
 #custom-niri-column-9.active,
-#custom-niri-column-10.active {
+#custom-niri-column-10.active,
+#custom-niri-column-11.active,
+#custom-niri-column-12.active,
+#custom-niri-column-13.active,
+#custom-niri-column-14.active,
+#custom-niri-column-15.active,
+#custom-niri-column-16.active,
+#custom-niri-column-17.active,
+#custom-niri-column-18.active,
+#custom-niri-column-19.active,
+#custom-niri-column-20.active {
     border-bottom: 3px solid @base05;
 }
 

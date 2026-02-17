@@ -1,5 +1,6 @@
-{ pkgs, ... }: let
-  tools = mcp: tools: map(t: "mcp__${mcp}__${t}") tools;
+{ pkgs, ... }:
+let
+  tools = mcp: tools: map (t: "mcp__${mcp}__${t}") tools;
   anthropic = {
     "claude-opus-4-5-thinking" = "opus-4.5";
     "claude-sonnet-4-5-thinking" = "sonnet-4.5";
@@ -15,7 +16,8 @@
     "gemini-3-flash-preview" = "gemini-3-flash";
   };
   # allModels = anthropic // openai // google;
-in {
+in
+{
   home.packages = with pkgs; [
     # github-copilot-cli
     lmstudio
@@ -23,6 +25,34 @@ in {
   ];
 
   programs = {
+    codex = {
+      enable = true;
+      # package = pkgs.codex-latest;
+      settings = {
+        personality = "pragmatic";
+        model = "gpt-5.3-codex";
+        model_reasoning_effort = "medium";
+
+        approval_policy = "untrusted";
+        sandbox_mode = "workspace-write";
+        sandbox_workspace_write.network_access = true;
+
+        tui.notifications = true;
+        file_opener = "none";
+
+        features = {
+          remote_models = true;
+          runtime_metrics = true;
+          use_linux_sandbox_bwrap = true;
+        };
+
+        otel.exporter.otlp-http = {
+          endpoint = "https://metrics.vpn.dzerv.art";
+          protocol = "binary";
+        };
+      };
+    };
+
     # TODO: Add skills: https://docs.claude.com/en/docs/claude-code/skills
     claude-code = {
       enable = true;
@@ -82,16 +112,17 @@ in {
             "Skill(openspec:*)"
 
             "Search(path: ., *)"
-          ] ++ (tools "grafana" [
-              "find_*"
-              "fetch_*"
-              "get_*"
-              "generate_deeplink"
-              "list_*"
-              "query_*"
-              "search_dashboards"
-            ]);
-          ask = [];
+          ]
+          ++ (tools "grafana" [
+            "find_*"
+            "fetch_*"
+            "get_*"
+            "generate_deeplink"
+            "list_*"
+            "query_*"
+            "search_dashboards"
+          ]);
+          ask = [ ];
           deny = [
             "Bash(git add:*)"
             "Bash(git commit:*)"
@@ -115,7 +146,7 @@ in {
           ANTHROPIC_AUTH_TOKEN = "sk-dummy";
           API_TIMEOUT_MS = "3000000";
 
-          ANTHROPIC_DEFAULT_OPUS_MODEL = "gpt-5.3-codex(high)";
+          ANTHROPIC_DEFAULT_OPUS_MODEL = "gpt-5.3-codex(medium)";
           ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.3-codex(medium)";
           ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7";
           CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.3-codex(high)";
@@ -160,7 +191,7 @@ in {
 
         provider = {
           dz-anthropic = {
-          # anthropic = {
+            # anthropic = {
             npm = "@ai-sdk/anthropic"; # openai-compatible makes claude models break after each tool call
             name = "DZervArt (Anthropic)";
             options = {
@@ -182,12 +213,21 @@ in {
 
         formatter = {
           cargo = {
-            command = ["cargo" "fmt"];
-            extensions = [".rs"];
+            command = [
+              "cargo"
+              "fmt"
+            ];
+            extensions = [ ".rs" ];
           };
           terraform = {
-            command = ["terraform" "fmt"];
-            extensions = [".tf" ".hcl"];
+            command = [
+              "terraform"
+              "fmt"
+            ];
+            extensions = [
+              ".tf"
+              ".hcl"
+            ];
           };
         };
 

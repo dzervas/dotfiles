@@ -8,70 +8,114 @@ let
   inherit (lib) mkIf optionals;
   cfg = config.setup;
 
-  niriColumns = builtins.genList (i: i + 1) 10;
-  niriColumnModules = map (column: "custom/niri-column-${toString column}") niriColumns;
+  niriSlots = builtins.genList (i: i + 1) 20;
+  niriColumnModules = map (slot: "custom/niri-column-${toString slot}") niriSlots;
 
   niriColumnScript = pkgs.writeShellScript "waybar-niri-column" ''
     set -eu
 
-    column="$1"
+    slot="$1"
 
     workspaces_json="$(${pkgs.niri}/bin/niri msg -j workspaces 2>/dev/null || true)"
     windows_json="$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null || true)"
-
     [ -n "$workspaces_json" ] || exit 0
     [ -n "$windows_json" ] || exit 0
 
-    workspace_id="$(printf '%s\n' "$workspaces_json" | ${pkgs.jq}/bin/jq -r 'first(.[] | select(.is_focused) | .id) // empty')"
-    [ -n "$workspace_id" ] || exit 0
+    target="$(
+      ${pkgs.jq}/bin/jq -cn --argjson slot "$slot" --argjson workspaces "$workspaces_json" --argjson windows "$windows_json" '
+        ($workspaces | map({ key: (.id | tostring), value: .idx }) | from_entries) as $workspace_idx
+        | ($windows
+          | map(select(.is_floating | not))
+          | map({
+              id,
+              workspace_id,
+              column: .layout.pos_in_scrolling_layout[0],
+              app_id,
+              title,
+              is_focused,
+              focus_secs: .focus_timestamp.secs,
+              focus_nanos: .focus_timestamp.nanos
+            })
+          | group_by([.workspace_id, .column])
+          | map(sort_by(.focus_secs, .focus_nanos) | last)
+          | sort_by(($workspace_idx[(.workspace_id | tostring)] // 9999), .column)
+        )[$slot - 1] // empty
+      '
+    )"
 
-    focused_column="$(printf '%s\n' "$windows_json" | ${pkgs.jq}/bin/jq -r --argjson workspace "$workspace_id" 'first(.[] | select(.workspace_id == $workspace and .is_focused) | .layout.pos_in_scrolling_layout[0]) // empty')"
+    [ -n "$target" ] || exit 0
 
-    app_id="$(printf '%s\n' "$windows_json" | ${pkgs.jq}/bin/jq -r --argjson workspace "$workspace_id" --argjson column "$column" '
-      [ .[] | select(.workspace_id == $workspace and .layout.pos_in_scrolling_layout[0] == $column) ]
-      | sort_by(.focus_timestamp.secs, .focus_timestamp.nanos)
-      | (last | .app_id) // empty
-    ')"
-
+    app_id="$(printf '%s\n' "$target" | ${pkgs.jq}/bin/jq -r '.app_id // empty')"
     [ -n "$app_id" ] || exit 0
 
-    title="$(printf '%s\n' "$windows_json" | ${pkgs.jq}/bin/jq -r --argjson workspace "$workspace_id" --argjson column "$column" '
-      [ .[] | select(.workspace_id == $workspace and .layout.pos_in_scrolling_layout[0] == $column) ]
-      | sort_by(.focus_timestamp.secs, .focus_timestamp.nanos)
-      | (last | .title) // empty
-    ')"
+    title="$(printf '%s\n' "$target" | ${pkgs.jq}/bin/jq -r '.title // empty')"
+    is_focused="$(printf '%s\n' "$target" | ${pkgs.jq}/bin/jq -r '.is_focused')"
 
-    icon="󰣆"
+    icon="󰣆 "
     case "$app_id" in
       brave*|chromium*|firefox*) icon=" " ;;
       com.mitchellh.ghostty|org.wezfurlong.wezterm|Alacritty|foot*|kitty) icon=" " ;;
       dev.zed.Zed|code*|codium*|nvim*) icon="󰨞 " ;;
       com.slack.Slack|slack) icon=" " ;;
       discord*|vesktop) icon=" " ;;
+      1password) icon="󰢁 " ;;
       org.telegram.desktop|telegramdesktop) icon=" " ;;
       spotify) icon=" " ;;
       steam*|steam_app_*) icon=" " ;;
     esac
 
     class=""
-    if [ "$focused_column" = "$column" ]; then
+    if [ "$is_focused" = "true" ]; then
       class="active"
     fi
 
     ${pkgs.jq}/bin/jq -cn --arg text "$icon" --arg tooltip "$title" --arg class "$class" '{text: $text, tooltip: $tooltip, class: $class}'
   '';
 
+  niriColumnFocusScript = pkgs.writeShellScript "waybar-niri-column-focus" ''
+    set -eu
+
+    slot="$1"
+
+    workspaces_json="$(${pkgs.niri}/bin/niri msg -j workspaces 2>/dev/null || true)"
+    windows_json="$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null || true)"
+    [ -n "$workspaces_json" ] || exit 0
+    [ -n "$windows_json" ] || exit 0
+
+    window_id="$(
+      ${pkgs.jq}/bin/jq -rnc --argjson slot "$slot" --argjson workspaces "$workspaces_json" --argjson windows "$windows_json" '
+        ($workspaces | map({ key: (.id | tostring), value: .idx }) | from_entries) as $workspace_idx
+        | ($windows
+          | map(select(.is_floating | not))
+          | map({
+              id,
+              workspace_id,
+              column: .layout.pos_in_scrolling_layout[0],
+              focus_secs: .focus_timestamp.secs,
+              focus_nanos: .focus_timestamp.nanos
+            })
+          | group_by([.workspace_id, .column])
+          | map(sort_by(.focus_secs, .focus_nanos) | last)
+          | sort_by(($workspace_idx[(.workspace_id | tostring)] // 9999), .column)
+        )[$slot - 1].id // empty
+      '
+    )"
+
+    [ -n "$window_id" ] || exit 0
+    ${pkgs.niri}/bin/niri msg action focus-window --id "$window_id"
+  '';
+
   niriColumnSettings = builtins.listToAttrs (
-    map (column: {
-      name = "custom/niri-column-${toString column}";
+    map (slot: {
+      name = "custom/niri-column-${toString slot}";
       value = {
         return-type = "json";
-        exec = "${niriColumnScript} ${toString column}";
+        exec = "${niriColumnScript} ${toString slot}";
         interval = 1;
         hide-empty-text = true;
-        on-click = "${pkgs.niri}/bin/niri msg action focus-column ${toString column}";
+        on-click = "${niriColumnFocusScript} ${toString slot}";
       };
-    }) niriColumns
+    }) niriSlots
   );
 in
 {
