@@ -4,6 +4,16 @@
 	// 	"enabled": true,
 	// 	"ai_provider": "Z.AI"
 	// },
+	"vim_mode": true,
+ "edit_predictions": {
+  "sweep": {
+   "privacy_mode": true
+  }
+ },
+ "telemetry": {
+		"diagnostics": true,
+		"metrics": false,
+	},
 	"which_key": {
 		"enabled": true,
 	},
@@ -20,7 +30,6 @@
 			"default_mode": "acceptEdits",
 		},
 	},
-	"vim_mode": true,
 
 	// Theme
 	"buffer_font_family": "Iosevka Nerd Font",
@@ -102,9 +111,6 @@
 	},
 	"git_panel": {
 		"button": false,
-	},
-	"features": {
-		"edit_prediction_provider": "zed",
 	},
 	"language_models": {
 		// TODO: Add z.ai mcp: https://docs.z.ai/devpack/mcp/zread-mcp-server

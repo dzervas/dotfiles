@@ -139,7 +139,7 @@
       # inputs.nixpkgs.follows = "nixpkgs";
       # inputs.home-manager.follows = "home-manager";
     # };
-    
+
     # Niri
     niri.url = "github:sodiboo/niri-flake";
 
@@ -149,6 +149,11 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    zed.url = "github:zed-industries/zed/v0.223.5"; # flake-update:^v\d+.\d{1,3}.\d+$
+    zed.inputs.nixpkgs.follows = "nixpkgs";
+
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
   };
 
   nixConfig.ssh-auth-sock = "env:SSH_AUTH_SOCK";

@@ -12,7 +12,8 @@ final: prev: rec {
   lmstudio-python = prev.callPackage ./lmstudio-python.nix {};
   openspec = prev.callPackage ./openspec.nix {};
   voxtype = prev.callPackage ./voxtype.nix {};
-  # codex = prev.callPackage ./codex.nix {};
+  # nix-update:codex-latest
+  codex-latest = prev.callPackage ./codex.nix {};
 
   python = prev.python3.override {
     self = python;
@@ -52,23 +53,4 @@ final: prev: rec {
   #     postPatch = "ln -s ${grammars} parser";
   #   }
   # ).override { webUISupport = true; } ;
-
-  # nix -update:codex-latest: --version-regex "rust-v(.*)"
-  # codex-latest = prev.codex.overrideAttrs (new: old: rec {
-  #   version = "0.72.0";
-  #   src = prev.fetchFromGitHub {
-  #     owner = "openai";
-  #     repo = "codex";
-  #     tag = "rust-v${new.version}";
-  #     hash = "sha256-rNol7k/CcAKJXZYsbORRqD+uJfN6TPfcEbkUXezpFkY=";
-  #   };
-  #
-  #   # cargoDeps = old.cargoDeps.overrideAttrs (prev.lib.const {
-  #   #   name = "codex-latest-vendor";
-  #   #   inherit src;
-  #   #   outputHash = "sha256-rNol7k/CcAKJXZYsbORRqD+uJfN6TPfcEbkUXezpFkY=";
-  #   # });
-  #   cargoHash = "";
-  #   # cargoLock.lockFile = src.out + "/Cargo.lock";
-  # });
 }

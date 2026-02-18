@@ -1,12 +1,27 @@
-{ config, lib, pkgs, ... }: let
-  mkRule = { rules, class ? null, title ? null }:
-    map (rule:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  mkRule =
+    {
+      rules,
+      class ? null,
+      title ? null,
+    }:
+    map (
+      rule:
       let
         classStr = if class != null then ",match:class ${class}" else "";
         titleStr = if title != null then ",match:title ${title}" else "";
-      in "${rule}${classStr}${titleStr}") rules;
+      in
+      "${rule}${classStr}${titleStr}"
+    ) rules;
   mkRules = rules: builtins.concatLists (map mkRule rules);
-in {
+in
+{
   setup.windowManager = "hyprland";
   imports = [
     ./components/hypridle.nix
@@ -65,66 +80,75 @@ in {
       ];
 
       "$mod" = "SUPER";
-      bind = let
-        # Find the first/last window in the current workspace that is not the active window
-        cycle-focus = which: lib.replaceStrings [ "\n" "  " ] [ " " "" ] ''
-          hyprctl clients -j |
-          jq -r '
-            . as $all |
-            ($all[] | select(.focusHistoryID == 0) | .workspace.id) as $workspace_id |
-            [ $all[] | select(.workspace.id == $workspace_id) ] |
-            to_entries as $entries |
-            ($entries | map(select(.value.focusHistoryID == 0).key) | first) as $active |
-            $entries[($active ${which}) % ($entries | length)] |
-            "address:" + .value.address
-          ' |
-          xargs hyprctl dispatch focuswindow
-        '';
-      in [
-        # To check if the active window is grouped: hyprctl clients -j | jq --exit-status '.[] | select(.focusHistoryID == 0 and (.grouped | length) > 0)'
-        "$mod, Return, exec, ${config.setup.terminal}"
-        "$mod, C, killactive"
-        "$mod+Shift, C, forcekillactive"
-        "$mod, E, exec, hyprctl keyword general:layout 'dwindle'"
-        # "$mod, T, hy3:changegroup, toggletab"
-        "$mod, F, fullscreen"
-        "$mod, G, togglegroup"
-        "$mod+Shift, G, moveoutofgroup"
-        "$mod, P, exec, 1password --quick-access"
-        "$mod, R, exec, ${config.setup.runner}"
-        "$mod, L, exec, ${config.setup.lockerInstant}"
-        "$mod+Shift, F, togglefloating"
-        "$mod+Shift, R, exec, hyprctl reload"
-        "$mod, Left, workspace, m-1"
-        "$mod+Shift, Left, movetoworkspacesilent, m-1"
-        "$mod, Right, workspace, m+1"
-        "$mod+Shift, Right, movetoworkspacesilent, m+1"
+      bind =
+        let
+          # Find the first/last window in the current workspace that is not the active window
+          cycle-focus =
+            which:
+            lib.replaceStrings [ "\n" "  " ] [ " " "" ] ''
+              hyprctl clients -j |
+              jq -r '
+                . as $all |
+                ($all[] | select(.focusHistoryID == 0) | .workspace.id) as $workspace_id |
+                [ $all[] | select(.workspace.id == $workspace_id) ] |
+                to_entries as $entries |
+                ($entries | map(select(.value.focusHistoryID == 0).key) | first) as $active |
+                $entries[($active ${which}) % ($entries | length)] |
+                "address:" + .value.address
+              ' |
+              xargs hyprctl dispatch focuswindow
+            '';
+        in
+        [
+          # To check if the active window is grouped: hyprctl clients -j | jq --exit-status '.[] | select(.focusHistoryID == 0 and (.grouped | length) > 0)'
+          "$mod, Return, exec, ${config.setup.terminal}"
+          "$mod, C, killactive"
+          "$mod+Shift, C, forcekillactive"
+          "$mod, E, exec, hyprctl keyword general:layout 'dwindle'"
+          # "$mod, T, hy3:changegroup, toggletab"
+          "$mod, F, fullscreen"
+          "$mod, G, togglegroup"
+          "$mod+Shift, G, moveoutofgroup"
+          "$mod, P, exec, 1password --quick-access"
+          "$mod, R, exec, ${config.setup.runner}"
+          "$mod, L, exec, ${config.setup.lockerInstant}"
+          "$mod+Shift, F, togglefloating"
+          "$mod+Shift, R, exec, hyprctl reload"
+          "$mod, Left, workspace, m-1"
+          "$mod+Shift, Left, movetoworkspacesilent, m-1"
+          "$mod, Right, workspace, m+1"
+          "$mod+Shift, Right, movetoworkspacesilent, m+1"
 
-        # Window selection
-        "$mod, Up, exec, ${cycle-focus "+1"}"
-        "$mod+Shift, Up, exec, ${cycle-focus "+1"} swapwindow"
-        "$mod, Down, exec, ${cycle-focus "-1"}"
-        "$mod+Shift, Down, exec, ${cycle-focus "-1"} swapwindow"
+          # Window selection
+          "$mod, Up, exec, ${cycle-focus "+1"}"
+          "$mod+Shift, Up, exec, ${cycle-focus "+1"} swapwindow"
+          "$mod, Down, exec, ${cycle-focus "-1"}"
+          "$mod+Shift, Down, exec, ${cycle-focus "-1"} swapwindow"
 
-        "$mod, Tab, workspace, previous"
-        "$mod, Comma, focusmonitor, +1"
-        "$mod+Shift, Comma, movecurrentworkspacetomonitor, +1"
-        "$mod, Period, focusmonitor, -1"
-        "$mod+Shift, Period, movecurrentworkspacetomonitor, -1"
-        ", Print, exec, flameshot gui"
-        # "$mod, Print, exec, flameshot screen"
-      ] ++ (
-        # workspaces
-        # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
-        builtins.concatLists (builtins.genList (i:
-            let ws = i + 1;
-            in [
-              "$mod, code:1${toString i}, workspace, ${toString ws}"
-              "$mod SHIFT, code:1${toString i}, movetoworkspacesilent, ${toString ws}"
-            ]
+          "$mod, Tab, workspace, previous"
+          "$mod, Comma, focusmonitor, +1"
+          "$mod+Shift, Comma, movecurrentworkspacetomonitor, +1"
+          "$mod, Period, focusmonitor, -1"
+          "$mod+Shift, Period, movecurrentworkspacetomonitor, -1"
+          ", Print, exec, flameshot gui"
+          # "$mod, Print, exec, flameshot screen"
+        ]
+        ++ (
+          # workspaces
+          # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
+          builtins.concatLists (
+            builtins.genList (
+              i:
+              let
+                ws = i + 1;
+              in
+              [
+                "$mod, code:1${toString i}, workspace, ${toString ws}"
+                "$mod SHIFT, code:1${toString i}, movetoworkspacesilent, ${toString ws}"
+              ]
+            ) 9
           )
-          9)
-      );
+        );
 
       bindl = [
         ", XF86AudioNext, exec, playerctl next"
@@ -162,25 +186,113 @@ in {
       windowrule = mkRules [
         # mkRule { title = "^1Password$"; class = "^1Password$"; rules = ["float" "center" "persistentsize" "pin" "stayfocused"]; }
         # mkRule { title = ".+— 1Password$"; rules = ["unset" "float" "center" "persistentsize"]; }
-        { title = "1Password"; class = "1Password"; rules = ["float on" "center on" ]; }
-        { class = "jadx-gui-JadxGUI"; rules = ["float on"]; }
-        { class = "firefox"; title = "Picture-in-Picture"; rules = ["float on" "center on"]; }
-        { class = "Steam Settings"; rules = ["float on"]; }
-        { class = "OrcaSlicer"; rules = ["suppress_event on"]; }
-        { class = "org.pulseaudio.pavucontrol"; rules = ["float on" "center on"]; }
-        { title = "Ropuka's Idle Island"; rules = ["float on" "persistent_size on" "fullscreen_state 0 0"]; }
-        { title = "atuin-desktop"; rules = ["float on"]; }
-        { class = "spotify"; rules = ["float on" "center on"]; }
-        { class = "thunar"; title = ''^Rename ".*"$''; rules = ["float on"]; }
-        { title = "Media viewer"; class = "org.telegram.desktop"; rules = ["float on" "center on"]; }
-        { title = "File Operation Progress"; class = "Thunar"; rules = ["float on" "center on"]; }
-        { class = "xdg-desktop-portal-gtk"; rules = ["float on" "center on"]; }
+        {
+          title = "1Password";
+          class = "1Password";
+          rules = [
+            "float on"
+            "center on"
+          ];
+        }
+        {
+          class = "jadx-gui-JadxGUI";
+          rules = [ "float on" ];
+        }
+        {
+          class = "firefox";
+          title = "Picture-in-Picture";
+          rules = [
+            "float on"
+            "center on"
+          ];
+        }
+        {
+          class = "Steam Settings";
+          rules = [ "float on" ];
+        }
+        {
+          class = "OrcaSlicer";
+          rules = [ "suppress_event on" ];
+        }
+        {
+          class = "org.pulseaudio.pavucontrol";
+          rules = [
+            "float on"
+            "center on"
+          ];
+        }
+        {
+          title = "Ropuka's Idle Island";
+          rules = [
+            "float on"
+            "persistent_size on"
+            "fullscreen_state 0 0"
+          ];
+        }
+        {
+          title = "atuin-desktop";
+          rules = [ "float on" ];
+        }
+        {
+          class = "spotify";
+          rules = [
+            "float on"
+            "center on"
+          ];
+        }
+        {
+          class = "thunar";
+          title = ''^Rename ".*"$'';
+          rules = [ "float on" ];
+        }
+        {
+          title = "Media viewer";
+          class = "org.telegram.desktop";
+          rules = [
+            "float on"
+            "center on"
+          ];
+        }
+        {
+          title = "File Operation Progress";
+          class = "Thunar";
+          rules = [
+            "float on"
+            "center on"
+          ];
+        }
+        {
+          class = "xdg-desktop-portal-gtk";
+          rules = [
+            "float on"
+            "center on"
+          ];
+        }
 
         # Google Meet popup
-        { class = "brave-browser"; title = "^Meet - \w+$"; rules = ["no_initial_focus on" "border_size 0" "rounding 0" "decorate off" "no_shadow  off"]; }
+        {
+          class = "brave-browser";
+          title = "^Meet - \w+$";
+          rules = [
+            "no_initial_focus on"
+            "border_size 0"
+            "rounding 0"
+            "decorate off"
+            "no_shadow  off"
+          ];
+        }
 
         # https://github.com/hyprwm/Hyprland/discussions/12759
-        { title = "flameshot"; rules = ["no_anim on" "pin on" "float on" "fullscreen_state on" "move 0 0"]; }
+        {
+          title = "flameshot";
+          rules = [
+            "no_anim on"
+            "pin on"
+            "float on"
+            "fullscreen_state on"
+            "move 0 0"
+          ];
+        }
       ];
 
       # Layouts
@@ -251,7 +363,7 @@ in {
       # https://wiki.hyprland.org/Useful-Utilities/Systemd-start/#installation
       enable = false;
       enableXdgAutostart = true;
-      variables = ["--all"];
+      variables = [ "--all" ];
     };
   };
 }

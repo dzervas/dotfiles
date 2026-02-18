@@ -1,3 +1,4 @@
+ulimit -n 4096 # Fix the too many open files in /nix/store issue
 sudo nixos-rebuild switch --flake "$FLAKE_URL" --override-input nix-private "path:.private" $argv || return $status
 
 set -f flake_file (echo "$FLAKE_URL" | cut -d'#' -f1 | cut -d'?' -f1)

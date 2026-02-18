@@ -50,17 +50,17 @@
         "Mod+Shift+R".action.spawn-sh = "niri msg action load-config-file";
         "Mod+R".action.spawn-sh = config.setup.runner;
 
-        "Mod+Left".action.focus-column-left = [];
-        "Mod+Right".action.focus-column-right = [];
-        "Mod+Shift+Left".action.move-column-left = [];
-        "Mod+Shift+Right".action.move-column-right = [];
+        "Mod+Left".action.focus-column-left-or-last = [ ];
+        "Mod+Right".action.focus-column-right-or-first = [ ];
+        "Mod+Shift+Left".action.move-column-left = [ ];
+        "Mod+Shift+Right".action.move-column-right = [ ];
 
-        "Mod+Comma".action.focus-monitor-left = [];
-        "Mod+Period".action.focus-monitor-right = [];
-        "Mod+Tab".action.focus-monitor-previous = [];
-        "Mod+Shift+Comma".action.move-window-to-monitor-left = [];
-        "Mod+Shift+Period".action.move-window-to-monitor-right = [];
-        "Mod+Shift+Tab".action.move-window-to-monitor-previous = [];
+        "Mod+Comma".action.focus-monitor-left = [ ];
+        "Mod+Period".action.focus-monitor-right = [ ];
+        "Mod+Tab".action.focus-monitor-previous = [ ];
+        "Mod+Shift+Comma".action.move-window-to-monitor-left = [ ];
+        "Mod+Shift+Period".action.move-window-to-monitor-right = [ ];
+        "Mod+Shift+Tab".action.move-window-to-monitor-previous = [ ];
 
         "Print".action.spawn-sh = "flameshot gui";
 
@@ -140,6 +140,18 @@
           };
         };
       };
+
+      window-rules = [
+        {
+          matches = [
+            { app-id = "Steam Settings"; }
+            { app-id = "jadx-gui-JadxGUI"; }
+            { app-id = "org.pulseaudio.pavucontrol"; }
+            { app-id = "org.telegram.desktop"; title = "Telegram"; }
+          ];
+          open-floating = true;
+        }
+      ];
     };
   };
 }

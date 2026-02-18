@@ -1,22 +1,43 @@
 { lib
-, buildNpmPackage
+, stdenvNoCC
 , fetchurl
+, nodejs
 }:
-
-buildNpmPackage rec {
+stdenvNoCC.mkDerivation rec {
   pname = "codex";
-  version = "0.63.0";
+  version = "0.103.0";
 
   src = fetchurl {
     url = "https://registry.npmjs.org/@openai/codex/-/codex-${version}.tgz";
-    hash = "sha256-CXVGj6hEyc/AGdOgq3/w2zrZR5thuEXrVNNy/rE3Z+E=";
+    hash = "sha256-Mfm+aoFcOoJ80dK/i+KSvONjnHtdunf9dWtIclyuZmE=";
   };
 
-  # Package ships all runtime files; no dependencies to fetch.
-  npmDepsHash = "sha256-pQpattmS9VmO3ZIQUFn66az8GSmB4IvYhTTCFn6SUmo=";
-  forceEmptyCache = true;
+  platformSrc = fetchurl {
+    url = "https://registry.npmjs.org/@openai/codex/-/codex-${version}-linux-x64.tgz";
+    hash = "sha256-D7vZkttu4+gnN+OlHFM8zCGJzTResJSXP8kFbcnxVvA=";
+  };
 
-  dontNpmBuild = true;
+  nativeBuildInputs = [ nodejs ];
+  propagatedBuildInputs = [ nodejs ];
+
+  sourceRoot = "package";
+
+  installPhase = ''
+    runHook preInstall
+
+    mkdir -p "$out/lib/codex" "$out/bin"
+
+    cp -r bin "$out/lib/codex/"
+
+    mkdir -p platform
+    tar -xzf "$platformSrc" -C platform
+    cp -r platform/package/vendor "$out/lib/codex/"
+
+    patchShebangs "$out/lib/codex/bin"
+    ln -s "$out/lib/codex/bin/codex.js" "$out/bin/codex"
+
+    runHook postInstall
+  '';
 
   meta = with lib; {
     description = "OpenAI Codex CLI (packaged from @openai/codex)";

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 let
   tools = mcp: tools: map (t: "mcp__${mcp}__${t}") tools;
   anthropic = {
@@ -27,7 +27,7 @@ in
   programs = {
     codex = {
       enable = true;
-      # package = pkgs.codex-latest;
+      package = pkgs.codex-latest;
       settings = {
         personality = "pragmatic";
         model = "gpt-5.3-codex";
@@ -36,10 +36,12 @@ in
         approval_policy = "untrusted";
         sandbox_mode = "workspace-write";
         sandbox_workspace_write.network_access = true;
+        check_for_update_on_startup = false;
 
         tui.notifications = true;
         file_opener = "none";
 
+        suppress_unstable_features_warning = true;
         features = {
           remote_models = true;
           runtime_metrics = true;

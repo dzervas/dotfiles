@@ -1,6 +1,5 @@
-{ pkgs, ... }: {
+_: {
   nix = {
-    package = pkgs.nix;
     extraOptions = ''
       # Garbage collect when free space is less than 32GB
       min-free = ${toString (32 * 1024 * 1024 * 1024)}

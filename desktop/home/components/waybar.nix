@@ -55,7 +55,7 @@ let
     case "$app_id" in
       brave*|chromium*|firefox*) icon=" " ;;
       com.mitchellh.ghostty|org.wezfurlong.wezterm|Alacritty|foot*|kitty) icon=" " ;;
-      dev.zed.Zed|code*|codium*|nvim*) icon="󰨞 " ;;
+      dev.zed.Zed*|code*|codium*|nvim*) icon="󰨞 " ;;
       com.slack.Slack|slack) icon=" " ;;
       discord*|vesktop) icon=" " ;;
       1password) icon="󰢁 " ;;

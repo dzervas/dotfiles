@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -38,6 +39,7 @@
     zoxide.enable = true;
     zed-editor = {
       enable = true;
+      package = inputs.zed.packages.x86_64-linux.default;
       extraPackages = with pkgs; [
         nil
         nixd
