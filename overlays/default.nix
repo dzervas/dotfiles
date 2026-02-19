@@ -11,7 +11,10 @@ final: prev: rec {
   claude-chrome = prev.callPackage ./claude-chrome.nix {};
   lmstudio-python = prev.callPackage ./lmstudio-python.nix {};
   openspec = prev.callPackage ./openspec.nix {};
+  # nix-update:voxtype
   voxtype = prev.callPackage ./voxtype.nix {};
+  # nix-update:webctl
+  webctl = prev.callPackage ./webctl.nix {};
   # nix-update:codex-latest
   codex-latest = prev.callPackage ./codex.nix {};
 
@@ -27,10 +30,10 @@ final: prev: rec {
 
   # nix-update:claude-code-latest
   claude-code-latest = prev.claude-code.overrideAttrs rec {
-    version = "2.1.42";
+    version = "2.1.45";
     src = final.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-+99eaqKAOUvz+omHJ4bxlDepdpn8FNLmvxKcVDR76o4=";
+      hash = "sha256-EWpGw/5rX4NBPx4sGnz3uzvUtSQKBzCBZPSCTYarsPI=";
     };
     npmDepsHash = "sha256-DNdRkN/rpCsN8fnZbz18r2KRUTl5HCur+GyrofH+T/Y=";
   };
@@ -46,11 +49,4 @@ final: prev: rec {
     };
     doCheck = false; # Fails in explorer.init
   };
-
-  # tree-sitter-cli = prev.tree-sitter.overrideAttrs (_new: _old: let
-  #     grammars = prev.tree-sitter.withPlugins (_: prev.tree-sitter.allGrammars);
-  #   in {
-  #     postPatch = "ln -s ${grammars} parser";
-  #   }
-  # ).override { webUISupport = true; } ;
 }

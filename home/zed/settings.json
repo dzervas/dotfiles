@@ -5,12 +5,12 @@
 	// 	"ai_provider": "Z.AI"
 	// },
 	"vim_mode": true,
- "edit_predictions": {
-  "sweep": {
-   "privacy_mode": true
-  }
- },
- "telemetry": {
+	"edit_predictions": {
+		"sweep": {
+			"privacy_mode": true,
+		},
+	},
+	"telemetry": {
 		"diagnostics": true,
 		"metrics": false,
 	},
@@ -329,104 +329,25 @@
 		],
 		"default_profile": "write",
 		"play_sound_when_agent_done": true,
-		"always_allow_tool_actions": true,
 		"inline_assistant_model": {
 			"provider": "CLIProxyAPI",
 			"model": "glm-4.7-flashx",
 		},
 		"default_model": {
 			"provider": "CLIProxyAPI",
-			"model": "gpt-5.3-codex",
+			"model": "gpt-5.1-codex-mini",
 		},
-		"profiles": {
-			"test": {
-				"name": "Test",
-				"tools": {},
-				"enable_all_context_servers": false,
-				"context_servers": {},
-			},
-			"minimal": {
-				"name": "Minimal",
-				"tools": {},
-				"enable_all_context_servers": false,
-				"context_servers": {
-					"mcp-server-context7": {
-						"tools": {
-							"resolve-library-id": true,
-							"get-library-docs": true,
-						},
-					},
-					"kagimcp": {
-						"tools": {
-							"kagi_search_fetch": true,
-							"kagi_summarizer": true,
-							"kagi_fastgpt": true,
-						},
-					},
-				},
-			},
-			"write": {
-				"name": "Write",
-				"tools": {
-					"copy_path": true,
-					"create_directory": true,
-					"delete_path": true,
-					"diagnostics": true,
-					"edit_file": true,
-					"fetch": true,
-					"list_directory": true,
-					"project_notifications": false,
-					"move_path": true,
-					"now": true,
-					"find_path": true,
-					"read_file": true,
-					"open": true,
-					"grep": true,
-					"terminal": false,
-					"thinking": true,
-					"web_search": true,
-				},
-				"enable_all_context_servers": true,
-				"context_servers": {
-					"kagimcp": {
-						"tools": {
-							"kagi_summarizer": true,
-							"kagi_search_fetch": true,
-							"kagi_fastgpt": true,
-						},
-					},
-				},
-			},
-			"ask": {
-				"name": "Ask",
-				"tools": {
-					"diagnostics": true,
-					"fetch": true,
-					"list_directory": true,
-					"project_notifications": false,
-					"now": true,
-					"find_path": true,
-					"read_file": true,
-					"open": true,
-					"grep": true,
-					"thinking": true,
-					"web_search": true,
-				},
-				"enable_all_context_servers": false,
-				"context_servers": {
-					"mcp-server-context7": {
-						"tools": {
-							"resolve-library-id": true,
-							"get-library-docs": true,
-						},
-					},
-					"kagimcp": {
-						"tools": {
-							"kagi_summarizer": true,
-							"kagi_search_fetch": true,
-							"kagi_fastgpt": true,
-						},
-					},
+
+		"tool_permissions": {
+			"default": "confirm",
+			"tools": {
+				"terminal": {
+					"default_mode": "confirm",
+					"always_allow": [
+						{"pattern": "^pwd$"},
+						{"pattern": "^ls$"},
+						{"pattern": "^file"},
+					]
 				},
 			},
 		},

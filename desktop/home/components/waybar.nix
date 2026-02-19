@@ -62,6 +62,7 @@ let
       org.telegram.desktop|telegramdesktop) icon=" " ;;
       spotify) icon=" " ;;
       steam*|steam_app_*) icon=" " ;;
+      "Binary Ninja") icon="󰝴 " ;;
     esac
 
     class=""

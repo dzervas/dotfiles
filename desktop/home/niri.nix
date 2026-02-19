@@ -151,6 +151,13 @@
           ];
           open-floating = true;
         }
+        {
+          matches = [
+            { app-id = "1password"; }
+            { app-id = "spotify"; }
+          ];
+          default-column-width.proportion = 0.33;
+        }
       ];
     };
   };

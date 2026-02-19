@@ -1,4 +1,3 @@
-# nix-update:voxtype
 {
   lib,
   fetchFromGitHub,
@@ -16,16 +15,16 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "voxtype";
-  version = "0.5.5";
+  version = "0.6.1";
 
   src = fetchFromGitHub {
     owner = "peteonrails";
     repo = pname;
     tag = "v${version}";
-    hash = "sha256-w2d65BKXgC2M7EKDJ43beOQ2JXECsPSR9Z45sOT1Hi8=";
+    hash = "sha256-xSRU43Kgu6VaCuK2eiooGOJsv1VqXWvM+UUHTzGylIg=";
   };
 
-  cargoHash = "sha256-FoMaxAc0kvCnxFKprJyGHYK8vl+fSa23uckw8OQqFu4=";
+  cargoHash = "sha256-9WH763tI/NaCdxIfu46YxEyYPJCTDQe6iR4ugi6a/Bc=";
   buildFeatures = [ "gpu-vulkan" ];
 
   cmakeFlags = [

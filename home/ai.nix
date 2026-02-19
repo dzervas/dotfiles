@@ -1,4 +1,4 @@
-{ inputs, pkgs, ... }:
+{ pkgs, ... }:
 let
   tools = mcp: tools: map (t: "mcp__${mcp}__${t}") tools;
   anthropic = {
@@ -21,7 +21,7 @@ in
   home.packages = with pkgs; [
     # github-copilot-cli
     lmstudio
-    # claude-chrome
+    webctl
   ];
 
   programs = {
@@ -40,6 +40,8 @@ in
 
         tui.notifications = true;
         file_opener = "none";
+
+        project_doc_fallback_filenames = ["CLAUDE.md"];
 
         suppress_unstable_features_warning = true;
         features = {
