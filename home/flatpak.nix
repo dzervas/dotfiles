@@ -16,7 +16,7 @@
       "com.github.skylot.jadx"
       "io.github.ryubing.Ryujinx"
       "com.bambulab.BambuStudio"
-      "com.teamspeak.TeamSpeak"
+      # "com.teamspeak.TeamSpeak"
     ] else []);
 
     overrides = {

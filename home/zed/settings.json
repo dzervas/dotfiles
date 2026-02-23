@@ -327,7 +327,7 @@
 				"model": "claude-opus-4-6-thinking",
 			},
 		],
-		"default_profile": "write",
+		"default_profile": "ask",
 		"play_sound_when_agent_done": true,
 		"inline_assistant_model": {
 			"provider": "CLIProxyAPI",
@@ -335,7 +335,7 @@
 		},
 		"default_model": {
 			"provider": "CLIProxyAPI",
-			"model": "gpt-5.1-codex-mini",
+			"model": "gpt-5.3-codex",
 		},
 
 		"tool_permissions": {

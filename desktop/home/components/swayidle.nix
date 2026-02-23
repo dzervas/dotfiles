@@ -2,6 +2,7 @@
 let
   swaylock = "${config.programs.swaylock.package}/bin/swaylock -f; ${config.setup.passwordManagerLock}";
   swaymsg = "${pkgs.sway}/bin/swaymsg";
+  niri = "${pkgs.niri}/bin/niri";
   # wpctl = "${pkgs.wireplumber}/bin/wpctl";
   configFile = "${config.xdg.configHome}/swayidle/config";
 in
@@ -32,6 +33,18 @@ in
         timeout = 600;
         command = "${swaymsg} output '*' dpms off";
         resumeCommand = "${swaymsg} output '*' dpms on";
+      }
+    ] else if config.setup.windowManager == "niri" then [
+      {
+        # Switch to english layout
+        timeout = 330;
+        command = "${niri} msg action switch-layout 0";
+      }
+      {
+        # Turn off displays
+        timeout = 600;
+        command = "${niri} msg action power-off-monitors";
+        resumeCommand = "${niri} msg action power-on-monitors";
       }
     ] else []);
   };

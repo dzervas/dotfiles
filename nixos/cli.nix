@@ -21,6 +21,7 @@
     ngrok
     nh
     p7zip
+    pciutils
     podman-compose
     readline
     ripgrep

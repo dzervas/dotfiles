@@ -2,8 +2,8 @@
 set -euo pipefail
 
 DEBOUNCE_TIME=0.1
-OPEN_URL="http://exit-sign.lan/light/panel/turn_on"
-CLOSE_URL="http://exit-sign.lan/light/panel/turn_off"
+OPEN_URL="http://exit-sign.lan/light/Panel/turn_on"
+CLOSE_URL="http://exit-sign.lan/light/Panel/turn_off"
 
 # TODO: check the camera and sign on boot
 
@@ -13,14 +13,14 @@ last_open_time=0
 # Function to execute OPEN command with debouncing
 handle_open() {
     echo "Executing OPEN command..."
-    curl -s "$OPEN_URL" || echo "Failed to execute OPEN command"
+    curl -X POST -s "$OPEN_URL" || echo "Failed to execute OPEN command"
     echo "OPEN command executed at $(date)"
 }
 
 # Function to execute CLOSE command
 handle_close() {
     echo "Executing CLOSE command..."
-    curl -s "$CLOSE_URL" || echo "Failed to execute CLOSE command"
+    curl -X POST -s "$CLOSE_URL" || echo "Failed to execute CLOSE command"
     echo "CLOSE command executed at $(date)"
 }
 
