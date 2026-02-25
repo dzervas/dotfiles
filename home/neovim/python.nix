@@ -18,7 +18,7 @@
           kaleido
           nbformat
           pillow
-          plotly
+          # plotly
           pnglatex
           pyperclip
         ]);

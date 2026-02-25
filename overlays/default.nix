@@ -10,7 +10,6 @@ final: prev: rec {
   buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
   claude-chrome = prev.callPackage ./claude-chrome.nix {};
   lmstudio-python = prev.callPackage ./lmstudio-python.nix {};
-  openspec = prev.callPackage ./openspec.nix {};
   # nix-update:voxtype
   voxtype = prev.callPackage ./voxtype.nix {};
   # nix-update:webctl
@@ -30,10 +29,10 @@ final: prev: rec {
 
   # nix-update:claude-code-latest
   claude-code-latest = prev.claude-code.overrideAttrs rec {
-    version = "2.1.50";
+    version = "2.1.56";
     src = final.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-pSPZzbLhFsE8zwlp+CHB5MqS1gT3CeIlkoAtswmxCZs=";
+      hash = "sha256-ou7sX4vXnCtirFE/lpF+ouiAoeFreBQ3QLs9yytFW7I=";
     };
     npmDepsHash = "sha256-DNdRkN/rpCsN8fnZbz18r2KRUTl5HCur+GyrofH+T/Y=";
   };

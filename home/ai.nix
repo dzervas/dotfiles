@@ -19,7 +19,7 @@ let
 in
 {
   home.packages = with pkgs; [
-    # github-copilot-cli
+    github-copilot-cli
     lmstudio
     webctl
   ];

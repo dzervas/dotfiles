@@ -26,7 +26,7 @@
     ./starship.nix
     ./ssh.nix
     ./tools.nix
-    ./thumbnailers.nix
+    # ./thumbnailers.nix
     ./updater
     ./xdg.nix
   ];
@@ -40,10 +40,6 @@
     zed-editor = {
       enable = true;
       package = inputs.zed.packages.x86_64-linux.default;
-      extraPackages = with pkgs; [
-        nil
-        nixd
-      ];
     };
   };
 
@@ -96,6 +92,8 @@
       trilium-desktop
 
       nix-update
+      nil
+      nixd
 
       # (tree-sitter.withPlugins (p: builtins.attrValues p))
 

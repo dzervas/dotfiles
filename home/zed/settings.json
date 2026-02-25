@@ -6,7 +6,8 @@
 	// },
 	"vim_mode": true,
 	"edit_predictions": {
-		"sweep": {
+		"provider": "copilot",
+  "sweep": {
 			"privacy_mode": true,
 		},
 	},
