@@ -14,7 +14,7 @@
     ./dev.nix
     ./direnv.nix
     ./easyeffects
-    ./firefox.nix
+    # ./firefox.nix
     ./firmware.nix
     ./fish.nix
     ./flatpak.nix
@@ -102,6 +102,8 @@
 
       cameractrls-gtk4
       # voxtype
+
+      inputs.mcp-firewall.packages.x86_64-linux.default
     ];
 
     sessionVariables.TERMINAL = config.setup.terminal;

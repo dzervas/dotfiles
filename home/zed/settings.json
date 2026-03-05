@@ -7,7 +7,7 @@
 	"vim_mode": true,
 	"edit_predictions": {
 		"provider": "copilot",
-  "sweep": {
+		"sweep": {
 			"privacy_mode": true,
 		},
 	},
@@ -33,7 +33,7 @@
 	},
 
 	// Theme
-	"buffer_font_family": "Iosevka Nerd Font",
+	"buffer_font_family": "Iosevka Nerd Font Propo",
 	"buffer_font_size": 18,
 	"agent_buffer_font_size": 17,
 	"icon_theme": "Colored Zed Icons Theme Dark",
@@ -53,6 +53,7 @@
 			"tab_size": 2,
 		},
 		"Markdown": {
+			"hard_tabs": false,
 			"show_edit_predictions": false,
 		},
 		"Typst": {
@@ -287,7 +288,6 @@
 	"auto_update": false,
 	"autoscroll_on_clicks": true,
 	"base_keymap": "VSCode",
-	"buffer_line_height": "standard",
 	"close_on_file_delete": true,
 	"double_click_in_multibuffer": "open",
 	"expand_excerpt_lines": 3,

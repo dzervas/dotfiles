@@ -131,38 +131,52 @@
           "ahead_of_origin(to)" = "related_origin_bookmarks(to)..to";
           # Return the revs that are before `to` but within a remote bookmark (so behind)
           "behind_origin(to)" = "to..related_origin_bookmarks(to)";
+          # Return the latest non empty rev - could be @ or @-
+          "latest_non_empty()" = "heads(@-::@ & ~empty())";
 
           "stash()" = ''bookmarks(glob:"stash/*") | tags(glob:"stash/*") | description(glob:"Stash: *")'';
         };
 
-        aliases = {
+        aliases = 
+        let
+          command = cmd: ["util" "exec" "--" "fish" "-c" cmd ""];
+        in
+        {
           d = ["diff"];
           s = ["status"];
           ll = ["log" "-r" "::"];
-
-          acp = [
-            "util" "exec" "--" "fish" "-c"
-            ''test (count $argv) -gt 0 && jj commit -m "$argv" || committer && jj push'' ""
-          ];
-          # Push to a new, auto-generated branch
-          # TODO: Allow for named branch
-          acp-new = [
-            "util" "exec" "--" "fish" "-c"
-            ''test (count $argv) -gt 0 && jj commit -m "$argv" || committer && jj git push --change @- --allow-new'' ""
-          ];
-          get-ignore = [
-            "util" "exec" "--" "bash" "-c"
-            ''curl -fsL "https://www.toptal.com/developers/gitignore/api/$1" >> .gitignore && echo "Appended to .gitignore" || echo "No gitignore found - check out https://gitignore.io"; '' ""
-          ];
-          hub = [
-            "util" "exec" "--" "bash" "-c"
-            ''grep -q / <<< $1 && jj git clone --colocate git@github.com:$1 $2 || jj git clone --colocate git@github.com:dzervas/$1 $2'' ""
-          ];
+          # TODO: Use `jj bookmark advance` instead
+          # https://github.com/jj-vcs/jj/releases/tag/v0.39.0
+          tug = [ "bookmark" "move" "--from" "closest_bookmark(latest_non_empty())" "--to" "latest_non_empty()" ];
           init = ["git" "init" "--colocate"];
-          oops = [
-            "util" "exec" "--" "bash" "-c"
-            "echo 'Going to squash on immutable and push. You sure?' && read && jj squash --ignore-immutable && jj push"
-          ];
+          
+          # Default command
+          statuslog = command "jj status && echo && jj log --limit 5";
+
+          # Committing and pushing
+          acp = command ''
+            if test (count $argv) -eq "0"
+              echo "Please provide a commit description"
+              exit 1
+            end
+            
+            jj commit -m "$(string trim "$argv")"
+            jj push
+          '';
+          oops = command "echo 'Going to squash on immutable and push. You sure?' && read && jj squash --ignore-immutable $argv && jj push";
+          pull = command ''
+            if test "$(jj log -r @ -T empty --no-graph --color never)" = "false"
+              echo "Dirty working copy - commit or fetch & new manually"
+              exit 1
+            end
+            
+            jj git fetch
+            jj new "closest_bookmark(@-)"
+          '';
+          push = command "jj tug && jj git push";
+          
+          get-ignore = command ''curl -fsL "https://www.toptal.com/developers/gitignore/api/$argv[1]" >> .gitignore && echo "Appended to .gitignore" || echo "No gitignore found - check out https://gitignore.io";'';
+          hub = command ''grep -q / <<< $argv[1] && jj git clone --colocate git@github.com:$argv[1] $argv[2] || jj git clone --colocate git@github.com:dzervas/$argv[1] $argv[2]'';
           pr = [
             "util" "exec" "--" "bash" "-c"
             ''
@@ -185,19 +199,6 @@
               fi
             '' ""
           ];
-          pull = [
-            "util" "exec" "--" "bash" "-c"
-            ''test "$(jj log -r @ -T empty --no-graph --color never)" = "true" || echo "Dirty working copy - commit or fetch & new manually" && jj git fetch && jj new "closest_bookmark(@-)"'' ""
-          ];
-          push = [
-            "util" "exec" "--" "bash" "-c"
-            "jj tug && jj git push"
-          ];
-          statuslog = [
-            "util" "exec" "--" "bash" "-c"
-            "jj status && echo && jj log --limit 5"
-          ];
-          tug = [ "bookmark" "move" "--from" "closest_bookmark(@-)" "--to" "@-"];
         };
 
         git.sign-on-push = true;
