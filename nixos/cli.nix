@@ -34,6 +34,7 @@
     wget
 
     nix-serve-ng
+    rust-script
   ];
 
   # Set fish as the default shell

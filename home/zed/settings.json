@@ -53,7 +53,8 @@
 			"tab_size": 2,
 		},
 		"Markdown": {
-			"show_edit_predictions": false,
+			"hard_tabs": false,
+   "show_edit_predictions": false,
 		},
 		"Typst": {
 			"show_edit_predictions": false,

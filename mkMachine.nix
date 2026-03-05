@@ -41,7 +41,6 @@
         };
       }
 
-      inputs.determinate.nixosModules.default
       inputs.niri.nixosModules.niri
       inputs.opnix.nixosModules.default
 
