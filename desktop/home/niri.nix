@@ -152,6 +152,18 @@
           open-floating = true;
         }
         {
+          matches = [{ app-id= "steam"; title = "^notificationtoasts_.*"; }];
+
+          clip-to-geometry = true;
+          open-floating = true;
+          open-focused = false;
+          default-floating-position = {
+            x = 0;
+            y = 0;
+            relative-to = "bottom-right";
+          };
+        }
+        {
           matches = [
             { app-id = "1password"; }
             { app-id = "spotify"; }

@@ -63,6 +63,7 @@
 
         difftool.prompt = false;
 
+        # TODO: Use diffnav
         difftastic = {
           enable = true;
           enableAsDifftool = true;
@@ -101,6 +102,7 @@
         };
       };
     };
+    gh-dash.enable = true;
 
     jujutsu = {
       # TODO: Check out https://shaddy.dev/notes/jj-tug/ and https://abhinavsarkar.net/posts/jj-usage/
@@ -149,7 +151,7 @@
           # https://github.com/jj-vcs/jj/releases/tag/v0.39.0
           tug = [ "bookmark" "move" "--from" "closest_bookmark(latest_non_empty())" "--to" "latest_non_empty()" ];
           init = ["git" "init" "--colocate"];
-          
+
           # Default command
           statuslog = command "jj status && echo && jj log --limit 5";
 
@@ -159,22 +161,22 @@
               echo "Please provide a commit description"
               exit 1
             end
-            
+
             jj commit -m "$(string trim "$argv")"
             jj push
           '';
-          oops = command "echo 'Going to squash on immutable and push. You sure?' && read && jj squash --ignore-immutable $argv && jj push";
+          oops = command "echo 'Going to squash on immutable and push. You sure?' && read && jj squash --ignore-immutable && jj push";
           pull = command ''
             if test "$(jj log -r @ -T empty --no-graph --color never)" = "false"
               echo "Dirty working copy - commit or fetch & new manually"
               exit 1
             end
-            
+
             jj git fetch
             jj new "closest_bookmark(@-)"
           '';
           push = command "jj tug && jj git push";
-          
+
           get-ignore = command ''curl -fsL "https://www.toptal.com/developers/gitignore/api/$argv[1]" >> .gitignore && echo "Appended to .gitignore" || echo "No gitignore found - check out https://gitignore.io";'';
           hub = command ''grep -q / <<< $argv[1] && jj git clone --colocate git@github.com:$argv[1] $argv[2] || jj git clone --colocate git@github.com:dzervas/$argv[1] $argv[2]'';
           pr = [

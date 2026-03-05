@@ -23,7 +23,7 @@
 	"agent_servers": {
 		"opencode": {
 			"type": "extension",
-			"favorite_models": ["dz/claude-opus-4-6", "dz/glm-4.7", "dz/gpt-5.3-codex(medium)"],
+			"favorite_models": ["dz/claude-opus-4-6", "dz/glm-4.7", "dz/gpt-5.4(medium)"],
 			"default_config_options": {},
 			"favorite_config_option_values": {},
 		},
@@ -147,11 +147,11 @@
 						},
 					},
 					{
-						"name": "gpt-5.3-codex",
+						"name": "gpt-5.4",
 						"max_tokens": 400000,
 						"max_output_tokens": 128000,
 						"max_completion_tokens": 400000,
-						"display_name": "GPT 5.3 Codex",
+						"display_name": "GPT 5.4",
 						"capabilities": {
 							"tools": true,
 							"images": true,
@@ -321,7 +321,7 @@
 		"favorite_models": [
 			{
 				"provider": "CLIProxyAPI",
-				"model": "gpt-5.3-codex",
+				"model": "gpt-5.4",
 			},
 			{
 				"provider": "CLIProxyAPI",
@@ -336,7 +336,7 @@
 		},
 		"default_model": {
 			"provider": "CLIProxyAPI",
-			"model": "gpt-5.3-codex",
+			"model": "gpt-5.4",
 		},
 
 		"tool_permissions": {
@@ -344,11 +344,7 @@
 			"tools": {
 				"terminal": {
 					"default_mode": "confirm",
-					"always_allow": [
-						{"pattern": "^pwd$"},
-						{"pattern": "^ls$"},
-						{"pattern": "^file"},
-					]
+					"always_allow": [{ "pattern": "^pwd$" }, { "pattern": "^ls$" }, { "pattern": "^file" }],
 				},
 			},
 		},

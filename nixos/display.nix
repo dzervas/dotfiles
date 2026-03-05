@@ -27,10 +27,10 @@
     accounts-daemon.enable = true; # Flatpak needs this
   };
 
-  systemd.sleep.extraConfig = ''
-    HibernateDelaySec=1h
-    HibernateOnACPower=false
-  '';
+  systemd.sleep.settings.Sleep = {
+    HibernateDelaySec = "1h";
+    HibernateOnACPower = false;
+  };
 
   security.polkit.enable = true;
 }

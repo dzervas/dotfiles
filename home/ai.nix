@@ -7,9 +7,8 @@ let
     "glm-5" = "glm-5";
   };
   openai = {
-    "gpt-5.3-codex(high)" = "gpt-5.3-codex-high";
-    "gpt-5.3-codex(medium)" = "gpt-5.3-codex";
-    "gpt-5.3(high)" = "gpt-5.3";
+    "gpt-5.4(high)" = "gpt-5.4-high";
+    "gpt-5.4(medium)" = "gpt-5.4";
   };
   google = {
     "gemini-3-pro-preview" = "gemini-3-pro";
@@ -30,7 +29,7 @@ in
       package = pkgs.codex-latest;
       settings = {
         personality = "pragmatic";
-        model = "gpt-5.3-codex";
+        model = "gpt-5.4";
         model_reasoning_effort = "medium";
 
         approval_policy = "untrusted";
@@ -150,10 +149,10 @@ in
           ANTHROPIC_AUTH_TOKEN = "sk-dummy";
           API_TIMEOUT_MS = "3000000";
 
-          ANTHROPIC_DEFAULT_OPUS_MODEL = "gpt-5.3-codex(medium)";
-          ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.3-codex(medium)";
+          ANTHROPIC_DEFAULT_OPUS_MODEL = "gpt-5.4(medium)";
+          ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.4(medium)";
           ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7";
-          CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.3-codex(high)";
+          CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.4(high)";
 
           CLAUDE_CODE_ENABLE_TELEMETRY = "1";
           OTEL_METRICS_EXPORTER = "otlp";
@@ -177,7 +176,7 @@ in
         # plugin = [];
 
         mode.read-only = {
-          model = "dz-openai/gpt-5.3-codex(high)";
+          model = "dz-openai/gpt-5.4(high)";
           tools = {
             bash = true;
             edit = false;
