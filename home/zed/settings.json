@@ -6,10 +6,7 @@
 	// },
 	"vim_mode": true,
 	"edit_predictions": {
-		"provider": "copilot",
-		"sweep": {
-			"privacy_mode": true,
-		},
+		"provider": "zed",
 	},
 	"telemetry": {
 		"diagnostics": true,
@@ -38,6 +35,7 @@
 	"agent_buffer_font_size": 17,
 	"icon_theme": "Colored Zed Icons Theme Dark",
 	"theme": "VSCode Dark Modern",
+	"buffer_line_height": "standard",
 
 	// Languages
 	"format_on_save": "on",

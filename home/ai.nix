@@ -89,7 +89,7 @@ in
         # };
 
         permissions = {
-          defaultMode = "acceptEdits";
+          # defaultMode = "acceptEdits";
           disableBypassPermissionsMode = "disable";
 
           allow = [

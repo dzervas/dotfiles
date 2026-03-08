@@ -172,8 +172,9 @@
               exit 1
             end
 
+            set -l previous_bookmark (jj log -r 'latest_non_empty()' -T 'self.bookmarks()' --no-graph --color=never)
             jj git fetch
-            jj new "closest_bookmark(@-)"
+            jj new "$previous_bookmark"
           '';
           push = command "jj tug && jj git push";
 

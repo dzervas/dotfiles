@@ -43,12 +43,15 @@
         "Mod+C".action.close-window = [ ];
         "Mod+F".action.fullscreen-window = [ ];
         "Mod+Shift+F".action.toggle-window-floating = [ ];
+        "Mod+H".action.set-column-width = "50%";
         "Mod+M".action.maximize-column = [ ];
         "Mod+Shift+M".action.maximize-window-to-edges = [ ];
         "Mod+L".action.spawn-sh = config.setup.lockerInstant;
         "Mod+P".action.spawn-sh = "1password --quick-access";
-        "Mod+Shift+R".action.spawn-sh = "niri msg action load-config-file";
         "Mod+R".action.spawn-sh = config.setup.runner;
+        "Mod+Shift+R".action.spawn-sh = "niri msg action load-config-file";
+        "Mod+T".action.set-column-width = "33%";
+        "Mod+Shift+T".action.set-column-width = "66%";
 
         "Mod+Left".action.focus-column-left-or-last = [ ];
         "Mod+Right".action.focus-column-right-or-first = [ ];
@@ -85,6 +88,13 @@
         "Mod+7".action.focus-column = 7;
         "Mod+8".action.focus-column = 8;
         "Mod+9".action.focus-column = 9;
+      };
+
+      layout = {
+        preset-column-widths = [
+          { proportion = 0.5; }
+          { proportion = 0.66; }
+        ];
       };
 
       input = {
@@ -152,11 +162,21 @@
           open-floating = true;
         }
         {
+          matches = [
+            { app-id = "brave-browser"; }
+            { app-id = "com.mitchellh.ghostty"; }
+          ];
+          open-maximized = false;
+          # open-maximized-to-edges = true;
+        }
+        {
           matches = [{ app-id= "steam"; title = "^notificationtoasts_.*"; }];
 
           clip-to-geometry = true;
           open-floating = true;
           open-focused = false;
+          block-out-from = "screen-capture";
+          focus-ring.enable = false;
           default-floating-position = {
             x = 0;
             y = 0;
@@ -168,7 +188,11 @@
             { app-id = "1password"; }
             { app-id = "spotify"; }
           ];
-          default-column-width.proportion = 0.33;
+
+          default-column-width.proportion = 0.5;
+          open-maximized = false;
+          # open-maximized-to-edges = false;
+          block-out-from = "screen-capture";
         }
       ];
     };
