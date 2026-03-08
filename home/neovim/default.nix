@@ -23,15 +23,9 @@ in {
   # - Open links to browser
 
   imports = [
-    # ./ai.nix
     ./completion.nix
-    ./debug.nix
     ./lint.nix
     ./lsp.nix
-    # ./neovide.nix
-    ./python.nix
-    ./rust.nix
-    ./runner.nix
     ./snacks.nix
     ./ui.nix
   ];

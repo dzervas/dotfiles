@@ -6,7 +6,7 @@ in {
     plugins.treesitter.settings.parsers.norg_meta.enable = true; # picker likes it
     plugins.snacks = {
       enable = true;
-      package = pkgs.snacks-nvim-stable;
+      # package = pkgs.snacks-nvim-stable;
 
       settings = {
         # Handle large files efficiently

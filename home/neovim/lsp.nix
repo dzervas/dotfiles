@@ -41,6 +41,11 @@ in {
     };
     plugins = {
       lspconfig.enable = true;
+      rustaceanvim = {
+        enable = true;
+        # Build the code for LSP on a different path to avoid blocking
+        settings.server.default_settings.rust-analyzer.cargo.targetDir = "target/lsp";
+      };
 
       treesitter = {
         enable = true;

@@ -5,7 +5,7 @@
     binwalk sleuthkit
     dirb
     frida-tools
-    filezilla
+    # filezilla
     gobuster
     hashcat
     hashcat-utils
