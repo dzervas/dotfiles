@@ -36,6 +36,7 @@
     mpv.enable = true;
     mullvad-vpn.enable = true;
     nix-index.enable = true;
+    satty.enable = true;
     zoxide.enable = true;
     zed-editor = {
       enable = true;
@@ -111,7 +112,7 @@
 
   services = {
     keybase.enable = true;
-    flameshot.enable = true;
+    # flameshot.enable = true;
 
     # Disable gnome-keyring's ssh component to avoid conflicts with ssh-agent
     gnome-keyring.components = [ "secrets" ];
