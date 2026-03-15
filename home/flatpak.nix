@@ -12,6 +12,7 @@
       "org.telegram.desktop"
       "im.riot.Riot"
       "dev.vencord.Vesktop"
+      "io.anytype.anytype"
     ] ++ (if !config.setup.isLaptop then [
       "com.github.skylot.jadx"
       "io.github.ryubing.Ryujinx"

@@ -90,8 +90,6 @@
       gtk4 # Install to fix some inconsistencies (cursor, DPI, theme, etc.)
       gvfs
 
-      trilium-desktop
-
       nix-update
       nil
       nixd
@@ -104,6 +102,7 @@
       cameractrls-gtk4
       # voxtype
 
+      anytype-cli
       inputs.mcp-firewall.packages.x86_64-linux.default
     ];
 

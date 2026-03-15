@@ -7,15 +7,17 @@
 # To remove the build output of a nix store path:
 # nix-store --delete /nix/store/hash
 final: prev: rec {
-  buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
-  claude-chrome = prev.callPackage ./claude-chrome.nix {};
-  lmstudio-python = prev.callPackage ./lmstudio-python.nix {};
+  buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix { };
+  claude-chrome = prev.callPackage ./claude-chrome.nix { };
+  lmstudio-python = prev.callPackage ./lmstudio-python.nix { };
   # nix-update:voxtype
-  voxtype = prev.callPackage ./voxtype.nix {};
+  voxtype = prev.callPackage ./voxtype.nix { };
   # nix-update:webctl
-  webctl = prev.callPackage ./webctl.nix {};
+  webctl = prev.callPackage ./webctl.nix { };
   # nix-update:codex-latest
-  codex-latest = prev.callPackage ./codex.nix {};
+  codex-latest = prev.callPackage ./codex.nix { };
+  # nix-update:anytype-cli
+  anytype-cli = prev.callPackage ./anytype-cli.nix { };
 
   python = prev.python3.override {
     self = python;
@@ -29,23 +31,11 @@ final: prev: rec {
 
   # nix-update:claude-code-latest
   claude-code-latest = prev.claude-code.overrideAttrs rec {
-    version = "2.1.71";
+    version = "2.1.76";
     src = final.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-UAzKro3PgcZcAP3/3yXGU7DE+A4E8URtV+InMfyJrd4=";
+      hash = "sha256-kjzPTG32f35eN6S85gGLUCmsNwH70Sq5rruEs/0hioM=";
     };
     npmDepsHash = "sha256-DNdRkN/rpCsN8fnZbz18r2KRUTl5HCur+GyrofH+T/Y=";
-  };
-
-  # nix-update:snacks-nvim-stable
-  snacks-nvim-stable = prev.vimPlugins.snacks-nvim.overrideAttrs rec {
-    version = "2.30.0";
-    src = final.fetchFromGitHub {
-      owner = "folke";
-      repo = "snacks.nvim";
-      rev = "v${version}";
-      hash = "sha256-5m65Gvc6DTE9v7noOfm0+iQjDrqnrXYYV9QPnmr1JGY=";
-    };
-    doCheck = false; # Fails in explorer.init
   };
 }
