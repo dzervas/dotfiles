@@ -35,7 +35,7 @@
     services.NetworkManager-wait-online.enable = false;
 
     # Fix Tailscale connectivity after suspend/resume
-    services."tailscale-resume" = {
+    services."tailscaled-resume" = {
       description = "Restart Tailscale after resume";
       after = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
       wantedBy = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];

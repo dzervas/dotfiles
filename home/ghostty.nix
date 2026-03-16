@@ -23,8 +23,8 @@
       gtk-custom-css = "./custom.css";
 
       keybind = [
+        "ctrl+shift+f=start_search"
         "shift+enter=text:\\n" # Claude Code fix
-        "performable:ctrl+shift+f=write_screen_file:open"
         "performable:alt+r=toggle_command_palette"
         "performable:alt+shift+r=reload_config"
       ];

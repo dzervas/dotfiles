@@ -156,7 +156,7 @@ in
 
           CLAUDE_CODE_ENABLE_TELEMETRY = "1";
           OTEL_METRICS_EXPORTER = "otlp";
-          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT = "https://metrics.vpn.dzerv.art/opentelemetry/";
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT = "https://metrics.vpn.dzerv.art/opentelemetry/v1/metrics";
           OTEL_EXPORTER_OTLP_METRICS_PROTOCOL = "http/protobuf";
         };
       };

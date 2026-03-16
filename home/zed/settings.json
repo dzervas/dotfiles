@@ -4,7 +4,8 @@
 	// 	"enabled": true,
 	// 	"ai_provider": "Z.AI"
 	// },
-	"vim_mode": true,
+	"show_edit_predictions": true,
+ "vim_mode": true,
 	"edit_predictions": {
 		"provider": "zed",
 	},
