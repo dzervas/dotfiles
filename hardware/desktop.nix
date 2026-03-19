@@ -72,4 +72,7 @@ in {
     url = "https://images.unsplash.com/photo-1524252500348-1bb07b83f3be";
     sha256 = "sha256-3gH1F4MAM2bKhfHWZrEvCasY8T+rQVxWnKBfHmtTOrM=";
   };
+
+  # Work around intermittent suspend failures on Navi 10 during resume.
+  boot.kernelParams = [ "amd_iommu=off" ];
 }
