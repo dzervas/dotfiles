@@ -331,7 +331,7 @@
 		"play_sound_when_agent_done": true,
 		"inline_assistant_model": {
 			"provider": "CLIProxyAPI",
-			"model": "glm-4.7-flashx",
+			"model": "gpt-5.4",
 		},
 		"default_model": {
 			"provider": "CLIProxyAPI",

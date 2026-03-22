@@ -37,8 +37,7 @@ let
               focus_nanos: .focus_timestamp.nanos
             })
           | group_by([.workspace_id, .column])
-          | map(sort_by(.focus_secs, .focus_nanos) | last)
-          | sort_by(($workspace_idx[(.workspace_id | tostring)] // 9999), .column)
+          | map(sort_by(.workspace_id, .column) | last)
         )[$slot - 1] // empty
       '
     )"
@@ -55,7 +54,8 @@ let
     case "$app_id" in
       brave*|chromium*|firefox*) icon=" " ;;
       com.mitchellh.ghostty|org.wezfurlong.wezterm|Alacritty|foot*|kitty) icon=" " ;;
-      dev.zed.Zed*|code*|codium*|nvim*) icon="󰨞 " ;;
+      code*|codium*) icon="󰨞 " ;;
+      dev.zed.Zed*|nvim*) icon=" " ;;
       com.slack.Slack|slack) icon=" " ;;
       discord*|vesktop) icon=" " ;;
       1password) icon="󰢁 " ;;
@@ -63,6 +63,8 @@ let
       spotify) icon=" " ;;
       steam*|steam_app_*) icon=" " ;;
       "Binary Ninja") icon="󰝴 " ;;
+      "anytype") icon="󰴓 " ;;
+      "BambuStudio") icon="󰐫 " ;;
     esac
 
     class=""
@@ -96,8 +98,7 @@ let
               focus_nanos: .focus_timestamp.nanos
             })
           | group_by([.workspace_id, .column])
-          | map(sort_by(.focus_secs, .focus_nanos) | last)
-          | sort_by(($workspace_idx[(.workspace_id | tostring)] // 9999), .column)
+          | map(sort_by(.workspace_id, .column) | last)
         )[$slot - 1].id // empty
       '
     )"
