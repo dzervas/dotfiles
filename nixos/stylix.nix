@@ -14,7 +14,7 @@ in
     autoEnable = true;
     polarity = "dark";
     # For more see https://tinted-theming.github.io/base16-gallery/
-    base16Scheme = base16Scheme { name = "snazzy"; };
+    base16Scheme = base16Scheme { name = "nord"; };
     image = lib.mkDefault pkgs.nixos-artwork.wallpapers.gear.gnomeFilePath;
 
     cursor = {

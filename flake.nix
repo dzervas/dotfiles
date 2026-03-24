@@ -113,16 +113,16 @@
     nix-private.inputs.nixpkgs.follows = "nixpkgs";
 
     # HyprLand
-    hyprland.url = "github:hyprwm/Hyprland";
+    # hyprland.url = "github:hyprwm/Hyprland";
     # hyprland-dynamic-cursors.url = "github:VirtCode/hypr-dynamic-cursors";
     # hyprland-dynamic-cursors.inputs.hyprland.follows = "hyprland";
-    hyprland-hy3.url = "github:outfoxxed/hy3";
-    hyprland-hy3.inputs.hyprland.follows = "hyprland";
-    rose-pine-hyprcursor = {
-      url = "github:ndom91/rose-pine-hyprcursor";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.hyprlang.follows = "hyprland/hyprlang";
-    };
+    # hyprland-hy3.url = "github:outfoxxed/hy3";
+    # hyprland-hy3.inputs.hyprland.follows = "hyprland";
+    # rose-pine-hyprcursor = {
+    #   url = "github:ndom91/rose-pine-hyprcursor";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    #   inputs.hyprlang.follows = "hyprland/hyprlang";
+    # };
 
     # Cosmic Desktop
     # nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
@@ -143,6 +143,9 @@
     # Niri
     niri.url = "github:sodiboo/niri-flake";
 
+    noctalia.url = "github:noctalia-dev/noctalia-shell";
+    noctalia.inputs.nixpkgs.follows = "nixpkgs";
+
     # Lanzaboote fix:
     # https://github.com/nix-community/lanzaboote/pull/485
     rust-overlay = {
@@ -157,5 +160,9 @@
     zed.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  nixConfig.ssh-auth-sock = "env:SSH_AUTH_SOCK";
+  nixConfig = {
+    extra-substituters = [ "https://noctalia.cachix.org" ];
+    extra-trusted-public-keys = [ "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4=" ];
+    ssh-auth-sock = "env:SSH_AUTH_SOCK";
+  };
 }

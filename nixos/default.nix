@@ -58,18 +58,8 @@
     dbus.enable = true;
     fwupd.enable = true;
     pcscd.enable = true;
-
-    # Better getty
-    kmscon = {
-      enable = true;
-      fonts = [ config.stylix.fonts.monospace ];
-      useXkbConfig = true;
-      hwRender = true;
-      extraConfig = ''
-        xkb-layout=us,gr
-        xkb-options=grp:alt_space_toggle,caps:escape
-      '';
-    };
+    upower.enable = true;
+    tuned.enable = true;
 
     pipewire = {
       enable = true;

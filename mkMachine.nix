@@ -36,12 +36,14 @@
               inputs.flatpak.homeManagerModules.nix-flatpak
               inputs.nixvim.homeModules.nixvim
               inputs.nix-private.homeModules.private
+              inputs.noctalia.homeModules.default
             ];
           };
         };
       }
 
       inputs.niri.nixosModules.niri
+      inputs.noctalia.nixosModules.default
       inputs.opnix.nixosModules.default
 
       inputs.stylix.nixosModules.stylix

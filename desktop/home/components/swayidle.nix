@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
 let
-  swaylock = "${config.programs.swaylock.package}/bin/swaylock -f; ${config.setup.passwordManagerLock}";
   swaymsg = "${pkgs.sway}/bin/swaymsg";
   niri = "${pkgs.niri}/bin/niri";
   # wpctl = "${pkgs.wireplumber}/bin/wpctl";
@@ -11,13 +10,13 @@ in
     enable = true;
     events = {
       before-sleep = "playerctl pause; ${config.setup.passwordManagerLock}";
-      lock = swaylock;
+      lock = config.setup.locker;
       # { event = "before-sleep"; command = swaylock; }
       # Before-sleep lock is not triggered for some reason
-      after-resume = swaylock;
+      after-resume = config.setup.locker;
     };
     timeouts = [
-      { timeout = 300; command = swaylock; }
+      { timeout = 300; command = config.setup.locker; }
 
       # Mute mic
       # { timeout = 330; command = "${wpctl} set-mute @DEFAULT_SOURCE@ 1"; resumeCommand = "${wpctl} set-mute @DEFAULT_SOURCE@ 0"; }

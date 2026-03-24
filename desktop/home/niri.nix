@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  inputs,
   pkgs,
   ...
 }:
@@ -8,11 +9,11 @@
   setup.windowManager = "niri";
   imports = [
     ./components/swayidle.nix
-    ./components/swaylock.nix
-    ./components/rofi.nix
-    ./components/swaync.nix
-    ./components/trays.nix
-    ./components/waybar.nix
+    # ./components/swaylock.nix
+    # ./components/rofi.nix
+    # ./components/swaync.nix
+    # ./components/trays.nix
+    # ./components/waybar.nix
     ./components/wayland-fixes.nix
   ];
 
@@ -27,6 +28,32 @@
       useGrimAdapter = true; # Requires grim!
     };
   };
+
+  setup = {
+    runner = "noctalia-shell ipc call launcher toggle";
+    locker = "noctalia-shell ipc call lockScreen lock";
+    lockerInstant = config.setup.locker;
+  };
+
+  programs.noctalia-shell = {
+    enable = true;
+    package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    systemd.enable = true;
+    settings = {};
+    plugins = {
+      version = 2;
+      sources = [{ enabled = true; name = "Noctila Plugins"; url = "https://github.com/noctalia-dev/noctalia-plugins"; }];
+      states = builtins.mapAttrs (_name: url: { enabled = true; sourceUrl = url; } ) {
+        kaomoji-provider = "https://github.com/noctalia-dev/noctalia-plugins";
+        polkit-agent = "https://github.com/noctalia-dev/noctalia-plugins";
+        pomodoro = "https://github.com/noctalia-dev/noctalia-plugins";
+        privacy-indicator = "https://github.com/noctalia-dev/noctalia-plugins";
+        tailscale = "https://github.com/noctalia-dev/noctalia-plugins";
+        zed-provider = "https://github.com/noctalia-dev/noctalia-plugins";
+      };
+    };
+  };
+  xdg.configFile."noctalia/settings.json".source = lib.mkForce (config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/noctalia.json");
 
   programs.niri = {
     settings = {
@@ -52,11 +79,18 @@
         "Mod+Shift+R".action.spawn-sh = "niri msg action load-config-file";
         "Mod+T".action.set-column-width = "33%";
         "Mod+Shift+T".action.set-column-width = "66%";
+        "Mod+Z".action.spawn-sh = "noctalia-shell ipc call plugin:zed-provider toggle";
 
         "Mod+Left".action.focus-column-left-or-last = [ ];
         "Mod+Right".action.focus-column-right-or-first = [ ];
+        "Mod+Up".action.focus-window-or-workspace-up = [ ];
+        "Mod+Down".action.focus-window-or-workspace-down = [ ];
+        "Mod+Alt+Up".action.move-workspace-up = [ ];
+        "Mod+Alt+Down".action.move-workspace-down = [ ];
         "Mod+Shift+Left".action.move-column-left = [ ];
         "Mod+Shift+Right".action.move-column-right = [ ];
+        "Mod+Shift+Up".action.move-window-to-workspace-up = [ ];
+        "Mod+Shift+Down".action.move-window-to-workspace-down = [ ];
 
         "Mod+Comma".action.focus-monitor-left = [ ];
         "Mod+Period".action.focus-monitor-right = [ ];
@@ -81,22 +115,43 @@
         "XF86MonBrightnessUp".action.spawn-sh = "brightnessctl s 10%+";
         "XF86MonBrightnessDown".action.spawn-sh = "brightnessctl s 10%-";
 
-        "Mod+1".action.focus-column = 1;
-        "Mod+2".action.focus-column = 2;
-        "Mod+3".action.focus-column = 3;
-        "Mod+4".action.focus-column = 4;
-        "Mod+5".action.focus-column = 5;
-        "Mod+6".action.focus-column = 6;
-        "Mod+7".action.focus-column = 7;
-        "Mod+8".action.focus-column = 8;
-        "Mod+9".action.focus-column = 9;
+        "Mod+1".action.focus-workspace = 1;
+        "Mod+2".action.focus-workspace = 2;
+        "Mod+3".action.focus-workspace = 3;
+        "Mod+4".action.focus-workspace = 4;
+        "Mod+5".action.focus-workspace = 5;
+        "Mod+6".action.focus-workspace = 6;
+        "Mod+7".action.focus-workspace = 7;
+        "Mod+8".action.focus-workspace = 8;
+        "Mod+9".action.focus-workspace = 9;
+
+        "Mod+Shift+1".action.move-window-to-workspace = 1;
+        "Mod+Shift+2".action.move-window-to-workspace = 2;
+        "Mod+Shift+3".action.move-window-to-workspace = 3;
+        "Mod+Shift+4".action.move-window-to-workspace = 4;
+        "Mod+Shift+5".action.move-window-to-workspace = 5;
+        "Mod+Shift+6".action.move-window-to-workspace = 6;
+        "Mod+Shift+7".action.move-window-to-workspace = 7;
+        "Mod+Shift+8".action.move-window-to-workspace = 8;
+        "Mod+Shift+9".action.move-window-to-workspace = 9;
       };
 
       layout = {
+        gaps = 5;
         preset-column-widths = [
           { proportion = 0.5; }
           { proportion = 0.66; }
         ];
+
+        background-color = "transparent";
+
+        border.enable = false;
+        shadow.enable = true;
+        focus-ring = {
+          # Broken due to ghostty https://github.com/ghostty-org/ghostty/issues/3009
+          enable = false;
+          width = 2;
+        };
       };
 
       input = {
@@ -153,7 +208,20 @@
         };
       };
 
+      debug.honor-xdg-activation-with-invalid-serial = {};
       window-rules = [
+        {
+          # Noctila provided
+          geometry-corner-radius = let radius = 20.0;
+          in {
+            top-left = radius;
+            top-right = radius;
+            bottom-left = radius;
+            bottom-right = radius;
+          };
+          # Clip window contents to the rounded corners
+          clip-to-geometry = true;
+        }
         {
           matches = [
             { app-id = "Steam Settings"; }
@@ -197,6 +265,13 @@
           block-out-from = "screen-capture";
         }
       ];
+
+      overview.workspace-shadow.enable = false;
+      layer-rules = [{
+        # Make the wallpaper stationary
+        matches = [{ namespace = "^wallpaper$"; }];
+        place-within-backdrop = true;
+      }];
     };
   };
 }
