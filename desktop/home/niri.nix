@@ -58,8 +58,8 @@
         "Mod+Comma".action.focus-monitor-left = [ ];
         "Mod+Period".action.focus-monitor-right = [ ];
         "Mod+Tab".action.focus-monitor-previous = [ ];
-        "Mod+Shift+Comma".action.move-window-to-monitor-left = [ ];
-        "Mod+Shift+Period".action.move-window-to-monitor-right = [ ];
+        "Mod+Shift+Comma".action.move-workspace-to-monitor-left = [ ];
+        "Mod+Shift+Period".action.move-workspace-to-monitor-right = [ ];
         "Mod+Shift+Tab".action.move-window-to-monitor-previous = [ ];
 
         # "Print".action.spawn-sh = "flameshot gui";

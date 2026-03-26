@@ -103,6 +103,7 @@
       # voxtype
 
       anytype-cli
+      freecad
       inputs.mcp-firewall.packages.x86_64-linux.default
     ];
 
