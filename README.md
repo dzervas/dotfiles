@@ -201,7 +201,7 @@ chmod 600 /etc/nix/cache/private-key.pem
 
 # To serve:
 nix store sign --all --recursive -k /etc/nix/cache/private-key.pem
-NIX_SECRET_KEY_FILE=/etc/nix/cache/private-key.pem nix-serve-ng -- --host 0.0.0.0 --port 8181
+NIX_SECRET_KEY_FILE=/etc/nix/cache/private-key.pem nix run nixpkgs#nix-serve-ng -- -- --host 0.0.0.0 --port 8181
 ```
 
 Client side:

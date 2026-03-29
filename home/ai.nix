@@ -20,7 +20,6 @@ in
   home.packages = with pkgs; [
     github-copilot-cli
     lmstudio
-    webctl
   ];
 
   programs = {

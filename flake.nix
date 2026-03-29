@@ -156,8 +156,8 @@
     mcp-firewall.url = "github:dzervas/mcp-firewall";
     mcp-firewall.inputs.nixpkgs.follows = "nixpkgs";
 
-    zed.url = "github:zed-industries/zed/v0.223.5"; # flake-update:^v\d+.\d{1,3}.\d+$
-    zed.inputs.nixpkgs.follows = "nixpkgs";
+    # zed.url = "github:zed-industries/zed/v0.223.5"; # flake-update:^v\d+.\d{1,3}.\d+$
+    # zed.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   nixConfig = {
