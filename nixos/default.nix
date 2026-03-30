@@ -59,7 +59,7 @@
     fwupd.enable = true;
     pcscd.enable = true;
     upower.enable = true;
-    tuned.enable = true;
+    # tuned.enable = true;
 
     pipewire = {
       enable = true;
