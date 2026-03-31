@@ -18,6 +18,8 @@ final: prev: rec {
   codex-latest = prev.callPackage ./codex.nix { };
   # nix-update:anytype-cli
   anytype-cli = prev.callPackage ./anytype-cli.nix { };
+  # nix-update:n8n-cli
+  n8n-cli = prev.callPackage ./n8n-cli.nix { };
 
   python = prev.python3.override {
     self = python;
