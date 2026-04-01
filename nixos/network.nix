@@ -1,7 +1,7 @@
-{ config, pkgs, ... }: {
+{ pkgs, ... }: {
   networking = {
-    useNetworkd = true;
-    nameservers = [ "8.8.8.8" "1.1.1.1" ];
+    # nameservers = [ "8.8.8.8" "1.1.1.1" ];
+
     networkmanager = {
       enable = true;
       # Use systemd-resolved so that DNS can be split based on the domains:
@@ -9,6 +9,7 @@
       # local dns for any search domains
       # cloudflare for everything else
       dns = "systemd-resolved";
+      appendNameservers = [ "8.8.8.8" "1.1.1.1" ];
       unmanaged = ["zt+" "tailscale+" "tun+"];
     };
 
@@ -22,16 +23,7 @@
   };
 
   systemd = {
-    # Use magic dns only for the tailscale subdomains
-    network = {
-      wait-online.enable = false;
-      networks."tailscale0" = {
-        matchConfig.Name = "tailscale0";
-        dns = [ "100.100.100.100" ];
-        domains = [ "~ts.dzerv.art" ];
-      };
-    };
-
+    network.wait-online.enable = false;
     services.NetworkManager-wait-online.enable = false;
 
     # Fix Tailscale connectivity after suspend/resume
@@ -51,17 +43,19 @@
       enable = true;
       settings.Resolve = {
         # Global fallback DNS
-        FallbackDns = config.networking.nameservers;
+        # FallbackDns = config.networking.nameservers;
         # Stuff break with forced dnssec :/
         # dnssec = "allow-downgrade";
         DNSOverTLS = "opportunistic";
-        Domains = [ "~." ]; # ensure systemd-resolved is the default resolver
       };
     };
 
     tailscale = {
       enable = true;
       openFirewall = true;
+      disableUpstreamLogging = true;
+      disableTaildrop = true;
+      extraDaemonFlags = [ "--no-logs-no-support" ];
     };
 
     printing = {

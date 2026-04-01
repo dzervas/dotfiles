@@ -26,33 +26,33 @@ in
     codex = {
       enable = true;
       package = pkgs.codex-latest;
-      settings = {
-        personality = "pragmatic";
-        model = "gpt-5.4";
-        model_reasoning_effort = "medium";
-
-        approval_policy = "untrusted";
-        sandbox_mode = "workspace-write";
-        sandbox_workspace_write.network_access = true;
-        check_for_update_on_startup = false;
-
-        tui.notifications = true;
-        file_opener = "none";
-
-        project_doc_fallback_filenames = ["CLAUDE.md"];
-
-        suppress_unstable_features_warning = true;
-        features = {
-          remote_models = true;
-          runtime_metrics = true;
-          use_linux_sandbox_bwrap = true;
-        };
-
-        otel.exporter.otlp-http = {
-          endpoint = "https://metrics.vpn.dzerv.art";
-          protocol = "binary";
-        };
-      };
+      # settings = {
+      #   personality = "pragmatic";
+      #   model = "gpt-5.4";
+      #   model_reasoning_effort = "medium";
+      #
+      #   approval_policy = "untrusted";
+      #   sandbox_mode = "workspace-write";
+      #   sandbox_workspace_write.network_access = true;
+      #   check_for_update_on_startup = false;
+      #
+      #   tui.notifications = true;
+      #   file_opener = "none";
+      #
+      #   project_doc_fallback_filenames = ["CLAUDE.md"];
+      #
+      #   suppress_unstable_features_warning = true;
+      #   features = {
+      #     remote_models = true;
+      #     runtime_metrics = true;
+      #     use_linux_sandbox_bwrap = true;
+      #   };
+      #
+      #   otel.exporter.otlp-http = {
+      #     endpoint = "https://metrics.vpn.dzerv.art";
+      #     protocol = "binary";
+      #   };
+      # };
     };
 
     # TODO: Add skills: https://docs.claude.com/en/docs/claude-code/skills
@@ -144,14 +144,14 @@ in
         };
 
         env = {
-          ANTHROPIC_BASE_URL = "https://ai.vpn.dzerv.art";
-          ANTHROPIC_AUTH_TOKEN = "sk-dummy";
-          API_TIMEOUT_MS = "3000000";
+          # ANTHROPIC_BASE_URL = "https://ai.vpn.dzerv.art";
+          # ANTHROPIC_AUTH_TOKEN = "sk-dummy";
+          # API_TIMEOUT_MS = "3000000";
 
-          ANTHROPIC_DEFAULT_OPUS_MODEL = "gpt-5.4(medium)";
-          ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.4(medium)";
-          ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7";
-          CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.4(high)";
+          # ANTHROPIC_DEFAULT_OPUS_MODEL = "gpt-5.4(medium)";
+          # ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.4(medium)";
+          # ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7";
+          # CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.4(high)";
 
           CLAUDE_CODE_ENABLE_TELEMETRY = "1";
           OTEL_METRICS_EXPORTER = "otlp";

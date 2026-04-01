@@ -5,7 +5,7 @@
 	// 	"ai_provider": "Z.AI"
 	// },
 	"show_edit_predictions": true,
- "vim_mode": true,
+	"vim_mode": true,
 	"edit_predictions": {
 		"provider": "zed",
 	},
@@ -26,6 +26,7 @@
 			"favorite_config_option_values": {},
 		},
 		"claude": {
+			"type": "registry",
 			"default_mode": "acceptEdits",
 		},
 	},
@@ -342,7 +343,7 @@
 			"default": "confirm",
 			"tools": {
 				"terminal": {
-					"default_mode": "confirm",
+					"default": "confirm",
 					"always_allow": [{ "pattern": "^pwd$" }, { "pattern": "^ls$" }, { "pattern": "^file" }],
 				},
 			},
