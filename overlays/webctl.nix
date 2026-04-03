@@ -6,14 +6,14 @@
 }:
 python3.pkgs.buildPythonApplication rec {
   pname = "webctl";
-  version = "0.4.1";
+  version = "0.4.2";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "cosinusalpha";
     repo = "webctl";
     rev = "v${version}";
-    hash = "sha256-/DV+zEaUfhD0EDR+AFDYVwmsp8ODPkpa/tDpSEBjkwo=";
+    hash = "sha256-k5TYElg1teVXWi4255jsbR66RHi7092ndHwwJB4xXVU=";
   };
 
   build-system = with python3.pkgs; [ hatchling ];

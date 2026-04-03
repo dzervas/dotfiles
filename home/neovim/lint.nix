@@ -66,7 +66,7 @@
             package = pkgs.nixfmt;
           };
           # opentofu_fmt.enable = true;
-          prettier.enable = true; # HTML/CSS/JS/TS/JSON/Astro
+          # prettier.enable = true; # HTML/CSS/JS/TS/JSON/Astro
           rustywind.enable = true; # Tailwind classes
           shellharden.enable = true;
           shfmt.enable = true;

@@ -10,13 +10,13 @@
 }:
 stdenv.mkDerivation (finalAttrs: rec {
   pname = "n8n-cli";
-  version = "2.14.2";
+  version = "2.15.0";
 
   src = fetchFromGitHub {
     owner = "n8n-io";
     repo = "n8n";
-    tag = "v${version}";
-    hash = "sha256-tbSaID0kajqEoipDgwk4kxEbY4AXTWiaKO/BfyzC0e8=";
+    tag = "n8n@${version}";
+    hash = "sha256-TOIJqLa68ibry9LSqMkHrJJ+v9t2bK2ybNPUDdiJ66Q=";
   };
 
   pnpmWorkspaces = [ "@n8n/cli..." ];
@@ -30,7 +30,7 @@ stdenv.mkDerivation (finalAttrs: rec {
       ;
     inherit pnpm;
     fetcherVersion = 1;
-    hash = "sha256-714fwBjrMlOG7SFzitb+sXZZ9tkzK5jFlilMf2pRBC4=";
+    hash = "sha256-+Fjnd6wn6eQlRYTikqQcokBjmrStABOePsVPHnzeEWU=";
   };
 
   nativeBuildInputs = [

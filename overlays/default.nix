@@ -18,7 +18,7 @@ final: prev: rec {
   codex-latest = prev.callPackage ./codex.nix { };
   # nix-update:anytype-cli
   anytype-cli = prev.callPackage ./anytype-cli.nix { };
-  # nix-update:n8n-cli
+  # nix-update:n8n-cli --version-regex 'n8n@(2\.\d+\.\d+)'
   n8n-cli = prev.callPackage ./n8n-cli.nix { };
 
   python = prev.python3.override {
@@ -33,10 +33,10 @@ final: prev: rec {
 
   # nix-update:claude-code-latest
   claude-code-latest = prev.claude-code.overrideAttrs rec {
-    version = "2.1.87";
+    version = "2.1.92";
     src = final.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-jorpY6ao1YgkoTgIk1Ae2BQCbqOuEtwzoIG36BP5nG4=";
+      hash = "sha256-CLLCtVK3TeXFZ8wBnRRHNc2MoUt7lTdMJwz8sZHpkFM=";
     };
     npmDepsHash = "sha256-DNdRkN/rpCsN8fnZbz18r2KRUTl5HCur+GyrofH+T/Y=";
   };

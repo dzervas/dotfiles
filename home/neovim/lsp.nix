@@ -64,7 +64,7 @@ in {
             css.enable = true;
             # comment.enable = true;
             fish.enable = true;
-            go.enable = true;
+            # go.enable = true;
             hcl.enable = true;
             html.enable = true;
             hurl.enable = true;

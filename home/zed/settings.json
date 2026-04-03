@@ -4,7 +4,14 @@
 	// 	"enabled": true,
 	// 	"ai_provider": "Z.AI"
 	// },
-	"show_edit_predictions": true,
+	"context_servers": {
+  "terraform-context-server": {
+   "enabled": true,
+   "remote": false,
+   "settings": {}
+  }
+ },
+ "show_edit_predictions": true,
 	"vim_mode": true,
 	"edit_predictions": {
 		"provider": "zed",
@@ -328,7 +335,7 @@
 				"model": "claude-opus-4-6-thinking",
 			},
 		],
-		"default_profile": "ask",
+		"default_profile": "write",
 		"play_sound_when_agent_done": true,
 		"inline_assistant_model": {
 			"provider": "CLIProxyAPI",
@@ -342,7 +349,26 @@
 		"tool_permissions": {
 			"default": "confirm",
 			"tools": {
-				"terminal": {
+				"mcp:mcp-server-context7:query-docs": {
+     "default": "allow"
+    },
+    "mcp:mcp-server-context7:resolve-library-id": {
+     "default": "allow"
+    },
+    "fetch": {
+     "always_allow": [
+      {
+       "pattern": "^https?://registry\\.terraform\\.io"
+      },
+      {
+       "pattern": "^https?://cloud\\.google\\.com"
+      },
+      {
+       "pattern": "^https?://github\\.com"
+      }
+     ]
+    },
+    "terminal": {
 					"default": "confirm",
 					"always_allow": [{ "pattern": "^pwd$" }, { "pattern": "^ls$" }, { "pattern": "^file" }],
 				},
