@@ -18,8 +18,9 @@ let
 in
 {
   home.packages = with pkgs; [
-    github-copilot-cli
     lmstudio
+    bubblewrap
+    pi-coding-agent
   ];
 
   programs = {

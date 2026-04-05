@@ -20,6 +20,8 @@ final: prev: rec {
   anytype-cli = prev.callPackage ./anytype-cli.nix { };
   # nix-update:n8n-cli --version-regex 'n8n@(2\.\d+\.\d+)'
   n8n-cli = prev.callPackage ./n8n-cli.nix { };
+  # nix-update:playwright-cli --version-regex 'n8n@(2\.\d+\.\d+)'
+  playwright-cli = prev.callPackage ./playwright-cli.nix { };
 
   python = prev.python3.override {
     self = python;
@@ -32,12 +34,14 @@ final: prev: rec {
   };
 
   # nix-update:claude-code-latest
-  claude-code-latest = prev.claude-code.overrideAttrs rec {
+  claude-code-latest = prev.claude-code-bin.overrideAttrs rec {
+    # Get from https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/latest
     version = "2.1.92";
-    src = final.fetchzip {
-      url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-CLLCtVK3TeXFZ8wBnRRHNc2MoUt7lTdMJwz8sZHpkFM=";
-    };
-    npmDepsHash = "sha256-DNdRkN/rpCsN8fnZbz18r2KRUTl5HCur+GyrofH+T/Y=";
+    src = final.fetchurl (let
+      nodePlatform = final.stdenvNoCC.hostPlatform.node;
+    in {
+      url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/${version}/${nodePlatform.platform}-${nodePlatform.arch}/claude";
+      hash = "sha256-4iMkUUln/y1en5Hw7jfkZ1v4tt/sJ/r7GcslzFsj/K8=";
+    });
   };
 }

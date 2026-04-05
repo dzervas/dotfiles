@@ -22,7 +22,7 @@
           deadnix.enable = true;
           dotenv_linter.enable = true;
           fish.enable = true;
-          ltrs.enable = true; # Rust
+          # ltrs.enable = true; # Rust
           # opentofu_validate.enable = true; # Fights with terraform_validate
           # pylint.enable = true;
           revive.enable = true; # Golang

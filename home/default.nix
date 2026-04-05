@@ -102,6 +102,7 @@
       cameractrls-gtk4
       # voxtype
       n8n-cli
+      playwright-cli
 
       anytype-cli
       freecad

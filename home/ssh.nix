@@ -37,7 +37,7 @@
     };
   };
 
-  services.yubikey-agent.enable = true;
+  # services.yubikey-agent.enable = true;
   systemd.user.services.ssh-agent.Service.Environment = [
     "SSH_ASK_PASS=${pkgs.wayprompt}/bin/wayprompt-ssh-askpass"
   ];
