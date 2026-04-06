@@ -1,20 +1,6 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 let
   tools = mcp: tools: map (t: "mcp__${mcp}__${t}") tools;
-  anthropic = {
-    "claude-opus-4-5-thinking" = "opus-4.5";
-    "claude-sonnet-4-5-thinking" = "sonnet-4.5";
-    "glm-5" = "glm-5";
-  };
-  openai = {
-    "gpt-5.4(high)" = "gpt-5.4-high";
-    "gpt-5.4(medium)" = "gpt-5.4";
-  };
-  google = {
-    "gemini-3-pro-preview" = "gemini-3-pro";
-    "gemini-3-flash-preview" = "gemini-3-flash";
-  };
-  # allModels = anthropic // openai // google;
 in
 {
   home.packages = with pkgs; [
@@ -22,6 +8,9 @@ in
     bubblewrap
     pi-coding-agent
   ];
+
+  home.file.".pi/agent/extensions".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi";
 
   programs = {
     codex = {

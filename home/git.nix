@@ -180,6 +180,7 @@
 
           get-ignore = command ''echo $argv - $argv[1] && curl -fsL "https://www.toptal.com/developers/gitignore/api/$argv[1]" >> .gitignore && echo "Appended to .gitignore" || echo "No gitignore found - check out https://gitignore.io";'';
           hub = command ''echo -n "$argv[1]" | grep -q / && jj git clone --colocate "git@github.com:$argv[1]" $aargv[2] || jj git clone --colocate "git@github.com:dzervas/$argv[1]" $argv[2]'';
+          repo = command "gh repo view --web";
           pr = [
             "util" "exec" "--" "bash" "-c"
             ''

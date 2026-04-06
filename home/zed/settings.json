@@ -5,13 +5,13 @@
 	// 	"ai_provider": "Z.AI"
 	// },
 	"context_servers": {
-  "terraform-context-server": {
+		"terraform-context-server": {
    "enabled": true,
-   "remote": false,
-   "settings": {}
-  }
- },
- "show_edit_predictions": true,
+			"remote": false,
+			"settings": {},
+		},
+	},
+	"show_edit_predictions": true,
 	"vim_mode": true,
 	"edit_predictions": {
 		"provider": "zed",
@@ -28,7 +28,7 @@
 	"agent_servers": {
 		"opencode": {
 			"type": "extension",
-			"favorite_models": ["dz/claude-opus-4-6", "dz/glm-4.7", "dz/gpt-5.4(medium)"],
+			"favorite_models": ["dz/claude-opus-4-6", "dz/glm-5.1", "dz/gpt-5.4(medium)"],
 			"default_config_options": {},
 			"favorite_config_option_values": {},
 		},
@@ -141,11 +141,11 @@
 						},
 					},
 					{
-						"name": "glm-4.7",
+						"name": "glm-5.1",
 						"max_tokens": 400000,
 						"max_output_tokens": 128000,
 						"max_completion_tokens": 400000,
-						"display_name": "GLM 4.7",
+						"display_name": "GLM 5.1",
 						"capabilities": {
 							"tools": true,
 							"images": true,
@@ -193,11 +193,11 @@
 						},
 					},
 					{
-						"name": "gemini-claude-sonnet-4-5-thinking",
+						"name": "claude-sonnet-4-6",
 						"max_tokens": 200000,
 						"max_output_tokens": 64000,
 						"max_completion_tokens": 200000,
-						"display_name": "Claude Sonnet 4.5 Thinking (gemini)",
+						"display_name": "Claude Sonnet 4.6",
 						"capabilities": {
 							"tools": true,
 							"images": true,
@@ -225,20 +225,6 @@
 						"max_output_tokens": 128000,
 						"max_completion_tokens": 400000,
 						"display_name": "GPT 5.2",
-						"capabilities": {
-							"tools": true,
-							"images": true,
-							"parallel_tool_calls": true,
-							"prompt_cache_key": true,
-						},
-					},
-
-					{
-						"name": "gemini-claude-sonnet-4-5",
-						"max_tokens": 200000,
-						"max_output_tokens": 64000,
-						"max_completion_tokens": 200000,
-						"display_name": "Claude Sonnet 4.5 (gemini)",
 						"capabilities": {
 							"tools": true,
 							"images": true,
@@ -329,13 +315,20 @@
 			{
 				"provider": "CLIProxyAPI",
 				"model": "gpt-5.4",
+				"enable_thinking": false,
 			},
 			{
 				"provider": "CLIProxyAPI",
 				"model": "claude-opus-4-6-thinking",
+				"enable_thinking": false,
+			},
+			{
+				"provider": "CLIProxyAPI",
+				"model": "glm-5.1",
+				"enable_thinking": false,
 			},
 		],
-		"default_profile": "write",
+		"default_profile": "ask",
 		"play_sound_when_agent_done": true,
 		"inline_assistant_model": {
 			"provider": "CLIProxyAPI",
@@ -343,32 +336,32 @@
 		},
 		"default_model": {
 			"provider": "CLIProxyAPI",
-			"model": "gpt-5.4",
+			"model": "glm-5.1",
 		},
 
 		"tool_permissions": {
 			"default": "confirm",
 			"tools": {
 				"mcp:mcp-server-context7:query-docs": {
-     "default": "allow"
-    },
-    "mcp:mcp-server-context7:resolve-library-id": {
-     "default": "allow"
-    },
-    "fetch": {
-     "always_allow": [
-      {
-       "pattern": "^https?://registry\\.terraform\\.io"
-      },
-      {
-       "pattern": "^https?://cloud\\.google\\.com"
-      },
-      {
-       "pattern": "^https?://github\\.com"
-      }
-     ]
-    },
-    "terminal": {
+					"default": "allow",
+				},
+				"mcp:mcp-server-context7:resolve-library-id": {
+					"default": "allow",
+				},
+				"fetch": {
+					"always_allow": [
+						{
+							"pattern": "^https?://registry\\.terraform\\.io",
+						},
+						{
+							"pattern": "^https?://cloud\\.google\\.com",
+						},
+						{
+							"pattern": "^https?://github\\.com",
+						},
+					],
+				},
+				"terminal": {
 					"default": "confirm",
 					"always_allow": [{ "pattern": "^pwd$" }, { "pattern": "^ls$" }, { "pattern": "^file" }],
 				},
