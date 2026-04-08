@@ -1,0 +1,17 @@
+{
+	"agent": {
+		"tool_permissions": {
+			"tools": {
+				"delete_path": {
+					"default": "confirm",
+					"always_deny": [
+						{ "pattern": "^/etc" },
+						{ "pattern": "^/usr" },
+						{ "pattern": "\\.git/?$" },
+						{ "pattern": "node_modules/?$" },
+					],
+				},
+			},
+		},
+	},
+}
