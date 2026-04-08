@@ -18,9 +18,9 @@ final: prev: rec {
   codex-latest = prev.callPackage ./codex.nix { };
   # nix-update:anytype-cli
   anytype-cli = prev.callPackage ./anytype-cli.nix { };
-  # nix-update:n8n-cli --version-regex 'n8n@(2\.\d+\.\d+)'
+  # nix-update :n8n-cli --version-regex 'n8n@(2\.\d+\.\d+)'
   n8n-cli = prev.callPackage ./n8n-cli.nix { };
-  # nix-update:playwright-cli --version-regex 'n8n@(2\.\d+\.\d+)'
+  # nix-update :playwright-cli --version-regex 'n8n@(2\.\d+\.\d+)'
   playwright-cli = prev.callPackage ./playwright-cli.nix { };
 
   python = prev.python3.override {
@@ -33,7 +33,7 @@ final: prev: rec {
     };
   };
 
-  # nix-update:claude-code-latest
+  # nix-update :claude-code-latest
   claude-code-latest = prev.claude-code-bin.overrideAttrs rec {
     # Get from https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/latest
     version = "2.1.92";

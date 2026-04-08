@@ -3,14 +3,18 @@ let
   tools = mcp: tools: map (t: "mcp__${mcp}__${t}") tools;
 in
 {
-  home.packages = with pkgs; [
-    lmstudio
-    bubblewrap
-    pi-coding-agent
-  ];
+  home = {
+    packages = with pkgs; [
+      lmstudio
+      bubblewrap # for codex
+      pi-coding-agent
+      openspec
+    ];
 
-  home.file.".pi/agent/extensions".source =
-    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi";
+    sessionVariables.OPENSPEC_TELEMETRY = 0;
+    file.".pi/agent/extensions".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi";
+  };
 
   programs = {
     codex = {

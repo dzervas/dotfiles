@@ -94,6 +94,7 @@
             "left": [
                 {
                     "colorizeSystemIcon": "none",
+                    "colorizeSystemText": "none",
                     "customIconPath": "",
                     "enableColorization": false,
                     "icon": "rocket",
@@ -241,7 +242,7 @@
                     "useCustomFont": false
                 },
                 {
-                    "iconColor": "none",
+                    "iconColor": "error",
                     "id": "KeepAwake",
                     "textColor": "none"
                 },
