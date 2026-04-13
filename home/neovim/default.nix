@@ -214,6 +214,10 @@ in {
       colorcolumn = "100";
       ruler = true;
 
+      # Diable modelines
+      modeline = false;
+      modelines = 0;
+
       # Line numbers on the side
       number = true;
       relativenumber = true;
@@ -263,10 +267,10 @@ in {
     };
 
     performance.byteCompileLua = {
-      # enable = true;
-      # nvimRuntime = true;
-      # luaLib = true;
-      # plugins = true;
+      enable = true;
+      nvimRuntime = true;
+      luaLib = true;
+      plugins = true;
     };
 
 

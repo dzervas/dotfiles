@@ -68,6 +68,7 @@ export default function (pi: ExtensionAPI) {
 			for (const rule of actionPatterns) {
 				for (const pattern in rule.patterns) {
 					// TODO: Add basic templating support for file-based rules
+					// TODO: Use anymatch
 					if (new RegExp(pattern).test(effectiveInput as string)) {
 						switch (action) {
 							case SavedPatternAction.allow:

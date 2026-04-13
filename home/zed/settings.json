@@ -1,9 +1,4 @@
 {
-	// "speech": {
-	// 	"model": "~/Downloads/whisper.ggml-base.en.bin",
-	// 	"enabled": true,
-	// 	"ai_provider": "Z.AI"
-	// },
 	"context_servers": {
 		"terraform-context-server": {
    "enabled": true,
@@ -14,11 +9,12 @@
 	"show_edit_predictions": true,
 	"vim_mode": true,
 	"edit_predictions": {
+		"disabled_globs": [".private"],
 		"provider": "zed",
 	},
 	"telemetry": {
 		"diagnostics": true,
-		"metrics": false,
+		"metrics": true,
 	},
 	"which_key": {
 		"enabled": true,
