@@ -71,6 +71,7 @@
     };
   };
 
+  environment.variables.PODMAN_COMPOSE_WARNING_LOGS = "false";
   environment.shellAliases = {
     # Quick aliases for common commands
     "1ping" = "ping 1.1.1.1";

@@ -88,7 +88,7 @@ export default function (pi: ExtensionAPI) {
 		}
 
 		const choice = await ctx.ui.select(
-			`Permission request:\n\n  ${effectiveInput}(${effectiveInput})\n\nAllow?`,
+			`Permission request:\n\n${event.toolName}(${effectiveInput})\n\nAllow?`,
 			["Yes", "Add pattern", "Yes, always", "No"],
 		);
 
