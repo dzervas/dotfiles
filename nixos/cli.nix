@@ -1,6 +1,7 @@
 { pkgs, ... }: {
   environment.systemPackages = with pkgs; [
     bat
+    binutils
     btop
     colordiff
     cyme # Better lsusb!

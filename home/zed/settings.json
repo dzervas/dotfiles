@@ -1,7 +1,7 @@
 {
 	"context_servers": {
 		"terraform-context-server": {
-   "enabled": true,
+			"enabled": true,
 			"remote": false,
 			"settings": {},
 		},
@@ -22,6 +22,9 @@
 	"colorize_brackets": true,
 	"agent_ui_font_size": 18.0,
 	"agent_servers": {
+		"codex-acp": {
+			"type": "registry",
+		},
 		"opencode": {
 			"type": "extension",
 			"favorite_models": ["dz/claude-opus-4-6", "dz/glm-5.1", "dz/gpt-5.4(medium)"],
@@ -270,7 +273,7 @@
 		// Debugging
 		"probe-rs": true,
 
-		"opencode": true,
+		"codex-acp": true,
 	},
 
 	// UI & Behavior
@@ -324,7 +327,7 @@
 				"enable_thinking": false,
 			},
 		],
-		"default_profile": "ask",
+		"default_profile": "write",
 		"play_sound_when_agent_done": true,
 		"inline_assistant_model": {
 			"provider": "CLIProxyAPI",
@@ -332,7 +335,7 @@
 		},
 		"default_model": {
 			"provider": "CLIProxyAPI",
-			"model": "glm-5.1",
+			"model": "gpt-5.4",
 		},
 
 		"tool_permissions": {

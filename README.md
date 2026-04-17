@@ -11,6 +11,7 @@ There's also a live CD configuration in `hardware/iso`.
 ### Download
 
 In NixOS (with flakes):
+
 ```bash
 # Once per system
 nix run github:dzervas/dotfiles#iso-auth
@@ -205,6 +206,7 @@ NIX_SECRET_KEY_FILE=/etc/nix/cache/private-key.pem nix run nixpkgs#nix-serve-ng 
 ```
 
 Client side:
+
 ```bash
 rebuild --option substituters 'http://<host>:8181 https://cache.nixos.org' --option trusted-public-keys '<public-key.pem>'
 ```
