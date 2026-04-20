@@ -7,8 +7,7 @@
 
   programs.noctalia-shell = {
     enable = true;
-    package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
-    systemd.enable = true;
+    package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.override { calendarSupport = true; };
     settings = {};
     plugins = {
       version = 2;
@@ -25,4 +24,6 @@
   };
 
   xdg.configFile."noctalia/settings.json".source = lib.mkForce (config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/noctalia.json");
+
+  programs.niri.settings.spawn-at-startup = [{ argv = ["noctalia-shell"]; }];
 }

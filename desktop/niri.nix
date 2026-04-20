@@ -31,4 +31,6 @@
     nautilus
   ];
   services.gnome.sushi.enable = true;
+  # Calendar events - https://docs.noctalia.dev/getting-started/nixos/#calendar-events-support
+  services.gnome.evolution-data-server.enable = true;
 }
