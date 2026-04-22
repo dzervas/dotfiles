@@ -82,12 +82,14 @@
         ".shell.nix"
         ".claude"
         ".claude.json"
+        ".codex"
         ".mcp.json"
         ".aider.*"
         ".jj"
         ".worktrees"
         ".gemini"
         ".github/prompts"
+        ".pi"
       ];
     };
 

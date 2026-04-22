@@ -1,52 +1,48 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 let
   tools = mcp: tools: map (t: "mcp__${mcp}__${t}") tools;
+
+  nodejs = pkgs.nodejs_22; # tree-sitter does not work with nodejs_24
+  piImportNpmLock = pkgs.callPackage (pkgs.path + "/pkgs/build-support/node/import-npm-lock") {
+    callPackages = pkgs.newScope { inherit nodejs; };
+  };
+  piExtensionNodeModules = piImportNpmLock.buildNodeModules {
+    inherit nodejs;
+    npmRoot = ../pi/extensions;
+  };
+  piExtensions = pkgs.runCommand "pi-extensions" { } ''
+    mkdir -p "$out"
+    cp -rs --no-preserve=mode ${../pi/extensions}/. "$out/"
+    rm -rf "$out/node_modules"
+    ln -s ${piExtensionNodeModules}/node_modules "$out/node_modules"
+  '';
 in
 {
   home = {
     packages = with pkgs; [
       lmstudio
       bubblewrap # for codex
-      pi-coding-agent
       openspec
+
+      pi-coding-agent
+      nodejs # used too much to ignore :/
     ];
 
-    sessionVariables.OPENSPEC_TELEMETRY = 0;
-    file.".pi/agent/extensions".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi";
+    sessionVariables = {
+      OPENSPEC_TELEMETRY = 0;
+      # Disable update checks, telemetry, etc.
+      PI_OFFLINE = 1;
+    };
+    file = {
+      ".pi/agent/AGENTS.md".source = ../pi/global_agents.md;
+      ".pi/agent/extensions".source = piExtensions;
+    };
   };
 
   programs = {
     codex = {
       enable = true;
       package = pkgs.codex-latest;
-      # settings = {
-      #   personality = "pragmatic";
-      #   model = "gpt-5.4";
-      #   model_reasoning_effort = "medium";
-      #
-      #   approval_policy = "untrusted";
-      #   sandbox_mode = "workspace-write";
-      #   sandbox_workspace_write.network_access = true;
-      #   check_for_update_on_startup = false;
-      #
-      #   tui.notifications = true;
-      #   file_opener = "none";
-      #
-      #   project_doc_fallback_filenames = ["CLAUDE.md"];
-      #
-      #   suppress_unstable_features_warning = true;
-      #   features = {
-      #     remote_models = true;
-      #     runtime_metrics = true;
-      #     use_linux_sandbox_bwrap = true;
-      #   };
-      #
-      #   otel.exporter.otlp-http = {
-      #     endpoint = "https://metrics.vpn.dzerv.art";
-      #     protocol = "binary";
-      #   };
-      # };
     };
 
     # TODO: Add skills: https://docs.claude.com/en/docs/claude-code/skills
@@ -64,23 +60,6 @@ in
           type = "command";
         };
 
-        # extraKnownMarketplaces.anthropic.source = {
-        #   source = "github";
-        #   repo = "anthropics/skills";
-        # };
-        # enabledPlugins."document-skills@anthropic-agent-skills" = true;
-
-        # hooks = {
-        #   PreToolUse = [{
-        #     matcher = "";
-        #     hooks = [{
-        #       type = "command";
-        #       command = toString ./agentty/hooks/pretooluse.sh;
-        #       timeout = 60;
-        #     }];
-        #   }];
-        # };
-
         permissions = {
           # defaultMode = "acceptEdits";
           disableBypassPermissionsMode = "disable";
@@ -97,7 +76,6 @@ in
             "Bash(jj status:*)"
             "Bash(hurl:*)"
             "Bash(nix run .)"
-            "Bash(yarn test)"
             "Bash(statix check:*)"
 
             "Read(~/.claude/plugins/cache/superpowers/skills/*)"

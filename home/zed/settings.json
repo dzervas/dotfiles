@@ -22,18 +22,15 @@
 	"colorize_brackets": true,
 	"agent_ui_font_size": 18.0,
 	"agent_servers": {
-		"codex-acp": {
+		"pi-acp": {
 			"type": "registry",
 		},
-		"opencode": {
-			"type": "extension",
-			"favorite_models": ["dz/claude-opus-4-6", "dz/glm-5.1", "dz/gpt-5.4(medium)"],
-			"default_config_options": {},
-			"favorite_config_option_values": {},
-		},
-		"claude": {
+		"claude-acp": {
 			"type": "registry",
 			"default_mode": "acceptEdits",
+		},
+		"codex-acp": {
+			"type": "registry",
 		},
 	},
 
@@ -274,6 +271,8 @@
 		"probe-rs": true,
 
 		"codex-acp": true,
+		"claude-acp": true,
+		"pi-acp": true,
 	},
 
 	// UI & Behavior
@@ -334,8 +333,8 @@
 			"model": "gpt-5.4",
 		},
 		"default_model": {
-			"provider": "CLIProxyAPI",
-			"model": "gpt-5.4",
+			"provider": "copilot_chat",
+			"model": "gpt-4.1",
 		},
 
 		"tool_permissions": {

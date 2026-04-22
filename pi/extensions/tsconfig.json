@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"module": "esnext",
+		"target": "esnext",
+		"moduleResolution": "bundler",
+		"strict": true,
+		"typeRoots": [
+			"/etc/profiles/per-user/dzervas/lib/node_modules/pi-monorepo/node_modules",
+			"/home/dzervas/.pi/agent/extensions/node_modules",
+		],
+		"paths": {
+			"@mariozechner/pi-coding-agent": [
+				"/etc/profiles/per-user/dzervas/lib/node_modules/pi-monorepo/dist/index.d.ts",
+			],
+			"*": [
+				"/home/dzervas/.pi/agent/extensions/node_modules/*",
+				"/etc/profiles/per-user/dzervas/lib/node_modules/pi-monorepo/node_modules/*",
+			],
+		},
+	},
+	"include": ["./*.ts"],
+}
