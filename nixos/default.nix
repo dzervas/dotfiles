@@ -1,7 +1,7 @@
-{ config, pkgs, ... }: {
+{ pkgs, ... }: {
   imports = [
     ./1password.nix
-    ./apparmor.nix
+    # ./apparmor.nix
     ./bluetooth.nix
     ./camera.nix
     ./cli.nix
