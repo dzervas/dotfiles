@@ -9,13 +9,14 @@ let
   piExtensionNodeModules = piImportNpmLock.buildNodeModules {
     inherit nodejs;
     npmRoot = ../pi/extensions;
+
+    derivationArgs = {
+      doCheck = true;
+      checkPhase = ''
+        npm audit
+      '';
+    };
   };
-  piExtensions = pkgs.runCommand "pi-extensions" { } ''
-    mkdir -p "$out"
-    cp -rs --no-preserve=mode ${../pi/extensions}/. "$out/"
-    rm -rf "$out/node_modules"
-    ln -s ${piExtensionNodeModules}/node_modules "$out/node_modules"
-  '';
 in
 {
   home = {
@@ -35,7 +36,8 @@ in
     };
     file = {
       ".pi/agent/AGENTS.md".source = ../pi/global_agents.md;
-      ".pi/agent/extensions".source = piExtensions;
+      ".pi/agent/extensions".source = ../pi/extensions;
+      ".pi/agent/node_modules".source = piExtensionNodeModules + "/node_modules";
     };
   };
 

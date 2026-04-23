@@ -1,7 +1,7 @@
 {
 	"context_servers": {
 		"terraform-context-server": {
-			"enabled": true,
+   "enabled": true,
 			"remote": false,
 			"settings": {},
 		},
@@ -23,7 +23,10 @@
 	"agent_ui_font_size": 18.0,
 	"agent_servers": {
 		"pi-acp": {
-			"type": "registry",
+			"favorite_models": [
+    "openai-codex/gpt-5.4"
+   ],
+   "type": "registry",
 		},
 		"claude-acp": {
 			"type": "registry",

@@ -29,7 +29,7 @@ const COMPLEX_TYPES = new Set([
 	"while_statement",
 ]);
 const SIMPLE = new Set(["pwd", "echo", "printf", "true", "false"]);
-const READ = new Set(["cat", "head", "tail", "less", "file"]);
+const READ = new Set(["cat", "head", "tail", "less", "file", "sort", "jq"]);
 const WRITE = new Set(["touch", "mkdir", "rm"]);
 
 type Action = "allow" | "ask" | "deny";
@@ -519,17 +519,18 @@ function saveRule(subject: Subject) {
 
 async function confirm(subject: Subject, reason: string, ctx: ExtensionContext) {
 	if (!ctx.hasUI) return { block: true, reason: `${reason} (no UI available)` };
+
 	const options =
 		subject.ask.length > 0 ? ["Allow once", "No"] : ["Allow once", "Allow and save", "No"];
-	const choice = await ctx.ui.select(
-		`Permission request:\n\n${subject.toolName}(${subject.rawInput})\n\n${reason}`,
-		options,
-	);
+	const choice = await ctx.ui.select(`Permission request:\n\nReason: ${reason}`, options);
+
 	if (choice === "Allow once") return undefined;
+
 	if (choice === "Allow and save") {
 		ctx.ui.notify(saveRule(subject), "info");
 		return undefined;
 	}
+
 	return { block: true, reason: "Blocked by user" };
 }
 
