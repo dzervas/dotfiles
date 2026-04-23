@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 let
   tools = mcp: tools: map (t: "mcp__${mcp}__${t}") tools;
 
@@ -35,8 +35,10 @@ in
       PI_OFFLINE = 1;
     };
     file = {
-      ".pi/agent/AGENTS.md".source = ../pi/global_agents.md;
-      ".pi/agent/extensions".source = ../pi/extensions;
+      ".pi/agent/AGENTS.md".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/global_agents.md";
+      ".pi/agent/extensions".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/extensions";
       ".pi/agent/node_modules".source = piExtensionNodeModules + "/node_modules";
     };
   };

@@ -29,7 +29,7 @@ const COMPLEX_TYPES = new Set([
 	"while_statement",
 ]);
 const SIMPLE = new Set(["pwd", "echo", "printf", "true", "false"]);
-const READ = new Set(["cat", "head", "tail", "less", "file", "sort", "jq"]);
+const READ = new Set(["cat", "head", "tail", "less", "file", "sort", "jq", "ls", "xxd"]);
 const WRITE = new Set(["touch", "mkdir", "rm"]);
 
 type Action = "allow" | "ask" | "deny";
@@ -262,9 +262,36 @@ function classifyCommand(node: any, ask: string[], paths: PathRef[]) {
 	}
 
 	if (name === "find") {
-		const roots = (args.filter(Boolean) as string[]).filter(
-			(arg) => !arg.startsWith("-") && !["!", "(", ")"].includes(arg),
-		);
+		const tokens = args.filter(Boolean) as string[];
+		const roots: string[] = [];
+		let parsingRoots = true;
+
+		for (let index = 0; index < tokens.length; index += 1) {
+			const arg = tokens[index]!;
+
+			if ((arg === "-exec" || arg === "-execdir") && index + 1 < tokens.length) {
+				const terminatorIndex = tokens.findIndex(
+					(token, tokenIndex) =>
+						tokenIndex > index && (token === ";" || token === "\\;" || token === "+"),
+				);
+				const execArgs = tokens.slice(
+					index + 1,
+					terminatorIndex === -1 ? tokens.length : terminatorIndex,
+				);
+				const execName = execArgs[0];
+				if (!execName) return void ask.push(`Incomplete ${arg} in find`);
+				if (WRITE.has(execName) || execName === "cp" || execName === "mv")
+					return void ask.push(`find ${arg} runs ${execName}`);
+				ask.push(`find ${arg} requires confirmation`);
+				return;
+			}
+
+			if (parsingRoots) {
+				if (arg.startsWith("-") || ["!", "(", ")"].includes(arg)) parsingRoots = false;
+				else roots.push(arg);
+			}
+		}
+
 		(roots.length > 0 ? roots : ["."]).forEach((arg) => pushPath(paths, arg, "search"));
 		return;
 	}
@@ -535,6 +562,18 @@ async function confirm(subject: Subject, reason: string, ctx: ExtensionContext) 
 }
 
 export default function permissionsExtension(pi: ExtensionAPI) {
+	pi.on("session_start", async (_event, ctx) => {
+		const failures = runSelfTest();
+		if (failures.length === 0) ctx.ui.notify("[permissions] self-test passed", "info");
+		else {
+			ctx.ui.notify(`[permissions] self-test failed (${failures.length})`, "error");
+			ctx.ui.setWidget(
+				"permissions-self-test",
+				failures.map((failure) => `- ${failure}`),
+			);
+		}
+	});
+
 	pi.on("tool_call", async (event, ctx) => {
 		const subject = normalize(event);
 		const result = decide(subject, loadConfig());
@@ -542,4 +581,49 @@ export default function permissionsExtension(pi: ExtensionAPI) {
 		if (result.action === "deny") return { block: true, reason: result.reason };
 		return confirm(subject, result.reason, ctx);
 	});
+}
+
+type SelfTestAction = z.infer<typeof RuleSchema>["action"];
+
+function runSelfTest(): string[] {
+	const tests: Record<string, SelfTestAction> = {
+		"ls -lah /tmp/allow": "allow",
+		"rm -rf /tmp/deny": "deny",
+		"python script.py": "ask",
+		"rg 'hello world' ./file.txt": "allow",
+		"rg 'hello world' ../file.txt": "ask",
+		"rg 'hello world' /tmp/deny/file.txt": "deny",
+		"find . -name '*.txt' -print": "allow",
+		"find . -name '*.txt' -exec rm {} \\;": "ask",
+		"kubectl get all": "ask",
+	};
+
+	const allowPath = resolvePath("/tmp/allow");
+	const denyPath = resolvePath("/tmp/deny");
+	const config: Config = {
+		version: 2,
+		defaultAction: "ask",
+		allowRoots: [resolvePath("."), allowPath],
+		denyRoots: [denyPath],
+		rules: [],
+	};
+
+	const failures: string[] = [];
+
+	for (const [command, expected] of Object.entries(tests)) {
+		const subject = normalize({
+			type: "tool_call",
+			toolCallId: `self-test:${command}`,
+			toolName: "bash",
+			input: { command },
+		} as ToolCallEvent);
+		const actual = decide(subject, config);
+
+		if (actual.action !== expected)
+			failures.push(
+				`'${command}' expected=${expected} vs actual=${actual.action} reason=${actual.reason}`,
+			);
+	}
+
+	return failures;
 }
