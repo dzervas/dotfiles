@@ -2,10 +2,17 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import {
+	bashToolDefinition,
+	editToolDefinition,
+	findToolDefinition,
+	grepToolDefinition,
 	isToolCallEventType,
+	lsToolDefinition,
+	readToolDefinition,
 	type ExtensionAPI,
 	type ExtensionContext,
 	type ToolCallEvent,
+	writeToolDefinition,
 } from "@mariozechner/pi-coding-agent";
 import { z } from "zod";
 import { getProperty } from "dot-prop";
@@ -29,8 +36,8 @@ const COMPLEX_TYPES = new Set([
 	"while_statement",
 ]);
 const SIMPLE = new Set(["pwd", "echo", "printf", "true", "false"]);
-const READ = new Set(["cat", "head", "tail", "less", "file", "sort", "jq", "ls", "xxd"]);
-const WRITE = new Set(["touch", "mkdir", "rm"]);
+const READ = new Set(["cat", "head", "tail", "less", "file", "sort", "jq", "ls", "xxd", "nl"]);
+const WRITE = new Set(["touch", "mkdir", "rm", "sed"]);
 
 type Action = "allow" | "ask" | "deny";
 type ToolKind = "builtin" | "custom" | "mcp";
@@ -97,7 +104,7 @@ const RuleSchema = z.object({
 const ConfigSchema = z.object({
 	version: z.literal(2).default(2),
 	defaultAction: z.enum(["allow", "ask", "deny"]).default("ask"),
-	allowRoots: z.array(z.string()).default([]),
+	allowRoots: z.array(z.string()).default([resolvePath("."), "/nix/store"]),
 	denyRoots: z.array(z.string()).default([]),
 	rules: z.array(RuleSchema).default([]),
 });
@@ -238,6 +245,14 @@ function classifyCommand(node: any, ask: string[], paths: PathRef[]) {
 	// Simple commands don't need further analysis
 	if (SIMPLE.has(name)) return;
 
+	// ls without positionals still affects the current directory as read op
+	if (name === "ls") {
+		const positionals = args.filter(Boolean).filter((arg) => !arg!.startsWith("-")) as string[];
+		positionals.forEach((arg) => pushPath(paths, arg, "list"));
+
+		if (positionals.length === 0) pushPath(paths, ".", "list");
+	}
+
 	// Read/write commands are simple enough to handle directly
 	if (READ.has(name) || WRITE.has(name))
 		return args
@@ -252,13 +267,6 @@ function classifyCommand(node: any, ask: string[], paths: PathRef[]) {
 
 		positional.slice(0, -1).forEach((arg) => pushPath(paths, arg, "read"));
 		return pushPath(paths, positional.at(-1)!, "write");
-	}
-
-	if (name === "ls") {
-		const positionals = args.filter(Boolean).filter((arg) => !arg!.startsWith("-")) as string[];
-		positionals.forEach((arg) => pushPath(paths, arg, "list"));
-
-		if (!args.some(Boolean)) pushPath(paths, ".", "list");
 	}
 
 	if (name === "find") {
@@ -544,12 +552,54 @@ function saveRule(subject: Subject) {
 		: "Saved allow rule";
 }
 
+const TOOL_DEFINITIONS = {
+	bash: bashToolDefinition,
+	read: readToolDefinition,
+	edit: editToolDefinition,
+	write: writeToolDefinition,
+	grep: grepToolDefinition,
+	find: findToolDefinition,
+	ls: lsToolDefinition,
+} as const;
+
+function stripAnsi(text: string) {
+	return text.replace(/\u001b\[[0-?]*[ -/]*[@-~]|\u001b[@-Z\\-_]/gu, "");
+}
+
+function formatToolCall(subject: Subject, ctx: ExtensionContext) {
+	const definition = TOOL_DEFINITIONS[subject.toolName as keyof typeof TOOL_DEFINITIONS];
+	if (!definition?.renderCall)
+		return `${subject.toolName} ${JSON.stringify(subject.input, null, 2)}`;
+	try {
+		const component = definition.renderCall(subject.input, ctx.ui.theme, {
+			args: subject.input,
+			toolCallId: `permissions:${subject.toolName}`,
+			invalidate: () => {},
+			lastComponent: undefined,
+			state: {},
+			cwd: ctx.cwd,
+			executionStarted: false,
+			argsComplete: true,
+			isPartial: false,
+			expanded: false,
+			showImages: false,
+			isError: false,
+		});
+		return component.render(1000).join("\n").trim();
+	} catch {
+		return `${subject.toolName} ${JSON.stringify(subject.input, null, 2)}`;
+	}
+}
+
 async function confirm(subject: Subject, reason: string, ctx: ExtensionContext) {
 	if (!ctx.hasUI) return { block: true, reason: `${reason} (no UI available)` };
 
 	const options =
 		subject.ask.length > 0 ? ["Allow once", "No"] : ["Allow once", "Allow and save", "No"];
-	const choice = await ctx.ui.select(`Permission request:\n\nReason: ${reason}`, options);
+	const choice = await ctx.ui.select(
+		`󱅞 Permission request:\n${formatToolCall(subject, ctx)}\n\nReason: ${reason}`,
+		options,
+	);
 
 	if (choice === "Allow once") return undefined;
 
@@ -588,6 +638,7 @@ type SelfTestAction = z.infer<typeof RuleSchema>["action"];
 function runSelfTest(): string[] {
 	const tests: Record<string, SelfTestAction> = {
 		"ls -lah /tmp/allow": "allow",
+		"ls -lah": "allow",
 		"rm -rf /tmp/deny": "deny",
 		"python script.py": "ask",
 		"rg 'hello world' ./file.txt": "allow",
@@ -596,6 +647,9 @@ function runSelfTest(): string[] {
 		"find . -name '*.txt' -print": "allow",
 		"find . -name '*.txt' -exec rm {} \\;": "ask",
 		"kubectl get all": "ask",
+		"find . -name '*.txt' -print | sed 's#^./##'": "allow",
+		"sed -i 's/old/new/g' file.txt": "allow",
+		"sed -i 's/old/new/g' /tmp/deny": "deny",
 	};
 
 	const allowPath = resolvePath("/tmp/allow");
