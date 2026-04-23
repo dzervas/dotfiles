@@ -52,6 +52,10 @@ type Subject = {
 	paths: PathRef[];
 	ask: string[];
 };
+type ReadModeState = {
+	enabled: boolean;
+	previousTools?: string[];
+};
 type Rule = {
 	action: Action;
 	priority?: number;
@@ -522,6 +526,34 @@ function escape(text: string) {
 	return text.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
 }
 
+const READ_MODE_TOOLS = ["read", "bash", "grep", "find", "ls", "questionnaire"];
+const READ_MODE_ALLOWED_CUSTOM_TOOLS = new Set(["questionnaire"]);
+
+function decideReadMode(subject: Subject) {
+	if (subject.toolName === "edit" || subject.toolName === "write")
+		return { block: true as const, reason: "Read mode: file mutations are disabled" };
+
+	if (subject.paths.some((entry) => entry.access === "write"))
+		return { block: true as const, reason: "Read mode: write access is disabled" };
+
+	if (subject.ask.length > 0)
+		return {
+			block: true as const,
+			reason: `Read mode: blocked because the command is not safely classifiable (${[...new Set(subject.ask)].join("; ")})`,
+		};
+
+	if (subject.toolKind === "custom" && !READ_MODE_ALLOWED_CUSTOM_TOOLS.has(subject.toolName))
+		return {
+			block: true as const,
+			reason: `Read mode: custom tool '${subject.toolName}' is not allowed`,
+		};
+
+	if (subject.toolKind === "mcp")
+		return { block: true as const, reason: "Read mode: MCP tools are blocked by default" };
+
+	return undefined;
+}
+
 function saveRule(subject: Subject) {
 	const source = fs.existsSync(CONFIG_PATHS[1]) ? CONFIG_PATHS[1] : CONFIG_PATHS[2];
 	const parsed = fs.existsSync(source) ? JSON.parse(fs.readFileSync(source, "utf8")) : undefined;
@@ -612,6 +644,80 @@ async function confirm(subject: Subject, reason: string, ctx: ExtensionContext) 
 }
 
 export default function permissionsExtension(pi: ExtensionAPI) {
+	let readModeEnabled = true;
+	let previousTools: string[] | undefined;
+
+	function updateReadModeUi(ctx: ExtensionContext) {
+		// TODO: This should be a setFooter
+		ctx.ui.setStatus(
+			"permissions-read-mode",
+			readModeEnabled ? undefined : ctx.ui.theme.fg("accent", "󱚌 workspace edit"),
+		);
+	}
+
+	function persistReadMode() {
+		pi.appendEntry<ReadModeState>("permissions-read-mode", {
+			enabled: readModeEnabled,
+			previousTools,
+		});
+	}
+
+	function restoreReadMode(ctx: ExtensionContext) {
+		let restored: ReadModeState | undefined;
+
+		for (const entry of ctx.sessionManager.getBranch()) {
+			if (entry.type === "custom" && entry.customType === "permissions-read-mode")
+				restored = entry.data as ReadModeState | undefined;
+		}
+
+		readModeEnabled = restored?.enabled ?? false;
+		previousTools = restored?.previousTools;
+
+		if (readModeEnabled)
+			pi.setActiveTools(
+				READ_MODE_TOOLS.filter((name) => pi.getAllTools().some((tool) => tool.name === name)),
+			);
+		updateReadModeUi(ctx);
+	}
+
+	function setReadMode(enabled: boolean, ctx: ExtensionContext) {
+		if (enabled === readModeEnabled) {
+			updateReadModeUi(ctx);
+			ctx.ui.notify(`Read mode already ${enabled ? "enabled" : "disabled"}`, "info");
+			return;
+		}
+
+		if (enabled) {
+			previousTools = pi.getActiveTools();
+			pi.setActiveTools(
+				READ_MODE_TOOLS.filter((name) => pi.getAllTools().some((tool) => tool.name === name)),
+			);
+			readModeEnabled = true;
+			ctx.ui.notify("Read mode enabled. File mutations are blocked.", "info");
+		} else {
+			readModeEnabled = false;
+			if (previousTools && previousTools.length > 0) {
+				const available = new Set(pi.getAllTools().map((tool) => tool.name));
+				pi.setActiveTools(previousTools.filter((tool) => available.has(tool)));
+			}
+			ctx.ui.notify("Read mode disabled.", "info");
+		}
+
+		updateReadModeUi(ctx);
+		persistReadMode();
+	}
+
+	pi.registerCommand("read-only", {
+		description: "Toggle read-only mode: /read-only [on|off|toggle]",
+		handler: async (args, ctx) => {
+			const action = args.trim().toLowerCase();
+			if (!action || action === "toggle") return setReadMode(!readModeEnabled, ctx);
+			if (action === "on") return setReadMode(true, ctx);
+			if (action === "off") return setReadMode(false, ctx);
+			ctx.ui.notify("Usage: /read-mode [on|off|toggle]", "warning");
+		},
+	});
+
 	pi.on("session_start", async (_event, ctx) => {
 		const failures = runSelfTest();
 		if (failures.length === 0) ctx.ui.notify("[permissions] self-test passed", "info");
@@ -622,10 +728,19 @@ export default function permissionsExtension(pi: ExtensionAPI) {
 				failures.map((failure) => `- ${failure}`),
 			);
 		}
+		restoreReadMode(ctx);
+	});
+
+	pi.on("session_tree", async (_event, ctx) => {
+		restoreReadMode(ctx);
 	});
 
 	pi.on("tool_call", async (event, ctx) => {
 		const subject = normalize(event);
+		if (readModeEnabled) {
+			const readModeDecision = decideReadMode(subject);
+			if (readModeDecision) return readModeDecision;
+		}
 		const result = decide(subject, loadConfig());
 		if (result.action === "allow") return { block: false, reason: result.reason };
 		if (result.action === "deny") return { block: true, reason: result.reason };
