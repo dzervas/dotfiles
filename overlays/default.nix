@@ -44,4 +44,24 @@ final: prev: rec {
       hash = "sha256-4iMkUUln/y1en5Hw7jfkZ1v4tt/sJ/r7GcslzFsj/K8=";
     });
   };
+
+  # nix-update:pi-coding-agent-latest
+  pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (finalAttrs: _prevAttrs: rec {
+    version = "0.70.2";
+
+    src = final.fetchFromGitHub {
+      owner = "badlogic";
+      repo = "pi-mono";
+      tag = "v${version}";
+      hash = "sha256-qqmJloTp3mWuZBGgpwoyoFyXx6QD8xhJEwCZb7xFabM=";
+    };
+
+    npmDepsHash = "sha256-ImDvTC0Nm+IGYJuqjwUUfnOtA65uJvjlpP4h2Xt/2vE=";
+
+    npmDeps = final.fetchNpmDeps {
+      inherit (finalAttrs) src;
+      name = "${finalAttrs.pname}-${finalAttrs.version}-npm-deps";
+      hash = finalAttrs.npmDepsHash;
+    };
+  });
 }

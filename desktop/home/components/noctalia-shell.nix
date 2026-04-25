@@ -25,5 +25,5 @@
 
   xdg.configFile."noctalia/settings.json".source = lib.mkForce (config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/noctalia.json");
 
-  programs.niri.settings.spawn-at-startup = [{ argv = ["noctalia-shell"]; }];
+  programs.niri.settings.spawn-at-startup = [{ sh = "noctalia-shell"; }];
 }

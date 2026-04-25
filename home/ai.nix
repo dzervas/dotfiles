@@ -25,7 +25,7 @@ in
       bubblewrap # for codex
       openspec
 
-      pi-coding-agent
+      pi-coding-agent-latest
       nodejs # used too much to ignore :/
     ];
 
