@@ -5,16 +5,16 @@
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "codex";
-  version = "0.123.0";
+  version = "0.125.0";
 
   src = fetchurl {
     url = "https://registry.npmjs.org/@openai/codex/-/codex-${version}.tgz";
-    hash = "sha256-hbVJq7TG7BlbWtDzvsKZf07RrvZGT7iagpMY0K/S54g=";
+    hash = "sha256-fW9pf01VM7cowjX3glTMvc+rwIFPXVAipl3ZzFxUAZs=";
   };
 
   platformSrc = fetchurl {
     url = "https://registry.npmjs.org/@openai/codex/-/codex-${version}-linux-x64.tgz";
-    hash = "sha256-9BSTgYmgYeexRDoV4S0HkXOmrXtBLmIcmx1lG1/qv/M=";
+    hash = "sha256-IR9HM3GcQFjyj4nnOhKCMHtwRJMUeE6rFrVJczk4Q/8=";
   };
 
   nativeBuildInputs = [ nodejs ];

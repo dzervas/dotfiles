@@ -29,6 +29,7 @@
     # ./thumbnailers.nix
     ./updater
     ./xdg.nix
+    ./zellij.nix
   ];
 
   programs = {
@@ -107,6 +108,8 @@
       anytype-cli
       freecad
       inputs.mcp-firewall.packages.x86_64-linux.default
+
+      ladybird
     ];
 
     sessionVariables.TERMINAL = config.setup.terminal;

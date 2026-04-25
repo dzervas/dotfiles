@@ -1,6 +1,6 @@
 { pkgs, ... }: let
   ssh-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj";
-  _1password-gui = pkgs._1password-gui-beta;
+  inherit (pkgs) _1password-gui;
 in {
   setup.passwordManagerLock = "${pkgs._1password-gui}/bin/1password --lock --silent";
 
