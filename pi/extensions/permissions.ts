@@ -36,7 +36,23 @@ const COMPLEX_TYPES = new Set([
 	"while_statement",
 ]);
 const SIMPLE = new Set(["pwd", "echo", "printf", "true", "false"]);
-const READ = new Set(["cat", "head", "tail", "less", "file", "sort", "jq", "ls", "xxd", "nl"]);
+const READ = new Set([
+	"cat",
+	"head",
+	"tail",
+	"less",
+	"file",
+	"sort",
+	"jq",
+	"ls",
+	"xxd",
+	"nl",
+	"nm",
+	"readelf",
+	"strings",
+	"sha256sum",
+	"objdump",
+]);
 const WRITE = new Set(["touch", "mkdir", "rm", "sed"]);
 
 type Action = "allow" | "ask" | "deny";
