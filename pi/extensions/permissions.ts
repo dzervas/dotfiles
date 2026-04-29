@@ -52,6 +52,7 @@ const READ = new Set([
 	"strings",
 	"sha256sum",
 	"objdump",
+	"test",
 ]);
 const WRITE = new Set(["touch", "mkdir", "rm", "sed"]);
 
@@ -543,7 +544,7 @@ function escape(text: string) {
 }
 
 const READ_MODE_TOOLS = ["read", "bash", "grep", "find", "ls", "questionnaire"];
-const READ_MODE_ALLOWED_CUSTOM_TOOLS = new Set(["questionnaire"]);
+const READ_MODE_ALLOWED_CUSTOM_TOOLS = new Set(["questionnaire", "todo"]);
 
 function decideReadMode(subject: Subject) {
 	if (subject.toolName === "edit" || subject.toolName === "write")

@@ -329,7 +329,7 @@
 				"enable_thinking": false,
 			},
 		],
-		"default_profile": "write",
+		"default_profile": "ask",
 		"play_sound_when_agent_done": true,
 		"inline_assistant_model": {
 			"provider": "CLIProxyAPI",

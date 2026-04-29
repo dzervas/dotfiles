@@ -34,7 +34,7 @@
 
   programs = {
     home-manager.enable = true;
-    mpv.enable = true;
+    # mpv.enable = true;
     mullvad-vpn.enable = true;
     nix-index.enable = true;
     satty.enable = true;

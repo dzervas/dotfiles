@@ -4,10 +4,10 @@
 }:
 stdenv.mkDerivation rec {
   pname = "anytype-cli";
-  version = "0.2.0";
+  version = "0.2.3";
   src = fetchurl {
     url = "https://github.com/anyproto/anytype-cli/releases/download/v${version}/anytype-cli-v${version}-linux-amd64.tar.gz";
-    sha256 = "sha256-xds2APg9QRqbLdk/7EMD3CVBF4axNVC+9a/YMQCZ4UE=";
+    sha256 = "sha256-0nrXvIsa6k3zpRp1evkU+GOcdg8R5Xuq45d+ahvE24c=";
   };
 
   dontUnpack = true;
