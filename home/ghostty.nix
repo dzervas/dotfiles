@@ -1,7 +1,10 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
-  # TODO: Slow startup
   # TODO: Handle local file urls with nvim
+  home.packages = with pkgs; [
+    viu # Render images in ghostty
+  ];
+
   setup.terminal = "ghostty";
   programs.ghostty = {
     enable = true;

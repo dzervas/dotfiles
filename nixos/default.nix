@@ -32,7 +32,9 @@
     dconf.enable = true;
     nix-ld = {
       enable = true;
-      # libraries = with pkgs; [];
+      libraries = with pkgs; [
+        libcap.lib # codex-acp for zed
+      ];
     };
   };
 

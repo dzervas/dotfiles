@@ -1,7 +1,13 @@
 {
+	"project_panel": {
+		"dock": "left",
+	},
+	"outline_panel": {
+		"dock": "left",
+	},
 	"context_servers": {
 		"terraform-context-server": {
-   "enabled": true,
+			"enabled": true,
 			"remote": false,
 			"settings": {},
 		},
@@ -22,18 +28,16 @@
 	"colorize_brackets": true,
 	"agent_ui_font_size": 18.0,
 	"agent_servers": {
+		"codex-acp": {
+			"type": "registry",
+		},
 		"pi-acp": {
-			"favorite_models": [
-    "openai-codex/gpt-5.4"
-   ],
-   "type": "registry",
+			"favorite_models": ["openai-codex/gpt-5.4"],
+			"type": "registry",
 		},
 		"claude-acp": {
 			"type": "registry",
 			"default_mode": "acceptEdits",
-		},
-		"codex-acp": {
-			"type": "registry",
 		},
 	},
 
@@ -110,6 +114,7 @@
 		"mute_on_join": true,
 	},
 	"collaboration_panel": {
+		"dock": "left",
 		"button": true,
 	},
 	"git": {
@@ -118,6 +123,7 @@
 		},
 	},
 	"git_panel": {
+		"dock": "left",
 		"button": false,
 	},
 	"language_models": {
@@ -272,10 +278,6 @@
 
 		// Debugging
 		"probe-rs": true,
-
-		"codex-acp": true,
-		"claude-acp": true,
-		"pi-acp": true,
 	},
 
 	// UI & Behavior
@@ -312,6 +314,7 @@
 
 	// AI Nitpicks
 	"agent": {
+		"dock": "right",
 		"favorite_models": [
 			{
 				"provider": "CLIProxyAPI",
