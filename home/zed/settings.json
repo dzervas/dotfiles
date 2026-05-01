@@ -316,22 +316,17 @@
 	"agent": {
 		"dock": "right",
 		"favorite_models": [
-			{
-				"provider": "CLIProxyAPI",
-				"model": "gpt-5.4",
-				"enable_thinking": false,
-			},
-			{
-				"provider": "CLIProxyAPI",
-				"model": "claude-opus-4-6-thinking",
-				"enable_thinking": false,
-			},
-			{
-				"provider": "CLIProxyAPI",
-				"model": "glm-5.1",
-				"enable_thinking": false,
-			},
-		],
+   {
+    "provider": "CLIProxyAPI",
+    "model": "gpt-5.4",
+    "enable_thinking": false
+   },
+   {
+    "provider": "CLIProxyAPI",
+    "model": "claude-opus-4-6-thinking",
+    "enable_thinking": false
+   }
+  ],
 		"default_profile": "ask",
 		"play_sound_when_agent_done": true,
 		"inline_assistant_model": {

@@ -4,7 +4,7 @@
 function find_comments
 	rg --no-heading --color=never \
 		-e '^\s*[#/*]* (XXX|TODO): ' \
-		--type-add 'source:*.{c,cpp,h,hpp,nix,py,js,ts,java,go,rs,rb,php,sh,bash,fish}' \
+		--type-add 'source:*.{c,cpp,h,hpp,nix,py,js,jsx,ts,tsx,java,go,rs,rb,php,sh,bash,fish}' \
 		--type source \
 		. 2>/dev/null | \
 		sort -t: -k1,1 -k2,2

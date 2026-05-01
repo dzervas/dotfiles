@@ -41,7 +41,7 @@
     zoxide.enable = true;
     zed-editor = {
       enable = true;
-      package = inputs.nixpkgs-master.legacyPackages.x86_64-linux.zed-editor;
+      # package = inputs.nixpkgs-master.legacyPackages.x86_64-linux.zed-editor;
     };
   };
 

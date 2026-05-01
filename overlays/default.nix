@@ -34,7 +34,7 @@ final: prev: rec {
   };
 
   # nix-update :claude-code-latest
-  claude-code-latest = prev.claude-code-bin.overrideAttrs rec {
+  claude-code-latest = prev.claude-code.overrideAttrs rec {
     # Get from https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/latest
     version = "2.1.92";
     src = final.fetchurl (let
@@ -47,16 +47,16 @@ final: prev: rec {
 
   # nix-update:pi-coding-agent-latest
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (finalAttrs: _prevAttrs: rec {
-    version = "0.70.6";
+    version = "0.72.0";
 
     src = final.fetchFromGitHub {
       owner = "badlogic";
       repo = "pi-mono";
       tag = "v${version}";
-      hash = "sha256-XZUnKk+B9kWn51kRfMkfInYCz+5hVuWQBvgOm9PO9bo=";
+      hash = "sha256-ifA9shJqb7eZVmjXK/TSQfLAT0lvc2fL2d9V7X96heY=";
     };
 
-    npmDepsHash = "sha256-pEVIqp9rbuHFE6eqSmADmIXWAPey1VbD7qmOJwksz1o=";
+    npmDepsHash = "sha256-UWzpV+lIcgwejYeeUSp9CvPU+aZU0+ikvkzAkZM2ReE=";
 
     npmDeps = final.fetchNpmDeps {
       inherit (finalAttrs) src;
