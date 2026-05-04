@@ -82,7 +82,7 @@ let
         selected=""
         for candidate in $candidates; do
           echo "Checking $package@$candidate with Snyk..." >&2
-          if snyk test "$package@$candidate" --severity-threshold=low >/dev/null; then
+          if snyk test "$package@$candidate" --severity-threshold=low; then
             selected="$candidate"
             break
           fi
@@ -133,6 +133,8 @@ in
 
       pi-coding-agent-latest
       nodejs # used too much to ignore :/
+      snyk
+      typescript
     ];
 
     sessionVariables = {
