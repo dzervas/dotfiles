@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   tools = mcp: tools: map (t: "mcp__${mcp}__${t}") tools;
 
@@ -17,6 +22,105 @@ let
       '';
     };
   };
+
+  piPackages = [
+    "npm:pi-subagents@0.12.4"
+    "npm:context-mode@1.0.72"
+    "npm:pi-mcp-adapter@2.2.2"
+  ];
+
+  piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
+
+  piSettings = {
+    packages = piPackages;
+    npmCommand = [
+      "${nodejs}/bin/npm"
+      "--prefix"
+      piNpmPrefix
+    ];
+  };
+
+  piExtensionBump = pkgs.writeShellApplication {
+    name = "pi-extension-bump";
+    runtimeInputs = with pkgs; [
+      coreutils
+      jq
+      nodejs
+      python3
+      snyk
+    ];
+    text = ''
+      set -euo pipefail
+
+      ai_nix="''${DOTFILES_PATH:-${config.home.homeDirectory}/Lab/dotfiles}/home/ai.nix"
+      specs=(${lib.escapeShellArgs piPackages})
+      cutoff="$(date -u -d '30 days ago' +%F)"
+      resolved_specs=()
+
+      for spec in "''${specs[@]}"; do
+        case "$spec" in
+          npm:*@*) ;;
+          *)
+            echo "Pi package must be pinned as npm:<package>@<version>: $spec" >&2
+            exit 1
+            ;;
+        esac
+
+        package_version="''${spec#npm:}"
+        package="''${package_version%@*}"
+
+        echo "Resolving $package..." >&2
+        candidates="$(npm view "$package" time --json \
+          | jq -r --arg cutoff "$cutoff" '
+              del(.created, .modified)
+              | to_entries
+              | map(select(.value[0:10] <= $cutoff))
+              | .[].key
+            ' \
+          | sort -V -r)"
+
+        selected=""
+        for candidate in $candidates; do
+          echo "Checking $package@$candidate with Snyk..." >&2
+          if snyk test "$package@$candidate" --severity-threshold=low >/dev/null; then
+            selected="$candidate"
+            break
+          fi
+        done
+
+        if [[ -z "$selected" ]]; then
+          echo "No version of $package older than $cutoff passed Snyk" >&2
+          exit 1
+        fi
+
+        echo "Selected $package@$selected" >&2
+        resolved_specs+=("npm:$package@$selected")
+      done
+
+      block="$({
+        echo "  piPackages = ["
+        for spec in "''${resolved_specs[@]}"; do
+          echo "    \"$spec\""
+        done
+        echo "  ];"
+      })"
+
+      PI_PACKAGES_BLOCK="$block" AI_NIX="$ai_nix" python3 -c '
+import os
+import re
+from pathlib import Path
+
+path = Path(os.environ["AI_NIX"])
+block = os.environ["PI_PACKAGES_BLOCK"]
+text = path.read_text()
+new_text, count = re.subn(r"  piPackages = \[\n.*?\n  \];", block, text, count=1, flags=re.S)
+if count != 1:
+    raise SystemExit(f"Could not find piPackages block in {path}")
+if new_text != text:
+    path.write_text(new_text)
+'
+    '';
+  };
 in
 {
   home = {
@@ -24,6 +128,8 @@ in
       lmstudio
       bubblewrap # for codex
       openspec
+      github-copilot-cli
+      piExtensionBump
 
       pi-coding-agent-latest
       nodejs # used too much to ignore :/
@@ -31,8 +137,6 @@ in
 
     sessionVariables = {
       OPENSPEC_TELEMETRY = 0;
-      # Disable update checks, telemetry, etc.
-      PI_OFFLINE = 1;
     };
     file = {
       ".pi/agent/AGENTS.md".source =
@@ -40,6 +144,7 @@ in
       ".pi/agent/extensions".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/extensions";
       ".pi/agent/node_modules".source = piExtensionNodeModules + "/node_modules";
+      ".pi/agent/settings.json".text = builtins.toJSON piSettings;
     };
   };
 

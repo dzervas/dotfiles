@@ -96,16 +96,29 @@ function toProviderModel(modelId: string, source: Model<any>) {
 }
 
 export default async function (pi: ExtensionAPI) {
-	const [allModels, response] = await Promise.all([
-		loadGeneratedModels(),
-		fetch(`${OPENAI_BASE_URL}/models`),
-	]);
+	const allModels = await loadGeneratedModels();
 
-	if (!response.ok) {
-		throw new Error(`Failed to fetch ${OPENAI_BASE_URL}/models: ${response.status} ${response.statusText}`);
+	let response: Response;
+	try {
+		response = await fetch(`${OPENAI_BASE_URL}/models`);
+	} catch (error) {
+		console.warn(`Failed to fetch ${OPENAI_BASE_URL}/models: ${error instanceof Error ? error.message : String(error)}`);
+		return;
 	}
 
-	const payload = (await response.json()) as GatewayModelsResponse;
+	if (!response.ok) {
+		console.warn(`Failed to fetch ${OPENAI_BASE_URL}/models: ${response.status} ${response.statusText}`);
+		return;
+	}
+
+	let payload: GatewayModelsResponse;
+	try {
+		payload = (await response.json()) as GatewayModelsResponse;
+	} catch (error) {
+		console.warn(`Failed to parse ${OPENAI_BASE_URL}/models: ${error instanceof Error ? error.message : String(error)}`);
+		return;
+	}
+
 	const missing: string[] = [];
 	const models = payload.data
 		.filter((model) => !IGNORED_MODELS.has(model.id))
