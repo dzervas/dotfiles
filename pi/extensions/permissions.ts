@@ -2,17 +2,11 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import {
-	bashToolDefinition,
-	editToolDefinition,
-	findToolDefinition,
-	grepToolDefinition,
 	isToolCallEventType,
-	lsToolDefinition,
-	readToolDefinition,
 	type ExtensionAPI,
 	type ExtensionContext,
 	type ToolCallEvent,
-	writeToolDefinition,
+	type ToolCallEventResult,
 } from "@mariozechner/pi-coding-agent";
 import { z } from "zod";
 import { getProperty } from "dot-prop";
@@ -56,10 +50,12 @@ const READ = new Set([
 ]);
 const WRITE = new Set(["touch", "mkdir", "rm", "sed"]);
 
+export const PERMISSIONS_ASK_EVENT = "permissions:ask";
+
 type Action = "allow" | "ask" | "deny";
 type ToolKind = "builtin" | "custom" | "mcp";
 type PathRef = { access: "read" | "write" | "search" | "list"; raw: string; resolved: string };
-type Subject = {
+export type PermissionSubject = {
 	toolName: string;
 	toolKind: ToolKind;
 	mcpServer?: string;
@@ -383,7 +379,7 @@ function parseMcp(toolName: string) {
 
 // Extract any meaningful info from the event to create a subject
 // That could mean a list of commands (after breaking down mutliple piped commands), affected paths, etc.
-function normalize(event: ToolCallEvent): Subject {
+function normalize(event: ToolCallEvent): PermissionSubject {
 	const mcp = parseMcp(event.toolName);
 	let toolKind: ToolKind = "custom";
 
@@ -403,7 +399,7 @@ function normalize(event: ToolCallEvent): Subject {
 			break;
 	}
 
-	const subject: Subject = {
+	const subject: PermissionSubject = {
 		toolName: event.toolName,
 		toolKind,
 		mcpServer: mcp?.server,
@@ -452,7 +448,7 @@ function fieldMatches(value: unknown, matcher: FieldMatcher) {
 	);
 }
 
-function ruleScore(rule: Rule, subject: Subject) {
+function ruleScore(rule: Rule, subject: PermissionSubject) {
 	let score = 0;
 	if (rule.tool?.kind && rule.tool.kind !== subject.toolKind) return undefined;
 	if (rule.tool?.kind) score += 4;
@@ -489,7 +485,7 @@ function ruleScore(rule: Rule, subject: Subject) {
 	return score;
 }
 
-function decide(subject: Subject, config: Config) {
+function decide(subject: PermissionSubject, config: Config) {
 	if (subject.paths.some((entry) => config.denyRoots.some((root) => inside(entry.resolved, root))))
 		return { action: "deny" as const, reason: "Path is inside a denied root" };
 
@@ -521,7 +517,7 @@ function decide(subject: Subject, config: Config) {
 	return { action: config.defaultAction, reason: "Default policy" };
 }
 
-function toolSelector(subject: Subject) {
+function toolSelector(subject: PermissionSubject) {
 	return subject.toolKind === "mcp"
 		? {
 				kind: "mcp" as const,
@@ -546,7 +542,7 @@ function escape(text: string) {
 const READ_MODE_TOOLS = ["read", "bash", "grep", "find", "ls", "questionnaire"];
 const READ_MODE_ALLOWED_CUSTOM_TOOLS = new Set(["questionnaire", "todo"]);
 
-function decideReadMode(subject: Subject) {
+function decideReadMode(subject: PermissionSubject) {
 	if (subject.toolName === "edit" || subject.toolName === "write")
 		return { block: true as const, reason: "Read mode: file mutations are disabled" };
 
@@ -571,7 +567,7 @@ function decideReadMode(subject: Subject) {
 	return undefined;
 }
 
-function saveRule(subject: Subject) {
+function saveRule(subject: PermissionSubject) {
 	const source = fs.existsSync(CONFIG_PATHS[1]) ? CONFIG_PATHS[1] : CONFIG_PATHS[2];
 	const parsed = fs.existsSync(source) ? JSON.parse(fs.readFileSync(source, "utf8")) : undefined;
 	const local = !parsed
@@ -601,63 +597,41 @@ function saveRule(subject: Subject) {
 		: "Saved allow rule";
 }
 
-const TOOL_DEFINITIONS = {
-	bash: bashToolDefinition,
-	read: readToolDefinition,
-	edit: editToolDefinition,
-	write: writeToolDefinition,
-	grep: grepToolDefinition,
-	find: findToolDefinition,
-	ls: lsToolDefinition,
-} as const;
+export type PermissionAskRequest = {
+	subject: PermissionSubject;
+	reason: string;
+	ctx: ExtensionContext;
+	accept: () => void;
+	resolve: (result: ToolCallEventResult | undefined) => void;
+	saveRule: () => string;
+};
 
-function stripAnsi(text: string) {
-	return text.replace(/\u001b\[[0-?]*[ -/]*[@-~]|\u001b[@-Z\\-_]/gu, "");
-}
-
-function formatToolCall(subject: Subject, ctx: ExtensionContext) {
-	const definition = TOOL_DEFINITIONS[subject.toolName as keyof typeof TOOL_DEFINITIONS];
-	if (!definition?.renderCall)
-		return `${subject.toolName} ${JSON.stringify(subject.input, null, 2)}`;
-	try {
-		const component = definition.renderCall(subject.input, ctx.ui.theme, {
-			args: subject.input,
-			toolCallId: `permissions:${subject.toolName}`,
-			invalidate: () => {},
-			lastComponent: undefined,
-			state: {},
-			cwd: ctx.cwd,
-			executionStarted: false,
-			argsComplete: true,
-			isPartial: false,
-			expanded: false,
-			showImages: false,
-			isError: false,
-		});
-		return component.render(1000).join("\n").trim();
-	} catch {
-		return `${subject.toolName} ${JSON.stringify(subject.input, null, 2)}`;
-	}
-}
-
-async function confirm(subject: Subject, reason: string, ctx: ExtensionContext) {
+async function askPermission(
+	pi: ExtensionAPI,
+	subject: PermissionSubject,
+	reason: string,
+	ctx: ExtensionContext,
+): Promise<ToolCallEventResult | undefined> {
 	if (!ctx.hasUI) return { block: true, reason: `${reason} (no UI available)` };
 
-	const options =
-		subject.ask.length > 0 ? ["Allow once", "No"] : ["Allow once", "Allow and save", "No"];
-	const choice = await ctx.ui.select(
-		`󱅞 Permission request:\n${formatToolCall(subject, ctx)}\n\nReason: ${reason}`,
-		options,
-	);
+	return new Promise((resolve) => {
+		let accepted = false;
+		const request: PermissionAskRequest = {
+			subject,
+			reason,
+			ctx,
+			accept: () => {
+				accepted = true;
+			},
+			resolve,
+			saveRule: () => saveRule(subject),
+		};
 
-	if (choice === "Allow once") return undefined;
+		pi.events.emit(PERMISSIONS_ASK_EVENT, request);
 
-	if (choice === "Allow and save") {
-		ctx.ui.notify(saveRule(subject), "info");
-		return undefined;
-	}
-
-	return { block: true, reason: "Blocked by user" };
+		if (!accepted)
+			resolve({ block: true, reason: `${reason} (permission prompt extension unavailable)` });
+	});
 }
 
 export default function permissionsExtension(pi: ExtensionAPI) {
@@ -761,7 +735,7 @@ export default function permissionsExtension(pi: ExtensionAPI) {
 		const result = decide(subject, loadConfig());
 		if (result.action === "allow") return { block: false, reason: result.reason };
 		if (result.action === "deny") return { block: true, reason: result.reason };
-		return confirm(subject, result.reason, ctx);
+		return askPermission(pi, subject, result.reason, ctx);
 	});
 }
 
