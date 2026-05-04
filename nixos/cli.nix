@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   environment.systemPackages = with pkgs; [
     bat
     binutils
@@ -110,8 +111,8 @@
     watch = "command watch -c ";
 
     # Useful aliases
-    docker_rm = "docker rm $(docker ps --no-trunc -aqf status=exited)";
-    docker_rmi = "docker rmi $(docker images --no-trunc -qf dangling=true)";
+    docker_rm = "docker rm $(docker container ls --external --no-trunc -aq)";
+    docker_rmi = "docker rmi $(docker images --no-trunc -aqf dangling=true)";
     open = "xdg-open";
     passgen = "tr -dc A-Za-z0-9 </dev/urandom | head -c ";
     reboot = "read -P 'Are you sure?' && systemctl reboot";

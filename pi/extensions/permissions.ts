@@ -51,6 +51,8 @@ const READ = new Set([
 const WRITE = new Set(["touch", "mkdir", "rm", "sed"]);
 
 export const PERMISSIONS_ASK_EVENT = "permissions:ask";
+const PI_SANDBOX_STATE_KEY = Symbol.for("dzervas.pi.sandbox");
+const PI_SANDBOX_STATE_EVENT = "sandbox:state";
 
 type Action = "allow" | "ask" | "deny";
 type ToolKind = "builtin" | "custom" | "mcp";
@@ -88,6 +90,18 @@ type Config = {
 	rules: Rule[];
 };
 type FieldMatcher = string | string[] | { equals?: unknown; regex?: string | string[] };
+type SandboxState = { enabled?: boolean };
+
+function isSandboxed() {
+	const globalWithSandbox = globalThis as typeof globalThis & {
+		__DZERVAS_PI_SANDBOX__?: SandboxState;
+		[PI_SANDBOX_STATE_KEY]?: SandboxState;
+	};
+	return Boolean(
+		globalWithSandbox.__DZERVAS_PI_SANDBOX__?.enabled ||
+		globalWithSandbox[PI_SANDBOX_STATE_KEY]?.enabled,
+	);
+}
 
 const Regexes = z.union([z.string(), z.array(z.string())]);
 const RuleSchema = z.object({
@@ -637,12 +651,39 @@ async function askPermission(
 export default function permissionsExtension(pi: ExtensionAPI) {
 	let readModeEnabled = true;
 	let previousTools: string[] | undefined;
+	let sandboxed = isSandboxed();
+	let disablePermissions = false;
+
+	pi.events.on(PI_SANDBOX_STATE_EVENT, (state) => {
+		sandboxed = Boolean((state as SandboxState | undefined)?.enabled);
+
+		if (sandboxed) {
+			pi.registerCommand("yolo", {
+				description: "Toggle allow all permissions (sandboxed)",
+				handler: async (_args, ctx) => {
+					if (!sandboxed) {
+						disablePermissions = false;
+					} else {
+						disablePermissions = !disablePermissions;
+					}
+					ctx.ui.setStatus(
+						"permissions:",
+						disablePermissions ? ctx.ui.theme.fg("error", "yolo") : undefined,
+					);
+				},
+			});
+		}
+	});
+
+	function permissionsDisabled() {
+		return (sandboxed || isSandboxed()) && disablePermissions;
+	}
 
 	function updateReadModeUi(ctx: ExtensionContext) {
 		// TODO: This should be a setFooter
 		ctx.ui.setStatus(
 			"permissions-read-mode",
-			readModeEnabled ? undefined : ctx.ui.theme.fg("accent", "󱚌 workspace edit"),
+			readModeEnabled ? undefined : ctx.ui.theme.fg("text", "󱚌 workspace edit"),
 		);
 	}
 
@@ -710,6 +751,16 @@ export default function permissionsExtension(pi: ExtensionAPI) {
 	});
 
 	pi.on("session_start", async (_event, ctx) => {
+		if (permissionsDisabled()) {
+			readModeEnabled = false;
+			ctx.ui.setStatus("permissions-read-mode", undefined);
+			ctx.ui.setStatus(
+				"permissions-sandbox-disabled",
+				ctx.ui.theme.fg("accent", "permissions off: sandbox"),
+			);
+			return;
+		}
+
 		const failures = runSelfTest();
 		if (failures.length === 0) ctx.ui.notify("[permissions] self-test passed", "info");
 		else {
@@ -723,10 +774,13 @@ export default function permissionsExtension(pi: ExtensionAPI) {
 	});
 
 	pi.on("session_tree", async (_event, ctx) => {
+		if (permissionsDisabled()) return;
 		restoreReadMode(ctx);
 	});
 
 	pi.on("tool_call", async (event, ctx) => {
+		if (permissionsDisabled()) return { block: false, reason: "Permissions disabled in sandbox" };
+
 		const subject = normalize(event);
 		if (readModeEnabled) {
 			const readModeDecision = decideReadMode(subject);

@@ -14,15 +14,6 @@
       bind \e\[3\;6~ __forget
       export FLAKE_URL="/home/dzervas/Lab/dotfiles?submodules=1&lfs=1"
 
-      # Agentty: inline agent mode
-      source ${./agentty/state.fish}
-      source ${./agentty/render.fish}
-      source ${./agentty/providers/claude.fish}
-      source ${./agentty/agentty.fish}
-      bind \ei "agentty_toggle; commandline -f repaint"
-      bind \em "agentty_mode_cycle; commandline -f repaint"
-      bind \en "agentty_new_session; commandline -f repaint"
-
       # If running inside a nvim terminal, leverage the remote opener
       # so `nvim` opens in the already running Neovim instance.
       if set -q NVIM
@@ -91,9 +82,10 @@
         body = builtins.readFile ./fish-functions/needs-update.fish;
         description = "Check if a newer nixpkgs version is available";
       };
-      qq = {
-        body = builtins.readFile ./fish-functions/qq.fish;
-        description = "Quick question towards the local AI";
+      pis = {
+        body = builtins.readFile ./fish-functions/pis.fish;
+        description = "Run pi inside a bubblewrap sandbox";
+        wraps = "pi";
       };
       rebuild = {
         body = builtins.readFile ./fish-functions/rebuild.fish;

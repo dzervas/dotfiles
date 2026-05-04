@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__nixos__*",
+      "Bash(statix check:*)",
+      "Bash(hyprctl activewindow:*)",
+      "Bash(loginctl show-session:*)",
+      "Bash(nix log:*)",
+      "Bash(nix build:*)",
+      "WebFetch(domain:nix-community.github.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:codecompanion.olimorris.dev)",
+      "WebFetch(domain:pypi.org)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:wiki.nixos.org)",
+      "WebFetch(domain:nix-community.github.io)",
+      "WebFetch(domain:mynixos.com)",
+      "WebFetch(domain:www.anthropic.com)",
+      "WebFetch(domain:discourse.nixos.org)",
+      "WebFetch(domain:nixos.wiki)",
+      "WebFetch(domain:ungoogled-software.github.io)",
+      "Bash(niri msg --help:*)",
+      "Bash(niri msg action --help:*)",
+      "Bash(niri msg -j windows)",
+      "Bash(journalctl -b -1)",
+      "Bash(journalctl -b -1:*)",
+      "Bash(lspci:*)",
+      "Bash(journalctl -b 0:*)",
+      "WebFetch(domain:zed.dev)",
+      "Bash(nix-prefetch-url:*)",
+      "WebFetch(domain:registry.npmjs.org)",
+      "WebFetch(domain:tailscale.com)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enabledMcpjsonServers": [
+    "nixvim-docs",
+    "nixos"
+  ]
+}
