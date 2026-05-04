@@ -30,9 +30,9 @@ function short(value: unknown, fallback = "."): string {
 }
 
 function status(theme: any, isPartial: boolean, isError: boolean): string {
-	if (isPartial) return theme.fg("warning", "…");
-	if (isError) return theme.fg("error", "✗");
-	return theme.fg("success", "✓");
+	if (isPartial) return theme.fg("warning", "… ");
+	if (isError) return theme.fg("error", "✗ ");
+	return theme.fg("success", "✓ ");
 }
 
 function suffix(theme: any, parts: string[]): string {
