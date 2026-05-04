@@ -53,20 +53,29 @@ function formatToolCall(subject: PermissionSubject, request: PermissionAskReques
 	}
 }
 
-async function answerPermissionRequest(request: PermissionAskRequest) {
+async function answerPermissionRequest(pi: ExtensionAPI, request: PermissionAskRequest) {
 	const { subject, reason, ctx } = request;
-	const options = ["Allow once", "Allow and save", "No"];
+	const options = [
+		"Allow once",
+		"Allow once + message",
+		"Allow and save",
+		"Allow and save + message",
+		"No",
+		"No + message",
+	];
 	const choice = await ctx.ui.select(
 		`󱅞 Permission request:\n${formatToolCall(subject, request)}\n\nReason: ${reason}`,
 		options,
 	);
 
-	if (choice === "Allow once") return undefined;
+	if (choice?.includes("save")) ctx.ui.notify(request.saveRule(), "info");
 
-	if (choice === "Allow and save") {
-		ctx.ui.notify(request.saveRule(), "info");
-		return undefined;
+	if (choice?.includes("message")) {
+		const message = await ctx.ui.input("Append message to agent:");
+		if (message?.trim()) pi.sendUserMessage(message.trim(), { deliverAs: "steer" });
 	}
+
+	if (choice?.startsWith("Allow")) return undefined;
 
 	return { block: true, reason: "Blocked by user" };
 }
@@ -89,7 +98,7 @@ export default function permissionPromptExtension(pi: ExtensionAPI) {
 		if (!isPermissionAskRequest(data)) return;
 
 		data.accept();
-		void answerPermissionRequest(data).then(data.resolve, (error: unknown) =>
+		void answerPermissionRequest(pi, data).then(data.resolve, (error: unknown) =>
 			data.resolve({
 				block: true,
 				reason: error instanceof Error ? error.message : "Permission prompt failed",
