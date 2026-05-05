@@ -556,27 +556,31 @@ function escape(text: string) {
 const READ_MODE_TOOLS = ["read", "bash", "grep", "find", "ls", "questionnaire"];
 const READ_MODE_ALLOWED_CUSTOM_TOOLS = new Set(["questionnaire", "todo"]);
 
-function decideReadMode(subject: PermissionSubject) {
+function decideReadMode(pi: ExtensionAPI, subject: PermissionSubject, ctx: ExtensionContext) {
 	if (subject.toolName === "edit" || subject.toolName === "write")
-		return { block: true as const, reason: "Read mode: file mutations are disabled" };
+		return askPermission(pi, subject, "Read mode: file mutations are disabled", ctx);
 
 	if (subject.paths.some((entry) => entry.access === "write"))
-		return { block: true as const, reason: "Read mode: write access is disabled" };
+		return askPermission(pi, subject, "Read mode: write access is disabled", ctx);
 
 	if (subject.ask.length > 0)
-		return {
-			block: true as const,
-			reason: `Read mode: blocked because the command is not safely classifiable (${[...new Set(subject.ask)].join("; ")})`,
-		};
+		return askPermission(
+			pi,
+			subject,
+			`Read mode: blocked because the command is not safely classifiable (${[...new Set(subject.ask)].join("; ")})`,
+			ctx,
+		);
 
 	if (subject.toolKind === "custom" && !READ_MODE_ALLOWED_CUSTOM_TOOLS.has(subject.toolName))
-		return {
-			block: true as const,
-			reason: `Read mode: custom tool '${subject.toolName}' is not allowed`,
-		};
+		return askPermission(
+			pi,
+			subject,
+			`Read mode: custom tool '${subject.toolName}' is not allowed`,
+			ctx,
+		);
 
 	if (subject.toolKind === "mcp")
-		return { block: true as const, reason: "Read mode: MCP tools are blocked by default" };
+		return askPermission(pi, subject, "Read mode: MCP tools are blocked by default", ctx);
 
 	return undefined;
 }
@@ -783,7 +787,7 @@ export default function permissionsExtension(pi: ExtensionAPI) {
 
 		const subject = normalize(event);
 		if (readModeEnabled) {
-			const readModeDecision = decideReadMode(subject);
+			const readModeDecision = decideReadMode(pi, subject, ctx);
 			if (readModeDecision) return readModeDecision;
 		}
 		const result = decide(subject, loadConfig());

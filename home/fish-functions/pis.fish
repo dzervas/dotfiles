@@ -103,6 +103,7 @@ end
 
 mkdir -p $sandbox_home/.pi/agent/extensions $sandbox_home/.config/{jj,git}
 
+# TODO: ro-bind pi extensions
 # --bind /nix/var/nix/daemon-socket /nix/var/nix/daemon-socket \
 bwrap \
 	--unshare-all \
@@ -126,7 +127,7 @@ bwrap \
 	--ro-bind /run/current-system/sw /run/current-system/sw \
 	--ro-bind /etc/profiles/per-user/$USER/ /etc/profiles/per-user/$USER/ \
 	--bind $sandbox_home $HOME \
-	--ro-bind $HOME/.pi $HOME/.pi \
+	--bind $HOME/.pi $HOME/.pi \
 	--ro-bind $HOME/Lab/dotfiles/pi/sandbox.ts $HOME/.pi/agent/sandbox.ts \
 	--bind $project_dir $project_dir \
 	--ro-bind $HOME/.config/jj $HOME/.config/jj \

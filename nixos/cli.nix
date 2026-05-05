@@ -111,8 +111,7 @@
     watch = "command watch -c ";
 
     # Useful aliases
-    docker_rm = "docker rm $(docker container ls --external --no-trunc -aq)";
-    docker_rmi = "docker rmi $(docker images --no-trunc -aqf dangling=true)";
+    docker_prune = "docker system df && docker image prune -a --filter 'until=168h' -f && docker container prune -f && docker builder prune -f && docker volume prune -f && docker system df";
     open = "xdg-open";
     passgen = "tr -dc A-Za-z0-9 </dev/urandom | head -c ";
     reboot = "read -P 'Are you sure?' && systemctl reboot";

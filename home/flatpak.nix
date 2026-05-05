@@ -1,4 +1,4 @@
-{ config, ... }: {
+{ config, pkgs, ... }: {
   # To update shortcuts: nix-shell -p desktop-file-utils --run "update-desktop-database -v"
   services.flatpak = {
     enable = true;
@@ -13,6 +13,14 @@
       "im.riot.Riot"
       "dev.vencord.Vesktop"
       "io.anytype.anytype"
+      # rec {
+      #   appId = "com.kagi.OrionGtk";
+      #   sha256 = "0b3c7y4dlgxfyzid78l37k4wa4dj5wiv4siwkmlr7gwq5lyrdlyh";
+      #   bundle = "${pkgs.fetchurl {
+      #     inherit sha256;
+      #     url = "https://orionbrowser.com/download/oriongtk.0.3.0.flatpak";
+      #   }}";
+      # }
     ] ++ (if !config.setup.isLaptop then [
       "com.github.skylot.jadx"
       "io.github.ryubing.Ryujinx"

@@ -11,5 +11,12 @@
   programs.chromium = {
     enable = true;
     package = pkgs.brave;
+    commandLineArgs = [
+      "--ozone-platform=wayland"
+      "--enable-features=WebRTCPipeWireCapturer"
+      "--enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE"
+      "--enable-logging=stderr"
+      "--ignore-gpu-blocklist"
+    ];
   };
 }
