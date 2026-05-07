@@ -25,7 +25,7 @@ let
 
   piPackages = [
     "npm:pi-subagents@0.12.4"
-    "npm:context-mode@1.0.72"
+    "npm:context-mode@1.0.75"
     "npm:pi-mcp-adapter@2.2.2"
   ];
 
