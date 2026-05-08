@@ -262,7 +262,6 @@
 		"nix": true,
 		"sql": true,
 		"svelte": true,
-		"tombi": true,
 		"toml": true,
 		"typst": true,
 		"tree-sitter-query": true,
@@ -307,7 +306,8 @@
 		"show_diagnostics": "errors",
 	},
 	"title_bar": {
-		"show_branch_icon": true,
+		"show_branch_status_icon": true,
+		"show_onboarding_banner": false,
 	},
 	"use_smartcase_search": true,
 	"wrap_guides": [100],
@@ -316,17 +316,17 @@
 	"agent": {
 		"dock": "right",
 		"favorite_models": [
-   {
-    "provider": "CLIProxyAPI",
-    "model": "gpt-5.4",
-    "enable_thinking": false
-   },
-   {
-    "provider": "CLIProxyAPI",
-    "model": "claude-opus-4-6-thinking",
-    "enable_thinking": false
-   }
-  ],
+			{
+				"provider": "CLIProxyAPI",
+				"model": "gpt-5.4",
+				"enable_thinking": false,
+			},
+			{
+				"provider": "CLIProxyAPI",
+				"model": "claude-opus-4-6-thinking",
+				"enable_thinking": false,
+			},
+		],
 		"default_profile": "ask",
 		"play_sound_when_agent_done": true,
 		"inline_assistant_model": {

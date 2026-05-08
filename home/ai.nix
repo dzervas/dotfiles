@@ -32,6 +32,12 @@ let
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
 
   piSettings = {
+    quietStartup = true;
+    collapseChangelog = true;
+    enableInstallTelemetry = false;
+    showHardwareCursor = true;
+    transport = "auto";
+
     packages = piPackages;
     npmCommand = [
       "${nodejs}/bin/npm"
@@ -139,6 +145,7 @@ in
 
     sessionVariables = {
       OPENSPEC_TELEMETRY = 0;
+      PI_SKIP_VERSION_CHECK = 1;
     };
     file = {
       ".pi/agent/AGENTS.md".source =
