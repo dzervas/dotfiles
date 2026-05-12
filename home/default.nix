@@ -46,13 +46,14 @@
   };
 
   xdg.configFile = {
-    "zed/settings.json".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/zed/settings.json";
-    "zed/keymap.json".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/zed/keymap.json";
     "nixpkgs/config.nix".text = "{ allowUnfree = true; }";
     katerc.source = ./katerc;
   };
+
+  systemd.user.tmpfiles.rules = [
+    "L ${config.xdg.configHome}/zed/settings.json - - - - ${config.home.homeDirectory}/Lab/dotfiles/home/zed/settings.json"
+    "L ${config.xdg.configHome}/zed/keymap.json - - - - ${config.home.homeDirectory}/Lab/dotfiles/home/zed/keymap.json"
+  ];
 
   gtk = {
     enable = true;

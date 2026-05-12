@@ -7,7 +7,7 @@
 	},
 	"context_servers": {
 		"terraform-context-server": {
-			"enabled": true,
+   "enabled": true,
 			"remote": false,
 			"settings": {},
 		},
@@ -328,7 +328,7 @@
 			},
 		],
 		"default_profile": "ask",
-		"play_sound_when_agent_done": true,
+		"play_sound_when_agent_done": "always",
 		"inline_assistant_model": {
 			"provider": "CLIProxyAPI",
 			"model": "gpt-5.4",
