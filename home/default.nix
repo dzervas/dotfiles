@@ -43,6 +43,18 @@
       enable = true;
       # package = inputs.nixpkgs-master.legacyPackages.x86_64-linux.zed-editor;
     };
+
+  #   npm = {
+  #     enable = true;
+  #     settings = {
+  #       min-release-age = 7;
+  #       omit = [ "dev" "optional" "peer" ];
+  #       prefer-dedupe = true;
+  #       prefer-offline = true;
+  #       strict-peer-deps = true;
+  #       install-strategy = "linked";
+  #     };
+  #   };
   };
 
   xdg.configFile = {
@@ -117,6 +129,7 @@
   };
 
   services = {
+    kdeconnect.enable = true;
     keybase.enable = true;
     # flameshot.enable = true;
 

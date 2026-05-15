@@ -102,6 +102,12 @@
                     "useDistroLogo": true
                 },
                 {
+                    "defaultSettings": {
+                        "entities": [
+                        ],
+                        "haToken": "",
+                        "haUrl": ""
+                    },
                     "id": "plugin:hassio"
                 },
                 {
@@ -119,7 +125,7 @@
                 },
                 {
                     "characterCount": 2,
-                    "colorizeIcons": false,
+                    "colorizeIcons": true,
                     "emptyColor": "secondary",
                     "enableScrollWheel": true,
                     "focusedColor": "primary",
@@ -137,9 +143,6 @@
                     "showBadge": true,
                     "showLabelsOnlyWhenOccupied": true,
                     "unfocusedIconsOpacity": 0.5
-                },
-                {
-                    "id": "plugin:valent-connect"
                 }
             ],
             "right": [

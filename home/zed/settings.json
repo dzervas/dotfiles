@@ -1,5 +1,9 @@
 {
-	"project_panel": {
+	"document_symbols": "on",
+ "show_completion_documentation": true,
+ "document_folding_ranges": "on",
+ "semantic_tokens": "combined",
+ "project_panel": {
 		"dock": "left",
 	},
 	"outline_panel": {
@@ -58,7 +62,10 @@
 		"shellscript": [".envrc"],
 	},
 	"languages": {
-		"YAML": {
+		"TypeScript": {
+   "document_folding_ranges": "on"
+  },
+  "YAML": {
 			"hard_tabs": false,
 			"tab_size": 2,
 		},
