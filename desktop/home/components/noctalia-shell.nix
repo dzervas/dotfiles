@@ -1,4 +1,12 @@
-{ config, lib, inputs, pkgs, ... }: {
+{ config, lib, inputs, pkgs, ... }: let
+  noctalia-shell-cal = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.override { calendarSupport = true; };
+  noctalia-shell = noctalia-shell-cal.overrideAttrs {
+    runtimeDeps = with pkgs; [
+      qt6.qtwebsockets.dev
+      valent
+    ];
+  };
+in {
   setup = {
     runner = "noctalia-shell ipc call launcher toggle";
     locker = "noctalia-shell ipc call lockScreen lock";
@@ -7,7 +15,7 @@
 
   programs.noctalia-shell = {
     enable = true;
-    package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.override { calendarSupport = true; };
+    package = noctalia-shell;
     settings = {};
     plugins = {
       version = 2;
