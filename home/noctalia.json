@@ -103,15 +103,6 @@
                 },
                 {
                     "defaultSettings": {
-                        "entities": [
-                        ],
-                        "haToken": "",
-                        "haUrl": ""
-                    },
-                    "id": "plugin:hassio"
-                },
-                {
-                    "defaultSettings": {
                         "activeColor": "primary",
                         "camFilterRegex": "",
                         "enableToast": true,
