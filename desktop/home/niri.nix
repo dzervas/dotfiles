@@ -203,6 +203,10 @@
           # open-maximized-to-edges = true;
         }
         {
+          matches = [{ app-id = "^steam_app_.*"; }];
+          open-fullscreen = true;
+        }
+        {
           matches = [{ app-id= "steam"; title = "^notificationtoasts_.*"; }];
 
           clip-to-geometry = true;

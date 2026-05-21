@@ -4,6 +4,7 @@
   home.packages = with pkgs; [
     git-lfs
     gnupg
+    forgejo-cli
   ];
   programs = {
     difftastic.options.display = "side-by-side";

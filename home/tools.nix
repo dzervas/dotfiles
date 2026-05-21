@@ -19,7 +19,7 @@
     seclists
     sqlmap
     subfinder
-    wifite2
+    # wifite2 # broken
     wirelesstools
     wpscan
     xh

@@ -119,10 +119,10 @@
       # playwright-cli
 
       anytype-cli
-      freecad
+      # freecad
       inputs.mcp-firewall.packages.x86_64-linux.default
 
-      ladybird
+      # ladybird # broken
     ];
 
     sessionVariables.TERMINAL = config.setup.terminal;
