@@ -1,9 +1,9 @@
 {
 	"document_symbols": "on",
- "show_completion_documentation": true,
- "document_folding_ranges": "on",
- "semantic_tokens": "combined",
- "project_panel": {
+	"show_completion_documentation": true,
+	"document_folding_ranges": "on",
+	"semantic_tokens": "combined",
+	"project_panel": {
 		"dock": "left",
 	},
 	"outline_panel": {
@@ -11,7 +11,7 @@
 	},
 	"context_servers": {
 		"terraform-context-server": {
-   "enabled": true,
+			"enabled": true,
 			"remote": false,
 			"settings": {},
 		},
@@ -36,7 +36,7 @@
 			"type": "registry",
 		},
 		"pi-acp": {
-			"favorite_models": ["openai-codex/gpt-5.4"],
+			"favorite_models": ["openai-codex/gpt-5.5"],
 			"type": "registry",
 		},
 		"claude-acp": {
@@ -63,9 +63,9 @@
 	},
 	"languages": {
 		"TypeScript": {
-   "document_folding_ranges": "on"
-  },
-  "YAML": {
+			"document_folding_ranges": "on",
+		},
+		"YAML": {
 			"hard_tabs": false,
 			"tab_size": 2,
 		},
@@ -166,11 +166,11 @@
 						},
 					},
 					{
-						"name": "gpt-5.4",
+						"name": "gpt-5.5",
 						"max_tokens": 400000,
 						"max_output_tokens": 128000,
 						"max_completion_tokens": 400000,
-						"display_name": "GPT 5.4",
+						"display_name": "GPT 5.5",
 						"capabilities": {
 							"tools": true,
 							"images": true,
@@ -325,7 +325,7 @@
 		"favorite_models": [
 			{
 				"provider": "CLIProxyAPI",
-				"model": "gpt-5.4",
+				"model": "gpt-5.5",
 				"enable_thinking": false,
 			},
 			{
@@ -338,11 +338,11 @@
 		"play_sound_when_agent_done": "always",
 		"inline_assistant_model": {
 			"provider": "CLIProxyAPI",
-			"model": "gpt-5.4",
+			"model": "gpt-5.5",
 		},
 		"default_model": {
 			"provider": "CLIProxyAPI",
-			"model": "gpt-5.4",
+			"model": "gpt-5.5",
 		},
 
 		"tool_permissions": {
