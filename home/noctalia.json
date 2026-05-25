@@ -427,10 +427,10 @@
     "hooks": {
         "colorGeneration": "",
         "darkModeChange": "",
-        "enabled": false,
+        "enabled": true,
         "performanceModeDisabled": "",
         "performanceModeEnabled": "",
-        "screenLock": "",
+        "screenLock": "1password --lock --silent",
         "screenUnlock": "",
         "session": "",
         "startup": "",

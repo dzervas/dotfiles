@@ -120,7 +120,7 @@
 	// Agent dock
 	{
 		"bindings": {
-			"alt-n": "agent::NewExternalAgentThread",
+			"alt-n": "agent::NewThread",
 			"alt-m": "agent::ToggleModelSelector",
 			"ctrl-tab": "agent::CycleModeSelector",
 		},

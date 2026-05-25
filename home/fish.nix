@@ -26,6 +26,8 @@
       complete -c watchf -s g -l exit-diff -d "Exit when output differences occur"
       complete -c watchf -s e -l exit-error -d "Exit if the command returns a non-zero exit code"
       complete -c watchf -f -a "(__fish_complete_subcommand)"
+
+      ${pkgs.devenv}/bin/devenv hook fish | source
     '';
     plugins = [
       { name = "autopair"; inherit (pkgs.fishPlugins.autopair) src; }
