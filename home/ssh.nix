@@ -26,6 +26,14 @@
       github = gh;
       "github.com" = gh;
 
+      dz = {
+        hostname = "dzerv.art";
+        user = "git";
+        port = 2222;
+      };
+      dzerv = dz;
+      "dzerv.art" = dz;
+
       raspberrypi = {
         hostname = "raspberrypi.local";
         user = "pi";
