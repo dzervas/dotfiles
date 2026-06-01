@@ -24,7 +24,7 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-zsOG1mBTXN4gdsTb1pUPKXATfhV5ZjgEsIUk07asaGo=";
   };
 
-  cargoHash = "sha256-5l62JQzFI6wrmuJVY0z3hFGnh4uxjN8/zp/Diyem2Xk=";
+  cargoHash = "sha256-YK5xZWPo7KAeWZeuMxNxHA3k6RR/MT2MIfEPcgMND00=";
   buildFeatures = [ "gpu-vulkan" ];
 
   cmakeFlags = [

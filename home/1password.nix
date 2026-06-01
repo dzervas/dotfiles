@@ -6,7 +6,7 @@ in {
 
   programs = {
     # TODO: Finish the migration to yubikey ssh
-    ssh.matchBlocks."*".identityAgent = "~/.1password/agent.sock";
+    ssh.settings."*".identityAgent = "~/.1password/agent.sock";
 
     git = {
       settings.gpg = {

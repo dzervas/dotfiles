@@ -3,7 +3,7 @@
     enable = true;
     includes = ["~/.ssh/local.config"];
     enableDefaultConfig = false;
-    matchBlocks = rec {
+    settings = {
       "*" = {
         addKeysToAgent = "confirm";
         compression = false;
@@ -19,20 +19,16 @@
       };
 
       # Aliases
-      gh = {
+      "gh github github.com" = {
         hostname = "github.com";
         user = "git";
       };
-      github = gh;
-      "github.com" = gh;
 
-      dz = {
+      "dz dzerv dzerv.art" = {
         hostname = "dzerv.art";
         user = "git";
         port = 2222;
       };
-      dzerv = dz;
-      "dzerv.art" = dz;
 
       raspberrypi = {
         hostname = "raspberrypi.local";

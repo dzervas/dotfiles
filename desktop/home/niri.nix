@@ -6,16 +6,17 @@
     ./components/wayland-fixes.nix
   ];
 
-  home.packages = with pkgs; [ grim ]; # For flameshot
+  home.packages = with pkgs; [
+    grim # For flameshot
+    wev
+  ];
 
   gtk.enable = true;
   qt.enable = true;
 
-  services = {
-    flameshot.settings.General = {
-      disabledGrimWarning = true;
-      useGrimAdapter = true; # Requires grim!
-    };
+  services.flameshot.settings.General = {
+    disabledGrimWarning = true;
+    useGrimAdapter = true; # Requires grim!
   };
 
   programs.niri = {

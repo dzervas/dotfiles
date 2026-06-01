@@ -119,7 +119,6 @@
       # playwright-cli
 
       anytype-cli
-      # freecad
       inputs.mcp-firewall.packages.x86_64-linux.default
 
       # ladybird # broken
@@ -131,7 +130,7 @@
   services = {
     kdeconnect.enable = true;
     keybase.enable = true;
-    # flameshot.enable = true;
+    flameshot.enable = true;
 
     # Disable gnome-keyring's ssh component to avoid conflicts with ssh-agent
     gnome-keyring.components = [ "secrets" ];
