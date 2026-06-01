@@ -1,20 +1,21 @@
-{ lib
-, stdenvNoCC
-, fetchurl
-, nodejs
+{
+  lib,
+  stdenvNoCC,
+  fetchurl,
+  nodejs,
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "codex";
-  version = "0.133.0";
+  version = "0.135.0";
 
   src = fetchurl {
     url = "https://registry.npmjs.org/@openai/codex/-/codex-${version}.tgz";
-    hash = "sha256-NqmmMfKfSy38Iv7qBR3PBx0/5UGXsjAxL98JHXZTiTo=";
+    hash = "sha256-WK0X6witZFyWer/KojO+ORoL2kMvmzybz0xsZtC4+6c=";
   };
 
   platformSrc = fetchurl {
     url = "https://registry.npmjs.org/@openai/codex/-/codex-${version}-linux-x64.tgz";
-    hash = "sha256-KYUZ/rdlW0vA/7F/FTeNnmNl+2XDDyOrAKseme7jGR0=";
+    hash = "sha256-AVsBpU7TSVGQu6ORCWeRlJtoxg4PFHqIw4mgQsuqy78=";
   };
 
   nativeBuildInputs = [ nodejs ];

@@ -7,11 +7,13 @@
         "--rm",
         "-i",
         "ghcr.io/utensils/mcp-nixos"
-      ]
+      ],
+      "directTools": true
     },
     "nixvim-docs": {
       "type": "http",
-      "url": "https://gitmcp.io/nix-community/nixvim"
+      "url": "https://gitmcp.io/nix-community/nixvim",
+      "directTools": true
     }
   }
 }

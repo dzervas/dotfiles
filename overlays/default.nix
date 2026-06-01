@@ -37,59 +37,64 @@ final: prev: rec {
   claude-code-latest = prev.claude-code.overrideAttrs rec {
     # Get from https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/latest
     version = "2.1.92";
-    src = final.fetchurl (let
-      nodePlatform = final.stdenvNoCC.hostPlatform.node;
-    in {
-      url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/${version}/${nodePlatform.platform}-${nodePlatform.arch}/claude";
-      hash = "sha256-4iMkUUln/y1en5Hw7jfkZ1v4tt/sJ/r7GcslzFsj/K8=";
-    });
+    src = final.fetchurl (
+      let
+        nodePlatform = final.stdenvNoCC.hostPlatform.node;
+      in
+      {
+        url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/${version}/${nodePlatform.platform}-${nodePlatform.arch}/claude";
+        hash = "sha256-4iMkUUln/y1en5Hw7jfkZ1v4tt/sJ/r7GcslzFsj/K8=";
+      }
+    );
   };
 
   # nix-update:pi-coding-agent-latest
-  pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (finalAttrs: _prevAttrs: rec {
-    version = "0.75.4";
+  pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
+    finalAttrs: _prevAttrs: rec {
+      version = "0.78.0";
 
-    src = final.fetchFromGitHub {
-      owner = "badlogic";
-      repo = "pi-mono";
-      tag = "v${version}";
-      # Upstream's 0.74.0 lockfile omits resolved/integrity metadata for many
-      # packages, so fetchNpmDeps cannot populate npm's offline cache from it.
-      # This is the nixpkgs-standard lockfile normalizer for that npm bug.
-      postFetch = ''
-        ${final.lib.getExe final.npm-lockfile-fix} $out/package-lock.json
+      src = final.fetchFromGitHub {
+        owner = "badlogic";
+        repo = "pi-mono";
+        tag = "v${version}";
+        # Upstream's 0.74.0 lockfile omits resolved/integrity metadata for many
+        # packages, so fetchNpmDeps cannot populate npm's offline cache from it.
+        # This is the nixpkgs-standard lockfile normalizer for that npm bug.
+        postFetch = ''
+          ${final.lib.getExe final.npm-lockfile-fix} $out/package-lock.json
+        '';
+        hash = "sha256-DyBKC9q2XMsEUS2nGKZKeqd1hn7Tth/2O96oKxoAp48=";
+      };
+
+      npmDepsHash = "sha256-2QXQPjn0PRa17NzE0db1bvMd4d23eKqsZWQfI3muCpU=";
+
+      npmDeps = final.fetchNpmDeps {
+        inherit (finalAttrs) src;
+        name = "${finalAttrs.pname}-${finalAttrs.version}-npm-deps";
+        hash = finalAttrs.npmDepsHash;
+      };
+
+      # nixpkgs 0.70.5 still copies the old @mariozechner workspace packages.
+      # 0.74.0 renamed them to @earendil-works, but the runtime still needs real
+      # package directories instead of workspace symlinks into packages/.
+      postInstall = ''
+        local nm="$out/lib/node_modules/pi-monorepo/node_modules"
+
+        # Replace workspace deps needed at runtime with real copies.
+        for ws in @earendil-works/pi-ai:packages/ai \
+                  @earendil-works/pi-agent-core:packages/agent \
+                  @earendil-works/pi-tui:packages/tui; do
+          IFS=: read -r pkg src <<< "$ws"
+          rm "$nm/$pkg"
+          cp -r "$src" "$nm/$pkg"
+        done
+
+        # Delete remaining workspace symlinks.
+        find "$nm" -type l -lname '*/packages/*' -delete
+
+        # Clean up now-dangling .bin symlinks.
+        find "$nm/.bin" -xtype l -delete
       '';
-      hash = "sha256-zjQA/qe5kXypsLkM8Svx6c9KuPCChhQRizpVoXQvZRw=";
-    };
-
-    npmDepsHash = "sha256-MW3zKxOusIUvnbJyfNDMO9LMPLPg/HrHsVZhNnMXPtc=";
-
-    npmDeps = final.fetchNpmDeps {
-      inherit (finalAttrs) src;
-      name = "${finalAttrs.pname}-${finalAttrs.version}-npm-deps";
-      hash = finalAttrs.npmDepsHash;
-    };
-
-    # nixpkgs 0.70.5 still copies the old @mariozechner workspace packages.
-    # 0.74.0 renamed them to @earendil-works, but the runtime still needs real
-    # package directories instead of workspace symlinks into packages/.
-    postInstall = ''
-      local nm="$out/lib/node_modules/pi-monorepo/node_modules"
-
-      # Replace workspace deps needed at runtime with real copies.
-      for ws in @earendil-works/pi-ai:packages/ai \
-                @earendil-works/pi-agent-core:packages/agent \
-                @earendil-works/pi-tui:packages/tui; do
-        IFS=: read -r pkg src <<< "$ws"
-        rm "$nm/$pkg"
-        cp -r "$src" "$nm/$pkg"
-      done
-
-      # Delete remaining workspace symlinks.
-      find "$nm" -type l -lname '*/packages/*' -delete
-
-      # Clean up now-dangling .bin symlinks.
-      find "$nm/.bin" -xtype l -delete
-    '';
-  });
+    }
+  );
 }

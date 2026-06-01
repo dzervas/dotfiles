@@ -15,13 +15,13 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "voxtype";
-  version = "0.7.3";
+  version = "0.7.5";
 
   src = fetchFromGitHub {
     owner = "peteonrails";
     repo = pname;
     tag = "v${version}";
-    hash = "sha256-iFrEc15kWf9Q8WxZB5m3Mn6VIvVe2m4agquaTBDGKGk=";
+    hash = "sha256-zsOG1mBTXN4gdsTb1pUPKXATfhV5ZjgEsIUk07asaGo=";
   };
 
   cargoHash = "sha256-5l62JQzFI6wrmuJVY0z3hFGnh4uxjN8/zp/Diyem2Xk=";

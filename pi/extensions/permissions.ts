@@ -591,6 +591,7 @@ function saveRule(subject: PermissionSubject) {
 	const local = !parsed
 		? { version: 2, defaultAction: "ask" as Action, allowRoots: [], denyRoots: [], rules: [] }
 		: coerceConfig(parsed);
+
 	const roots = [
 		...new Set(
 			subject.paths
@@ -598,6 +599,7 @@ function saveRule(subject: PermissionSubject) {
 				.filter((root) => !inside(root, CWD)),
 		),
 	];
+
 	if (roots.length > 0) local.allowRoots.push(...roots);
 	else
 		local.rules.push({
@@ -605,11 +607,13 @@ function saveRule(subject: PermissionSubject) {
 			tool: toolSelector(subject),
 			match: { raw: `^${escape(subject.rawInput)}$` },
 		});
+
 	fs.mkdirSync(path.dirname(CONFIG_PATHS[1]), { recursive: true });
 	fs.writeFileSync(
 		CONFIG_PATHS[1],
 		`${JSON.stringify({ ...local, allowRoots: [...new Set(local.allowRoots.map(resolvePath))] }, null, 2)}\n`,
 	);
+
 	return roots.length > 0
 		? `Saved ${roots.length} allowed root${roots.length === 1 ? "" : "s"}`
 		: "Saved allow rule";

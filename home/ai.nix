@@ -24,9 +24,10 @@ let
   };
 
   piPackages = [
-    "npm:pi-subagents@0.17.5"
-    "npm:context-mode@1.0.89"
-    "npm:pi-mcp-adapter@2.4.2"
+    "npm:pi-subagents@0.25.0"
+    "npm:context-mode@1.0.151"
+    "npm:pi-mcp-adapter@2.8.0"
+    "npm:pi-search-hub@2.0.1"
   ];
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
@@ -60,7 +61,7 @@ let
 
       ai_nix="''${DOTFILES_PATH:-${config.home.homeDirectory}/Lab/dotfiles}/home/ai.nix"
       specs=(${lib.escapeShellArgs piPackages})
-      cutoff="$(date -u -d '30 days ago' +%F)"
+      cutoff="$(date -u -d '7 days ago' +%F)"
       resolved_specs=()
 
       for spec in "''${specs[@]}"; do
@@ -88,7 +89,7 @@ let
         selected=""
         for candidate in $candidates; do
           echo "Checking $package@$candidate with Snyk..." >&2
-          if snyk test "$package@$candidate" --severity-threshold=low; then
+          if snyk test "$package@$candidate" --severity-threshold=medium; then
             selected="$candidate"
             break
           fi
@@ -112,19 +113,19 @@ let
       })"
 
       PI_PACKAGES_BLOCK="$block" AI_NIX="$ai_nix" python3 -c '
-import os
-import re
-from pathlib import Path
+      import os
+      import re
+      from pathlib import Path
 
-path = Path(os.environ["AI_NIX"])
-block = os.environ["PI_PACKAGES_BLOCK"]
-text = path.read_text()
-new_text, count = re.subn(r"  piPackages = \[\n.*?\n  \];", block, text, count=1, flags=re.S)
-if count != 1:
-    raise SystemExit(f"Could not find piPackages block in {path}")
-if new_text != text:
-    path.write_text(new_text)
-'
+      path = Path(os.environ["AI_NIX"])
+      block = os.environ["PI_PACKAGES_BLOCK"]
+      text = path.read_text()
+      new_text, count = re.subn(r"  piPackages = \[\n.*?\n  \];", block, text, count=1, flags=re.S)
+      if count != 1:
+        raise SystemExit(f"Could not find piPackages block in {path}")
+      if new_text != text:
+        path.write_text(new_text)
+      '
     '';
   };
 in
@@ -173,7 +174,7 @@ in
         includeCoAuthoredBy = false;
         alwaysThinkingEnabled = true;
         statusLine = {
-          command = "input=$(cat); echo \"[$(echo \"$input\" | jq -r '.model.display_name')]  $(basename \"$(echo \"$input\" | jq -r '.workspace.current_dir')\")\"";
+          # command = "input=$(cat); echo \"[$(echo \"$input\" | jq -r '.model.display_name')]  $(basename \"$(echo \"$input\" | jq -r '.workspace.current_dir')\")\"";
           padding = 0;
           type = "command";
         };
