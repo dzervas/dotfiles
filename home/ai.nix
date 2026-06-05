@@ -24,20 +24,22 @@ let
   };
 
   piPackages = [
-    "npm:pi-subagents@0.25.0"
-    "npm:context-mode@1.0.151"
+    "npm:pi-subagents@0.27.0"
+    "npm:context-mode@1.0.161"
     "npm:pi-mcp-adapter@2.8.0"
-    "npm:pi-search-hub@2.0.1"
+    "npm:pi-search-hub@2.1.0"
+    "npm:@cortexkit/pi-anthropic-auth@1.6.1"
   ];
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
 
-  piSettings = {
+  piSettings = rec {
     quietStartup = true;
     collapseChangelog = true;
     enableInstallTelemetry = false;
     showHardwareCursor = true;
     transport = "auto";
+    warnings.anthropicExtraUsage = false;
 
     packages = piPackages;
     npmCommand = [
@@ -45,6 +47,11 @@ let
       "--prefix"
       piNpmPrefix
     ];
+
+    defaultProvider = "dzerv-art";
+    defaultModel = "claude-opus-4-8";
+    defaultThinkingLevel = "medium";
+    enabledModels = [ defaultModel "gpt-5.5" "claude-sonnet-4-6" ];
   };
 
   piExtensionBump = pkgs.writeShellApplication {
@@ -174,7 +181,7 @@ in
         includeCoAuthoredBy = false;
         alwaysThinkingEnabled = true;
         statusLine = {
-          # command = "input=$(cat); echo \"[$(echo \"$input\" | jq -r '.model.display_name')]  $(basename \"$(echo \"$input\" | jq -r '.workspace.current_dir')\")\"";
+          command = "input=$(cat); echo \"[$(echo \"$input\" | jq -r '.model.display_name')]  $(basename \"$(echo \"$input\" | jq -r '.workspace.current_dir')\")\"";
           padding = 0;
           type = "command";
         };

@@ -276,6 +276,17 @@ function classifyCommand(node: any, ask: string[], paths: PathRef[]) {
 	// Simple commands don't need further analysis
 	if (SIMPLE.has(name)) return;
 
+	// cd is read-only navigation: it must abide by path permissions, but
+	// `cd -` (return to previous directory) is dynamic and always confirmed.
+	if (name === "cd") {
+		const positionals = args.filter(Boolean).filter((arg) => !arg!.startsWith("-")) as string[];
+
+		if (args.includes("-")) return ask.push("cd - requires confirmation");
+
+		(positionals.length > 0 ? positionals : ["~"]).forEach((arg) => pushPath(paths, arg, "read"));
+		return;
+	}
+
 	// ls without positionals still affects the current directory as read op
 	if (name === "ls") {
 		const positionals = args.filter(Boolean).filter((arg) => !arg!.startsWith("-")) as string[];
@@ -818,6 +829,12 @@ function runSelfTest(): string[] {
 		"find . -name '*.txt' -print | sed 's#^./##'": "allow",
 		"sed -i 's/old/new/g' file.txt": "allow",
 		"sed -i 's/old/new/g' /tmp/deny": "deny",
+		"cd ./src": "allow",
+		"cd ./src && cat hello": "allow",
+		"cd /tmp/allow": "allow",
+		"cd /tmp/deny": "deny",
+		"cd ../outside": "ask",
+		"cd -": "ask",
 	};
 
 	const allowPath = resolvePath("/tmp/allow");

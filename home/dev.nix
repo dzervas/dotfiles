@@ -98,6 +98,8 @@
     k2tf
     tfautomv
     hurl
+
+    elf2uf2-rs
   ];
 
   home = {
