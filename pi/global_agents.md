@@ -63,3 +63,12 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+---
+
+## Better bash tool calls
+
+- Avoid using environment variables for simple path substitution
+- Prefer the built-in read/ls/grep/edit tools instead of bash commands
+- Prefer ripgrep over grep
+- Prefer the read tool with offset & limit instead of sed

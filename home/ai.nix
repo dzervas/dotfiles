@@ -49,7 +49,7 @@ let
     ];
 
     defaultProvider = "dzerv-art";
-    defaultModel = "claude-opus-4-8";
+    defaultModel = "anthropic/claude-opus-4-8";
     defaultThinkingLevel = "medium";
     enabledModels = [ defaultModel "gpt-5.5" "claude-sonnet-4-6" ];
   };

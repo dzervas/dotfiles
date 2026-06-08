@@ -190,13 +190,22 @@ function coerceConfig(parsed: unknown): Config {
 		: ConfigSchema.parse(parsed);
 }
 
+// Web search and fetch are read-only network lookups that should never block.
+const DEFAULT_RULES: Rule[] = [
+	{
+		action: "allow",
+		comment: "Web search/fetch are always allowed",
+		tool: { kind: "custom", name: ["^web_search$", "^web_read$"] },
+	},
+];
+
 function loadConfig(): Config {
 	let config: Config = {
 		version: 2,
 		defaultAction: "ask",
 		allowRoots: [],
 		denyRoots: [],
-		rules: [],
+		rules: [...DEFAULT_RULES],
 	};
 	for (const file of CONFIG_PATHS) {
 		if (!fs.existsSync(file)) continue;
@@ -396,10 +405,36 @@ function walk(
 	for (const child of node.namedChildren ?? []) walk(child, ask, paths, depth + 1, seen);
 }
 
+const MCP_CACHE_PATH = path.join(os.homedir(), ".pi", "agent", "mcp-cache.json");
+
+// MCP tools are registered as `${serverPrefix}_${toolName}` by pi-mcp-adapter,
+// where the server prefix is the server name with dashes turned into underscores.
+// Read the live server list to recover the originating server via longest-prefix match.
+function loadMcpServers(): string[] {
+	try {
+		const parsed = JSON.parse(fs.readFileSync(MCP_CACHE_PATH, "utf8")) as { servers?: unknown };
+		const names = Array.isArray(parsed.servers)
+			? parsed.servers.filter((server): server is string => typeof server === "string")
+			: typeof parsed.servers === "object" && parsed.servers !== null
+				? Object.keys(parsed.servers)
+				: [];
+		return names
+			.map((server) => server.replace(/-/gu, "_"))
+			.sort((left, right) => right.length - left.length);
+	} catch {
+		return [];
+	}
+}
+
 function parseMcp(toolName: string) {
-	const parts = toolName.split("__");
-	if (parts[0] !== "mcp") return undefined;
-	return { server: parts[1], tool: parts[2] };
+	const legacy = toolName.split("__");
+	if (legacy[0] === "mcp") return { server: legacy[1], tool: legacy[2] };
+
+	for (const server of loadMcpServers()) {
+		if (toolName.startsWith(`${server}_`))
+			return { server, tool: toolName.slice(server.length + 1) };
+	}
+	return undefined;
 }
 
 // Extract any meaningful info from the event to create a subject

@@ -24,11 +24,30 @@ function getToolDefinitions(cwd: string) {
 	} as const;
 }
 
+function formatValue(value: unknown) {
+	if (typeof value === "string") return value;
+	return JSON.stringify(value);
+}
+
+// Clean key/value rendering for custom and MCP tools, which lack a native
+// renderCall here. MCP tools are shown as `MCP(server) tool`.
+function formatGenericCall(subject: PermissionSubject) {
+	const header =
+		subject.toolKind === "mcp"
+			? `MCP(${subject.mcpServer ?? "?"}) ${subject.mcpTool ?? subject.toolName}`
+			: subject.toolName;
+
+	const entries = Object.entries(subject.input ?? {});
+	if (entries.length === 0) return header;
+
+	const args = entries.map(([key, value]) => `  ${key}: ${formatValue(value)}`);
+	return [header, ...args].join("\n");
+}
+
 function formatToolCall(subject: PermissionSubject, request: PermissionAskRequest) {
 	const definitions = getToolDefinitions(request.ctx.cwd);
 	const definition = definitions[subject.toolName as keyof typeof definitions];
-	if (!definition?.renderCall)
-		return `${subject.toolName} ${JSON.stringify(subject.input, null, 2)}`;
+	if (!definition?.renderCall) return formatGenericCall(subject);
 	try {
 		const component = definition.renderCall(subject.input as any, request.ctx.ui.theme, {
 			args: subject.input,
@@ -49,7 +68,7 @@ function formatToolCall(subject: PermissionSubject, request: PermissionAskReques
 		while (lines.at(-1)?.trim() === "") lines.pop();
 		return lines.join("\n");
 	} catch {
-		return `${subject.toolName} ${JSON.stringify(subject.input, null, 2)}`;
+		return formatGenericCall(subject);
 	}
 }
 
@@ -63,6 +82,7 @@ async function answerPermissionRequest(pi: ExtensionAPI, request: PermissionAskR
 		"No",
 		"No + message",
 	];
+	process.stderr.write("\x07"); // ring the terminal bell to flag the prompt
 	const choice = await ctx.ui.select(
 		`󱅞 Permission request:\n${formatToolCall(subject, request)}\n\nReason: ${reason}`,
 		options,
