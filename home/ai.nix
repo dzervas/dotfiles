@@ -51,7 +51,7 @@ let
     defaultProvider = "dzerv-art";
     defaultModel = "anthropic/claude-opus-4-8";
     defaultThinkingLevel = "medium";
-    enabledModels = [ defaultModel "gpt-5.5" "claude-sonnet-4-6" ];
+    enabledModels = [ defaultModel "gpt-5.5" "claude-fable-5" "claude-sonnet-4-6" ];
   };
 
   piExtensionBump = pkgs.writeShellApplication {
