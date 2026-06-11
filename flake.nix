@@ -144,7 +144,7 @@
     # Niri
     niri.url = "github:sodiboo/niri-flake";
 
-    noctalia.url = "github:noctalia-dev/noctalia-shell";
+    noctalia.url = "github:noctalia-dev/noctalia-shell/legacy-v4";
     noctalia.inputs.nixpkgs.follows = "nixpkgs";
 
     # Lanzaboote fix:

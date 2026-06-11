@@ -24,11 +24,11 @@ let
   };
 
   piPackages = [
-    "npm:pi-subagents@0.27.0"
-    "npm:context-mode@1.0.161"
-    "npm:pi-mcp-adapter@2.8.0"
+    "npm:pi-subagents@0.28.0"
+    "npm:context-mode@1.0.162"
+    "npm:pi-mcp-adapter@2.9.0"
     "npm:pi-search-hub@2.1.0"
-    "npm:@cortexkit/pi-anthropic-auth@1.6.1"
+    "npm:@cortexkit/pi-anthropic-auth@1.5.0"
   ];
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
