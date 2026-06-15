@@ -27,8 +27,8 @@ let
     "npm:pi-subagents@0.28.0"
     "npm:context-mode@1.0.162"
     "npm:pi-mcp-adapter@2.9.0"
-    "npm:pi-search-hub@2.1.0"
-    "npm:@cortexkit/pi-anthropic-auth@1.5.0"
+    "npm:pi-search-hub@2.3.3"
+    "npm:@cortexkit/pi-anthropic-auth@1.7.0"
   ];
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";

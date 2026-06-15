@@ -24,8 +24,8 @@
         user = "git";
       };
 
-      "dz dzerv dzerv.art" = {
-        hostname = "dzerv.art";
+      "dz dzerv git.vpn.dzerv.art" = {
+        hostname = "git.vpn.dzerv.art";
         user = "git";
         port = 2222;
       };

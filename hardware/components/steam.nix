@@ -54,9 +54,16 @@
 
     steam = {
       enable = true;
-      remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+      # remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
       localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
       protontricks.enable = true;
+      extest.enable = true; # Steam input on wayland
+      gamescopeSession.enable = true;
+
+      # extraCompatPackages = with pkgs; [
+        # proton-ge-bin
+        # wine-discord-ipc-bridge
+      # ];
     };
   };
 }

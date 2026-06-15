@@ -6,6 +6,7 @@
     gnupg
     forgejo-cli
   ];
+
   programs = {
     difftastic.options.display = "side-by-side";
 
@@ -228,5 +229,8 @@
     };
   };
 
-  home.file."${config.programs.git.settings.gpg.ssh.allowedSignersFile}".text = "dzervas@dzervas.gr ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj Dimitris Zervas";
-                       }
+  home.file = {
+    "${config.programs.git.settings.gpg.ssh.allowedSignersFile}".text = "dzervas@dzervas.gr ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj Dimitris Zervas";
+    ".config/forgejo-cli/client_ids".text = "git.vpn.dzerv.art 2da718ae-cb43-4d0c-88a0-9462abea3642";
+  };
+}

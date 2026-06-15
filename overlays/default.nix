@@ -51,7 +51,7 @@ final: prev: rec {
   # nix-update:pi-coding-agent-latest
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
     finalAttrs: _prevAttrs: rec {
-      version = "0.79.1";
+      version = "0.79.4";
 
       src = final.fetchFromGitHub {
         owner = "badlogic";
@@ -63,10 +63,10 @@ final: prev: rec {
         postFetch = ''
           ${final.lib.getExe final.npm-lockfile-fix} $out/package-lock.json
         '';
-        hash = "sha256-J6pFbsIF6JU19W9KxcC6cN7lmxQWW0yeTX/VNreEE1Q=";
+        hash = "sha256-IgcFMxY9G68QEYGzvL1VXEfiEiCui6uACu7oHJsioQY=";
       };
 
-      npmDepsHash = "sha256-xIMA5uTk01sOsnO3q+pG7jndJSzNXn+6L5w9lc8xRhg=";
+      npmDepsHash = "sha256-SO198UOM7nTiqi0gKDCSbdImkoXpoFvLcAydutLagu4=";
 
       npmDeps = final.fetchNpmDeps {
         inherit (finalAttrs) src;

@@ -34,7 +34,7 @@
   boot.kernel.sysctl."kernel.dmesg_restrict" = false;
 
   # Fix flatpak default browser
-  systemd.user.extraConfig = "DefaultEnvironment=\"PATH=/run/current-system/sw/bin\"";
+  systemd.user.settings.Manager.DefaultEnvironment = "PATH=/run/current-system/sw/bin";
 
   # Fix home-manager xdg desktop portal support
   environment.pathsToLink = [ "/share/xdg-desktop-portal" "/share/applications" ];
