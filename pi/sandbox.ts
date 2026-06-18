@@ -1,4 +1,4 @@
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 export const PI_SANDBOX_STATE_KEY = Symbol.for("dzervas.pi.sandbox");
 export const PI_SANDBOX_STATE_EVENT = "sandbox:state";

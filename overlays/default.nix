@@ -54,15 +54,9 @@ final: prev: rec {
       version = "0.79.4";
 
       src = final.fetchFromGitHub {
-        owner = "badlogic";
-        repo = "pi-mono";
+        owner = "earendil-works";
+        repo = "pi";
         tag = "v${version}";
-        # Upstream's 0.74.0 lockfile omits resolved/integrity metadata for many
-        # packages, so fetchNpmDeps cannot populate npm's offline cache from it.
-        # This is the nixpkgs-standard lockfile normalizer for that npm bug.
-        postFetch = ''
-          ${final.lib.getExe final.npm-lockfile-fix} $out/package-lock.json
-        '';
         hash = "sha256-IgcFMxY9G68QEYGzvL1VXEfiEiCui6uACu7oHJsioQY=";
       };
 
@@ -73,28 +67,6 @@ final: prev: rec {
         name = "${finalAttrs.pname}-${finalAttrs.version}-npm-deps";
         hash = finalAttrs.npmDepsHash;
       };
-
-      # nixpkgs 0.70.5 still copies the old @mariozechner workspace packages.
-      # 0.74.0 renamed them to @earendil-works, but the runtime still needs real
-      # package directories instead of workspace symlinks into packages/.
-      postInstall = ''
-        local nm="$out/lib/node_modules/pi-monorepo/node_modules"
-
-        # Replace workspace deps needed at runtime with real copies.
-        for ws in @earendil-works/pi-ai:packages/ai \
-                  @earendil-works/pi-agent-core:packages/agent \
-                  @earendil-works/pi-tui:packages/tui; do
-          IFS=: read -r pkg src <<< "$ws"
-          rm "$nm/$pkg"
-          cp -r "$src" "$nm/$pkg"
-        done
-
-        # Delete remaining workspace symlinks.
-        find "$nm" -type l -lname '*/packages/*' -delete
-
-        # Clean up now-dangling .bin symlinks.
-        find "$nm/.bin" -xtype l -delete
-      '';
     }
   );
 }

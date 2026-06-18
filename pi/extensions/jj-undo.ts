@@ -1,4 +1,8 @@
-import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type {
+	ExtensionAPI,
+	ExtensionCommandContext,
+	ExtensionContext,
+} from "@earendil-works/pi-coding-agent";
 
 const CUSTOM_TYPE = "jj-undo";
 const JJ_CONFIG_ARGS = ["--config", "signing.backend=none"];
@@ -42,7 +46,10 @@ function shortOperation(operationId: string): string {
 	return operationId.slice(0, 12);
 }
 
-function commandError(action: string, result: { stdout: string; stderr: string; code: number }): Error {
+function commandError(
+	action: string,
+	result: { stdout: string; stderr: string; code: number },
+): Error {
 	const output = (result.stderr || result.stdout).trim();
 	return new Error(output || `${action} failed with exit code ${result.code}`);
 }
@@ -208,7 +215,11 @@ export default function jjUndo(pi: ExtensionAPI) {
 				await restoreOperation(pi, cwd, checkpoint.operationId);
 			} catch (error) {
 				const message = error instanceof Error ? error.message : String(error);
-				notify(ctx, `jj undo: failed to restore ${shortOperation(checkpoint.operationId)}: ${message}`, "error");
+				notify(
+					ctx,
+					`jj undo: failed to restore ${shortOperation(checkpoint.operationId)}: ${message}`,
+					"error",
+				);
 				return;
 			}
 
@@ -217,13 +228,21 @@ export default function jjUndo(pi: ExtensionAPI) {
 				const result = await ctx.navigateTree(targetEntryId, { summarize: false });
 				if (result.cancelled) {
 					await restoreOperation(pi, cwd, currentOperationId);
-					notify(ctx, "jj undo: conversation navigation was cancelled; restored repo state", "error");
+					notify(
+						ctx,
+						"jj undo: conversation navigation was cancelled; restored repo state",
+						"error",
+					);
 					return;
 				}
 			} catch (error) {
 				await restoreOperation(pi, cwd, currentOperationId);
 				const message = error instanceof Error ? error.message : String(error);
-				notify(ctx, `jj undo: conversation navigation failed; restored repo state: ${message}`, "error");
+				notify(
+					ctx,
+					`jj undo: conversation navigation failed; restored repo state: ${message}`,
+					"error",
+				);
 				return;
 			}
 

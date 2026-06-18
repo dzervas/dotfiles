@@ -1,5 +1,5 @@
-import type { Model } from "@mariozechner/pi-ai";
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { Model } from "@earendil-works/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 const PROVIDER_ID = "dzerv-art";
 const PROVIDER_NAME = "dzerv.art";
@@ -57,7 +57,7 @@ function sourceBaseUrl(model: Model<any>): string {
 }
 
 async function loadGeneratedModels(): Promise<Model<any>[]> {
-	const piAiEntry = import.meta.resolve("@mariozechner/pi-ai");
+	const piAiEntry = import.meta.resolve("@earendil-works/pi-ai");
 	const generatedModelsUrl = new URL("./models.generated.js", piAiEntry);
 	const { MODELS } = (await import(generatedModelsUrl.href)) as { MODELS: GeneratedModels };
 	return Object.values(MODELS).flatMap((providerModels) => Object.values(providerModels));
@@ -68,10 +68,16 @@ function pickModel(modelId: string, allModels: Model<any>[]): Model<any> | undef
 	const candidates = ids.flatMap((id, aliasIndex) => {
 		const exact = allModels
 			.filter((model) => model.id === id)
-			.map((model) => ({ model, score: aliasIndex * 1_000 + providerRank(modelId, model.provider) }));
+			.map((model) => ({
+				model,
+				score: aliasIndex * 1_000 + providerRank(modelId, model.provider),
+			}));
 		const normalized = allModels
 			.filter((model) => normalizeSourceId(model.id) === id)
-			.map((model) => ({ model, score: aliasIndex * 1_000 + 500 + providerRank(modelId, model.provider) }));
+			.map((model) => ({
+				model,
+				score: aliasIndex * 1_000 + 500 + providerRank(modelId, model.provider),
+			}));
 		return [...exact, ...normalized];
 	});
 
@@ -102,12 +108,16 @@ export default async function (pi: ExtensionAPI) {
 	try {
 		response = await fetch(`${OPENAI_BASE_URL}/models`);
 	} catch (error) {
-		console.warn(`Failed to fetch ${OPENAI_BASE_URL}/models: ${error instanceof Error ? error.message : String(error)}`);
+		console.warn(
+			`Failed to fetch ${OPENAI_BASE_URL}/models: ${error instanceof Error ? error.message : String(error)}`,
+		);
 		return;
 	}
 
 	if (!response.ok) {
-		console.warn(`Failed to fetch ${OPENAI_BASE_URL}/models: ${response.status} ${response.statusText}`);
+		console.warn(
+			`Failed to fetch ${OPENAI_BASE_URL}/models: ${response.status} ${response.statusText}`,
+		);
 		return;
 	}
 
@@ -115,7 +125,9 @@ export default async function (pi: ExtensionAPI) {
 	try {
 		payload = (await response.json()) as GatewayModelsResponse;
 	} catch (error) {
-		console.warn(`Failed to parse ${OPENAI_BASE_URL}/models: ${error instanceof Error ? error.message : String(error)}`);
+		console.warn(
+			`Failed to parse ${OPENAI_BASE_URL}/models: ${error instanceof Error ? error.message : String(error)}`,
+		);
 		return;
 	}
 

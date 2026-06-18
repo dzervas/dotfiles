@@ -29,6 +29,8 @@ let
     "npm:pi-mcp-adapter@2.9.0"
     "npm:pi-search-hub@2.3.3"
     "npm:@cortexkit/pi-anthropic-auth@1.7.0"
+    "npm:pi-readseek@0.3.19"
+    # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
   ];
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";

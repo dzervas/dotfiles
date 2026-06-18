@@ -7,7 +7,7 @@ import {
 	type ExtensionContext,
 	type ToolCallEvent,
 	type ToolCallEventResult,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import { z } from "zod";
 import { getProperty } from "dot-prop";
 import Parser from "tree-sitter";
@@ -47,6 +47,7 @@ const READ = new Set([
 	"sha256sum",
 	"objdump",
 	"test",
+	"wc",
 ]);
 const WRITE = new Set(["touch", "mkdir", "rm", "sed"]);
 

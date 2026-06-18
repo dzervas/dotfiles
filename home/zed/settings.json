@@ -32,7 +32,10 @@
 	"colorize_brackets": true,
 	"agent_ui_font_size": 18.0,
 	"agent_servers": {
-		"codex-acp": {
+		"opencode": {
+   "type": "registry"
+  },
+  "codex-acp": {
 			"type": "registry",
 		},
 		"pi-acp": {

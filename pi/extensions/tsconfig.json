@@ -9,7 +9,7 @@
 			"/home/dzervas/.pi/agent/extensions/node_modules",
 		],
 		"paths": {
-			"@mariozechner/pi-coding-agent": [
+			"@earendil-works/pi-coding-agent": [
 				"/etc/profiles/per-user/dzervas/lib/node_modules/pi-monorepo/dist/index.d.ts",
 			],
 			"*": [

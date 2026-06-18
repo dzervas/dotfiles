@@ -1,15 +1,11 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import {
 	createFindTool,
-	createGrepTool,
 	createLsTool,
-	createReadTool,
 	type FindToolDetails,
-	type GrepToolDetails,
 	type LsToolDetails,
-	type ReadToolDetails,
-} from "@mariozechner/pi-coding-agent";
-import { Container, Text } from "@mariozechner/pi-tui";
+} from "@earendil-works/pi-coding-agent";
+import { Container, Text } from "@earendil-works/pi-tui";
 
 function hidden() {
 	return new Container();
@@ -35,71 +31,8 @@ function status(theme: any, isPartial: boolean, isError: boolean): string {
 	return theme.fg("success", "✓ ");
 }
 
-function suffix(theme: any, parts: string[]): string {
-	const visible = parts.filter(Boolean);
-	return visible.length > 0 ? theme.fg("dim", ` ${visible.join(" ")}`) : "";
-}
-
 export default function compactReadingTools(pi: ExtensionAPI) {
 	const cwd = process.cwd();
-
-	const read = createReadTool(cwd);
-	pi.registerTool({
-		name: "read",
-		label: read.label,
-		description: read.description,
-		parameters: read.parameters,
-		renderShell: "self",
-		execute: (toolCallId, params, signal, onUpdate) => read.execute(toolCallId, params, signal, onUpdate),
-		renderCall(args, theme, context) {
-			if (!context.isPartial) return hidden();
-			const path = short(args?.path, "<path>");
-			const ranges = [args?.offset ? `@${args.offset}` : "", args?.limit ? `+${args.limit}` : ""];
-			const line = `${status(theme, true, false)} ${theme.fg("toolTitle", theme.bold("Read"))} ${theme.fg("accent", path)}${suffix(theme, ranges)}`;
-			return new Text(line, 0, 0);
-		},
-		renderResult(result, _options, theme, context) {
-			const args = context.args;
-			const path = short(args?.path, "<path>");
-			const ranges = [args?.offset ? `@${args.offset}` : "", args?.limit ? `+${args.limit}` : ""];
-			let line = `${status(theme, false, context.isError)} ${theme.fg("toolTitle", theme.bold("Read"))} ${theme.fg("accent", path)}${suffix(theme, ranges)}`;
-			const details = result.details as ReadToolDetails | undefined;
-			const first = result.content[0];
-			line += first?.type === "image" ? theme.fg("dim", " image") : theme.fg("dim", ` ${nonEmptyLineCount(textContent(result))} lines`);
-			if (details?.truncation?.truncated) line += theme.fg("warning", " truncated");
-			return new Text(line, 0, 0);
-		},
-	});
-
-	const grep = createGrepTool(cwd);
-	pi.registerTool({
-		name: "grep",
-		label: grep.label,
-		description: grep.description,
-		parameters: grep.parameters,
-		renderShell: "self",
-		execute: (toolCallId, params, signal, onUpdate) => grep.execute(toolCallId, params, signal, onUpdate),
-		renderCall(args, theme, context) {
-			if (!context.isPartial) return hidden();
-			const pattern = short(args?.pattern, "<pattern>");
-			const where = short(args?.path ?? args?.glob ?? ".");
-			let line = `${status(theme, true, false)} ${theme.fg("toolTitle", theme.bold("Grep"))} ${theme.fg("accent", pattern)} ${theme.fg("dim", `in ${where}`)}`;
-			line += suffix(theme, [args?.ignoreCase ? "-i" : "", args?.literal ? "literal" : "", args?.context ? `ctx=${args.context}` : ""]);
-			return new Text(line, 0, 0);
-		},
-		renderResult(result, _options, theme, context) {
-			const args = context.args;
-			const pattern = short(args?.pattern, "<pattern>");
-			const where = short(args?.path ?? args?.glob ?? ".");
-			let line = `${status(theme, false, context.isError)} ${theme.fg("toolTitle", theme.bold("Grep"))} ${theme.fg("accent", pattern)} ${theme.fg("dim", `in ${where}`)}`;
-			line += suffix(theme, [args?.ignoreCase ? "-i" : "", args?.literal ? "literal" : "", args?.context ? `ctx=${args.context}` : ""]);
-			const details = result.details as GrepToolDetails | undefined;
-			line += theme.fg("dim", ` ${nonEmptyLineCount(textContent(result))} matches`);
-			if (details?.matchLimitReached) line += theme.fg("warning", ` limit=${details.matchLimitReached}`);
-			if (details?.truncation?.truncated || details?.linesTruncated) line += theme.fg("warning", " truncated");
-			return new Text(line, 0, 0);
-		},
-	});
 
 	const find = createFindTool(cwd);
 	pi.registerTool({
@@ -108,7 +41,8 @@ export default function compactReadingTools(pi: ExtensionAPI) {
 		description: find.description,
 		parameters: find.parameters,
 		renderShell: "self",
-		execute: (toolCallId, params, signal, onUpdate) => find.execute(toolCallId, params, signal, onUpdate),
+		execute: (toolCallId, params, signal, onUpdate) =>
+			find.execute(toolCallId, params, signal, onUpdate),
 		renderCall(args, theme, context) {
 			if (!context.isPartial) return hidden();
 			const pattern = short(args?.pattern, "<pattern>");
@@ -125,7 +59,8 @@ export default function compactReadingTools(pi: ExtensionAPI) {
 			if (args?.limit) line += theme.fg("dim", ` limit=${args.limit}`);
 			const details = result.details as FindToolDetails | undefined;
 			line += theme.fg("dim", ` ${nonEmptyLineCount(textContent(result))} files`);
-			if (details?.resultLimitReached) line += theme.fg("warning", ` limit=${details.resultLimitReached}`);
+			if (details?.resultLimitReached)
+				line += theme.fg("warning", ` limit=${details.resultLimitReached}`);
 			if (details?.truncation?.truncated) line += theme.fg("warning", " truncated");
 			return new Text(line, 0, 0);
 		},
@@ -138,7 +73,8 @@ export default function compactReadingTools(pi: ExtensionAPI) {
 		description: ls.description,
 		parameters: ls.parameters,
 		renderShell: "self",
-		execute: (toolCallId, params, signal, onUpdate) => ls.execute(toolCallId, params, signal, onUpdate),
+		execute: (toolCallId, params, signal, onUpdate) =>
+			ls.execute(toolCallId, params, signal, onUpdate),
 		renderCall(args, theme, context) {
 			if (!context.isPartial) return hidden();
 			const path = short(args?.path, ".");
@@ -153,7 +89,8 @@ export default function compactReadingTools(pi: ExtensionAPI) {
 			if (args?.limit) line += theme.fg("dim", ` limit=${args.limit}`);
 			const details = result.details as LsToolDetails | undefined;
 			line += theme.fg("dim", ` ${nonEmptyLineCount(textContent(result))} entries`);
-			if (details?.entryLimitReached) line += theme.fg("warning", ` limit=${details.entryLimitReached}`);
+			if (details?.entryLimitReached)
+				line += theme.fg("warning", ` limit=${details.entryLimitReached}`);
 			if (details?.truncation?.truncated) line += theme.fg("warning", " truncated");
 			return new Text(line, 0, 0);
 		},

@@ -7,7 +7,7 @@ import {
 	createReadToolDefinition,
 	createWriteToolDefinition,
 	type ExtensionAPI,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import type { PermissionAskRequest, PermissionSubject } from "./permissions";
 
 const PERMISSIONS_ASK_EVENT = "permissions:ask";
