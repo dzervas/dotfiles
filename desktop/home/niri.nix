@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   setup.windowManager = "niri";
   imports = [
@@ -22,6 +27,24 @@
   programs.niri = {
     settings = {
       prefer-no-csd = true;
+
+      workspaces = {
+        "web".open-on-output = "DP-1";
+        "work".open-on-output = "DP-1";
+        "game".open-on-output = "DP-1";
+        "term".open-on-output = "DP-3";
+        "chat".open-on-output = "DP-3";
+      };
+
+      spawn-at-startup = [
+        { argv = [ "brave" ]; }
+        { argv = [ "io.anytype.anytype" ]; }
+        { argv = [ "zeditor" ]; }
+        { argv = [ "steam" ]; }
+        { argv = [ config.setup.terminal ]; }
+        { argv = [ "org.telegram.desktop" ]; }
+        { argv = [ "dev.vencord.Vesktop" ]; }
+      ];
 
       cursor = {
         inherit (config.stylix.cursor) size;
@@ -70,7 +93,8 @@
 
         # "Print".action.spawn-sh = "flameshot gui";
         # Flameshot workaround by https://github.com/niri-wm/niri/discussions/1737
-        "Print".action.spawn-sh = ''${pkgs.grim}/bin/grim -t ppm -g "$(${pkgs.slurp}/bin/slurp -d)" - | ${pkgs.satty}/bin/satty -f - --initial-tool=arrow --copy-command=wl-copy --actions-on-escape="save-to-clipboard,exit" --brush-smooth-history-size=5 --disable-notifications'';
+        "Print".action.spawn-sh =
+          ''${pkgs.grim}/bin/grim -t ppm -g "$(${pkgs.slurp}/bin/slurp -d)" - | ${pkgs.satty}/bin/satty -f - --initial-tool=arrow --copy-command=wl-copy --actions-on-escape="save-to-clipboard,exit" --brush-smooth-history-size=5 --disable-notifications'';
 
         "XF86AudioPlay".action.spawn-sh = "playerctl play-pause";
         "XF86AudioPause".action.spawn-sh = "playerctl play-pause";
@@ -177,17 +201,20 @@
         };
       };
 
-      debug.honor-xdg-activation-with-invalid-serial = {};
+      debug.honor-xdg-activation-with-invalid-serial = { };
       window-rules = [
         {
           # Noctila provided
-          geometry-corner-radius = let radius = 20.0;
-          in {
-            top-left = radius;
-            top-right = radius;
-            bottom-left = radius;
-            bottom-right = radius;
-          };
+          geometry-corner-radius =
+            let
+              radius = 20.0;
+            in
+            {
+              top-left = radius;
+              top-right = radius;
+              bottom-left = radius;
+              bottom-right = radius;
+            };
           # Clip window contents to the rounded corners
           clip-to-geometry = true;
         }
@@ -196,7 +223,10 @@
             { app-id = "Steam Settings"; }
             { app-id = "jadx-gui-JadxGUI"; }
             { app-id = "org.pulseaudio.pavucontrol"; }
-            { app-id = "org.telegram.desktop"; title = "Telegram"; }
+            {
+              app-id = "org.telegram.desktop";
+              title = "Telegram";
+            }
           ];
           open-floating = true;
         }
@@ -209,11 +239,16 @@
           # open-maximized-to-edges = true;
         }
         {
-          matches = [{ app-id = "^steam_app_.*"; }];
+          matches = [ { app-id = "^steam_app_.*"; } ];
           open-fullscreen = true;
         }
         {
-          matches = [{ app-id= "steam"; title = "^notificationtoasts_.*"; }];
+          matches = [
+            {
+              app-id = "steam";
+              title = "^notificationtoasts_.*";
+            }
+          ];
 
           clip-to-geometry = true;
           open-floating = true;
@@ -237,14 +272,73 @@
           # open-maximized-to-edges = false;
           block-out-from = "screen-capture";
         }
+
+        # Startup apps
+        {
+          matches = [
+            {
+              app-id = "brave-browser";
+              at-startup = true;
+            }
+          ];
+          # open-maximized-to-edges = false;
+          open-on-workspace = "web";
+          open-focused = true;
+        }
+        {
+          matches = [
+            {
+              app-id = "anytype";
+              at-startup = true;
+            }
+            {
+              app-id = "dev.zed.Zed";
+              at-startup = true;
+            }
+          ];
+          open-on-workspace = "work";
+        }
+        {
+          matches = [
+            {
+              app-id = "steam";
+              at-startup = true;
+            }
+          ];
+          open-on-workspace = "game";
+        }
+        {
+          matches = [
+            {
+              app-id = "com.mitchellh.ghostty";
+              at-startup = true;
+            }
+          ];
+          open-on-workspace = "term";
+        }
+        {
+          matches = [
+            {
+              app-id = "org.telegram.desktop";
+              at-startup = true;
+            }
+            {
+              app-id = "vesktop";
+              at-startup = true;
+            }
+          ];
+          open-on-workspace = "chat";
+        }
       ];
 
       overview.workspace-shadow.enable = false;
-      layer-rules = [{
-        # Make the wallpaper stationary
-        matches = [{ namespace = "^wallpaper$"; }];
-        place-within-backdrop = true;
-      }];
+      layer-rules = [
+        {
+          # Make the wallpaper stationary
+          matches = [ { namespace = "^wallpaper$"; } ];
+          place-within-backdrop = true;
+        }
+      ];
     };
   };
 }
