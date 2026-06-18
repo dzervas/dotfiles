@@ -22,7 +22,12 @@
   programs.niri = {
     settings = {
       prefer-no-csd = true;
-      cursor.size = config.stylix.cursor.size;
+
+      cursor = {
+        inherit (config.stylix.cursor) size;
+        theme = config.stylix.cursor.name;
+      };
+
       xwayland-satellite = {
         enable = true;
         path = lib.getExe pkgs.xwayland-satellite-unstable;

@@ -20,7 +20,7 @@ in
     cursor = {
       # package = inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default;
       package = lib.mkDefault pkgs.rose-pine-cursor;
-      name = "BreezX-RosePine-Linux";
+      name = "BreezeX-RosePine-Linux";
       size = 32;
     };
 
