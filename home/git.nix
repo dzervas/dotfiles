@@ -5,6 +5,7 @@
     git-lfs
     gnupg
     forgejo-cli
+    woodpecker-cli
   ];
 
   programs = {

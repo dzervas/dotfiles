@@ -48,6 +48,7 @@ const READ = new Set([
 	"objdump",
 	"test",
 	"wc",
+	"tr",
 ]);
 const WRITE = new Set(["touch", "mkdir", "rm", "sed"]);
 
@@ -198,10 +199,23 @@ const DEFAULT_RULES: Rule[] = [
 		comment: "Web search/fetch are always allowed",
 		tool: {
 			kind: "custom",
-			name: ["^web_search$", "^web_read$", "^ctx_fetch_and_index$", "^ctx_search$"],
+			name: ["^web_search$", "^web_read$", "^ctx_fetch_and_index$", "^ctx_search$", "^questionnaire$"],
 		},
 	},
 ];
+
+function readConfigFile(file: string): unknown {
+	const raw = fs.readFileSync(file, "utf8");
+	try {
+		return JSON.parse(raw);
+	} catch (err) {
+		const reason = err instanceof Error ? err.message : String(err);
+		throw new Error(
+			`Invalid permissions config: ${file} is not valid JSON (${reason}). ` +
+				`Fix the syntax (e.g. a trailing comma or missing quote) or delete the file to reset.`,
+		);
+	}
+}
 
 function loadConfig(): Config {
 	let config: Config = {
@@ -213,7 +227,7 @@ function loadConfig(): Config {
 	};
 	for (const file of CONFIG_PATHS) {
 		if (!fs.existsSync(file)) continue;
-		const next = coerceConfig(JSON.parse(fs.readFileSync(file, "utf8")));
+		const next = coerceConfig(readConfigFile(file));
 		config = {
 			...config,
 			...next,
@@ -566,6 +580,11 @@ function decide(subject: PermissionSubject, config: Config) {
 		)[0];
 	if (best?.rule.action === "deny")
 		return { action: "deny" as const, reason: best.rule.comment ?? "Denied by rule" };
+	// An explicit allow rule is a deliberate user whitelist, so it overrides the
+	// classifier's conservative "ask" net (e.g. unrecognized commands like kubectl).
+	// denyRoots/deny rules above still win; only the safety-net ask is overridden.
+	if (best?.rule.action === "allow")
+		return { action: "allow" as const, reason: best.rule.comment ?? "Allowed by rule" };
 	if (subject.ask.length > 0)
 		return { action: "ask" as const, reason: [...new Set(subject.ask)].join("; ") };
 	if (best)
@@ -637,7 +656,7 @@ function decideReadMode(pi: ExtensionAPI, subject: PermissionSubject, ctx: Exten
 
 function saveRule(subject: PermissionSubject) {
 	const source = fs.existsSync(CONFIG_PATHS[1]) ? CONFIG_PATHS[1] : CONFIG_PATHS[2];
-	const parsed = fs.existsSync(source) ? JSON.parse(fs.readFileSync(source, "utf8")) : undefined;
+	const parsed = fs.existsSync(source) ? readConfigFile(source) : undefined;
 	const local = !parsed
 		? { version: 2, defaultAction: "ask" as Action, allowRoots: [], denyRoots: [], rules: [] }
 		: coerceConfig(parsed);
@@ -864,7 +883,6 @@ function runSelfTest(): string[] {
 		"rg 'hello world' /tmp/deny/file.txt": "deny",
 		"find . -name '*.txt' -print": "allow",
 		"find . -name '*.txt' -exec rm {} \\;": "ask",
-		"kubectl get all": "ask",
 		"find . -name '*.txt' -print | sed 's#^./##'": "allow",
 		"sed -i 's/old/new/g' file.txt": "allow",
 		"sed -i 's/old/new/g' /tmp/deny": "deny",
@@ -874,6 +892,11 @@ function runSelfTest(): string[] {
 		"cd /tmp/deny": "deny",
 		"cd ../outside": "ask",
 		"cd -": "ask",
+		"kubectl get all": "allow",
+		"kubectl -n hello get pods": "allow",
+		"kubectl -n hello get secret": "ask",
+		"kubectl get secrets": "ask",
+		"hello world woww": "ask",
 	};
 
 	const allowPath = resolvePath("/tmp/allow");
@@ -883,7 +906,28 @@ function runSelfTest(): string[] {
 		defaultAction: "ask",
 		allowRoots: [resolvePath("."), allowPath],
 		denyRoots: [denyPath],
-		rules: [],
+		rules: [
+			{
+				"action": "allow",
+				"tool": {
+					"kind": "builtin",
+					"name": "^bash$"
+				},
+				"match": {
+					"raw": "^kubectl (-n \\w+ )?(get|describe|logs|events)\\b"
+				}
+			},
+			{
+				"action": "ask",
+				"tool": {
+					"kind": "builtin",
+					"name": "^bash$"
+				},
+				"match": {
+					"raw": "^kubectl (-n \\w+ )?get secrets?\\b"
+				}
+			},
+		],
 	};
 
 	const failures: string[] = [];
@@ -905,3 +949,11 @@ function runSelfTest(): string[] {
 
 	return failures;
 }
+
+// TODO: Handle batch execute:
+// ctx_batch_execute
+//   commands: [{"label":"extract-host","command":"curl -s 'https://raw.githubusercontent.com/woodpecker-ci/woodpecker/main/server/forge/common/utils.go' | grep -nA15 'func ExtractHostFromCloneURL'"},{"label":"clone-override-search","command":"curl -s
+// 'https://raw.githubusercontent.com/woodpecker-ci/woodpecker/main/server/forge/forgejo/forgejo.go' | grep -nE 'opts.URL|c.url|CloneURL|r.Clone|Clone =|cloneURL' "},{"label":"any-clone-env","command":"curl -s
+// 'https://raw.githubusercontent.com/woodpecker-ci/woodpecker/main/cmd/server/flags.go' | grep -niE 'clone|forgejo-url|forge.*url' | head -40"}]
+//   queries: ["ExtractHostFromCloneURL implementation","clone URL override environment variable","forgejo url flag definition"]
+//   concurrency: 3
