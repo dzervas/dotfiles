@@ -120,4 +120,8 @@ function use_mcp() {
 	fi
 }
 
-eval "$(devenv direnvrc)"
+# devenv's generated direnv integration runs `devenv direnv-export` and evals
+# its stdout.  On first reload after a config change, the TUI/progress output can
+# occasionally leak onto stdout, making direnv try to execute words like
+# "Running" as shell commands.  Force non-TUI quiet mode for direnv activations.
+eval "$(devenv direnvrc | sed 's/local devenv_cmd=("${DEVENV_BIN}")/local devenv_cmd=("${DEVENV_BIN}" --quiet --no-tui)/')"

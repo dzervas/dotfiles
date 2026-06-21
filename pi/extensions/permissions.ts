@@ -48,7 +48,9 @@ const READ = new Set([
 	"objdump",
 	"test",
 	"wc",
+	"which",
 	"tr",
+	"uniq",
 ]);
 const WRITE = new Set(["touch", "mkdir", "rm", "sed"]);
 
@@ -199,7 +201,7 @@ const DEFAULT_RULES: Rule[] = [
 		comment: "Web search/fetch are always allowed",
 		tool: {
 			kind: "custom",
-			name: ["^web_search$", "^web_read$", "^ctx_fetch_and_index$", "^ctx_search$", "^questionnaire$"],
+			name: ["^web_search$", "^web_read$", "^ctx_fetch_and_index$", "^ctx_search$", "^questionnaire$", "^todo$"],
 		},
 	},
 ];
@@ -288,17 +290,6 @@ function classifyCommand(node: any, ask: string[], paths: PathRef[]) {
 				!child.type.includes("redirect"),
 		)
 		.map((child: any) => argText(child, ask, paths));
-
-	for (const redirect of children.filter((child: any) => child.type.includes("redirect"))) {
-		if (redirect.text.includes("<<") || COMPLEX_TYPES.has(redirect.type))
-			return ask.push(`Complex redirect in ${name}`);
-
-		const target = argText(redirect.namedChildren?.at(-1), ask, paths);
-
-		if (!target) return ask.push(`Dynamic redirect in ${name}`);
-
-		pushPath(paths, target, /^\d*<(?!=|<)/u.test(redirect.text.trim()) ? "read" : "write");
-	}
 
 	// Simple commands don't need further analysis
 	if (SIMPLE.has(name)) return;
@@ -397,6 +388,20 @@ function classifyCommand(node: any, ask: string[], paths: PathRef[]) {
 	ask.push(`Unsupported shell command: ${name}`);
 }
 
+// Redirects are siblings of the command they apply to (under a
+// `redirected_statement`), so they're classified during the walk rather than
+// inside classifyCommand, which only sees the command node's own children.
+function classifyRedirect(node: any, ask: string[], paths: PathRef[]) {
+	if (node.text.includes("<<") || COMPLEX_TYPES.has(node.type))
+		return ask.push("Complex redirect");
+
+	const target = argText(node.namedChildren?.at(-1), ask, paths);
+
+	if (!target) return ask.push("Dynamic redirect");
+
+	pushPath(paths, target, /^\d*<(?!=|<)/u.test(node.text.trim()) ? "read" : "write");
+}
+
 // === Event normalization ===
 
 function walk(
@@ -419,6 +424,8 @@ function walk(
 		seen.commands += 1;
 		return classifyCommand(node, ask, paths);
 	}
+
+	if (node.type.endsWith("_redirect")) return classifyRedirect(node, ask, paths);
 
 	for (const child of node.namedChildren ?? []) walk(child, ask, paths, depth + 1, seen);
 }
@@ -897,6 +904,9 @@ function runSelfTest(): string[] {
 		"kubectl -n hello get secret": "ask",
 		"kubectl get secrets": "ask",
 		"hello world woww": "ask",
+		"kubectl -n hello get pods > /tmp/allow/hello-pods": "allow",
+		"kubectl -n hello get pods 2> /tmp/deny/hello-pods": "deny",
+		"ls -lah && kubectl -n hello get pods > /tmp/deny/hello-pods && rm /tmp/allow/hello-pods": "deny",
 	};
 
 	const allowPath = resolvePath("/tmp/allow");

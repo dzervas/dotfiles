@@ -148,6 +148,9 @@
 
     targets.zed.enable = false;
   };
+
+  # Enable the mid-click paste to gsettings-based apps (e.g. ghostty)
+  dconf.settings."org/gnome/desktop/interface".gtk-enable-primary-paste = true;
 }
 
 # ZMK building
