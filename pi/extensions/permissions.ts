@@ -175,6 +175,13 @@ function matches(value: string | undefined, pattern?: string | string[]) {
 	);
 }
 
+// Assume a leading `^` so raw patterns anchor to the start of each command.
+function anchorStart(pattern?: string | string[]) {
+	if (!pattern) return pattern;
+	const anchor = (entry: string) => (entry.startsWith("^") ? entry : `^${entry}`);
+	return Array.isArray(pattern) ? pattern.map(anchor) : anchor(pattern);
+}
+
 function coerceConfig(parsed: unknown): Config {
 	return Array.isArray(parsed)
 		? {
@@ -558,11 +565,13 @@ function ruleScore(rule: Rule, subject: PermissionSubject) {
 	if (rule.tool?.name) score += 8;
 	if (rule.tool?.server && !matches(subject.mcpServer, rule.tool.server)) return undefined;
 	if (rule.tool?.server) score += 8;
-	// match.raw is tested per sub-command so an anchored pattern like `^kubectl`
+	// match.raw is tested per sub-command so an anchored pattern like `kubectl`
 	// matches `echo hi && kubectl get all` but not `echo "kubectl get all"`.
 	// Non-bash tools (no parsed sub-commands) fall back to the raw input.
+	// A leading `^` is assumed when absent so patterns anchor to the command start.
 	const rawTargets = subject.commands.length > 0 ? subject.commands : [subject.rawInput];
-	if (rule.match?.raw && !rawTargets.some((cmd) => matches(cmd, rule.match?.raw))) return undefined;
+	const rawPattern = anchorStart(rule.match?.raw);
+	if (rawPattern && !rawTargets.some((cmd) => matches(cmd, rawPattern))) return undefined;
 	if (rule.match?.raw) score += 3;
 	for (const [key, matcher] of Object.entries(rule.match?.fields ?? {})) {
 		if (!fieldMatches(getProperty(subject.input, key), matcher)) return undefined;
@@ -925,6 +934,9 @@ function runSelfTest(): string[] {
 		// must not match, but a real kubectl sub-command in a compound must.
 		'echo "kubectl get all"': "ask",
 		"echo hi && kubectl get all": "allow",
+		// `^` is assumed when absent, so a keyword mid-command does not match the
+		// allow rule (whose raw pattern omits a leading `^`).
+		"sudo kubectl get all": "ask",
 	};
 
 	const allowPath = resolvePath("/tmp/allow");
@@ -942,7 +954,7 @@ function runSelfTest(): string[] {
 					"name": "^bash$"
 				},
 				"match": {
-					"raw": "^kubectl (-n \\w+ )?(get|describe|logs|events)\\b"
+					"raw": "kubectl (-n \\w+ )?(get|describe|logs|events)\\b"
 				}
 			},
 			{
@@ -952,7 +964,7 @@ function runSelfTest(): string[] {
 					"name": "^bash$"
 				},
 				"match": {
-					"raw": "^kubectl (-n \\w+ )?get secrets?\\b"
+					"raw": "kubectl (-n \\w+ )?get secrets?\\b"
 				}
 			},
 		],
