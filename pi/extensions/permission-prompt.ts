@@ -9,6 +9,11 @@ import {
 	type ExtensionAPI,
 } from "@earendil-works/pi-coding-agent";
 import type { PermissionAskRequest, PermissionSubject } from "./permissions";
+import {
+	type DialogueOption,
+	type DialogueResult,
+	ScrollableDialogue,
+} from "./lib/scrollable-dialogue";
 
 const PERMISSIONS_ASK_EVENT = "permissions:ask";
 
@@ -72,30 +77,76 @@ function formatToolCall(subject: PermissionSubject, request: PermissionAskReques
 	}
 }
 
+// Choose a syntax-highlighted body for the dialog. Bash and the context-mode
+// execute tools carry source/commands worth highlighting; everything else
+// falls back to the renderCall/generic key-value dump as plain text.
+function formatBody(
+	subject: PermissionSubject,
+	request: PermissionAskRequest,
+): { body: string; language?: string } {
+	if (subject.toolKind === "builtin" && subject.toolName === "bash")
+		return { body: subject.rawInput, language: "bash" };
+
+	const input = subject.input ?? {};
+
+	// ctx_execute / ctx_execute_file: a single code block in its own language.
+	if (
+		(subject.toolName === "ctx_execute" || subject.toolName === "ctx_execute_file") &&
+		typeof input.code === "string"
+	)
+		return {
+			body: input.code,
+			language: typeof input.language === "string" ? input.language : undefined,
+		};
+
+	// ctx_batch_execute: show each command on its own line, highlighted as shell.
+	if (subject.toolName === "ctx_batch_execute" && Array.isArray(input.commands))
+		return {
+			body: (input.commands as Array<{ label?: string; command?: string }>)
+				.map((entry) => `# ${entry.label ?? ""}\n${entry.command ?? ""}`)
+				.join("\n\n"),
+			language: "bash",
+		};
+
+	return { body: formatToolCall(subject, request) };
+}
+
 async function answerPermissionRequest(pi: ExtensionAPI, request: PermissionAskRequest) {
 	const { subject, reason, ctx } = request;
-	const options = [
-		"Allow once",
-		"Allow once + message",
-		"Allow and save",
-		"Allow and save + message",
-		"No",
-		"No + message",
+
+	const { body, language } = formatBody(subject, request);
+
+	const options: DialogueOption[] = [
+		{ value: "allow", label: "Allow once", allowMessage: true },
+		{ value: "allow-save", label: "Allow and save", allowMessage: true },
+		{ value: "deny", label: "No", allowMessage: true },
 	];
+
 	process.stderr.write("\x07"); // ring the terminal bell to flag the prompt
-	const choice = await ctx.ui.select(
-		`󱅞 Permission request:\n${formatToolCall(subject, request)}\n\nReason: ${reason}`,
-		options,
+
+	const result = await ctx.ui.custom<DialogueResult | null>((tui, theme, _kb, done) =>
+		new ScrollableDialogue(
+			tui,
+			theme,
+			{
+				title: "󱅞 Permission request",
+				body,
+				language,
+				reason: `Reason: ${reason}`,
+				options,
+				messagePrompt: "Append message to agent:",
+			},
+			done,
+		),
 	);
 
-	if (choice?.includes("save")) ctx.ui.notify(request.saveRule(), "info");
+	if (!result) return { block: true, reason: "Blocked by user" };
 
-	if (choice?.includes("message")) {
-		const message = await ctx.ui.input("Append message to agent:");
-		if (message?.trim()) pi.sendUserMessage(message.trim(), { deliverAs: "steer" });
-	}
+	if (result.value === "allow-save") ctx.ui.notify(request.saveRule(), "info");
 
-	if (choice?.startsWith("Allow")) return undefined;
+	if (result.message) pi.sendUserMessage(result.message, { deliverAs: "steer" });
+
+	if (result.value === "allow" || result.value === "allow-save") return undefined;
 
 	return { block: true, reason: "Blocked by user" };
 }

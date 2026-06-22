@@ -29,7 +29,7 @@ const COMPLEX_TYPES = new Set([
 	"process_substitution",
 	"while_statement",
 ]);
-const SIMPLE = new Set(["pwd", "echo", "printf", "true", "false"]);
+const SIMPLE = new Set(["pwd", "echo", "printf", "true", "false", "which"]);
 const READ = new Set([
 	"cat",
 	"head",
@@ -48,7 +48,6 @@ const READ = new Set([
 	"objdump",
 	"test",
 	"wc",
-	"which",
 	"tr",
 	"uniq",
 ]);
