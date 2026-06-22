@@ -69,6 +69,7 @@ export type PermissionSubject = {
 	rawInput: string;
 	input: Record<string, unknown>;
 	paths: PathRef[];
+	commands: string[];
 	ask: string[];
 };
 type ReadModeState = {
@@ -408,6 +409,7 @@ function walk(
 	node: any,
 	ask: string[],
 	paths: PathRef[],
+	commands: string[],
 	depth: number,
 	seen = { nodes: 0, commands: 0 },
 ) {
@@ -422,12 +424,13 @@ function walk(
 
 	if (node.type === "command") {
 		seen.commands += 1;
+		commands.push(node.text);
 		return classifyCommand(node, ask, paths);
 	}
 
 	if (node.type.endsWith("_redirect")) return classifyRedirect(node, ask, paths);
 
-	for (const child of node.namedChildren ?? []) walk(child, ask, paths, depth + 1, seen);
+	for (const child of node.namedChildren ?? []) walk(child, ask, paths, commands, depth + 1, seen);
 }
 
 const MCP_CACHE_PATH = path.join(os.homedir(), ".pi", "agent", "mcp-cache.json");
@@ -494,6 +497,7 @@ function normalize(event: ToolCallEvent): PermissionSubject {
 			: JSON.stringify(event.input),
 		input: event.input,
 		paths: [],
+		commands: [],
 		ask: [],
 	};
 
@@ -502,7 +506,13 @@ function normalize(event: ToolCallEvent): PermissionSubject {
 			subject.ask.push("Shell command is too long to classify safely");
 		else {
 			try {
-				walk(parser.parse(event.input.command).rootNode, subject.ask, subject.paths, 0);
+				walk(
+					parser.parse(event.input.command).rootNode,
+					subject.ask,
+					subject.paths,
+					subject.commands,
+					0,
+				);
 			} catch {
 				subject.ask.push("Shell command could not be parsed safely");
 			}
@@ -548,7 +558,11 @@ function ruleScore(rule: Rule, subject: PermissionSubject) {
 	if (rule.tool?.name) score += 8;
 	if (rule.tool?.server && !matches(subject.mcpServer, rule.tool.server)) return undefined;
 	if (rule.tool?.server) score += 8;
-	if (rule.match?.raw && !matches(subject.rawInput, rule.match.raw)) return undefined;
+	// match.raw is tested per sub-command so an anchored pattern like `^kubectl`
+	// matches `echo hi && kubectl get all` but not `echo "kubectl get all"`.
+	// Non-bash tools (no parsed sub-commands) fall back to the raw input.
+	const rawTargets = subject.commands.length > 0 ? subject.commands : [subject.rawInput];
+	if (rule.match?.raw && !rawTargets.some((cmd) => matches(cmd, rule.match?.raw))) return undefined;
 	if (rule.match?.raw) score += 3;
 	for (const [key, matcher] of Object.entries(rule.match?.fields ?? {})) {
 		if (!fieldMatches(getProperty(subject.input, key), matcher)) return undefined;
@@ -907,6 +921,10 @@ function runSelfTest(): string[] {
 		"kubectl -n hello get pods > /tmp/allow/hello-pods": "allow",
 		"kubectl -n hello get pods 2> /tmp/deny/hello-pods": "deny",
 		"ls -lah && kubectl -n hello get pods > /tmp/deny/hello-pods && rm /tmp/allow/hello-pods": "deny",
+		// match.raw is tested per sub-command: a kubectl inside a string literal
+		// must not match, but a real kubectl sub-command in a compound must.
+		'echo "kubectl get all"': "ask",
+		"echo hi && kubectl get all": "allow",
 	};
 
 	const allowPath = resolvePath("/tmp/allow");
