@@ -51,16 +51,16 @@ final: prev: rec {
   # nix-update:pi-coding-agent-latest
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
     finalAttrs: _prevAttrs: rec {
-      version = "0.79.4";
+      version = "0.79.10";
 
       src = final.fetchFromGitHub {
         owner = "earendil-works";
         repo = "pi";
         tag = "v${version}";
-        hash = "sha256-IgcFMxY9G68QEYGzvL1VXEfiEiCui6uACu7oHJsioQY=";
+        hash = "sha256-UMRkOzJpA1XcEHzRwHxgBg6idEmpVJzBKlrXZaVf4MQ=";
       };
 
-      npmDepsHash = "sha256-SO198UOM7nTiqi0gKDCSbdImkoXpoFvLcAydutLagu4=";
+      npmDepsHash = "sha256-QwnECZVri6w/3KdxITnnRkhtq1GIpzP08C/PF4fMmd4=";
 
       npmDeps = final.fetchNpmDeps {
         inherit (finalAttrs) src;

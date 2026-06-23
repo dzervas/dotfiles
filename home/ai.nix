@@ -23,14 +23,14 @@ let
     };
   };
 
+  # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
   piPackages = [
     "npm:pi-subagents@0.28.0"
     "npm:context-mode@1.0.162"
-    "npm:pi-mcp-adapter@2.9.0"
+    "npm:pi-mcp-adapter@2.10.0"
     "npm:pi-search-hub@2.3.3"
-    "npm:@cortexkit/pi-anthropic-auth@1.7.0"
-    "npm:pi-readseek@0.3.19"
-    # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
+    "npm:@cortexkit/pi-anthropic-auth@1.10.3"
+    "npm:pi-readseek@0.3.12"
   ];
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
@@ -51,7 +51,7 @@ let
     ];
 
     defaultProvider = "dzerv-art";
-    defaultModel = "anthropic/claude-opus-4-8";
+    defaultModel = "claude-opus-4-8";
     defaultThinkingLevel = "medium";
     enabledModels = [ defaultModel "gpt-5.5" "claude-fable-5" "claude-sonnet-4-6" ];
   };

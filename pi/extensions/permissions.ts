@@ -219,6 +219,18 @@ const DEFAULT_RULES: Rule[] = [
 			name: ["^web_search$", "^web_read$", "^ctx_fetch_and_index$", "^ctx_search$", "^questionnaire$", "^todo$"],
 		},
 	},
+	{
+		action: "allow",
+		tool: {
+			kind: "builtin",
+			name: "^bash$"
+		},
+		match: {
+			raw: [
+				"(jj|git) (diff|status|log)",
+			]
+		}
+	}
 ];
 
 function readConfigFile(file: string): unknown {
