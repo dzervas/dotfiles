@@ -147,7 +147,7 @@ const RuleSchema = z.object({
 const ConfigSchema = z.object({
 	version: z.literal(2).default(2),
 	defaultAction: z.enum(["allow", "ask", "deny"]).default("ask"),
-	allowRoots: z.array(z.string()).default([resolvePath("."), "/nix/store"]),
+	allowRoots: z.array(z.string()).default([resolvePath("."), "/nix/store", "/dev/null"]),
 	denyRoots: z.array(z.string()).default([]),
 	rules: z.array(RuleSchema).default([]),
 });
@@ -216,7 +216,7 @@ const DEFAULT_RULES: Rule[] = [
 		comment: "Web search/fetch are always allowed",
 		tool: {
 			kind: "custom",
-			name: ["^web_search$", "^web_read$", "^ctx_fetch_and_index$", "^ctx_search$", "^questionnaire$", "^todo$"],
+			name: ["^web_search$", "^web_read$", "^ctx_fetch_and_index$", "^ctx_search$", "^questionnaire$", "^todo$", "^subagent$"],
 		},
 	},
 	{
@@ -228,6 +228,7 @@ const DEFAULT_RULES: Rule[] = [
 		match: {
 			raw: [
 				"(jj|git) (diff|status|log)",
+				"cd \"$(pwd)\"",
 			]
 		}
 	}
@@ -984,7 +985,7 @@ export default function permissionsExtension(pi: ExtensionAPI) {
 		// TODO: This should be a setFooter
 		ctx.ui.setStatus(
 			"permissions-read-mode",
-			readModeEnabled ? undefined : ctx.ui.theme.fg("text", "󱚌 workspace edit"),
+			readModeEnabled ? ctx.ui.theme.fg("dim", "󰏯 read") : ctx.ui.theme.fg("success", "󰏫 edit"),
 		);
 	}
 

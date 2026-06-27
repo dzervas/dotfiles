@@ -15,11 +15,7 @@
 
 import { complete, type Message } from "@earendil-works/pi-ai";
 import type { ExtensionAPI, SessionEntry } from "@earendil-works/pi-coding-agent";
-import {
-	BorderedLoader,
-	convertToLlm,
-	serializeConversation,
-} from "@earendil-works/pi-coding-agent";
+import { BorderedLoader, convertToLlm, serializeConversation } from "@earendil-works/pi-coding-agent";
 
 const SYSTEM_PROMPT = `You are a context transfer assistant. Given a conversation history and the user's goal for a new thread, generate a focused prompt that:
 
@@ -130,10 +126,7 @@ export default function (pi: ExtensionAPI) {
 			}
 
 			// Let user edit the generated prompt
-			const editedPrompt = await ctx.ui.editor(
-				"Edit handoff prompt (enter to submit, shift+enter for newline, esc to cancel)",
-				result,
-			);
+			const editedPrompt = await ctx.ui.editor("Edit handoff prompt (enter to submit, shift+enter for newline, esc to cancel)", result);
 
 			if (editedPrompt === undefined) {
 				ctx.ui.notify("Cancelled", "info");

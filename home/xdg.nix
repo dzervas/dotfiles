@@ -65,6 +65,7 @@
         "x-scheme-handler/orcaslicer" = "BambuStudio.desktop";
         "x-scheme-handler/prusaslicer" = "BambuStudio.desktop";
         "x-scheme-handler/bambustudio" = "BambuStudio.desktop";
+        "x-scheme-handler/bambustudioopen" = "BambuStudio.desktop";
         "x-scheme-handler/slack" = "Slack.desktop";
         "x-scheme-handler/atuin" = "Atuin.desktop";
         "x-scheme-handler/tg" = "Telegram.desktop";
