@@ -26,10 +26,10 @@ let
   # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
   piPackages = [
     "npm:pi-subagents@0.28.0"
-    "npm:context-mode@1.0.162"
+    "npm:context-mode@1.0.165"
     "npm:pi-mcp-adapter@2.10.0"
     "npm:pi-search-hub@2.3.3"
-    "npm:@cortexkit/pi-anthropic-auth@1.10.1"
+    "npm:@cortexkit/pi-anthropic-auth@1.12.0"
     "npm:pi-readseek@0.3.22"
   ];
 

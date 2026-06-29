@@ -93,6 +93,7 @@
         ".gemini"
         ".github/prompts"
         ".pi"
+        ".mcp.json"
       ];
     };
 
