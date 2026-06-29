@@ -1,0 +1,173 @@
+--[[ <ModName> — RogueCore / DRG UE4SS Lua mod (template)
+
+  Annotated starting point. Replace the GAME-SPECIFIC bits (hook target, params,
+  the work you do) with what your SDK dump confirmed. Keep the patterns:
+   - pre/post hook split          (output only exists in POST)
+   - pcall + fail-open everywhere
+   - ExecuteInGameThread for any UObject/widget mutation off the game thread
+   - FText (not string) for SetText
+   - widget searches scoped to the target menu
+]]
+
+--------------------------------------------------------------------------------
+-- Config
+--------------------------------------------------------------------------------
+local SETTINGS = {
+    Enabled         = false,   -- opt-in; set true to default ON
+    ToggleKey       = Key.F2,  -- avoid F8 on RogueCore (bug-report UI)
+    ToggleModifiers = {},      -- e.g. { ModifierKey.CONTROL }
+    Verbose         = true,    -- set false for release builds
+}
+
+local TAG = "[<ModName>] "
+local function log(fmt, ...)
+    if SETTINGS.Verbose then print(TAG .. string.format(fmt, ...) .. "\n") end
+end
+
+--------------------------------------------------------------------------------
+-- Small helpers
+--------------------------------------------------------------------------------
+
+-- Build an FText from a Lua string. SetText REQUIRES FText; a raw string crashes.
+local function MakeText(str)
+    local ktl = StaticFindObject("/Script/Engine.Default__KismetTextLibrary")
+    if not (ktl and ktl:IsValid()) then return nil end
+    return ktl:Conv_StringToText(str)
+end
+
+-- Find a TextBlock in a specific menu whose CURRENT text equals `wanted` (case-insensitive).
+-- FindAllOf is game-wide and auto-names repeat across widgets, so scope by full path.
+local function FindMenuTextBlockByText(menuToken, wanted)
+    local all = FindAllOf("TextBlock")
+    if not all then return nil end
+    local wlow = string.lower(wanted)
+    for _, tb in pairs(all) do
+        if tb and tb:IsValid() then
+            local okf, full = pcall(function() return tb:GetFullName() end)
+            if okf and full and string.find(full, menuToken, 1, true) then
+                local okt, txt = pcall(function() return tb:GetText():ToString() end)
+                if okt and txt and string.lower(txt) == wlow then return tb end
+            end
+        end
+    end
+    return nil
+end
+
+-- Find a TextBlock in a menu by its widget NAME (path-scoped). Use after you've
+-- edited a label's text (so text-match no longer works) by caching its name once.
+local function FindMenuTextBlockByName(menuToken, name)
+    local all = FindAllOf("TextBlock")
+    if not all then return nil end
+    for _, tb in pairs(all) do
+        if tb and tb:IsValid() then
+            local ok, full = pcall(function() return tb:GetFullName() end)
+            if ok and full
+               and string.find(full, menuToken, 1, true)
+               and string.find(full, "." .. name, 1, true) then
+                return tb
+            end
+        end
+    end
+    return nil
+end
+
+--------------------------------------------------------------------------------
+-- On-screen status on a bind-free menu label (PrintString is invisible in Shipping)
+--------------------------------------------------------------------------------
+local MENU_TOKEN  = "_MENU_ServerList"   -- substring of the target menu's path
+local TITLE_TEXT  = "SERVER LIST"        -- a bind-free, always-visible label's base text
+local SLATE_VISIBLE = 0                  -- ESlateVisibility::Visible
+
+local _titleBase, _titleName = nil, nil
+
+local function ShowStatus()
+    local ok, err = pcall(function()
+        local tb = (_titleName and FindMenuTextBlockByName(MENU_TOKEN, _titleName))
+                or FindMenuTextBlockByText(MENU_TOKEN, TITLE_TEXT)
+        if not (tb and tb:IsValid()) then return end
+        if _titleBase == nil then
+            local g, s = pcall(function() return tb:GetText():ToString() end)
+            _titleBase = (g and s) or TITLE_TEXT
+            local okn, full = pcall(function() return tb:GetFullName() end)
+            if okn and full then _titleName = full:match("%.([%w_]+)$") end
+        end
+        local state = SETTINGS.Enabled and "ON" or "OFF"
+        local ftext = MakeText(_titleBase .. "   -   [<Key>] <ModName>: " .. state)
+        if not ftext then return end
+        tb:SetText(ftext)
+        tb:SetVisibility(SLATE_VISIBLE)
+    end)
+    if not ok then log("status update failed: %s", tostring(err)) end
+end
+
+--------------------------------------------------------------------------------
+-- The hook (GAME-SPECIFIC: replace target + body with your dump's signature)
+--------------------------------------------------------------------------------
+local HOOK_TARGET = "/Script/RogueCore.FSDServerListLibrary:SortLobbies"
+
+-- PRE: runs before exec. Output params are NOT populated here. Usually a no-op.
+local function OnPre(self, ...)
+end
+
+-- POST: runs after exec. Output params are populated. Do the real work here.
+-- This also fires on every refresh tick while the menu is open, so it's a good
+-- place to keep the status label in sync.
+local function OnPost(self, ...)
+    ShowStatus()                       -- keep status label current (ON/OFF)
+    if not SETTINGS.Enabled then return end
+    local ok, err = pcall(function()
+        -- local args = { ... }            -- each is a RemoteUnrealParam; :get() to read
+        -- local outArr = args[N]:get()    -- e.g. SortedLobbies (output) lives in POST
+        -- ... read fields, permute TArray via a scratch array, etc. ...
+        -- Fail open on any per-element error so you never hide/break content.
+    end)
+    if not ok then log("hook error: %s", tostring(err)) end
+end
+
+--------------------------------------------------------------------------------
+-- Registration (retry until the owning class is loaded)
+--------------------------------------------------------------------------------
+local hooked = false
+local function TryRegister()
+    if hooked then return true end
+    local ok = pcall(function() RegisterHook(HOOK_TARGET, OnPre, OnPost) end)
+    if ok then hooked = true; log("Hooked %s (pre+post)", HOOK_TARGET) end
+    return ok
+end
+
+TryRegister()
+if not hooked then
+    local tries = 0
+    LoopAsync(3000, function()
+        tries = tries + 1
+        if TryRegister() then return true end
+        if tries >= 40 then log("could not hook after %d tries", tries); return true end
+        return false
+    end)
+end
+
+--------------------------------------------------------------------------------
+-- Optional: re-apply on an open menu WITHOUT a network refresh.
+-- Prefer the menu widget's own no-arg refresh (e.g. RefreshServerList); do NOT use
+-- SetServerSearchActive/ListLobbies — those wipe the list with a new search.
+--------------------------------------------------------------------------------
+local function Nudge()
+    local w = FindFirstOf("_MENU_ServerList_C")   -- NOTE: blueprint class needs the _C
+    if not (w and w:IsValid()) then return end
+    pcall(function() w:RefreshServerList() end)
+end
+
+--------------------------------------------------------------------------------
+-- Keybind: toggle + apply now (game-thread!) 
+--------------------------------------------------------------------------------
+RegisterKeyBind(SETTINGS.ToggleKey, SETTINGS.ToggleModifiers, function()
+    SETTINGS.Enabled = not SETTINGS.Enabled
+    log("%s", SETTINGS.Enabled and "ENABLED" or "DISABLED")
+    TryRegister()
+    ExecuteInGameThread(function()   -- REQUIRED: widget/UObject work must be on game thread
+        ShowStatus()
+        Nudge()
+    end)
+end)
+
+log("Loaded. Toggle key = <Key>. Default = %s.", SETTINGS.Enabled and "ON" or "OFF")

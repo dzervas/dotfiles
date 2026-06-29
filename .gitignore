@@ -8,3 +8,4 @@ uv.lock
 .python-version
 .pi
 /pi/extensions/search.json
+__pycache__

@@ -162,6 +162,8 @@ in
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/global_agents.md";
       ".pi/agent/extensions".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/extensions";
+      ".pi/agent/skills".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/skills";
       ".pi/agent/node_modules".source = piExtensionNodeModules + "/node_modules";
       ".pi/agent/settings.json".text = builtins.toJSON piSettings;
     };
