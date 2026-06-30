@@ -1,6 +1,0 @@
-- git-to-jj hook
-- rewind with jj undo support
-- jj status line
-- openspec command - propose, apply & archive with optional review loop
-- sandbox thingy?
-- sing-fire mode

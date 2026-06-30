@@ -24,13 +24,14 @@ let
   };
 
   # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
+  # "npm:context-mode@1.0.165" # Adds too many tools and delivers... nothing?
   piPackages = [
     "npm:pi-subagents@0.28.0"
-    "npm:context-mode@1.0.165"
     "npm:pi-mcp-adapter@2.10.0"
-    "npm:pi-search-hub@2.3.3"
+    "npm:pi-web-access@0.13.0"
     "npm:@cortexkit/pi-anthropic-auth@1.12.0"
     "npm:pi-readseek@0.3.22"
+    "npm:@juicesharp/rpiv-todo@1.20.0"
   ];
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
@@ -53,7 +54,21 @@ let
     defaultProvider = "dzerv-art";
     defaultModel = "claude-opus-4-8";
     defaultThinkingLevel = "medium";
-    enabledModels = [ defaultModel "gpt-5.5" "claude-fable-5" "claude-sonnet-4-6" ];
+    enabledModels = [ defaultModel "gpt-5.5" "claude-fable-5" "claude-sonnet-5" ];
+
+    subagents = {
+      defaultModel = "claude-sonnet-5";
+      agentOverrides = let
+        smallModel = "claude-haiku-4-5";
+      in {
+        scout.model = smallModel; # Local file recon
+        researcher.model = smallModel; # Web recon
+        delegate.model = smallModel; # Small worker
+
+        oracle.model = piSettings.defaultModel; # Plan reviewer
+        reviewer.model = piSettings.defaultModel; # Code reviewer
+      };
+    };
   };
 
   piExtensionBump = pkgs.writeShellApplication {
@@ -180,7 +195,7 @@ in
       enable = true;
       # package = pkgs.claude-code-latest;
       settings = {
-        model = "opusplan";
+        model = "opus";
         enableAllProjectMcpServers = false;
         includeCoAuthoredBy = false;
         alwaysThinkingEnabled = true;
