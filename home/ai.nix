@@ -29,9 +29,9 @@ let
     "npm:pi-subagents@0.28.0"
     "npm:pi-mcp-adapter@2.10.0"
     "npm:pi-web-access@0.13.0"
-    "npm:@cortexkit/pi-anthropic-auth@1.12.0"
     "npm:pi-readseek@0.3.22"
     "npm:@juicesharp/rpiv-todo@1.20.0"
+    "npm:@gotgenes/pi-anthropic-auth@1.0.0"
   ];
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
