@@ -25,7 +25,6 @@
       "com.github.skylot.jadx"
       "io.github.ryubing.Ryujinx"
       "com.bambulab.BambuStudio"
-      # "com.teamspeak.TeamSpeak"
     ] else []);
 
     overrides = {
@@ -36,12 +35,12 @@
           "xdg-config/gtk-4.0:ro"
           "xdg-download"
           "/run/dbus/system_bus_socket"
-          "!host:reset"
-          "!host-os:reset"
-          "!host-etc:reset"
-          "!home:reset"
+          "!host"
+          "!host-os"
+          "!host-etc"
+          "!home"
         ];
-        devices = [ "!all:reset" "dri" ];
+        devices = [ "!all" "dri" ];
         sockets = [ "wayland" ];
       };
 
