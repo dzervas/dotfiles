@@ -26,12 +26,12 @@ let
   # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
   # "npm:context-mode@1.0.165" # Adds too many tools and delivers... nothing?
   piPackages = [
-    "npm:pi-subagents@0.28.0"
+    "npm:pi-subagents@0.31.0"
     "npm:pi-mcp-adapter@2.10.0"
     "npm:pi-web-access@0.13.0"
-    "npm:pi-readseek@0.3.22"
+    "npm:pi-readseek@0.4.13"
     "npm:@juicesharp/rpiv-todo@1.20.0"
-    "npm:@gotgenes/pi-anthropic-auth@1.0.0"
+    "npm:@gotgenes/pi-anthropic-auth@0.7.0"
   ];
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
@@ -187,7 +187,7 @@ in
   programs = {
     codex = {
       enable = true;
-      package = pkgs.codex-latest;
+      # package = pkgs.codex-latest;
     };
 
     # TODO: Add skills: https://docs.claude.com/en/docs/claude-code/skills
