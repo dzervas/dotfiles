@@ -2,20 +2,25 @@
 // subject; the decision engine (decide.ts) turns findings into ask/deny
 // outcomes.
 //
-// This is the seam for the upcoming command safety classification model:
-// add it as another Classifier here. It can vouch for "unknown"-verdict
-// findings (unrecognized commands) but must never override "unsafe" ones.
+// This is the seam for command safety classification models. The local LLM
+// classifier is opt-in and advisory-only for now: it records a proposed
+// action/confidence for UI display, but the decision engine does not trust or enforce it.
 
 import type { Classifier, PermissionSubject } from "../types";
 import { classifyBash } from "./bash";
+import { classifyWithLocalLlm } from "./local-llm";
 
 const CLASSIFIERS: Classifier[] = [
 	classifyBash,
-	// safetyModelClassifier, ← future command safety model slots in here
+	// Trusted safety model classifiers can be added here later.
 ];
 
-export async function classify(subject: PermissionSubject): Promise<PermissionSubject> {
+export async function classify(
+	subject: PermissionSubject,
+	options: { signal?: AbortSignal; localLlm?: boolean } = {},
+): Promise<PermissionSubject> {
 	for (const classifier of CLASSIFIERS) subject.findings.push(...(await classifier(subject)));
+	if (options.localLlm) await classifyWithLocalLlm(subject, options.signal);
 	return subject;
 }
 

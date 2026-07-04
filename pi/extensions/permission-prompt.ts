@@ -111,6 +111,24 @@ function formatBody(
 	return { body: formatToolCall(subject, request) };
 }
 
+function classifierEmoji(action: "allow" | "ask" | "deny", confidence: number): string {
+	if (confidence < 90) return "❔ ";
+	if (action === "allow") return "✅ ";
+	if (action === "deny") return "🛑 ";
+	return "⚠️ ";
+}
+function classifierDetails(subject: PermissionSubject): string[] | undefined {
+	const advice = subject.llmAdvice;
+	if (!advice) return undefined;
+
+	const emoji = classifierEmoji(advice.action, advice.confidence);
+
+	return [
+		`${emoji}Local LLM classifier (advisory only): ${advice.action} (${advice.confidence}%)`,
+		`LLM reason: ${advice.reason}`,
+	];
+}
+
 async function answerPermissionRequest(pi: ExtensionAPI, request: PermissionAskRequest) {
 	const { subject, reason, ctx } = request;
 
@@ -133,6 +151,7 @@ async function answerPermissionRequest(pi: ExtensionAPI, request: PermissionAskR
 				body,
 				language,
 				reason: `Reason: ${reason}`,
+				details: classifierDetails(subject),
 				options,
 				messagePrompt: "Append message to agent:",
 			},

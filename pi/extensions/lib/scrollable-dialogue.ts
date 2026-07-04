@@ -32,6 +32,7 @@ export interface ScrollableDialogueOptions {
 	body: string;
 	language?: string;
 	reason?: string;
+	details?: string[];
 	options: DialogueOption[];
 	// Hard cap on visible body rows. Defaults to "fit the terminal height".
 	maxBodyLines?: number;
@@ -172,6 +173,10 @@ export class ScrollableDialogue {
 		out.push("");
 		if (this.opts.reason) {
 			add(th.fg("muted", ` ${this.opts.reason}`));
+			out.push("");
+		}
+		if (this.opts.details?.length) {
+			for (const detail of this.opts.details) add(th.fg("muted", ` ${detail}`));
 			out.push("");
 		}
 

@@ -99,7 +99,7 @@ export default function permissionsExtension(pi: ExtensionAPI) {
 	pi.on("tool_call", async (event, ctx) => {
 		if (permissionsDisabled()) return { block: false, reason: "Permissions disabled in sandbox" };
 
-		const subject = await classify(normalize(event));
+		const subject = await classify(normalize(event), { signal: ctx.signal, localLlm: true });
 		if (readMode.enabled) {
 			const readModeDecision = readMode.decide(subject, ctx);
 			if (readModeDecision) return readModeDecision;

@@ -5,6 +5,13 @@
 // decision engine turns findings + rules into allow/ask/deny (decide.ts).
 
 export type Action = "allow" | "ask" | "deny";
+export type LlmClassifierAdvice = {
+	action: Action;
+	confidence: number;
+	reason: string;
+	model: string;
+	baseUrl?: string;
+};
 export type ToolKind = "builtin" | "custom" | "mcp";
 export type PathRef = { access: "read" | "write" | "search" | "list"; raw: string; resolved: string };
 
@@ -35,6 +42,9 @@ export type PermissionSubject = {
 	// Parsed sub-commands (bash only); match.raw rules are tested per sub-command.
 	commands: string[];
 	findings: Finding[];
+	// Advisory-only local LLM output. The decision engine intentionally ignores it
+	// until the classifier earns trust.
+	llmAdvice?: LlmClassifierAdvice;
 };
 
 // A classifier inspects the subject and reports findings. It may also enrich

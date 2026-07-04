@@ -11,6 +11,7 @@
       "com.spotify.Client"
       "org.telegram.desktop"
       "im.riot.Riot"
+      "io.keet.Keet"
       "dev.vencord.Vesktop"
       "io.anytype.anytype"
       # rec {
