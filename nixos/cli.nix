@@ -138,4 +138,107 @@
   # TODO: Do we want to allow user-based keeb config?
   # Non-root access to the qmk
   hardware.keyboard.qmk.enable = true;
+
+  services.llama-cpp = let
+  #   modelPreset = (pkgs.formats.ini { }).generate "llama-models.ini" {
+  #   "*" = {
+  #     ctx-size = 8192;
+  #     n-predict = 192;
+  #     threads = 16;
+  #     threads-batch = 16;
+  #     batch-size = 1024;
+  #     ubatch-size = 256;
+  #     flash-attn = "on";
+  #     cache-type-k = "q8_0";
+  #     cache-type-v = "q8_0";
+  #     cache-prompt = true;
+  #     parallel = 1;
+  #     reasoning = "off";
+  #     temp = 0.1;
+  #     top-k = 20;
+  #     top-p = 0.8;
+  #     min-p = 0.0;
+  #   };
+  #
+  #   "qwen3-1.7b" = {
+  #     model = "Qwen/Qwen3-1.7B-GGUF:Q4_K_M";
+  #     alias = "cmd-gate-fast";
+  #   };
+  #   "qwen3-4b" = {
+  #     model = "Qwen/Qwen3-4B-GGUF:Q4_K_M";
+  #     alias = "cmd-gate";
+  #   };
+  # };
+  in
+  {
+    enable = true;
+    port = 1337;
+    package = pkgs.llama-cpp-vulkan;
+
+    settings = {
+      hf-repo = "Qwen/Qwen3-4B-GGUF";
+      hf-file = "Qwen3-4B-Q4_K_M.gguf";
+      alias = "cmd-gate";
+
+      # 4k is enough, 8k gives breathing room for policy + shell AST + command.
+      ctx-size = 8192;
+      n-predict = 192;
+
+      # 5950X: physical cores first. SMT often does not help token generation.
+      threads = 16;
+      threads-batch = 16;
+
+      # Prompt/classification workload. Bigger batch helps prefill, but do not go silly.
+      batch-size = 1024;
+      ubatch-size = 256;
+
+      # CPU only
+      # gpu-layers = 0;
+      # flash-attn = "on";
+
+      # For GPU:
+      gpu-layers = "all";
+      split-mode = "none";
+      main-gpu = 0;
+      fit = "on";
+      fit-target = 1024;
+      flash-attn = "on";
+      cache-type-k = "q8_0";
+      cache-type-v = "q8_0";
+      kv-offload = true;
+
+      # Server behavior.
+      parallel = 1;
+      cont-batching = true;
+      cache-prompt = true;
+      cache-reuse = 256;
+      metrics = true;
+      slots = true;
+      timeout = 30;
+
+      # For Qwen3 gatekeeping: do not let it spend tokens thinking.
+      reasoning = "off";
+      reasoning-format = "none";
+
+      # Classification sampling. Low temp because this is a policy helper, not chat.
+      seed = 42;
+      temp = 0.1;
+      top-k = 20;
+      top-p = 0.8;
+      min-p = 0.0;
+      repeat-penalty = 1.0;
+      presence-penalty = 0.0;
+      frequency-penalty = 0.0;
+    };
+  };
+
+  # Vulkan shader cache fix that is commonly needed with the NixOS service.
+  systemd.services.llama-cpp.environment = {
+    XDG_CACHE_HOME = "/var/cache/llama-cpp";
+    MESA_SHADER_CACHE_DIR = "/var/cache/llama-cpp";
+  };
+
+  systemd.tmpfiles.rules = [
+    "d /var/cache/llama-cpp 0755 llama-cpp llama-cpp -"
+  ];
 }

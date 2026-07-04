@@ -22,6 +22,16 @@ let
       '';
     };
   };
+  piCodingAgent = pkgs.symlinkJoin {
+    name = "pi-coding-agent-with-extension-node-path";
+    paths = [ pkgs.pi-coding-agent-latest ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    # Pi realpaths symlinked extensions before loading them, so bare imports
+    # need to resolve from the extension dependency closure while pi runs.
+    postBuild = ''
+      wrapProgram $out/bin/pi --prefix NODE_PATH : ${piExtensionNodeModules}/node_modules
+    '';
+  };
 
   # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
   # "npm:context-mode@1.0.165" # Adds too many tools and delivers... nothing?
@@ -162,7 +172,7 @@ in
       github-copilot-cli
       piExtensionBump
 
-      pi-coding-agent-latest
+      piCodingAgent
       nodejs # used too much to ignore :/
       snyk
       typescript
