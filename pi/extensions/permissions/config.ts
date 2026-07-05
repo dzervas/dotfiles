@@ -77,7 +77,16 @@ const DEFAULT_RULES: Rule[] = [
 		comment: "Web search/fetch are always allowed",
 		tool: {
 			kind: "custom",
-			name: ["^web_search$", "^web_read$", "^fetch_content$", "^questionnaire$", "^todo$", "^subagent$"],
+			name: [
+				"^questionnaire$",
+				"^subagent$",
+				"^todo$",
+
+				"^web_search$",
+				"^web_read$",
+				"^fetch_content$",
+				"^get_search_content$",
+			],
 		},
 	},
 	{
