@@ -60,6 +60,9 @@ in
           top_down = true;
         };
 
+        # Replace the default vim.ui.input command-line prompt with a floating input
+        input.enabled = true;
+
         # TODO: How to put all entries in quickfix?
         picker = {
           enabled = true;
@@ -81,8 +84,8 @@ in
             ];
           };
 
-          # Do not replace the default select UI
-          ui_select = false;
+          # Replace the default vim.ui.select numbered menu with the picker
+          ui_select = true;
 
           sources = {
             zoxide = {

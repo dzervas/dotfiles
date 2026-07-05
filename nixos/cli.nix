@@ -176,21 +176,21 @@
     package = pkgs.llama-cpp-vulkan;
 
     settings = {
-      hf-repo = "Qwen/Qwen3-4B-GGUF";
-      hf-file = "Qwen3-4B-Q4_K_M.gguf";
-      alias = "cmd-gate";
+      hf-repo = "deepreinforce-ai/Ornith-1.0-9B-GGUF";
+      hf-file = "ornith-1.0-9b-Q4_K_M.gguf";
+      alias = "ornith";
 
-      # 4k is enough, 8k gives breathing room for policy + shell AST + command.
-      ctx-size = 8192;
+      # Ornith advertises a 262k training context; this is the max context.
+      ctx-size = 262144;
       n-predict = 192;
 
       # 5950X: physical cores first. SMT often does not help token generation.
       threads = 16;
       threads-batch = 16;
 
-      # Prompt/classification workload. Bigger batch helps prefill, but do not go silly.
+      # Best measured max-context prefill on this machine; generation is within noise.
       batch-size = 1024;
-      ubatch-size = 256;
+      ubatch-size = 512;
 
       # CPU only
       # gpu-layers = 0;
@@ -216,7 +216,7 @@
       slots = true;
       timeout = 30;
 
-      # For Qwen3 gatekeeping: do not let it spend tokens thinking.
+      # Keep reasoning disabled for low-latency helper usage.
       reasoning = "off";
       reasoning-format = "none";
 
