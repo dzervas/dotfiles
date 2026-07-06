@@ -145,7 +145,7 @@
       # Shared GPU/placement flags (were the llama-cpp "*" preset defaults).
       gpu = "-ngl 999 -sm none -mg 0 -fit on -fitt 1024 -fa on -ctk q8_0 -ctv q8_0 --kv-offload";
       # Shared server/batching flags.
-      perf = "-t 16 -tb 16 -b 1024 -ub 512 -np 1 -cb --cache-prompt --cache-reuse 256";
+      perf = "-t 16 -tb 16 -np 1 -cb --cache-prompt --cache-reuse 256";
       # Common server behaviour (metrics/slots/timeout, no web UI).
       srv = "--metrics --slots -to 30 --no-webui";
 
@@ -168,11 +168,13 @@
 
         models = {
           # Zeta 2.1 edit prediction (SeedCoder-8B). Greedy, native 32k context.
+          # Max output tokens needs to be 4x the zed config (512)
           zeta.cmd = ''
             ${llama-server} --port ''${PORT}
             -hf adilkairolla/zeta-2.1-GGUF --hf-file zeta-2.1-Q4_K_M.gguf
             ${gpu} ${perf} ${srv}
-            -c 32768 -n 512
+            -b 2048 -ub 2048
+            -c 8192 -n 2048
             --temp 0.0 --top-k 0 --top-p 1.0 --min-p 0.0
             -rea off --reasoning-format none
           '';
@@ -182,6 +184,7 @@
             ${llama-server} --port ''${PORT}
             -hf Qwen/Qwen3-4B-GGUF --hf-file Qwen3-4B-Q4_K_M.gguf
             ${gpu} ${perf} ${srv} ${gateSampling}
+            -b 1024 -ub 512
             -c 8192 -n 192
             -rea off --reasoning-format none
           '';
@@ -191,6 +194,7 @@
             ${llama-server} --port ''${PORT}
             -hf deepreinforce-ai/Ornith-1.0-9B-GGUF --hf-file ornith-1.0-9b-Q4_K_M.gguf
             ${gpu} ${perf} ${srv} ${gateSampling}
+            -b 1024 -ub 512
             -c 262144 -n -1
             -rea on --reasoning-budget -1 --reasoning-format deepseek --reasoning-preserve
           '';
