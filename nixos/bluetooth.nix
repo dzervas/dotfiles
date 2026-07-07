@@ -5,9 +5,12 @@
     settings = {
       General = {
         ControllerMode = "dual";
+        # ControllerMode = "le";
         FastConnectable = "true";
-        Experimental = "true";
-        # Enable = "Source,Sink,Media,Socket"; # No longer an option?
+        # Experimental = "true";
+
+        # https://github.com/bluez/bluez/blob/master/src/main.conf#L133-L144
+        # KernelExperimental = "6fbaf188-05e0-496a-9885-d6ddfdb4e03e"; # ISO socket, for LE Audio
       };
       LE.EnableAdvMonInterleaveScan = "true";
     };
@@ -32,7 +35,7 @@
         "bluetooth.autoswitch-to-headset-profile" = false;
       };
       "monitor.bluez.properties" = {
-        "bluez5.roles" = [ "a2dp_sink" "a2dp_source" "bap_duplex" ];
+        "bluez5.roles" = [ "a2dp_sink" "a2dp_source" "bap_duplex" "bap_source" "bap_sink" ];
       };
     };
   };

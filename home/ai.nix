@@ -46,7 +46,7 @@ let
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
 
-  piSettings = rec {
+  piSettings = {
     quietStartup = true;
     collapseChangelog = true;
     enableInstallTelemetry = false;
@@ -61,10 +61,9 @@ let
       piNpmPrefix
     ];
 
-    defaultProvider = "dzerv-art";
-    defaultModel = "claude-opus-4-8";
+    defaultModel = "gpt-5.5";
     defaultThinkingLevel = "medium";
-    enabledModels = [ defaultModel "gpt-5.5" "claude-fable-5" "claude-sonnet-5" ];
+    enabledModels = [ "claude-opus-4-8" "gpt-5.5" "claude-fable-5" "claude-sonnet-5" ];
 
     subagents = {
       defaultModel = "claude-sonnet-5";

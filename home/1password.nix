@@ -34,7 +34,8 @@ in {
       PartOf = [ "graphical-session.target" ];
     };
 
-    Service.ExecStart = "${_1password-gui}/bin/1password --silent --ozone-platform=wayland";
+    # Service.ExecStart = "${_1password-gui}/bin/1password --silent --ozone-platform=wayland";
+    Service.ExecStart = "${_1password-gui}/bin/1password --silent";
     Install.WantedBy = [ "graphical-session.target" ];
   };
 }
