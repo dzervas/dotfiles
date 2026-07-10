@@ -92,3 +92,14 @@ a fresh/independent context. Available models, cheapest/most-abundant first:
 **Quality over tokens:** if a result isn't good enough, escalate to a stronger
 model and retry. Saving tokens is never worth a bad result — quality is always
 preferred over token cost.
+
+
+## Subagent Usage
+
+- Use `delegate` for arbitrary one-off subagent instructions. The named agents
+  (`scout`, `reviewer`, `worker`, etc.) are role presets; they are not the only
+  delegation path. Prefer `delegate` when the task does not fit a preset.
+- When launching subagents, explicitly choose a model based on task difficulty
+  instead of blindly inheriting the parent model. Use cheaper/default models for
+  simple recon, summaries, and small delegated tasks; use stronger models for
+  complex planning, implementation, or adversarial review.

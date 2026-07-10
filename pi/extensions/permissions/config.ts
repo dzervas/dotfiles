@@ -80,6 +80,7 @@ const DEFAULT_RULES: Rule[] = [
 			name: [
 				"^questionnaire$",
 				"^subagent$",
+				"^get_subagent_result$",
 				"^todo$",
 
 				"^web_search$",

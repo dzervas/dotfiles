@@ -22,26 +22,35 @@ let
       '';
     };
   };
+  piCodingAgentNodeModules = pkgs.runCommand "pi-coding-agent-node-modules" { } ''
+    mkdir -p $out/node_modules/@earendil-works
+    ln -s ${pkgs.pi-coding-agent-latest}/lib/node_modules/pi-monorepo \
+      $out/node_modules/@earendil-works/pi-coding-agent
+  '';
   piCodingAgent = pkgs.symlinkJoin {
     name = "pi-coding-agent-with-extension-node-path";
     paths = [ pkgs.pi-coding-agent-latest ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
     # Pi realpaths symlinked extensions before loading them, so bare imports
     # need to resolve from the extension dependency closure while pi runs.
+    # Async subagent runners also need the Nix-installed Pi package exposed under
+    # its package name for detached module resolution.
     postBuild = ''
-      wrapProgram $out/bin/pi --prefix NODE_PATH : ${piExtensionNodeModules}/node_modules
+      wrapProgram $out/bin/pi \
+        --prefix NODE_PATH : ${piExtensionNodeModules}/node_modules \
+        --prefix NODE_PATH : ${piCodingAgentNodeModules}/node_modules \
+        --prefix NODE_OPTIONS " " "--conditions=import"
     '';
   };
 
   # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
-  # "npm:context-mode@1.0.165" # Adds too many tools and delivers... nothing?
   piPackages = [
-    "npm:pi-subagents@0.31.0"
-    "npm:pi-mcp-adapter@2.10.0"
+    "npm:pi-mcp-adapter@2.11.0"
     "npm:pi-web-access@0.13.0"
-    "npm:pi-readseek@0.4.22"
+    "npm:pi-readseek@0.4.27"
     "npm:@juicesharp/rpiv-todo@1.20.0"
-    "npm:@gotgenes/pi-anthropic-auth@0.7.0"
+    "npm:@gotgenes/pi-anthropic-auth@1.0.0"
+    "npm:@gotgenes/pi-subagents@18.0.1"
   ];
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
@@ -63,7 +72,7 @@ let
 
     defaultModel = "gpt-5.5";
     defaultThinkingLevel = "medium";
-    enabledModels = [ "claude-opus-4-8" "gpt-5.5" "claude-fable-5" "claude-sonnet-5" ];
+    enabledModels = [ "gpt-5.5" "claude-opus-4-8" "claude-fable-5" "claude-sonnet-5" ];
 
     subagents = {
       defaultModel = "claude-sonnet-5";
