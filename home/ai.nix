@@ -38,8 +38,8 @@ let
     postBuild = ''
       wrapProgram $out/bin/pi \
         --prefix NODE_PATH : ${piExtensionNodeModules}/node_modules \
-        --prefix NODE_PATH : ${piCodingAgentNodeModules}/node_modules \
-        --prefix NODE_OPTIONS " " "--conditions=import"
+        --prefix NODE_PATH : ${piCodingAgentNodeModules}/node_modules
+        # --prefix NODE_OPTIONS " " "--conditions=import"
     '';
   };
 

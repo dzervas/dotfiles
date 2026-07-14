@@ -114,6 +114,8 @@ bwrap \
 	--dev /dev \
 	--tmpfs /tmp \
 	--ro-bind /nix/store /nix/store \
+	--ro-bind /bin /bin \
+	--ro-bind /usr/bin /usr/bin \
 	--ro-bind /etc/nix /etc/nix \
 	--ro-bind /etc/static /etc/static \
 	--ro-bind /etc/ssl /etc/ssl \
