@@ -61,6 +61,7 @@ let
     enableInstallTelemetry = false;
     showHardwareCursor = true;
     transport = "auto";
+    terminal.showTerminalProgress = true;
     warnings.anthropicExtraUsage = false;
 
     packages = piPackages;
@@ -70,9 +71,9 @@ let
       piNpmPrefix
     ];
 
-    defaultModel = "gpt-5.5";
+    defaultModel = "gpt-5.6-terra";
     defaultThinkingLevel = "medium";
-    enabledModels = [ "gpt-5.5" "claude-opus-4-8" "claude-fable-5" "claude-sonnet-5" ];
+    enabledModels = [ "gpt-5.6-terra" "claude-opus-4-8" "claude-fable-5" "gpt-5.6-sol" "claude-sonnet-5" "gpt-5.5" ];
 
     subagents = {
       defaultModel = "claude-sonnet-5";

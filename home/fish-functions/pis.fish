@@ -127,7 +127,15 @@ bwrap \
 	--ro-bind /run/current-system/sw /run/current-system/sw \
 	--ro-bind /etc/profiles/per-user/$USER/ /etc/profiles/per-user/$USER/ \
 	--bind $sandbox_home $HOME \
-	--bind $HOME/.pi $HOME/.pi \
+	--ro-bind $HOME/.pi/agent/settings.json $HOME/.pi/agent/settings.json \
+	--ro-bind $HOME/.pi/agent/auth.json $HOME/.pi/agent/auth.json \
+	--ro-bind $HOME/.pi/agent/node_modules $HOME/.pi/agent/node_modules \
+	--ro-bind $HOME/.pi/agent/extensions $HOME/.pi/agent/extensions \
+	--ro-bind $HOME/.pi/agent/skills $HOME/.pi/agent/skills \
+	--ro-bind $HOME/.pi/agent/AGENTS.md $HOME/.pi/agent/AGENTS.md \
+	--bind $HOME/.pi/agent/sessions $HOME/.pi/agent/sessions \
+	--bind $HOME/.pi/agent/run-history.jsonl $HOME/.pi/agent/run-history.jsonl \
+	--bind $HOME/.pi/readseek $HOME/.pi/readseek \
 	--ro-bind $HOME/Lab/dotfiles/pi/sandbox.ts $HOME/.pi/agent/sandbox.ts \
 	--bind $project_dir $project_dir \
 	--ro-bind $HOME/.config/jj $HOME/.config/jj \
