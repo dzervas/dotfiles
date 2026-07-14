@@ -7,15 +7,21 @@ import {
 	createReadToolDefinition,
 	createWriteToolDefinition,
 	type ExtensionAPI,
+	type ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
-import type { PermissionAskRequest, PermissionSubject } from "./permissions";
+import {
+	PERMISSIONS_ASK_BROKER_KEY,
+	PERMISSIONS_ASK_EVENT,
+	type PermissionAskAnswer,
+	type PermissionAskBroker,
+	type PermissionAskRequest,
+	type PermissionSubject,
+} from "./permissions";
 import {
 	type DialogueOption,
 	type DialogueResult,
 	ScrollableDialogue,
 } from "./lib/scrollable-dialogue";
-
-const PERMISSIONS_ASK_EVENT = "permissions:ask";
 
 function getToolDefinitions(cwd: string) {
 	return {
@@ -49,18 +55,18 @@ function formatGenericCall(subject: PermissionSubject) {
 	return [header, ...args].join("\n");
 }
 
-function formatToolCall(subject: PermissionSubject, request: PermissionAskRequest) {
-	const definitions = getToolDefinitions(request.ctx.cwd);
+function formatToolCall(subject: PermissionSubject, ctx: ExtensionContext) {
+	const definitions = getToolDefinitions(ctx.cwd);
 	const definition = definitions[subject.toolName as keyof typeof definitions];
 	if (!definition?.renderCall) return formatGenericCall(subject);
 	try {
-		const component = definition.renderCall(subject.input as any, request.ctx.ui.theme, {
+		const component = definition.renderCall(subject.input as any, ctx.ui.theme, {
 			args: subject.input,
 			toolCallId: `permissions:${subject.toolName}`,
 			invalidate: () => {},
 			lastComponent: undefined,
 			state: {},
-			cwd: request.ctx.cwd,
+			cwd: ctx.cwd,
 			executionStarted: false,
 			argsComplete: true,
 			isPartial: false,
@@ -82,7 +88,7 @@ function formatToolCall(subject: PermissionSubject, request: PermissionAskReques
 // falls back to the renderCall/generic key-value dump as plain text.
 function formatBody(
 	subject: PermissionSubject,
-	request: PermissionAskRequest,
+	ctx: ExtensionContext,
 ): { body: string; language?: string } {
 	if (subject.toolKind === "builtin" && subject.toolName === "bash")
 		return { body: subject.rawInput, language: "bash" };
@@ -108,7 +114,7 @@ function formatBody(
 			language: "bash",
 		};
 
-	return { body: formatToolCall(subject, request) };
+	return { body: formatToolCall(subject, ctx) };
 }
 
 function classifierEmoji(action: "allow" | "ask" | "deny", confidence: number): string {
@@ -129,10 +135,16 @@ function classifierDetails(subject: PermissionSubject): string[] | undefined {
 	];
 }
 
-async function answerPermissionRequest(pi: ExtensionAPI, request: PermissionAskRequest) {
-	const { subject, reason, ctx } = request;
-
-	const { body, language } = formatBody(subject, request);
+// Renders the permission dialog on the given (UI-bearing) session context and
+// returns the raw decision. No side effects — callers apply rule saves and
+// steer messages against the session that actually asked.
+async function renderPermissionDialog(
+	ctx: ExtensionContext,
+	subject: PermissionSubject,
+	reason: string,
+	label?: string,
+): Promise<PermissionAskAnswer | null> {
+	const { body, language } = formatBody(subject, ctx);
 
 	const options: DialogueOption[] = [
 		{ value: "allow", label: "Allow once", allowMessage: true },
@@ -142,12 +154,14 @@ async function answerPermissionRequest(pi: ExtensionAPI, request: PermissionAskR
 
 	process.stderr.write("\x07"); // ring the terminal bell to flag the prompt
 
+	const title = label ? `󱅞 Permission request — ${label}` : "󱅞 Permission request";
+
 	const result = await ctx.ui.custom<DialogueResult | null>((tui, theme, _kb, done) =>
 		new ScrollableDialogue(
 			tui,
 			theme,
 			{
-				title: "󱅞 Permission request",
+				title,
 				body,
 				language,
 				reason: `Reason: ${reason}`,
@@ -159,15 +173,8 @@ async function answerPermissionRequest(pi: ExtensionAPI, request: PermissionAskR
 		),
 	);
 
-	if (!result) return { block: true, reason: "Blocked by user" };
-
-	if (result.value === "allow-save") ctx.ui.notify(request.saveRule(), "info");
-
-	if (result.message) pi.sendUserMessage(result.message, { deliverAs: "steer" });
-
-	if (result.value === "allow" || result.value === "allow-save") return undefined;
-
-	return { block: true, reason: "Blocked by user" };
+	if (!result) return null;
+	return { value: result.value as PermissionAskAnswer["value"], message: result.message };
 }
 
 function isPermissionAskRequest(value: unknown): value is PermissionAskRequest {
@@ -183,16 +190,73 @@ function isPermissionAskRequest(value: unknown): value is PermissionAskRequest {
 	);
 }
 
+// Shared, process-wide state. The extension module is a singleton across all
+// in-process sessions (parent + subagents), so a single dialog queue serializes
+// every prompt onto one terminal and a single ctx points at the UI session.
+let uiCtx: ExtensionContext | undefined;
+let dialogChain: Promise<unknown> = Promise.resolve();
+
+// Serialize all dialogs (same-session and bridged) so concurrent subagents
+// don't fight over the terminal.
+function enqueue<T>(fn: () => Promise<T>): Promise<T> {
+	const run = dialogChain.then(fn, fn);
+	dialogChain = run.then(
+		() => undefined,
+		() => undefined,
+	);
+	return run;
+}
+
+// The bridge target: no-UI sessions (subagents) look this up on globalThis and
+// call it to surface their prompt on the UI session's terminal.
+const broker: PermissionAskBroker = async (subject, reason) => {
+	if (!uiCtx) return undefined;
+	const ctx = uiCtx;
+	const answer = await enqueue(() => renderPermissionDialog(ctx, subject, reason, "subagent"));
+	return answer ?? undefined;
+};
+
 export default function permissionPromptExtension(pi: ExtensionAPI) {
+	let registeredBroker = false;
+
+	const registerBrokerIfUI = (ctx: ExtensionContext) => {
+		if (!ctx.hasUI) return;
+		uiCtx = ctx;
+		(globalThis as Record<PropertyKey, unknown>)[PERMISSIONS_ASK_BROKER_KEY] = broker;
+		registeredBroker = true;
+	};
+
+	pi.on("session_start", async (_event, ctx) => registerBrokerIfUI(ctx));
+	pi.on("session_tree", async (_event, ctx) => registerBrokerIfUI(ctx));
+
+	pi.on("session_shutdown", async () => {
+		if (!registeredBroker) return;
+		const g = globalThis as Record<PropertyKey, unknown>;
+		if (g[PERMISSIONS_ASK_BROKER_KEY] === broker) delete g[PERMISSIONS_ASK_BROKER_KEY];
+		registeredBroker = false;
+	});
+
 	pi.events.on(PERMISSIONS_ASK_EVENT, (data) => {
 		if (!isPermissionAskRequest(data)) return;
 
+		// A UI-bearing session asked directly; keep the broker ctx fresh too.
+		if (data.ctx.hasUI) uiCtx = data.ctx;
 		data.accept();
-		void answerPermissionRequest(pi, data).then(data.resolve, (error: unknown) =>
-			data.resolve({
-				block: true,
-				reason: error instanceof Error ? error.message : "Permission prompt failed",
-			}),
+
+		void enqueue(() => renderPermissionDialog(data.ctx, data.subject, data.reason)).then(
+			(answer) => {
+				if (!answer) return data.resolve({ block: true, reason: "Blocked by user" });
+				if (answer.value === "allow-save") data.ctx.ui.notify(data.saveRule(), "info");
+				if (answer.message) pi.sendUserMessage(answer.message, { deliverAs: "steer" });
+				if (answer.value === "allow" || answer.value === "allow-save")
+					return data.resolve(undefined);
+				return data.resolve({ block: true, reason: "Blocked by user" });
+			},
+			(error: unknown) =>
+				data.resolve({
+					block: true,
+					reason: error instanceof Error ? error.message : "Permission prompt failed",
+				}),
 		);
 	});
 }
