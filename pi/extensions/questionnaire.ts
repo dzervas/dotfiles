@@ -14,6 +14,7 @@ import {
 	matchesKey,
 	Text,
 	truncateToWidth,
+	wrapTextWithAnsi,
 } from "@earendil-works/pi-tui";
 import { Type } from "@sinclair/typebox";
 
@@ -284,6 +285,13 @@ export default function questionnaire(pi: ExtensionAPI) {
 					// Helper to add truncated line
 					const add = (s: string) => lines.push(truncateToWidth(s, width));
 
+					// Helper to add wrapped prompt text (one leading space of indent)
+					const addPrompt = (prompt: string) => {
+						for (const line of wrapTextWithAnsi(prompt, width - 1)) {
+							lines.push(theme.fg("text", ` ${line}`));
+						}
+					};
+
 					add(theme.fg("accent", "─".repeat(width)));
 
 					// Tab bar (multi-question only)
@@ -334,7 +342,7 @@ export default function questionnaire(pi: ExtensionAPI) {
 
 					// Content
 					if (inputMode && q) {
-						add(theme.fg("text", ` ${q.prompt}`));
+						addPrompt(q.prompt);
 						lines.push("");
 						// Show options for reference
 						renderOptions();
@@ -368,7 +376,7 @@ export default function questionnaire(pi: ExtensionAPI) {
 							add(theme.fg("warning", ` Unanswered: ${missing}`));
 						}
 					} else if (q) {
-						add(theme.fg("text", ` ${q.prompt}`));
+						addPrompt(q.prompt);
 						lines.push("");
 						renderOptions();
 					}
