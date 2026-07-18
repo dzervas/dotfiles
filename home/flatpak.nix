@@ -51,6 +51,7 @@
         filesystems = [ "home/CryptVMs/Switch" ];
       };
 
+      "org.signal.Signal".Context.sockets = [ "wayland" "pulseaudio" ];
       "org.signal.Signal".Environment = {
         SIGNAL_PASSWORD_STORE = "gnome-libsecret";
         SIGNAL_USE_WAYLAND = "1";

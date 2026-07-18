@@ -87,6 +87,8 @@ const DEFAULT_RULES: Rule[] = [
 				"^web_read$",
 				"^fetch_content$",
 				"^get_search_content$",
+
+				"^workflow$",
 			],
 		},
 	},

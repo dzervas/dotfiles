@@ -139,6 +139,7 @@
       # Add support for the thermal printer
       SUBSYSTEM=="usb", ATTRS{idVendor}=="4b43", ATTRS{idProduct}=="3538", MODE="0660", GROUP="dialout"
     '';
+
     llama-swap = let
       llama-server = "${pkgs.llama-cpp-vulkan}/bin/llama-server";
 
@@ -201,7 +202,7 @@
         };
 
         # Load zeta at boot so it is the default resident model.
-        hooks.on_startup.preload = [ "zeta" ];
+        # hooks.on_startup.preload = [ "zeta" ];
       };
     };
   };

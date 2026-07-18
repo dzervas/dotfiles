@@ -75,18 +75,17 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ## Subagent Model Selection
 
-When delegating via the `subagent` tool, pick the `model` arg by matching task
-difficulty to cost — do NOT just inherit the parent model. Prefer delegating over
+When delegating via the `subagent` or `workflow` tool, pick the `model` arg by matching task
+difficulty to cost - do NOT just inherit the parent model. Prefer delegating over
 doing everything inline when a task is parallelizable, isolatable, or benefits from
 a fresh/independent context. Available models, cheapest/most-abundant first:
 
-- **gpt-5.5** — DEFAULT workhorse. Cheap, abundant sub, strong at coding and long
+- **gpt-5.5/gpt-5.6-terra/claude-opus-4-8** - DEFAULT workhorse. Cheap, abundant sub, strong at coding and long
   multi-step workflows. Use for the bulk of delegated work: recon, research,
   routine implementation, and anything run in parallel or high volume.
-- **claude-sonnet-5** — If gpt is out of tokens and the work is simple enough,
+- **claude-sonnet-5/gpt-5.6-luna** - If gpt is out of tokens and the work is simple enough,
   use it. It's dumber than gpt but good enough for recon/summaries/etc.
-- **claude-opus-4-8** — Similar model to GPT but harsh limits.
-- **claude-fable-5** — Last resort, hardest ceiling. Most capable model, for the
+- **claude-fable-5/gpt-5.6-sol (probably high)** - Last resort, hardest ceiling. Most capable model, for the
   most ambitious long-horizon work only.
 
 **Quality over tokens:** if a result isn't good enough, escalate to a stronger
