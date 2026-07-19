@@ -7,5 +7,6 @@
 uv.lock
 .python-version
 .pi
-/pi/extensions/search.json
 __pycache__
+/pi/extensions/search.json
+/pi/extensions/**.js
