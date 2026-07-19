@@ -136,8 +136,9 @@ bwrap \
 	--ro-bind $HOME/.pi/agent/skills $HOME/.pi/agent/skills \
 	--ro-bind $HOME/.pi/agent/AGENTS.md $HOME/.pi/agent/AGENTS.md \
 	--bind $HOME/.pi/agent/sessions $HOME/.pi/agent/sessions \
-	--bind $HOME/.pi/agent/run-history.jsonl $HOME/.pi/agent/run-history.jsonl \
+	--bind $HOME/.pi/workflows $HOME/.pi/workflows \
 	--bind $HOME/.pi/readseek $HOME/.pi/readseek \
+	--bind $HOME/.pi/agent/run-history.jsonl $HOME/.pi/agent/run-history.jsonl \
 	--ro-bind $HOME/Lab/dotfiles/pi/sandbox.ts $HOME/.pi/agent/sandbox.ts \
 	--bind $project_dir $project_dir \
 	--ro-bind $HOME/.config/jj $HOME/.config/jj \

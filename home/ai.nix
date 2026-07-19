@@ -201,6 +201,16 @@ in
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/skills";
       ".pi/agent/node_modules".source = piExtensionNodeModules + "/node_modules";
       ".pi/agent/settings.json".text = builtins.toJSON piSettings;
+      ".pi/workflows/settings.json".text = builtins.toJSON {
+        keywordTriggerEnabled = false;
+      };
+      ".pi/workflows/model-tiers.json".text = builtins.toJSON {
+        tiers = {
+          small = "openai-codex/gpt-5.6-luna:low";
+          medium = "dzerv-art/claude-opus-4-8";
+          big = "openai-codex/gpt-5.6-sol:high";
+        };
+      };
     };
   };
 
