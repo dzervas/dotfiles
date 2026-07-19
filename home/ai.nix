@@ -51,7 +51,7 @@ let
     "npm:@juicesharp/rpiv-todo@1.20.0"
     "npm:@gotgenes/pi-anthropic-auth@1.0.0"
     "npm:@gotgenes/pi-subagents@18.0.1"
-    "npm:@quintinshaw/pi-dynamic-workflows@2.12.1"
+    "npm:@quintinshaw/pi-dynamic-workflows@3.2.1"
   ];
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
