@@ -38,7 +38,10 @@
 			"type": "registry",
 		},
 		"pi-acp": {
-			"type": "registry",
+			"default_config_options": {
+    "model": "dzerv-art/claude-opus-4-8"
+   },
+   "type": "registry",
 		},
 		"claude-acp": {
 			"type": "registry",

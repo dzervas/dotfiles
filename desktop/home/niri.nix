@@ -29,11 +29,11 @@
       prefer-no-csd = true;
 
       workspaces = {
-        "web".open-on-output = "DP-1";
-        "work".open-on-output = "DP-1";
-        "game".open-on-output = "DP-1";
-        "term".open-on-output = "DP-3";
-        "chat".open-on-output = "DP-3";
+        "1-web".open-on-output = "DP-1";
+        "2-work".open-on-output = "DP-1";
+        "3-game".open-on-output = "DP-1";
+        "1-term".open-on-output = "DP-3";
+        "2-chat".open-on-output = "DP-3";
       };
 
       spawn-at-startup = [
@@ -282,7 +282,7 @@
             }
           ];
           # open-maximized-to-edges = false;
-          open-on-workspace = "web";
+          open-on-workspace = "1-web";
           open-focused = true;
         }
         {
@@ -296,7 +296,7 @@
               at-startup = true;
             }
           ];
-          open-on-workspace = "work";
+          open-on-workspace = "2-work";
         }
         {
           matches = [
@@ -305,7 +305,7 @@
               at-startup = true;
             }
           ];
-          open-on-workspace = "game";
+          open-on-workspace = "3-game";
         }
         {
           matches = [
@@ -314,7 +314,7 @@
               at-startup = true;
             }
           ];
-          open-on-workspace = "term";
+          open-on-workspace = "1-term";
         }
         {
           matches = [
@@ -327,7 +327,7 @@
               at-startup = true;
             }
           ];
-          open-on-workspace = "chat";
+          open-on-workspace = "2-chat";
         }
       ];
 
