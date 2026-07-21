@@ -69,4 +69,14 @@ final: prev: rec {
       };
     }
   );
+
+  # Broken: fix 1.18.0 upstream bug
+  flatpak = prev.flatpak.overrideAttrs (old: {
+    patches = (old.patches or []) ++ [
+      (prev.fetchpatch {
+        url = "https://github.com/swick/flatpak/commit/ae81e796091d357e5a2e4e348c406671632b15a6.patch";
+        hash = "sha256-ce8PTpQl5OuaCRCYKYih7v6D4PVWURwOh0m2Wf4GUvM=";
+      })
+    ];
+  });
 }

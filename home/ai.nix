@@ -47,11 +47,10 @@ let
   piPackages = [
     "npm:pi-mcp-adapter@2.11.0"
     "npm:pi-web-access@0.13.0"
-    "npm:pi-readseek@0.4.29"
+    "npm:pi-readseek@0.5.19"
     "npm:@juicesharp/rpiv-todo@1.20.0"
     "npm:@gotgenes/pi-anthropic-auth@1.0.0"
-    "npm:@gotgenes/pi-subagents@18.1.0"
-    # "npm:@quintinshaw/pi-dynamic-workflows@3.2.1"
+    "npm:@gotgenes/pi-subagents@18.0.2"
   ];
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
