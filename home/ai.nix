@@ -91,6 +91,11 @@ let
         reviewer.model = piSettings.defaultModel; # Code reviewer
       };
     };
+
+    readseek = {
+      replacedTools = [ "read" "edit" "write" "grep" ];
+      syntaxValidation = "warn";
+    };
   };
 
   piExtensionBump = pkgs.writeShellApplication {

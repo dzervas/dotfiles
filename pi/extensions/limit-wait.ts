@@ -182,8 +182,22 @@ export default function limitWaitExtension(pi: ExtensionAPI): void {
 		return Math.min(MAX_DELAY_MS, Math.max(MIN_DELAY_MS, delay));
 	}
 
+	/**
+	 * Access `ctx.hasUI` safely. A ctx captured before a session
+	 * replacement/reload becomes stale and throws on any property access; treat
+	 * that as "abandon" rather than letting it crash a timer callback.
+	 */
+	function isCtxStale(ctx: ExtensionContext): boolean {
+		try {
+			void ctx.hasUI;
+			return false;
+		} catch {
+			return true;
+		}
+	}
+
 	function updateWidget(ctx: ExtensionContext, fireAt: number): void {
-		if (!ctx.hasUI) return;
+		if (isCtxStale(ctx) || !ctx.hasUI) return;
 		const remaining = fmtDuration(fireAt - Date.now());
 		ctx.ui.setWidget("limit-wait", [
 			ctx.ui.theme.fg("warning", `⏳ Usage limit — retrying in ${remaining} · Esc to cancel`),
@@ -208,12 +222,25 @@ export default function limitWaitExtension(pi: ExtensionAPI): void {
 		const fireAt = Date.now() + delay;
 
 		updateWidget(ctx, fireAt);
-		countdownTimer = setInterval(() => updateWidget(latestCtx ?? ctx, fireAt), 1000);
+		countdownTimer = setInterval(() => {
+			const active = latestCtx ?? ctx;
+			if (isCtxStale(active)) {
+				// Session was replaced/reloaded out from under us; abandon quietly.
+				waiting = false;
+				clearTimers();
+				return;
+			}
+			updateWidget(active, fireAt);
+		}, 1000);
 		countdownTimer.unref?.();
 
 		retryTimer = setTimeout(() => {
 			clearTimers();
 			const active = latestCtx ?? ctx;
+			if (isCtxStale(active)) {
+				waiting = false;
+				return;
+			}
 			if (active.hasUI) active.ui.setWidget("limit-wait", undefined);
 			if (!triggerResume(pi, active.isIdle(), active.hasPendingMessages())) {
 				// Agent busy right now — check again shortly.
