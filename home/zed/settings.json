@@ -39,7 +39,7 @@
 		},
 		"pi-acp": {
 			"default_config_options": {
-    "model": "dzerv-art/claude-opus-4-8"
+    "model": "cliproxyapi/claude-opus-4-8"
    },
    "type": "registry",
 		},

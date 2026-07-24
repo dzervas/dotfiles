@@ -51,11 +51,12 @@ let
     "npm:@juicesharp/rpiv-todo@1.20.0"
     "npm:@gotgenes/pi-anthropic-auth@1.0.0"
     "npm:@gotgenes/pi-subagents@18.0.2"
+    "npm:@router-for-me/pi-cliproxyapi-provider@1.4.8"
   ];
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
 
-  piSettings = {
+  piSettings = rec {
     quietStartup = true;
     collapseChangelog = true;
     enableInstallTelemetry = false;
@@ -74,9 +75,9 @@ let
       piNpmPrefix
     ];
 
-    defaultModel = "gpt-5.6-terra";
+    defaultModel = builtins.elemAt enabledModels 0;
     defaultThinkingLevel = "medium";
-    enabledModels = [ "gpt-5.6-terra" "claude-opus-4-8" "claude-fable-5" "gpt-5.6-sol" "claude-sonnet-5" "gpt-5.5" ];
+    enabledModels = [ "claude-opus-4-8" "gpt-5.6-sol" "gpt-5.6-terra" "claude-fable-5" ];
 
     subagents = {
       defaultModel = "claude-sonnet-5";
@@ -214,7 +215,7 @@ in
       ".pi/workflows/model-tiers.json".text = builtins.toJSON {
         tiers = {
           small = "openai-codex/gpt-5.6-luna:low";
-          medium = "dzerv-art/claude-opus-4-8";
+          medium = "cliproxyapi/claude-opus-4-8";
           big = "openai-codex/gpt-5.6-sol:high";
         };
       };
