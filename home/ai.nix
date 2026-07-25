@@ -77,7 +77,7 @@ let
 
     defaultModel = builtins.elemAt enabledModels 0;
     defaultThinkingLevel = "medium";
-    enabledModels = [ "claude-opus-4-8" "gpt-5.6-sol" "gpt-5.6-terra" "claude-fable-5" ];
+    enabledModels = [ "claude-opus-5" "gpt-5.6-sol" "gpt-5.6-terra" "claude-fable-5" ];
 
     subagents = {
       defaultModel = "claude-sonnet-5";
@@ -215,7 +215,7 @@ in
       ".pi/workflows/model-tiers.json".text = builtins.toJSON {
         tiers = {
           small = "openai-codex/gpt-5.6-luna:low";
-          medium = "cliproxyapi/claude-opus-4-8";
+          medium = "cliproxyapi/claude-opus-5";
           big = "openai-codex/gpt-5.6-sol:high";
         };
       };

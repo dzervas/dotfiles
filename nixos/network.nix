@@ -65,6 +65,11 @@
 
     # resolved already handles this
     avahi.enable = false;
+
+    netbird = {
+      enable = true;
+      ui.enable = true;
+    };
   };
 
   # Broken package

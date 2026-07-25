@@ -80,7 +80,7 @@ difficulty to cost - do NOT just inherit the parent model. Prefer delegating ove
 doing everything inline when a task is parallelizable, isolatable, or benefits from
 a fresh/independent context. Available models, cheapest/most-abundant first:
 
-- **gpt-5.5/gpt-5.6-terra/claude-opus-4-8** - DEFAULT workhorse. Cheap, abundant sub, strong at coding and long
+- **gpt-5.5/gpt-5.6-terra/claude-opus-5** - DEFAULT workhorse. Cheap, abundant sub, strong at coding and long
   multi-step workflows. Use for the bulk of delegated work: recon, research,
   routine implementation, and anything run in parallel or high volume.
 - **claude-sonnet-5/gpt-5.6-luna** - If gpt is out of tokens and the work is simple enough,
