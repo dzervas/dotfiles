@@ -47,12 +47,18 @@ let
   piPackages = [
     "npm:pi-mcp-adapter@2.11.0"
     "npm:pi-web-access@0.13.0"
-    "npm:pi-readseek@0.5.19"
-    "npm:@juicesharp/rpiv-todo@1.20.0"
-    "npm:@gotgenes/pi-anthropic-auth@1.0.0"
-    "npm:@gotgenes/pi-subagents@18.0.2"
-    "npm:@router-for-me/pi-cliproxyapi-provider@1.4.8"
+    "npm:pi-readseek@0.8.0"
+    "npm:@juicesharp/rpiv-todo@2.0.0"
+    "npm:@gotgenes/pi-anthropic-auth@2.0.0"
+    "npm:@gotgenes/pi-subagents@18.2.0"
+    "npm:@quintinshaw/pi-dynamic-workflows@3.3.0"
+    {
+      source = "npm:@router-for-me/pi-cliproxyapi-provider@1.4.8";
+      # Disable tps.ts that shows elapsed n stuff, it's ugly
+      extensions = [ "index.ts" ];
+    }
   ];
+  piPackagesSources = map (p: p.source or p) piPackages;
 
   piNpmPrefix = "${config.home.homeDirectory}/.pi/agent/npm-global";
 
@@ -96,6 +102,12 @@ let
     readseek = {
       replacedTools = [ "read" "edit" "write" "grep" ];
       syntaxValidation = "warn";
+      display = {
+        read = "compact";
+        grep = "compact";
+        edit = "expanded";
+        write = "expanded";
+      };
     };
   };
 
@@ -108,11 +120,12 @@ let
       python3
       snyk
     ];
+
     text = ''
       set -euo pipefail
 
       ai_nix="''${DOTFILES_PATH:-${config.home.homeDirectory}/Lab/dotfiles}/home/ai.nix"
-      specs=(${lib.escapeShellArgs piPackages})
+      specs=(${lib.escapeShellArgs piPackagesSources})
       cutoff="$(date -u -d '7 days ago' +%F)"
       resolved_specs=()
 
@@ -214,9 +227,9 @@ in
       };
       ".pi/workflows/model-tiers.json".text = builtins.toJSON {
         tiers = {
-          small = "openai-codex/gpt-5.6-luna:low";
+          small = "cliproxyapi/gpt-5.6-luna:low";
           medium = "cliproxyapi/claude-opus-5";
-          big = "openai-codex/gpt-5.6-sol:high";
+          big = "cliproxyapi/gpt-5.6-sol:high";
         };
       };
     };
