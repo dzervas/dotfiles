@@ -1,0 +1,11 @@
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"skipLibCheck": true,
+		"types": ["node"],
+		"typeRoots": [
+			"/etc/profiles/per-user/dzervas/lib/node_modules/pi-monorepo/node_modules/@types"
+		]
+	},
+	"include": ["./*.ts"]
+}

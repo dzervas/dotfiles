@@ -42,9 +42,9 @@
   };
 
   # services.yubikey-agent.enable = true;
-  systemd.user.services.ssh-agent.Service.Environment = [
-    "SSH_ASK_PASS=${pkgs.wayprompt}/bin/wayprompt-ssh-askpass"
-  ];
+  # systemd.user.services.ssh-agent.Service.Environment = [
+  #   "SSH_ASK_PASS=${pkgs.wayprompt}/bin/wayprompt-ssh-askpass"
+  # ];
 
   # yubikey-agent uses the gpg-agent pinentry to ask for the PIN
   # services.gpg-agent = {

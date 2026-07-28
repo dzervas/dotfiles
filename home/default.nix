@@ -119,7 +119,6 @@
       # playwright-cli
 
       anytype-cli
-      inputs.mcp-firewall.packages.x86_64-linux.default
 
       # ladybird # broken
     ];

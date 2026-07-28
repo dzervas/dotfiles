@@ -16,6 +16,7 @@ let
     npmRoot = ../pi/extensions;
 
     derivationArgs = {
+      npmFlags = [ "--legacy-peer-deps" ];
       doCheck = true;
       checkPhase = ''
         npm audit
@@ -50,7 +51,7 @@ let
     "npm:pi-readseek@0.8.0"
     "npm:@juicesharp/rpiv-todo@2.0.0"
     "npm:@gotgenes/pi-anthropic-auth@2.0.0"
-    "npm:@gotgenes/pi-subagents@18.2.0"
+    "npm:@gotgenes/pi-subagents@19.2.1"
     "npm:@quintinshaw/pi-dynamic-workflows@3.3.0"
     {
       source = "npm:@router-for-me/pi-cliproxyapi-provider@1.4.8";

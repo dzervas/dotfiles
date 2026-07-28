@@ -13,7 +13,7 @@ in {
         enable = true;
         config.formatting = {
           PadArrays = true;
-          StringStyle = "double";
+          StringStyle = "single";
         };
       };
       nil_ls.enable = true;

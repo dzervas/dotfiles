@@ -48,7 +48,7 @@ final: prev: rec {
     );
   };
 
-  # nix-update:pi-coding-agent-latest
+  # nix-update:pi-coding-agent-latest --custom-dep modelData
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
     finalAttrs: _prevAttrs: rec {
       version = "0.82.1";
@@ -66,6 +66,11 @@ final: prev: rec {
         inherit (finalAttrs) src;
         name = "${finalAttrs.pname}-${finalAttrs.version}-npm-deps";
         hash = finalAttrs.npmDepsHash;
+      };
+
+      modelData = final.fetchurl {
+        url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${version}.tgz";
+        hash = "sha256-L535UigItiHNNEmHZTfwPYqN+LjX7C1bGMapEKqFtJA=";
       };
     }
   );
