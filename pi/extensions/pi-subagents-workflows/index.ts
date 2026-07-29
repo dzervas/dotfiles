@@ -1,5 +1,6 @@
+import { getMarkdownTheme, type ExtensionAPI, type ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { StringEnum } from "@earendil-works/pi-ai";
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Markdown } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 import { parseWorkflow, QuickJSWorkflowRuntime, type WorkflowRuntime } from "./runtime";
 import { WorkflowManager, type ToolInvoker, type WorkflowRecord } from "./workflow";
@@ -20,18 +21,12 @@ function summary(run: WorkflowRecord): string {
 	return `${run.id} ${run.status} · ${run.name} · ${run.agentCount} agents${phase}${error}`;
 }
 
-function defaultToolInvoker(pi: ExtensionAPI): ToolInvoker {
+function defaultToolInvoker(): ToolInvoker {
 	return {
-		async invoke(name, args, signal) {
-			const invokeTool = (pi as unknown as {
-				invokeTool?: (name: string, args: unknown, options?: { signal?: AbortSignal }) => Promise<unknown> | unknown;
-			}).invokeTool;
-			if (typeof invokeTool !== "function") {
-				throw new Error(
-					"workflow tool() is unavailable: this Pi version does not expose pi.invokeTool().",
-				);
-			}
-			return invokeTool.call(pi, name, args, { signal });
+		async invoke() {
+			throw new Error(
+				"workflow tool() is disabled because Pi has no documented permission-aware programmatic tool dispatcher. Use agent() to run tools through a subagent session.",
+			);
 		},
 	};
 }
@@ -40,21 +35,40 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 	return function subagentsWorkflowsExtension(pi: ExtensionAPI) {
 		const manager = new WorkflowManager(
 			options.runtime ?? new QuickJSWorkflowRuntime(),
-			options.toolInvoker ?? defaultToolInvoker(pi),
+			options.toolInvoker ?? defaultToolInvoker(),
 		);
 		let sessionActive = true;
 
+		const updateWorkflowWidget = (ctx: ExtensionContext) => {
+			if (!ctx.hasUI) return;
+			const active = manager.list().filter((run) => run.status === "running");
+			ctx.ui.setWidget(
+				"workflows",
+				active.length
+					? active.map((run) => {
+						const phase = run.phase ? ` · ${run.phase}` : "";
+						const agents = `${run.activeAgents} active agent${run.activeAgents === 1 ? "" : "s"}`;
+						return ctx.ui.theme.fg("accent", `◌ ${run.name}`) + ctx.ui.theme.fg("muted", `${phase} · ${agents}`);
+					})
+					: undefined,
+			);
+		};
+
+		// TODO: Once pi gives access to calling tools programatically, add a `tool()` function to do that
 		pi.registerTool({
-			name: "subagents_workflow",
-			label: "Subagents Workflow",
-			description: "Run a JavaScript workflow that coordinates pi-subagents.",
+			name: "workflow",
+			label: "Workflow",
+			description: "Run a JavaScript workflow that can parallelize subagents",
 			parameters: Type.Object({
-				script: Type.String({ description: "Workflow JavaScript beginning with export const meta." }),
+				script: Type.String({ description: "Self-contained JavaScript workflow. Its first statement must be `export const meta = { name, description };`; after that, use top-level `await` and `return`. Call subagents with `await agent(prompt, options?)` (or `parallel([() => agent(...)])`); `export default` is unsupported. Globals: agent, parallel, pipeline, phase, log, args, cwd, and process.cwd(). `tool()` is disabled so all tool use goes through permission-checked subagent sessions." }),
 				args: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
 				background: Type.Optional(Type.Boolean({ description: "Run in the background (default true)." })),
 				concurrency: Type.Optional(Type.Integer({ minimum: 1 })),
 				maxAgents: Type.Optional(Type.Integer({ minimum: 1 })),
 			}),
+			renderCall(args) {
+				return new Markdown(`**workflow**\n\n\`\`\`js\n${args.script}\n\`\`\``, 0, 0, getMarkdownTheme());
+			},
 			async execute(_id, params, signal, onUpdate, ctx) {
 				const workflow = parseWorkflow(params.script);
 				const background = params.background ?? true;
@@ -64,13 +78,17 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 					maxAgents: params.maxAgents,
 					cwd: ctx.cwd,
 					signal,
-					onUpdate: background ? undefined : (message) => onUpdate?.({ content: [{ type: "text", text: message }], details: {} }),
+					onUpdate: (message) => {
+						updateWorkflowWidget(ctx);
+						if (!background) onUpdate?.({ content: [{ type: "text", text: message }], details: {} });
+					},
 				});
+				updateWorkflowWidget(ctx);
 				if (background) {
 					void run.done.then((record) => {
 						if (!sessionActive) return;
 						pi.sendMessage({
-							customType: "subagents-workflow",
+							customType: "workflow",
 							content: `Workflow ${record.name} ${record.status}.\n${text(record.result ?? record.error ?? "No result.")}`,
 							display: true,
 							details: record,
@@ -92,9 +110,9 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 		});
 
 		pi.registerTool({
-			name: "subagents_workflow_control",
-			label: "Subagents Workflow Control",
-			description: "List, inspect, or stop in-memory subagent workflows.",
+			name: "workflow_control",
+			label: "Workflow Control",
+			description: "List, inspect, or stop in-memory workflows.",
 			parameters: Type.Object({
 				action: StringEnum(["list", "status", "stop"] as const),
 				runId: Type.Optional(Type.String()),
@@ -119,8 +137,8 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 			},
 		});
 
-		pi.registerCommand("subagent-workflows", {
-			description: "Show subagent workflow status",
+		pi.registerCommand("workflows", {
+			description: "Show workflow status",
 			handler: async (args, ctx) => {
 				const id = args.trim();
 				const message = id
@@ -130,12 +148,15 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 			},
 		});
 
-		pi.on("session_start", () => {
+		pi.on("session_start", (_event, ctx) => {
 			sessionActive = true;
+			ctx.ui.setWidget("subagents-workflows", undefined);
+			ctx.ui.setWidget("workflows", undefined);
 		});
-		pi.on("session_shutdown", () => {
+		pi.on("session_shutdown", (_event, ctx) => {
 			sessionActive = false;
 			manager.stopAll();
+			ctx.ui.setWidget("workflows", undefined);
 		});
 	};
 }

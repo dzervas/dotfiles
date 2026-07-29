@@ -25,6 +25,7 @@ export interface WorkflowRecord {
 	phase?: string;
 	logs: string[];
 	agentCount: number;
+	activeAgents: number;
 	result?: unknown;
 	error?: string;
 }
@@ -117,6 +118,7 @@ class WorkflowRun {
 			status: "running",
 			logs: [],
 			agentCount: 0,
+			activeAgents: 0,
 		};
 		this.limiter = new Limiter(options.concurrency);
 		if (options.signal?.aborted) this.stop();
@@ -215,6 +217,7 @@ class WorkflowRun {
 			foreground: true,
 		});
 		this.agentIds.add(id);
+		this.record.activeAgents = this.agentIds.size;
 		this.update(`agent ${this.record.agentCount} running`);
 
 		while (true) {
@@ -222,6 +225,7 @@ class WorkflowRun {
 			if (!record) throw new Error(`Subagent ${id} disappeared.`);
 			if (terminalAgentStatuses.has(record.status)) {
 				this.agentIds.delete(id);
+				this.record.activeAgents = this.agentIds.size;
 				if (record.status === "completed" || record.status === "steered") {
 					this.update(`agent ${this.record.agentCount} completed`);
 					return record.result ?? "";

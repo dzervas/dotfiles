@@ -1,6 +1,6 @@
-# Pi subagent workflows
+# Pi workflows
 
-A small Pi extension for coordinating `@gotgenes/pi-subagents` from a JavaScript workflow. It registers `subagents_workflow` and `subagents_workflow_control` plus `/subagent-workflows`.
+A small Pi extension for coordinating `@gotgenes/pi-subagents` from a JavaScript workflow. It registers `workflow` and `workflow_control` plus `/workflows`.
 
 A script must start with static metadata:
 
@@ -18,7 +18,7 @@ const reports = await parallel([
 return reports;
 ```
 
-Available globals are `agent(prompt, options?)`, `tool(name, args?)`, `parallel(thunks)`, `pipeline(items, ...stages)`, `phase(title)`, `log(message)`, `args`, `cwd`, and `process.cwd()`.
+Available globals are `agent(prompt, options?)`, `parallel(thunks)`, `pipeline(items, ...stages)`, `phase(title)`, `log(message)`, `args`, `cwd`, and `process.cwd()`.
 
 `pipeline` processes each item through its stages sequentially while items run concurrently. Each stage receives `(value, originalItem, index)`. Agent options are `agentType`, `model`, `thinking`, `label`, `maxTurns`, `schema`, and `schemaRetries`. A schema adds a JSON-only instruction, validates with Ajv, and retries with a fresh agent (two retries by default, at most five).
 
@@ -26,4 +26,4 @@ The extension limits agents per workflow (default concurrency 4 and default `max
 
 ## Deliberate omissions
 
-This is an in-memory runner: workflow state is not restored after reload or session changes. It has no workflow files, scheduling, durable logs, custom TUI, or Pi tool-dispatch implementation. `tool()` only works when a future Pi runtime exposes `pi.invokeTool`; otherwise it fails clearly.
+This is an in-memory runner: workflow state is not restored after reload or session changes. It has no workflow files, scheduling, durable logs, custom TUI, or direct Pi tool-dispatch implementation. `tool()` is deliberately disabled: workflows must use `agent()`, whose child session loads the parent's extensions, including the permission gate.
