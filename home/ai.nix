@@ -5,8 +5,6 @@
   ...
 }:
 let
-  tools = mcp: tools: map (t: "mcp__${mcp}__${t}") tools;
-
   nodejs = pkgs.nodejs_22; # tree-sitter does not work with nodejs_24
   piImportNpmLock = pkgs.callPackage (pkgs.path + "/pkgs/build-support/node/import-npm-lock") {
     callPackages = pkgs.newScope { inherit nodejs; };
@@ -199,13 +197,8 @@ in
       lmstudio
       bubblewrap # for codex
       openspec
-      github-copilot-cli
       piExtensionBump
-
-      piCodingAgent
-      nodejs # used too much to ignore :/
       snyk
-      typescript
     ];
 
     sessionVariables = {
@@ -220,110 +213,57 @@ in
       ".pi/agent/skills".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/skills";
       ".pi/agent/node_modules".source = piExtensionNodeModules + "/node_modules";
-      ".pi/agent/settings.json".text = builtins.toJSON piSettings;
-      ".pi/workflows/settings.json".text = builtins.toJSON {
-        keywordTriggerEnabled = false;
-      };
-      ".pi/workflows/model-tiers.json".text = builtins.toJSON {
-        tiers = {
-          small = "cliproxyapi/gpt-5.6-luna:low";
-          medium = "cliproxyapi/claude-opus-5";
-          big = "cliproxyapi/gpt-5.6-sol:high";
-        };
-      };
     };
   };
 
   programs = {
-    codex = {
+    codex.enable = true;
+    pi-coding-agent = {
       enable = true;
-      # package = pkgs.codex-latest;
-    };
+      package = pkgs.pi-coding-agent-latest;
+      extraPackages = with pkgs; [
+        nodejs
+        typescript
+        piCodingAgent
+      ];
 
-    # TODO: Add skills: https://docs.claude.com/en/docs/claude-code/skills
-    claude-code = {
-      enable = true;
-      # package = pkgs.claude-code-latest;
-      settings = {
-        model = "opus";
-        enableAllProjectMcpServers = false;
-        includeCoAuthoredBy = false;
-        alwaysThinkingEnabled = true;
-        statusLine = {
-          command = "input=$(cat); echo \"[$(echo \"$input\" | jq -r '.model.display_name')]  $(basename \"$(echo \"$input\" | jq -r '.workspace.current_dir')\")\"";
-          padding = 0;
-          type = "command";
+      settings = rec {
+        quietStartup = true;
+        collapseChangelog = true;
+        enableInstallTelemetry = false;
+
+        showHardwareCursor = true;
+        terminal = {
+          showTerminalProgress = true;
+          clearOnShrink = true;
         };
 
-        permissions = {
-          # defaultMode = "acceptEdits";
-          disableBypassPermissionsMode = "disable";
+        transport = "auto";
+        warnings.anthropicExtraUsage = false;
 
-          allow = [
-            "Bash(cargo check:*)"
-            "Bash(cargo build:*)"
-            "Bash(cargo test:*)"
-            "Bash(git diff:*)"
-            "Bash(git log:*)"
-            "Bash(git status:*)"
-            "Bash(jj diff:*)"
-            "Bash(jj log:*)"
-            "Bash(jj status:*)"
-            "Bash(hurl:*)"
-            "Bash(nix run .)"
-            "Bash(statix check:*)"
+        packages = piPackages;
+        npmCommand = [
+          "${nodejs}/bin/npm"
+          "--prefix"
+          piNpmPrefix
+        ];
 
-            "Read(~/.claude/plugins/cache/superpowers/skills/*)"
+        defaultModel = builtins.elemAt enabledModels 0;
+        defaultThinkingLevel = "medium";
+        enabledModels = [ "gpt-5.6-sol" "claude-opus-5" "gpt-5.6-terra" "claude-fable-5" ];
 
-            "WebSearch"
-            "WebFetch(domain:hurl.dev)"
+        subagents = {
+          defaultModel = "claude-sonnet-5";
+          agentOverrides = let
+            smallModel = "claude-haiku-4-5";
+          in {
+            scout.model = smallModel; # Local file recon
+            researcher.model = smallModel; # Web recon
+            delegate.model = smallModel; # Small worker
 
-            "Skill(openspec:*)"
-
-            "Search(path: ., *)"
-          ]
-          ++ (tools "grafana" [
-            "find_*"
-            "fetch_*"
-            "get_*"
-            "generate_deeplink"
-            "list_*"
-            "query_*"
-            "search_dashboards"
-          ]);
-          ask = [ ];
-          deny = [
-            "Bash(git add:*)"
-            "Bash(git commit:*)"
-            "Bash(git push:*)"
-            "Bash(git merge:*)"
-            "Bash(su:*)"
-            "Bash(sudo:*)"
-            "Bash(home-manager switch:*)"
-            "Bash(nixos-rebuild switch:*)"
-
-            "Read(~/.aws)"
-            "Read(~/.ssh)"
-            "Read(./.env)"
-            "Read(./.envrc)"
-            "Read(./.direnv)"
-          ];
-        };
-
-        env = {
-          # ANTHROPIC_BASE_URL = "https://ai.vpn.dzerv.art";
-          # ANTHROPIC_AUTH_TOKEN = "sk-dummy";
-          # API_TIMEOUT_MS = "3000000";
-
-          # ANTHROPIC_DEFAULT_OPUS_MODEL = "gpt-5.4(medium)";
-          # ANTHROPIC_DEFAULT_SONNET_MODEL = "gpt-5.4(medium)";
-          # ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7";
-          # CLAUDE_CODE_SUBAGENT_MODEL = "gpt-5.4(high)";
-
-          CLAUDE_CODE_ENABLE_TELEMETRY = "1";
-          OTEL_METRICS_EXPORTER = "otlp";
-          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT = "https://metrics.vpn.dzerv.art/opentelemetry/v1/metrics";
-          OTEL_EXPORTER_OTLP_METRICS_PROTOCOL = "http/protobuf";
+            oracle.model = piSettings.defaultModel; # Plan reviewer
+            reviewer.model = piSettings.defaultModel; # Code reviewer
+          };
         };
       };
     };
