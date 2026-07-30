@@ -207,9 +207,6 @@
                     "id": "NotificationHistory",
                     "showUnreadBadge": true,
                     "unreadBadgeColor": "primary"
-                },
-                {
-                    "id": "plugin:tailscale"
                 }
             ]
         }
