@@ -82,7 +82,7 @@ let
 
     defaultModel = builtins.elemAt enabledModels 0;
     defaultThinkingLevel = "medium";
-    enabledModels = [ "claude-opus-5" "gpt-5.6-sol" "gpt-5.6-terra" "claude-fable-5" ];
+    enabledModels = [ "gpt-5.6-sol" "claude-opus-5" "gpt-5.6-terra" "claude-fable-5" ];
 
     subagents = {
       defaultModel = "claude-sonnet-5";

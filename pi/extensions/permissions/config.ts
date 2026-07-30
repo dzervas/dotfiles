@@ -82,6 +82,7 @@ const DEFAULT_RULES: Rule[] = [
 				"^subagent$",
 				"^get_subagent_result$",
 				"^todo$",
+				"^background_jobs$",
 
 				"^web_search$",
 				"^web_read$",
