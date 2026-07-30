@@ -54,6 +54,16 @@ let
       # Disable tps.ts that shows elapsed n stuff, it's ugly
       extensions = [ "index.ts" ];
     }
+   {
+     source = "git:github.com/mattpocock/skills";
+     skills = [
+       "skills/engineering/wayfinder/SKILL.md"
+       "skills/engineering/domain-modeling/SKILL.md"
+       "skills/engineering/research/SKILL.md"
+       "skills/productivity/grill-me/SKILL.md"
+       "skills/productivity/grilling/SKILL.md"
+     ];
+   }
   ];
   piPackagesSources = map (p: p.source or p) piPackages;
 
