@@ -12,15 +12,12 @@
 
 import type { ExtensionUIContext, Theme } from "@earendil-works/pi-coding-agent";
 import { Text, type TUI, truncateToWidth } from "@earendil-works/pi-tui";
-import { counts, type Task, type TaskStatus, type TodoDetails, renderTasks } from "./state.js";
+import { CONFIDENCE_THRESHOLD, counts, type Task, type TaskStatus, type TodoDetails, renderTasks } from "./state.js";
 
 const WIDGET_KEY = "todo";
 
 /** Content rows (heading included) before the list collapses into "+N more". */
 const MAX_ROWS = 13;
-
-/** At or above this confidence a task counts as solid. */
-const GOOD_CONFIDENCE = 90;
 
 const GLYPH: Record<TaskStatus, string> = { pending: "○", in_progress: "◐", completed: "✓" };
 const GLYPH_COLOR: Record<TaskStatus, "dim" | "warning" | "success"> = {
@@ -30,12 +27,12 @@ const GLYPH_COLOR: Record<TaskStatus, "dim" | "warning" | "success"> = {
 };
 
 /**
- * ` 95%` — error while a gate has it flagged, success when solid, plain
- * otherwise. Empty for tasks replayed from a pre-confidence tool version.
+ * ` 95%` — green at the confidence threshold, red below it or when flagged.
+ * Empty for tasks replayed from a pre-confidence tool version.
  */
 function confidenceCell(task: Task, theme: Theme): string {
 	if (task.confidence === undefined) return "";
-	const color = task.flagged ? "error" : task.confidence >= GOOD_CONFIDENCE ? "success" : "text";
+	const color = !task.flagged && task.confidence >= CONFIDENCE_THRESHOLD ? "success" : "error";
 	return theme.fg(color, `${String(task.confidence).padStart(3)}%`);
 }
 
@@ -73,6 +70,7 @@ export class TodoWidget {
 	private tui: TUI | undefined;
 	private registered = false;
 	private collapsed = false;
+	private readonly hiddenCompleted = new Set<string>();
 	private readonly collapseKey: string;
 
 	constructor(collapseKey: string) {
@@ -94,6 +92,28 @@ export class TodoWidget {
 		this.collapsed = !this.collapsed;
 		// Forced redraw: collapsing changes the widget's height.
 		this.tui?.requestRender(true);
+	}
+
+	/** Hide work already completed confidently when the user starts a new turn. */
+	hideCompleted(): void {
+		for (const task of renderTasks()) {
+			if (this.isConfidentlyCompleted(task)) this.hiddenCompleted.add(task.id);
+		}
+		this.update();
+	}
+
+	private isConfidentlyCompleted(task: Task): boolean {
+		return task.status === "completed" && !task.flagged && (task.confidence ?? 0) >= CONFIDENCE_THRESHOLD;
+	}
+
+	private visibleTasks(): readonly Task[] {
+		const tasks = renderTasks();
+		// Reusing an id for new/incomplete work must make it visible again.
+		for (const id of this.hiddenCompleted) {
+			const task = tasks.find((candidate) => candidate.id === id);
+			if (!task || !this.isConfidentlyCompleted(task)) this.hiddenCompleted.delete(id);
+		}
+		return tasks.filter((task) => !this.hiddenCompleted.has(task.id));
 	}
 
 	update(): void {
@@ -133,13 +153,17 @@ export class TodoWidget {
 		this.tui = undefined;
 		this.registered = false;
 		this.collapsed = false;
+		this.hiddenCompleted.clear();
 	}
 
 	private render(theme: Theme, width: number): string[] {
-		const tasks = renderTasks();
-		if (tasks.length === 0) return [];
+		const allTasks = renderTasks();
+		if (allTasks.length === 0) return [];
+		const tasks = this.visibleTasks();
 
-		const { total, completed, inProgress } = counts(tasks);
+		// The heading always describes the complete list; filtering only affects
+		// the rows below it.
+		const { total, completed, inProgress } = counts(allTasks);
 		const color = inProgress > 0 ? "accent" : "dim";
 		const heading = `${theme.fg(color, inProgress > 0 ? "●" : "○")} ${theme.fg(color, "Todos")}  ${theme.fg("dim", `${completed}/${total}`)}`;
 
@@ -174,7 +198,7 @@ export function renderResult(details: TodoDetails | undefined, theme: Theme): Te
 		lines.push(taskLine(task, "", theme));
 	});
 	if (details.warnings?.length) {
-		lines.push(theme.fg("warning", ` ${details.warnings.length} confidence check${details.warnings.length === 1 ? "" : "s"} required`));
+		lines.push(theme.fg("warning", `  ${details.warnings.length} confidence check${details.warnings.length === 1 ? "" : "s"} required`));
 	}
 	return new Text(lines.join("\n"), 0, 0);
 }

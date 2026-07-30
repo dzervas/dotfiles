@@ -176,6 +176,12 @@ export default function todoExtension(pi: ExtensionAPI): void {
 		}
 	});
 
+	pi.on("message_start", async (event, ctx) => {
+		if (event.message.role !== "user") return;
+		const foreground = ifLive(() => sid(ctx) === getRenderSession());
+		if (foreground) widget?.hideCompleted();
+	});
+
 	pi.on("tool_execution_end", async (event) => {
 		if (event.toolName === "todo" && !event.isError) widget?.update();
 	});

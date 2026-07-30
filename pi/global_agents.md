@@ -80,13 +80,13 @@ difficulty to cost - do NOT just inherit the parent model. Prefer delegating ove
 doing everything inline when a task is parallelizable, isolatable, or benefits from
 a fresh/independent context. Available models:
 
-- **gpt-5.6-terra/claude-opus-5** - DEFAULT workhorse. Cheap, abundant sub, strong at coding and long
+- `gpt-5.6-terra` or `claude-opus-5` - DEFAULT workhorse. Cheap, abundant sub, strong at coding and long
   multi-step workflows. Use for the bulk of delegated work: recon, research,
   routine implementation, and anything run in parallel or high volume.
-- **claude-sonnet-5/gpt-5.6-luna** - It's dumber than the above but good enough for recon/summaries/etc.
-  and more efficient and fast
-- **claude-fable-5/gpt-5.6-sol (probably high)** - Last resort, hardest ceiling. Most capable model, for the
-  most ambitious long-horizon work only.
+- `gpt-5.6-luna` or `gpt-5.3-codex-spark` - It's dumber than the above but good enough for recon/summaries/etc.
+  and more efficient and fast. Spark is almost free and extremely fast.
+- `claude-fable-5` (only use medium effort) or `gpt-5.6-sol` (high effort) - Last resort, hardest ceiling.
+  Most capable model, for themost ambitious long-horizon work only.
 
 **Quality over tokens:** if a result isn't good enough, escalate to a stronger
 model and retry. Saving tokens is never worth a bad result — quality is always

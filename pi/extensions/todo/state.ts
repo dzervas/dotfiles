@@ -38,11 +38,11 @@ export interface TodoDetails {
 	warnings?: string[];
 }
 
-/** A completion-confidence rise larger than this is not credible as validation. */
-const SPIKE_THRESHOLD = 15;
+/** A final score at or above this is considered confidently complete. */
+export const CONFIDENCE_THRESHOLD = 90;
 
-/** A task claimed complete below this confidence is not credible as done. */
-const LOW_COMPLETION_CONFIDENCE = 80;
+/** A completion-confidence rise this large is not credible as validation. */
+const SPIKE_THRESHOLD = 15;
 
 const GATE_ADVICE =
 	"Recheck it with concrete evidence (a test run, an inspected output). If you cannot validate it yourself, delegate the verification to a subagent, or stop and report to the user exactly what is unverified. Then write the list again with a confidence that reflects the validation you actually performed.";
@@ -79,12 +79,12 @@ export function applyWrite(
 
 		const newlyCompleted = input.status === "completed" && before?.status !== "completed";
 		let gated = false;
-		if (newlyCompleted && input.confidence < LOW_COMPLETION_CONFIDENCE) {
+		if (newlyCompleted && input.confidence < CONFIDENCE_THRESHOLD) {
 			gated = true;
 			warnings.push(
 				`#${input.id} is marked completed at confidence ${input.confidence}, which is too low to call it done. ${GATE_ADVICE}`,
 			);
-		} else if (newlyCompleted && before?.confidence !== undefined && input.confidence - before.confidence > SPIKE_THRESHOLD) {
+		} else if (newlyCompleted && before?.confidence !== undefined && input.confidence - before.confidence >= SPIKE_THRESHOLD) {
 			gated = true;
 			warnings.push(
 				`#${input.id} rose ${before.confidence} → ${input.confidence} on completion, too sharply to count as independently validated. ${GATE_ADVICE}`,
