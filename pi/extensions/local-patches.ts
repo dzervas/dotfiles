@@ -1,0 +1,67 @@
+/**
+ * Re-applies hand-written patches to third-party Pi packages installed at
+ * runtime into ~/.pi/agent/npm/node_modules/ (not managed by Nix, reverted on
+ * every reinstall). Runs on session start; each patch is idempotent. Restart pi
+ * after adding a patch, since the target module is already loaded.
+ */
+
+import { readFileSync, writeFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+
+interface Patch {
+	/** Short patch name, shown in warnings. */
+	name: string;
+	/** Path relative to ~/.pi/agent/npm/node_modules/. */
+	file: string;
+	/** Exact text to replace. */
+	find: string;
+	/** Replacement text; if already present the patch is considered applied. */
+	replace: string;
+}
+
+const PATCHES: Patch[] = [
+	{
+		// pi always passes an explicit `expanded: false` in both the render options
+		// and the render context, so `defaultExpanded` (which carries the
+		// readseek.display.<tool> setting) is never reached and `"expanded"` has no
+		// effect. Tradeoff: tools set to "expanded" ignore the global collapse toggle.
+		name: "pi-readseek: honor readseek.display.<tool> = expanded",
+		file: "pi-readseek/dist/index.ts",
+		find: "return context?.expanded ?? options?.expanded ?? defaultExpanded;",
+		replace: "return (context?.expanded ?? options?.expanded ?? false) || defaultExpanded;",
+	},
+];
+
+const MODULES_DIR = join(homedir(), ".pi", "agent", "npm", "node_modules");
+
+function applyPatch(patch: Patch): string | undefined {
+	const path = join(MODULES_DIR, patch.file);
+
+	let content: string;
+	try {
+		content = readFileSync(path, "utf8");
+	} catch (error) {
+		return `cannot read ${path}: ${(error as Error).message}`;
+	}
+
+	if (content.includes(patch.replace)) return undefined;
+	if (!content.includes(patch.find)) return `pattern not found in ${path}`;
+
+	try {
+		writeFileSync(path, content.replace(patch.find, patch.replace));
+	} catch (error) {
+		return `cannot write ${path}: ${(error as Error).message}`;
+	}
+	return undefined;
+}
+
+export default function (pi: ExtensionAPI) {
+	pi.on("session_start", (_event, ctx: ExtensionContext) => {
+		for (const patch of PATCHES) {
+			const failure = applyPatch(patch);
+			if (failure) ctx.ui.notify(`local-patches: ${patch.name} failed - ${failure}`, "warning");
+		}
+	});
+}
