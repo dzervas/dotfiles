@@ -29,7 +29,7 @@ import {
 } from "./state.js";
 import { formatList, renderCall, renderResult, TodoWidget } from "./view.js";
 
-const COLLAPSE_KEY = "ctrl+shift+t";
+const COLLAPSE_KEY = "alt+t";
 
 const TaskSchema = Type.Object({
 	id: Type.String({ description: "Stable id you choose; reuse it in later calls to keep the task's history." }),
