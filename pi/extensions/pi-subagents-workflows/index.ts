@@ -3,6 +3,7 @@ import { StringEnum } from "@earendil-works/pi-ai";
 import { Markdown } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 import { parseWorkflow, QuickJSWorkflowRuntime, type WorkflowRuntime } from "./runtime";
+import { WorkflowTerminalProgress } from "./terminal-progress";
 import { WorkflowManager, type ToolInvoker, type WorkflowRecord } from "./workflow";
 
 export interface ExtensionOptions {
@@ -40,6 +41,7 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 		let sessionActive = true;
 		const waitedRunIds = new Set<string>();
 		const pendingNotifications = new Map<string, WorkflowRecord>();
+		const terminalProgress = new WorkflowTerminalProgress();
 
 		const notifyWorkflow = (record: WorkflowRecord) => {
 			if (!sessionActive || waitedRunIds.has(record.id)) return;
@@ -54,6 +56,7 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 		const updateWorkflowWidget = (ctx: ExtensionContext) => {
 			if (!ctx.hasUI) return;
 			const active = manager.list().filter((run) => run.status === "running");
+			if (ctx.mode === "tui") terminalProgress.setActive(active.length > 0, ctx.isIdle());
 			ctx.ui.setWidget(
 				"workflows",
 				active.length
@@ -171,6 +174,7 @@ When the workflow is done you will be notified, regardless of whether the curren
 		pi.on("agent_settled", () => {
 			for (const record of pendingNotifications.values()) notifyWorkflow(record);
 			pendingNotifications.clear();
+			terminalProgress.refresh();
 		});
 
 		pi.on("session_start", (_event, ctx) => {
@@ -184,6 +188,7 @@ When the workflow is done you will be notified, regardless of whether the curren
 			sessionActive = false;
 			pendingNotifications.clear();
 			manager.stopAll();
+			terminalProgress.setActive(false);
 			ctx.ui.setWidget("workflows", undefined);
 		});
 	};
