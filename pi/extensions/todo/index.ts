@@ -4,9 +4,8 @@
  *
  * Every call replaces the whole list (the shape Claude Code, Codex, and jcode
  * all converged on), so a single call can create, update, and drop tasks at
- * once. Each task carries a model-assessed `confidence`; the trail of those
- * assessments is owned by the tool, and an implausible jump to "completed"
- * is flagged back to the model.
+ * once. The optional confidence mechanism can be enabled globally in
+ * `state.ts`; it is disabled by default.
  */
 
 import { StringEnum } from "@earendil-works/pi-ai";
@@ -15,6 +14,7 @@ import type { KeyId } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 import {
 	applyWrite,
+	CONFIDENCE_ENABLED,
 	counts,
 	evictSession,
 	getRenderSession,
@@ -32,18 +32,22 @@ import { formatList, renderCall, renderResult, TodoWidget } from "./view.js";
 const COLLAPSE_KEY = "alt+t";
 
 const TaskSchema = Type.Object({
-	id: Type.String({ description: "Stable id you choose; reuse it in later calls to keep the task's history." }),
+	id: Type.String({ description: "Stable id you choose; reuse it in later calls to preserve the task's identity." }),
 	subject: Type.String({ description: "Short imperative task line, e.g. 'Add the parser test'." }),
 	status: StringEnum(["pending", "in_progress", "completed"] as const),
 	activeForm: Type.Optional(
 		Type.String({ description: "Present-continuous label shown while in_progress, e.g. 'adding the parser test'." }),
 	),
-	confidence: Type.Integer({
-		minimum: 0,
-		maximum: 100,
-		description:
-			"Self-assessed confidence, 0-100, that this task is (or will be) done correctly. Reassess it as evidence accumulates: a passing test, an inspected output, a reproduced bug each earn a step up. Do not stamp a high score on completion that you have not validated.",
-	}),
+	...(CONFIDENCE_ENABLED
+		? {
+				confidence: Type.Integer({
+					minimum: 0,
+					maximum: 100,
+					description:
+						"Self-assessed confidence, 0-100, that this task is (or will be) done correctly. Reassess it as evidence accumulates: a passing test, an inspected output, a reproduced bug each earn a step up. Do not stamp a high score on completion that you have not validated.",
+				}),
+			}
+		: {}),
 });
 
 const ParamsSchema = Type.Object({
@@ -74,12 +78,18 @@ export default function todoExtension(pi: ExtensionAPI): void {
 		label: "Todo",
 		description:
 			"Track multi-step work as a task list. Send the complete list every time: it replaces the stored one, ids are yours to choose and must stay stable across calls, and a task you omit is dropped. One call can create, reorder, update, and drop tasks at once.",
-		promptSnippet: "Track multi-step work as a task list with per-task confidence",
+		promptSnippet: CONFIDENCE_ENABLED
+			? "Track multi-step work as a task list with per-task confidence"
+			: "Track multi-step work as a task list",
 		promptGuidelines: [
 			"Use todo for work with 3+ steps or when the user hands you a list of tasks; skip it for trivial single-step and conversational requests.",
 			"Every todo call replaces the whole list: resend every task you still want, keep each task's id stable, and omit a task only when you mean to drop it.",
 			"Keep exactly one task in_progress: mark it in_progress before starting the work and completed as soon as it is actually done.",
-			"Score confidence honestly and raise it as validation happens, not at the end. A task marked completed with low confidence, or one whose confidence jumps on completion, is sent back for rechecking.",
+			...(CONFIDENCE_ENABLED
+				? [
+						"Score confidence honestly and raise it as validation happens, not at the end. A task marked completed with low confidence, or one whose confidence jumps on completion, is sent back for rechecking.",
+					]
+				: []),
 		],
 		parameters: ParamsSchema,
 

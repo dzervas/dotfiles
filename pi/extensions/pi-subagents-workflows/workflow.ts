@@ -271,6 +271,10 @@ export class WorkflowManager {
 		return this.runs.get(id)?.record;
 	}
 
+	wait(id: string): Promise<WorkflowRecord> | undefined {
+		return this.runs.get(id)?.done;
+	}
+
 	stop(id: string): WorkflowRecord | undefined {
 		const run = this.runs.get(id);
 		run?.stop();

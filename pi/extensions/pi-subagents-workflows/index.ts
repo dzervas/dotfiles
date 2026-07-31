@@ -38,6 +38,18 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 			options.toolInvoker ?? defaultToolInvoker(),
 		);
 		let sessionActive = true;
+		const waitedRunIds = new Set<string>();
+		const pendingNotifications = new Map<string, WorkflowRecord>();
+
+		const notifyWorkflow = (record: WorkflowRecord) => {
+			if (!sessionActive || waitedRunIds.has(record.id)) return;
+			pi.sendMessage({
+				customType: "workflow",
+				content: `Workflow ${record.name} ${record.status}.\n${text(record.result ?? record.error ?? "No result.")}`,
+				display: true,
+				details: record,
+			}, { triggerTurn: true, deliverAs: "followUp" });
+		};
 
 		const updateWorkflowWidget = (ctx: ExtensionContext) => {
 			if (!ctx.hasUI) return;
@@ -60,7 +72,13 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 			label: "Workflow",
 			description: "Run a JavaScript workflow that can parallelize subagents",
 			parameters: Type.Object({
-				script: Type.String({ description: "Self-contained JavaScript workflow. Its first statement must be `export const meta = { name, description };`; after that, use top-level `await` and `return`. Call subagents with `await agent(prompt, options?)` (or `parallel([() => agent(...)])`); `export default` is unsupported. Globals: agent, parallel, pipeline, phase, log, args, cwd, and process.cwd(). `tool()` is disabled so all tool use goes through permission-checked subagent sessions." }),
+				script: Type.String({ description: "Self-contained JavaScript workflow. \
+Its first statement must be `export const meta = { name, description };`; after that, \
+use top-level `await` and `return`. \
+Call subagents with `await agent(prompt, options?)` or `parallel([() => agent(...)])`; \
+`export default` is unsupported. \
+Globals: agent, parallel, pipeline, phase, log, args, cwd, and process.cwd(). \
+When the workflow is done you will be notified, regardless of whether the current turn is still active." }),
 				args: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
 				background: Type.Optional(Type.Boolean({ description: "Run in the background (default true)." })),
 				concurrency: Type.Optional(Type.Integer({ minimum: 1 })),
@@ -86,13 +104,9 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 				updateWorkflowWidget(ctx);
 				if (background) {
 					void run.done.then((record) => {
-						if (!sessionActive) return;
-						pi.sendMessage({
-							customType: "workflow",
-							content: `Workflow ${record.name} ${record.status}.\n${text(record.result ?? record.error ?? "No result.")}`,
-							display: true,
-							details: record,
-						}, { triggerTurn: true, deliverAs: "followUp" });
+						if (!sessionActive || waitedRunIds.has(record.id)) return;
+						if (ctx.isIdle()) notifyWorkflow(record);
+						else pendingNotifications.set(record.id, record);
 					});
 					return {
 						content: [{ type: "text", text: `Started workflow ${run.id}: ${workflow.meta.name}.` }],
@@ -112,9 +126,9 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 		pi.registerTool({
 			name: "workflow_control",
 			label: "Workflow Control",
-			description: "List, inspect, or stop in-memory workflows.",
+			description: "List, inspect, wait for, or stop in-memory workflows.",
 			parameters: Type.Object({
-				action: StringEnum(["list", "status", "stop"] as const),
+				action: StringEnum(["list", "status", "wait", "stop"] as const),
 				runId: Type.Optional(Type.String()),
 			}),
 			async execute(_id, params) {
@@ -125,10 +139,16 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 						details: { runs, run: undefined as WorkflowRecord | undefined },
 					};
 				}
-				if (!params.runId) throw new Error("runId is required for status and stop.");
+				if (!params.runId) throw new Error("runId is required for status, wait, and stop.");
+				if (params.action === "wait") {
+					waitedRunIds.add(params.runId);
+					pendingNotifications.delete(params.runId);
+				}
 				const record = params.action === "stop"
 					? manager.stop(params.runId)
-					: manager.status(params.runId);
+					: params.action === "wait"
+						? await manager.wait(params.runId)
+						: manager.status(params.runId);
 				if (!record) throw new Error(`Unknown workflow: ${params.runId}`);
 				return {
 					content: [{ type: "text", text: summary(record) }],
@@ -148,13 +168,21 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 			},
 		});
 
+		pi.on("agent_settled", () => {
+			for (const record of pendingNotifications.values()) notifyWorkflow(record);
+			pendingNotifications.clear();
+		});
+
 		pi.on("session_start", (_event, ctx) => {
 			sessionActive = true;
+			waitedRunIds.clear();
+			pendingNotifications.clear();
 			ctx.ui.setWidget("subagents-workflows", undefined);
 			ctx.ui.setWidget("workflows", undefined);
 		});
 		pi.on("session_shutdown", (_event, ctx) => {
 			sessionActive = false;
+			pendingNotifications.clear();
 			manager.stopAll();
 			ctx.ui.setWidget("workflows", undefined);
 		});

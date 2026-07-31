@@ -2,17 +2,25 @@
  * Rendering: the above-editor widget, the tool call/result rows, and the
  * `/todos` listing.
  *
- * Widget shape (confidence sits next to the status glyph):
+ * Widget shape:
  *
  *   ● Todos  1/3
- *   ├ ✓  95% Study the widget API
- *   ├ ◐  85% Write the extension · writing the extension
- *   └ ○  30% Verify replay after compaction
+ *   ├ ✓ Study the widget API
+ *   ├ ◐ Write the extension · writing the extension
+ *   └ ○ Verify replay after compaction
  */
 
 import type { ExtensionUIContext, Theme } from "@earendil-works/pi-coding-agent";
 import { Text, type TUI, truncateToWidth } from "@earendil-works/pi-tui";
-import { CONFIDENCE_THRESHOLD, counts, type Task, type TaskStatus, type TodoDetails, renderTasks } from "./state.js";
+import {
+	CONFIDENCE_ENABLED,
+	CONFIDENCE_THRESHOLD,
+	counts,
+	type Task,
+	type TaskStatus,
+	type TodoDetails,
+	renderTasks,
+} from "./state.js";
 
 const WIDGET_KEY = "todo";
 
@@ -28,10 +36,10 @@ const GLYPH_COLOR: Record<TaskStatus, "dim" | "warning" | "success"> = {
 
 /**
  * ` 95%` — green at the confidence threshold, red below it or when flagged.
- * Empty for tasks replayed from a pre-confidence tool version.
+ * Empty when confidence is disabled or unavailable in replayed data.
  */
 function confidenceCell(task: Task, theme: Theme): string {
-	if (task.confidence === undefined) return "";
+	if (!CONFIDENCE_ENABLED || task.confidence === undefined) return "";
 	const color = !task.flagged && task.confidence >= CONFIDENCE_THRESHOLD ? "success" : "error";
 	return theme.fg(color, `${String(task.confidence).padStart(3)}%`);
 }
@@ -103,7 +111,10 @@ export class TodoWidget {
 	}
 
 	private isConfidentlyCompleted(task: Task): boolean {
-		return task.status === "completed" && !task.flagged && (task.confidence ?? 0) >= CONFIDENCE_THRESHOLD;
+		return (
+			task.status === "completed" &&
+			(!CONFIDENCE_ENABLED || (!task.flagged && (task.confidence ?? 0) >= CONFIDENCE_THRESHOLD))
+		);
 	}
 
 	private visibleTasks(): readonly Task[] {
@@ -197,7 +208,7 @@ export function renderResult(details: TodoDetails | undefined, theme: Theme): Te
 	details.tasks.forEach((task, _index) => {
 		lines.push(taskLine(task, "", theme));
 	});
-	if (details.warnings?.length) {
+	if (CONFIDENCE_ENABLED && details.warnings?.length) {
 		lines.push(theme.fg("warning", `  ${details.warnings.length} confidence check${details.warnings.length === 1 ? "" : "s"} required`));
 	}
 	return new Text(lines.join("\n"), 0, 0);
@@ -208,8 +219,8 @@ export function formatList(tasks: readonly Task[]): string {
 	return tasks
 		.map((task) => {
 			const form = task.status === "in_progress" && task.activeForm ? ` · ${task.activeForm}` : "";
-			const trail = task.history.length > 1 ? ` (${task.history.join("›")})` : "";
-			const score = task.confidence === undefined ? "" : `  ${task.confidence}%${trail}`;
+			const trail = CONFIDENCE_ENABLED && (task.history?.length ?? 0) > 1 ? ` (${task.history?.join("›")})` : "";
+			const score = CONFIDENCE_ENABLED && task.confidence !== undefined ? `  ${task.confidence}%${trail}` : "";
 			return `  ${GLYPH[task.status]} ${task.subject}${form}${score}`;
 		})
 		.join("\n");

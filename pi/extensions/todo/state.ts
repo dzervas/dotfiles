@@ -1,24 +1,27 @@
 /**
  * Task state: types, the per-session store, branch replay, and the write
- * reducer that owns the confidence trail.
+ * reducer.
  *
  * The tool is a full-list replacement (like Claude Code's TodoWrite and
  * jcode's todo): the model resends every task it wants to keep, so ids are
  * model-chosen and only exist to anchor a task to its previous self across
- * writes — which is what makes the confidence history trustworthy.
+ * writes.
  */
 
 export type TaskStatus = "pending" | "in_progress" | "completed";
+
+/** Global switch for the confidence schema, tracking, gates, prompts, and UI. */
+export const CONFIDENCE_ENABLED: boolean = false;
 
 export interface Task {
 	id: string;
 	subject: string;
 	status: TaskStatus;
 	activeForm?: string;
-	/** Absent only for tasks replayed from a pre-confidence tool version. */
+	/** Present only when the confidence mechanism is enabled or in legacy replay data. */
 	confidence?: number;
-	/** Tool-owned confidence trail. Model-supplied values are ignored. */
-	history: number[];
+	/** Tool-owned confidence trail, present only while confidence is enabled. */
+	history?: number[];
 	/** Tool-owned: this task's confidence failed a gate and has not been reassessed. */
 	flagged?: boolean;
 }
@@ -29,7 +32,7 @@ export interface TaskInput {
 	subject: string;
 	status: TaskStatus;
 	activeForm?: string;
-	confidence: number;
+	confidence?: number;
 }
 
 /** Persisted tool-result payload; `replay` reconstructs state from the latest one. */
@@ -70,21 +73,38 @@ export function applyWrite(
 	previous: readonly Task[],
 	incoming: TaskInput[],
 ): { tasks: Task[]; warnings: string[] } {
+	if (!CONFIDENCE_ENABLED) {
+		return {
+			tasks: incoming.map((input) => ({
+				id: input.id,
+				subject: input.subject,
+				status: input.status,
+				...(input.activeForm ? { activeForm: input.activeForm } : {}),
+			})),
+			warnings: [],
+		};
+	}
+
 	const prior = new Map(previous.map((task) => [task.id, task]));
 	const warnings: string[] = [];
 	const tasks = incoming.map((input) => {
 		const before = prior.get(input.id);
-		const history = before ? [...before.history] : [];
-		if (history[history.length - 1] !== input.confidence) history.push(input.confidence);
+		const history = before?.history ? [...before.history] : [];
+		if (input.confidence !== undefined && history[history.length - 1] !== input.confidence) history.push(input.confidence);
 
 		const newlyCompleted = input.status === "completed" && before?.status !== "completed";
 		let gated = false;
-		if (newlyCompleted && input.confidence < CONFIDENCE_THRESHOLD) {
+		if (newlyCompleted && input.confidence !== undefined && input.confidence < CONFIDENCE_THRESHOLD) {
 			gated = true;
 			warnings.push(
 				`#${input.id} is marked completed at confidence ${input.confidence}, which is too low to call it done. ${GATE_ADVICE}`,
 			);
-		} else if (newlyCompleted && before?.confidence !== undefined && input.confidence - before.confidence >= SPIKE_THRESHOLD) {
+		} else if (
+			newlyCompleted &&
+			input.confidence !== undefined &&
+			before?.confidence !== undefined &&
+			input.confidence - before.confidence >= SPIKE_THRESHOLD
+		) {
 			gated = true;
 			warnings.push(
 				`#${input.id} rose ${before.confidence} → ${input.confidence} on completion, too sharply to count as independently validated. ${GATE_ADVICE}`,
@@ -95,10 +115,10 @@ export function applyWrite(
 			id: input.id,
 			subject: input.subject,
 			status: input.status,
-			confidence: input.confidence,
 			history,
 		};
 		if (input.activeForm) task.activeForm = input.activeForm;
+		if (input.confidence !== undefined) task.confidence = input.confidence;
 		// A flag clears only once the confidence is reassessed: re-sending the same
 		// score does not count as having rechecked the work.
 		if (gated || (before?.flagged && input.confidence === before.confidence)) task.flagged = true;
@@ -169,7 +189,10 @@ export function replay(ctx: BranchCtx): Task[] {
 		if (!message || message.role !== "toolResult" || message.toolName !== "todo") continue;
 		const details = message.details as TodoDetails | undefined;
 		if (!Array.isArray(details?.tasks)) continue;
-		tasks = details.tasks.map((task) => ({ ...task, history: [...(task.history ?? [])] }));
+		tasks = details.tasks.map((task) => ({
+			...task,
+			...(task.history ? { history: [...task.history] } : {}),
+		}));
 	}
 	return tasks;
 }
