@@ -156,6 +156,7 @@
     in
       {
       enable = true;
+      listenAddress = "0.0.0.0"; # Reachable from rootless Podman via host.containers.internal.
       port = 1337;
 
       settings = {

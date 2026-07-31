@@ -63,7 +63,11 @@ in {
       spec = "LABEL=linux-add";
       # Recommended accoding to the docs: https://github.com/Zygo/bees/blob/master/docs/config.md
       hashTableSizeMB = 128;
-      extraOptions = [ "--thread-count" "8" ];
+      extraOptions = [
+        "--thread-count" "8"
+        "--loadavg-target" "8" # Target system load - if above it throttle down
+        "--throttle-factor" "1.5" # Target btrfs queue processing speed vs the baseline (1.5 = 50% slowdown)
+      ];
     };
   };
 

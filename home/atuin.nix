@@ -1,7 +1,51 @@
 { config, lib, pkgs, ... }: let
+  llamaSwapModelsDir = "${config.home.homeDirectory}/.local/share/llama-swap";
+
+  llamaSwapConfig = pkgs.writeText "llama-swap-config.yaml" ''
+    healthCheckTimeout: 600
+    logLevel: debug
+    logToStdout: both
+
+    models:
+      zeta:
+        cmd: >-
+          llama-server --port ''${PORT}
+          -hf adilkairolla/zeta-2.1-GGUF --hf-file zeta-2.1-Q4_K_M.gguf
+          -ngl 999 -sm none -mg 0 -fit on -fitt 1024 -fa on -ctk q8_0 -ctv q8_0 --kv-offload
+          -t 16 -tb 16 -np 1 -cb --cache-prompt --cache-reuse 256
+          --metrics --slots -to 30 --no-webui
+          -b 2048 -ub 2048 -c 8192 -n 2048
+          --temp 0.0 --top-k 0 --top-p 1.0 --min-p 0.0
+          -rea off --reasoning-format none
+
+      cmd-gate:
+        cmd: >-
+          llama-server --port ''${PORT}
+          -hf Qwen/Qwen3-4B-GGUF --hf-file Qwen3-4B-Q4_K_M.gguf
+          -ngl 999 -sm none -mg 0 -fit on -fitt 1024 -fa on -ctk q8_0 -ctv q8_0 --kv-offload
+          -t 16 -tb 16 -np 1 -cb --cache-prompt --cache-reuse 256
+          --metrics --slots -to 30 --no-webui
+          -s 42 --temp 0.1 --top-k 20 --top-p 0.8 --min-p 0.0
+          --repeat-penalty 1.0 --presence-penalty 0.0 --frequency-penalty 0.0
+          -b 1024 -ub 512 -c 8192 -n 192
+          -rea off --reasoning-format none
+
+      ornith:
+        cmd: >-
+          llama-server --port ''${PORT}
+          -hf deepreinforce-ai/Ornith-1.0-9B-GGUF --hf-file ornith-1.0-9b-Q4_K_M.gguf
+          -ngl 999 -sm none -mg 0 -fit on -fitt 1024 -fa on -ctk q8_0 -ctv q8_0 --kv-offload
+          -t 16 -tb 16 -np 1 -cb --cache-prompt --cache-reuse 256
+          --metrics --slots -to 30 --no-webui
+          -s 42 --temp 0.1 --top-k 20 --top-p 0.8 --min-p 0.0
+          --repeat-penalty 1.0 --presence-penalty 0.0 --frequency-penalty 0.0
+          -b 1024 -ub 512 -c 262144 -n -1
+          -rea on --reasoning-budget -1 --reasoning-format deepseek --reasoning-preserve
+  '';
+
   atuinAiConfig = pkgs.writeText "atuin-ai-config.toml" ''
     port = 11337
-    endpoint = "http://host.containers.internal:1337/v1"
+    endpoint = "http://llama-swap:1337/v1"
     default_model = "ornith"
 
     [request.body]
@@ -49,16 +93,51 @@ in {
     };
   };
 
-  # Atuin AI's local protocol server, backed by the system llama-swap service.
+  # Local AI containers share a bridge network with container-name DNS.
   services.podman = {
     enable = true;
-    containers.atuin-ai = {
-      image = "ghcr.io/atuinsh/atuin-ai-server:latest";
-      description = "Self-hosted Atuin AI server";
-      ports = [ "127.0.0.1:11337:11337" ];
-      volumes = [ "${atuinAiConfig}:/etc/atuin-ai/config.toml:ro" ];
+
+    networks.local-ai = {
+      description = "Local AI services";
+      driver = "bridge";
+    };
+
+    containers = {
+      atuin-ai = {
+        image = "ghcr.io/atuinsh/atuin-ai-server:latest";
+        description = "Self-hosted Atuin AI server";
+        network = [ "local-ai.network" ];
+        networkAlias = [ "atuin-ai" ];
+        ports = [ "127.0.0.1:11337:11337" ];
+        volumes = [ "${atuinAiConfig}:/etc/atuin-ai/config.toml:ro" ];
+      };
+
+      llama-swap = {
+        image = "ghcr.io/mostlygeek/llama-swap:unified-vulkan";
+        description = "Vulkan llama.cpp model server and swapper";
+        network = [ "local-ai.network" ];
+        networkAlias = [ "llama-swap" ];
+        ports = [ "127.0.0.1:1337:1337" ];
+        devices = [ "/dev/dri:/dev/dri" ];
+        environment = {
+          HOME = "/models";
+          LLAMA_CACHE = "/models";
+          XDG_CACHE_HOME = "/models/.cache";
+        };
+        exec = "-config /etc/llama-swap/config/config.yaml -listen 0.0.0.0:1337 -watch-config";
+        volumes = [
+          "${llamaSwapConfig}:/etc/llama-swap/config/config.yaml:ro"
+          "${llamaSwapModelsDir}:/models"
+        ];
+        extraConfig.Container.GroupAdd = "keep-groups";
+      };
     };
   };
+
+  home.activation.createLlamaSwapModelsDir =
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      run mkdir -p ${lib.escapeShellArg llamaSwapModelsDir}
+    '';
 
   xdg.configFile."atuin-ai/config.toml".source = atuinAiConfig;
 

@@ -2,8 +2,9 @@ import { getMarkdownTheme, type ExtensionAPI, type ExtensionContext } from "@ear
 import { StringEnum } from "@earendil-works/pi-ai";
 import { Markdown } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
+import { getSubagentsService, SUBAGENT_EVENTS } from "@gotgenes/pi-subagents";
 import { parseWorkflow, QuickJSWorkflowRuntime, type WorkflowRuntime } from "./runtime";
-import { WorkflowTerminalProgress } from "./terminal-progress";
+import { terminalActivity } from "./terminal-progress";
 import { WorkflowManager, type ToolInvoker, type WorkflowRecord } from "./workflow";
 
 export interface ExtensionOptions {
@@ -39,9 +40,25 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 			options.toolInvoker ?? defaultToolInvoker(),
 		);
 		let sessionActive = true;
+		let terminalEnabled = false;
+		let parentIdle = true;
 		const waitedRunIds = new Set<string>();
 		const pendingNotifications = new Map<string, WorkflowRecord>();
-		const terminalProgress = new WorkflowTerminalProgress();
+		const terminalActivitySource = "subagents-workflows";
+
+		const syncTerminalProgress = () => {
+			if (!terminalEnabled) return;
+			const workflowRunning = manager.list().some((run) => run.status === "running");
+			const subagentRunning = getSubagentsService()?.hasRunning() ?? false;
+			terminalActivity.setActive(terminalActivitySource, workflowRunning || subagentRunning, parentIdle);
+		};
+
+		const disposeSubagentListeners = [
+			SUBAGENT_EVENTS.CREATED,
+			SUBAGENT_EVENTS.STARTED,
+			SUBAGENT_EVENTS.COMPLETED,
+			SUBAGENT_EVENTS.FAILED,
+		].map((event) => pi.events.on(event, syncTerminalProgress));
 
 		const notifyWorkflow = (record: WorkflowRecord) => {
 			if (!sessionActive || waitedRunIds.has(record.id)) return;
@@ -56,7 +73,7 @@ export function createSubagentsWorkflowsExtension(options: ExtensionOptions = {}
 		const updateWorkflowWidget = (ctx: ExtensionContext) => {
 			if (!ctx.hasUI) return;
 			const active = manager.list().filter((run) => run.status === "running");
-			if (ctx.mode === "tui") terminalProgress.setActive(active.length > 0, ctx.isIdle());
+			syncTerminalProgress();
 			ctx.ui.setWidget(
 				"workflows",
 				active.length
@@ -100,6 +117,7 @@ When the workflow is done you will be notified, regardless of whether the curren
 					cwd: ctx.cwd,
 					signal,
 					onUpdate: (message) => {
+						if (!sessionActive) return;
 						updateWorkflowWidget(ctx);
 						if (!background) onUpdate?.({ content: [{ type: "text", text: message }], details: {} });
 					},
@@ -171,24 +189,34 @@ When the workflow is done you will be notified, regardless of whether the curren
 			},
 		});
 
+		pi.on("agent_start", () => {
+			parentIdle = false;
+		});
 		pi.on("agent_settled", () => {
+			parentIdle = true;
 			for (const record of pendingNotifications.values()) notifyWorkflow(record);
 			pendingNotifications.clear();
-			terminalProgress.refresh();
+			syncTerminalProgress();
+			terminalActivity.refresh();
 		});
 
 		pi.on("session_start", (_event, ctx) => {
 			sessionActive = true;
+			terminalEnabled = ctx.mode === "tui";
+			parentIdle = ctx.isIdle();
 			waitedRunIds.clear();
 			pendingNotifications.clear();
 			ctx.ui.setWidget("subagents-workflows", undefined);
 			ctx.ui.setWidget("workflows", undefined);
+			syncTerminalProgress();
 		});
 		pi.on("session_shutdown", (_event, ctx) => {
 			sessionActive = false;
+			terminalEnabled = false;
 			pendingNotifications.clear();
 			manager.stopAll();
-			terminalProgress.setActive(false);
+			terminalActivity.setActive(terminalActivitySource, false);
+			for (const dispose of disposeSubagentListeners) dispose();
 			ctx.ui.setWidget("workflows", undefined);
 		});
 	};

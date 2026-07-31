@@ -276,6 +276,8 @@ in
             reviewer.model = piSettings.defaultModel; # Code reviewer
           };
         };
+
+        inherit (piSettings) readseek;
       };
     };
   };

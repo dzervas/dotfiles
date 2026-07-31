@@ -8,6 +8,7 @@
 
       "audio"
       "video"
+      "render"
       "input"
       "uinput"
 

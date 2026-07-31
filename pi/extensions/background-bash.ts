@@ -9,6 +9,7 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 import { ScrollableDialogue } from "./lib/scrollable-dialogue";
+import { terminalActivity } from "./pi-subagents-workflows/terminal-progress";
 
 const REGISTRY_KEY = Symbol.for("dzervas.pi.background-jobs");
 
@@ -71,10 +72,13 @@ function duration(job: Job): string {
 	return `${seconds.toFixed(1)}s`;
 }
 
+function commandPreview(command: string): string {
+	const singleLine = command.replace(/\s+/gu, " ").trim();
+	return singleLine.length > 72 ? `${singleLine.slice(0, 69)}...` : singleLine;
+}
+
 function jobLabel(job: Job): string {
-	const command = job.command.replace(/\s+/gu, " ").trim();
-	const preview = command.length > 72 ? `${command.slice(0, 69)}...` : command;
-	return `${job.status.padEnd(9)} #${job.id}  ${duration(job)}  ${preview}`;
+	return `${job.status.padEnd(9)} #${job.id}  ${duration(job)}  ${commandPreview(job.command)}`;
 }
 
 function formatJobs(registry: JobRegistry): string {
@@ -164,9 +168,13 @@ async function runPsCommand(ctx: ExtensionCommandContext, registry: JobRegistry)
 
 export default function backgroundBashExtension(pi: ExtensionAPI): void {
 	const processRegistry = getProcessRegistry();
+	const terminalActivitySource = "background-bash";
 	let sessionId: string | undefined;
 	let registry: JobRegistry | undefined;
-
+	let uiCtx: ExtensionContext | undefined;
+	let terminalEnabled = false;
+	let parentIdle = true;
+	let refreshInterval: ReturnType<typeof setInterval> | undefined;
 	const currentRegistry = (ctx?: ExtensionContext): JobRegistry => {
 		if (ctx) {
 			const currentSessionId = ctx.sessionManager.getSessionId();
@@ -178,6 +186,37 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 		}
 		if (!registry) throw new Error("Background job registry is not initialized");
 		return registry;
+	};
+
+	const stopRefreshLoop = () => {
+		if (!refreshInterval) return;
+		clearInterval(refreshInterval);
+		refreshInterval = undefined;
+	};
+
+	const refreshActivity = () => {
+		const ctx = uiCtx;
+		if (!ctx || !registry) return;
+		const active = [...registry.jobs.values()].filter(
+			(job) => job.status === "running" || job.status === "stopping",
+		);
+		terminalActivity.setActive(terminalActivitySource, terminalEnabled && active.length > 0, parentIdle);
+		if (ctx.hasUI) {
+			ctx.ui.setWidget(
+				"background-bash",
+				active.length
+					? active.map((job) =>
+						ctx.ui.theme.fg("accent", `◌ bash #${job.id}`) +
+						ctx.ui.theme.fg("muted", ` · ${duration(job)} · ${commandPreview(job.command)}`),
+					)
+					: undefined,
+			);
+		}
+		if (active.length > 0 && !refreshInterval) {
+			refreshInterval = setInterval(refreshActivity, 1000);
+		} else if (active.length === 0) {
+			stopRefreshLoop();
+		}
 	};
 
 	const builtin = createBashToolDefinition(process.cwd());
@@ -212,6 +251,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 				startedAt: Date.now(),
 			};
 			registry.jobs.set(job.id, job);
+			refreshActivity();
 
 			void delegate
 				.execute(
@@ -235,6 +275,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 				})
 				.finally(() => {
 					job.endedAt = Date.now();
+					refreshActivity();
 				});
 
 			return {
@@ -266,20 +307,42 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 				const job = requireJob(registry, params.id);
 				text = params.action === "inspect" ? inspectJob(job) : stopJob(job);
 			}
+			refreshActivity();
 			return { content: [{ type: "text", text }], details: {} };
 		},
 	});
 
 	pi.registerCommand("ps", {
 		description: "List, inspect, or stop background bash jobs",
-		handler: (_args, ctx) => runPsCommand(ctx, currentRegistry(ctx)),
+		handler: async (_args, ctx) => {
+			await runPsCommand(ctx, currentRegistry(ctx));
+			refreshActivity();
+		},
+	});
+
+	pi.on("agent_start", () => {
+		parentIdle = false;
+	});
+	pi.on("agent_settled", () => {
+		parentIdle = true;
+		refreshActivity();
+		terminalActivity.refresh();
 	});
 
 	pi.on("session_start", (_event, ctx) => {
 		currentRegistry(ctx);
+		uiCtx = ctx;
+		terminalEnabled = ctx.mode === "tui";
+		parentIdle = ctx.isIdle();
+		refreshActivity();
 	});
 
-	pi.on("session_shutdown", (event) => {
+	pi.on("session_shutdown", (event, ctx) => {
+		uiCtx = undefined;
+		terminalEnabled = false;
+		stopRefreshLoop();
+		terminalActivity.setActive(terminalActivitySource, false);
+		ctx.ui.setWidget("background-bash", undefined);
 		if (event.reason === "reload" || !registry) return;
 		for (const job of registry.jobs.values()) {
 			if (job.status === "running") stopJob(job);
