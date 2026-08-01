@@ -175,6 +175,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 	let terminalEnabled = false;
 	let parentIdle = true;
 	let refreshInterval: ReturnType<typeof setInterval> | undefined;
+	const pendingNotifications = new Map<number, Job>();
 	const currentRegistry = (ctx?: ExtensionContext): JobRegistry => {
 		if (ctx) {
 			const currentSessionId = ctx.sessionManager.getSessionId();
@@ -217,6 +218,19 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 		} else if (active.length === 0) {
 			stopRefreshLoop();
 		}
+	};
+
+	const notifyJob = (job: Job) => {
+		if (!uiCtx) return;
+		pi.sendMessage(
+			{
+				customType: "background-bash",
+				content: inspectJob(job),
+				display: true,
+				details: { id: job.id, status: job.status, command: job.command, cwd: job.cwd },
+			},
+			{ triggerTurn: true, deliverAs: "followUp" },
+		);
 	};
 
 	const builtin = createBashToolDefinition(process.cwd());
@@ -276,6 +290,8 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 				.finally(() => {
 					job.endedAt = Date.now();
 					refreshActivity();
+					if (ctx.isIdle()) notifyJob(job);
+					else pendingNotifications.set(job.id, job);
 				});
 
 			return {
@@ -325,6 +341,8 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 	});
 	pi.on("agent_settled", () => {
 		parentIdle = true;
+		for (const job of pendingNotifications.values()) notifyJob(job);
+		pendingNotifications.clear();
 		refreshActivity();
 		terminalActivity.refresh();
 	});
@@ -334,6 +352,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 		uiCtx = ctx;
 		terminalEnabled = ctx.mode === "tui";
 		parentIdle = ctx.isIdle();
+		pendingNotifications.clear();
 		refreshActivity();
 	});
 
@@ -341,6 +360,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 		uiCtx = undefined;
 		terminalEnabled = false;
 		stopRefreshLoop();
+		pendingNotifications.clear();
 		terminalActivity.setActive(terminalActivitySource, false);
 		ctx.ui.setWidget("background-bash", undefined);
 		if (event.reason === "reload" || !registry) return;

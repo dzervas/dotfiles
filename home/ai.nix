@@ -231,54 +231,13 @@ in
     codex.enable = true;
     pi-coding-agent = {
       enable = true;
-      package = pkgs.pi-coding-agent-latest;
+      package = piCodingAgent;
       extraPackages = with pkgs; [
         nodejs
         typescript
-        piCodingAgent
       ];
 
-      settings = rec {
-        quietStartup = true;
-        collapseChangelog = true;
-        enableInstallTelemetry = false;
-
-        showHardwareCursor = true;
-        terminal = {
-          showTerminalProgress = true;
-          clearOnShrink = true;
-        };
-
-        transport = "auto";
-        warnings.anthropicExtraUsage = false;
-
-        packages = piPackages;
-        npmCommand = [
-          "${nodejs}/bin/npm"
-          "--prefix"
-          piNpmPrefix
-        ];
-
-        defaultModel = builtins.elemAt enabledModels 0;
-        defaultThinkingLevel = "medium";
-        enabledModels = [ "gpt-5.6-sol" "claude-opus-5" "gpt-5.6-terra" "claude-fable-5" ];
-
-        subagents = {
-          defaultModel = "claude-sonnet-5";
-          agentOverrides = let
-            smallModel = "claude-haiku-4-5";
-          in {
-            scout.model = smallModel; # Local file recon
-            researcher.model = smallModel; # Web recon
-            delegate.model = smallModel; # Small worker
-
-            oracle.model = piSettings.defaultModel; # Plan reviewer
-            reviewer.model = piSettings.defaultModel; # Code reviewer
-          };
-        };
-
-        inherit (piSettings) readseek;
-      };
+      settings = piSettings;
     };
   };
 }
