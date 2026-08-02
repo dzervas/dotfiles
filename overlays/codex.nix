@@ -6,11 +6,11 @@
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "codex";
-  version = "0.145.0";
+  version = "0.146.1";
 
   src = fetchurl {
     url = "https://registry.npmjs.org/@openai/codex/-/codex-${version}.tgz";
-    hash = "sha256-QWOZeWysNx0aAzsX80sIupslyPKYpbnQDhD3LDsSjI0=";
+    hash = "sha256-g6qawBktVC/Ab6nmQC9Dj79xqFe3M6Vbgv59AHs678g=";
   };
 
   platformSrc = fetchurl {

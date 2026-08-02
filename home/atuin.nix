@@ -70,7 +70,7 @@
 in {
   programs.atuin = {
     enable = true;
-    daemon.enable = true;
+    # daemon.enable = true;
     flags = [ "--disable-up-arrow" ];
 
     enableFishIntegration = false; # To use pty-proxy

@@ -37,8 +37,7 @@
       enable = true;
       capSysNice = false;
       args = [
-        # TODO: Move to wayland-fixes
-        "--backend" "wayland"
+        "--backend" "drm" # instead of wayland, use direct rendering to enable HDR & VRR
         "--fullscreen"
 
         # Realtime governor

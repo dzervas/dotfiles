@@ -7,7 +7,7 @@
   system_fs = "/dev/mapper/cryptroot"; # The BTRFS is in RAID1 so the UUID is the same for both disks
 in {
   imports = [
-    ./components/amd.nix
+    # ./components/amd.nix
     ./components/boot.nix
     # ./components/libvirt.nix
     ./components/peripherals.nix
@@ -79,4 +79,5 @@ in {
 
   # Work around intermittent suspend failures on Navi 10 during resume.
   boot.kernelParams = [ "amd_iommu=off" ];
+  hardware.cpu.amd.updateMicrocode = true;
 }

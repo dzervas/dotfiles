@@ -23,12 +23,12 @@ let
   };
   piCodingAgentNodeModules = pkgs.runCommand "pi-coding-agent-node-modules" { } ''
     mkdir -p $out/node_modules/@earendil-works
-    ln -s ${pkgs.pi-coding-agent-latest}/lib/node_modules/pi-monorepo \
+    ln -s ${pkgs.pi-coding-agent}/lib/node_modules/pi-monorepo \
       $out/node_modules/@earendil-works/pi-coding-agent
   '';
   piCodingAgent = pkgs.symlinkJoin {
     name = "pi-coding-agent-with-extension-node-path";
-    paths = [ pkgs.pi-coding-agent-latest ];
+    paths = [ pkgs.pi-coding-agent ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
     # Pi realpaths symlinked extensions before loading them, so bare imports
     # need to resolve from the extension dependency closure while pi runs.
@@ -44,13 +44,13 @@ let
 
   # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
   piPackages = [
-    "npm:pi-mcp-adapter@2.11.0"
-    "npm:pi-web-access@0.13.0"
-    "npm:pi-readseek@0.8.19"
-    "npm:@gotgenes/pi-anthropic-auth@2.0.0"
+    "npm:pi-mcp-adapter@2.20.1"
+    "npm:pi-web-access@0.18.0"
+    "npm:pi-readseek@0.9.9"
+    "npm:@gotgenes/pi-anthropic-auth@2.0.1"
     "npm:@gotgenes/pi-subagents@19.2.1"
     {
-      source = "npm:@router-for-me/pi-cliproxyapi-provider@1.4.8";
+      source = "npm:@router-for-me/pi-cliproxyapi-provider@1.4.13";
       # Disable tps.ts that shows elapsed n stuff, it's ugly
       extensions = [ "index.ts" ];
     }

@@ -33,34 +33,20 @@ final: prev: rec {
     };
   };
 
-  # nix-update :claude-code-latest
-  claude-code-latest = prev.claude-code.overrideAttrs rec {
-    # Get from https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/latest
-    version = "2.1.92";
-    src = final.fetchurl (
-      let
-        nodePlatform = final.stdenvNoCC.hostPlatform.node;
-      in
-      {
-        url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/${version}/${nodePlatform.platform}-${nodePlatform.arch}/claude";
-        hash = "sha256-4iMkUUln/y1en5Hw7jfkZ1v4tt/sJ/r7GcslzFsj/K8=";
-      }
-    );
-  };
-
   # nix-update:pi-coding-agent-latest --custom-dep modelData
+  # Broken:
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
     finalAttrs: _prevAttrs: rec {
-      version = "0.82.1";
+      version = "0.84.0";
 
       src = final.fetchFromGitHub {
         owner = "earendil-works";
         repo = "pi";
         tag = "v${version}";
-        hash = "sha256-LESpgd/KUoNqdBfnd1oyMN8coKm0Odbo9GYkUDry8Zk=";
+        hash = "sha256-qySIyclHsWUo/Uap9rCl97amvKBbHfRXlOB16t8t3Ns=";
       };
 
-      npmDepsHash = "sha256-5pHRwxpKg95/phOcYHeWdvPJNtSOhiw7PRoVxsuh0RM=";
+      npmDepsHash = "sha256-pIpwMAmSWjJKM5P+jltU/L/vS+d5JWNJYiIChfSZGOE=";
 
       npmDeps = final.fetchNpmDeps {
         inherit (finalAttrs) src;
@@ -70,18 +56,8 @@ final: prev: rec {
 
       modelData = final.fetchurl {
         url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${version}.tgz";
-        hash = "sha256-L535UigItiHNNEmHZTfwPYqN+LjX7C1bGMapEKqFtJA=";
+        hash = "sha256-WWDOeXctyqZZmC8LENp3qeMvapehFSu7LMfsZh/LzOo=";
       };
     }
   );
-
-  # Broken: fix 1.18.0 upstream bug
-  flatpak = prev.flatpak.overrideAttrs (old: {
-    patches = (old.patches or []) ++ [
-      (prev.fetchpatch {
-        url = "https://github.com/swick/flatpak/commit/ae81e796091d357e5a2e4e348c406671632b15a6.patch";
-        hash = "sha256-ce8PTpQl5OuaCRCYKYih7v6D4PVWURwOh0m2Wf4GUvM=";
-      })
-    ];
-  });
 }

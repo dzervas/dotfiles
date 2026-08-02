@@ -176,7 +176,7 @@
         "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002445" = {
           enable = true;
           focus-at-startup = true;
-          variable-refresh-rate = true;
+          variable-refresh-rate = "on-demand";
           scale = 1;
           position = {
             x = 0;
@@ -185,7 +185,7 @@
         };
         "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002448" = {
           enable = true;
-          variable-refresh-rate = true;
+          variable-refresh-rate = "on-demand";
           scale = 1;
         };
         "BOE NE135A1M-NY1" = {
@@ -227,6 +227,7 @@
               app-id = "org.telegram.desktop";
               title = "Telegram";
             }
+            { app-id = "^$"; title = "^$"; }
           ];
           open-floating = true;
         }
@@ -239,8 +240,9 @@
           # open-maximized-to-edges = true;
         }
         {
-          matches = [ { app-id = "^steam_app_.*"; } ];
+          matches = [ { title = ".+"; app-id = "^steam_app_.*"; } ];
           open-fullscreen = true;
+          variable-refresh-rate = true;
         }
         {
           matches = [
