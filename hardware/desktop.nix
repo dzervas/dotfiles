@@ -8,6 +8,7 @@
 in {
   imports = [
     # ./components/amd.nix
+    ./components/nvidia.nix
     ./components/boot.nix
     # ./components/libvirt.nix
     ./components/peripherals.nix

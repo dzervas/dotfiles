@@ -29,11 +29,11 @@
       prefer-no-csd = true;
 
       workspaces = {
-        "1-web".open-on-output = "DP-1";
-        "2-work".open-on-output = "DP-1";
-        "3-game".open-on-output = "DP-1";
-        "1-term".open-on-output = "DP-3";
-        "2-chat".open-on-output = "DP-3";
+        "1-web".open-on-output = "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002445";
+        "2-work".open-on-output = "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002445";
+        "3-game".open-on-output = "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002445";
+        "1-term".open-on-output = "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002448";
+        "2-chat".open-on-output = "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002448";
       };
 
       spawn-at-startup = [
@@ -178,6 +178,11 @@
           focus-at-startup = true;
           variable-refresh-rate = "on-demand";
           scale = 1;
+          mode = {
+            width = 2560;
+            height = 1440;
+            refresh = 119.998;
+          };
           position = {
             x = 0;
             y = 0;
@@ -187,6 +192,11 @@
           enable = true;
           variable-refresh-rate = "on-demand";
           scale = 1;
+          mode = {
+            width = 2560;
+            height = 1440;
+            refresh = 119.998;
+          };
         };
         "BOE NE135A1M-NY1" = {
           # Laptop built-in display
@@ -227,7 +237,10 @@
               app-id = "org.telegram.desktop";
               title = "Telegram";
             }
-            { app-id = "^$"; title = "^$"; }
+            {
+              app-id = "^$";
+              title = "^$";
+            }
           ];
           open-floating = true;
         }
@@ -240,7 +253,12 @@
           # open-maximized-to-edges = true;
         }
         {
-          matches = [ { title = ".+"; app-id = "^steam_app_.*"; } ];
+          matches = [
+            {
+              title = ".+";
+              app-id = "^steam_app_.*";
+            }
+          ];
           open-fullscreen = true;
           variable-refresh-rate = true;
         }

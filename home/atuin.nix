@@ -1,4 +1,10 @@
-{ config, lib, pkgs, ... }: let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
   llamaSwapModelsDir = "${config.home.homeDirectory}/.local/share/llama-swap";
 
   llamaSwapConfig = pkgs.writeText "llama-swap-config.yaml" ''
@@ -59,15 +65,17 @@
   '';
 
   # Copy-pasta of https://github.com/nix-community/home-manager/blob/master/modules/programs/atuin.nix#L172C7-L180
-  atuinFishConfig = pkgs.runCommand "atuin-fish-config.fish"
-    {
-      nativeBuildInputs = [ pkgs.writableTmpDirAsHomeHook ];
-    }
-    ''
-      ${lib.getExe config.programs.atuin.package} pty-proxy init fish > "$out"
-      ${lib.getExe config.programs.atuin.package} ai init fish >> "$out"
-    '';
-in {
+  atuinFishConfig =
+    pkgs.runCommand "atuin-fish-config.fish"
+      {
+        nativeBuildInputs = [ pkgs.writableTmpDirAsHomeHook ];
+      }
+      ''
+        ${lib.getExe config.programs.atuin.package} pty-proxy init fish > "$out"
+        ${lib.getExe config.programs.atuin.package} ai init fish >> "$out"
+      '';
+in
+{
   programs.atuin = {
     enable = true;
     # daemon.enable = true;
@@ -96,6 +104,7 @@ in {
   # Local AI containers share a bridge network with container-name DNS.
   services.podman = {
     enable = true;
+    enableTypeChecks = true;
 
     networks.local-ai = {
       description = "Local AI services";
@@ -104,6 +113,7 @@ in {
 
     containers = {
       atuin-ai = {
+        enable = false;
         image = "ghcr.io/atuinsh/atuin-ai-server:latest";
         description = "Self-hosted Atuin AI server";
         network = [ "local-ai.network" ];
@@ -113,12 +123,13 @@ in {
       };
 
       llama-swap = {
-        image = "ghcr.io/mostlygeek/llama-swap:unified-vulkan";
+        enable = false;
+        image = "ghcr.io/mostlygeek/llama-swap:unified-cuda";
         description = "Vulkan llama.cpp model server and swapper";
         network = [ "local-ai.network" ];
         networkAlias = [ "llama-swap" ];
         ports = [ "127.0.0.1:1337:1337" ];
-        devices = [ "/dev/dri:/dev/dri" ];
+        devices = [ "nvidia.com/gpu=all" ];
         environment = {
           HOME = "/models";
           LLAMA_CACHE = "/models";
@@ -130,14 +141,14 @@ in {
           "${llamaSwapModelsDir}:/models"
         ];
         extraConfig.Container.GroupAdd = "keep-groups";
+        # extraPodmanArgs = [ "--runtime=nvidia" ];
       };
     };
   };
 
-  home.activation.createLlamaSwapModelsDir =
-    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      run mkdir -p ${lib.escapeShellArg llamaSwapModelsDir}
-    '';
+  home.activation.createLlamaSwapModelsDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    run mkdir -p ${lib.escapeShellArg llamaSwapModelsDir}
+  '';
 
   xdg.configFile."atuin-ai/config.toml".source = atuinAiConfig;
 
