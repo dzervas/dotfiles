@@ -103,7 +103,8 @@ in
 
   # Local AI containers share a bridge network with container-name DNS.
   services.podman = {
-    enable = true;
+    # enable = true;
+    enable = false;
     enableTypeChecks = true;
 
     networks.local-ai = {
@@ -113,7 +114,6 @@ in
 
     containers = {
       atuin-ai = {
-        enable = false;
         image = "ghcr.io/atuinsh/atuin-ai-server:latest";
         description = "Self-hosted Atuin AI server";
         network = [ "local-ai.network" ];
@@ -123,7 +123,6 @@ in
       };
 
       llama-swap = {
-        enable = false;
         image = "ghcr.io/mostlygeek/llama-swap:unified-cuda";
         description = "Vulkan llama.cpp model server and swapper";
         network = [ "local-ai.network" ];

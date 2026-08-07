@@ -143,7 +143,8 @@
 
     # Niri
     # niri.url = "github:sodiboo/niri-flake";
-    niri.url = "github:rebizzz/niri-flake/fix/libdisplay-info-dep";
+    # niri.url = "github:rebizzz/niri-flake/fix/libdisplay-info-dep";
+    niri.url = "github:epireyn/niri-flake";
 
     noctalia.url = "github:noctalia-dev/noctalia-shell/legacy-v4";
     noctalia.inputs.nixpkgs.follows = "nixpkgs";

@@ -108,10 +108,9 @@ let
     };
 
     readseek = {
-      replacedTools = [ "read" "edit" "write" "grep" ];
+      overrideTools = [ "edit" "write" "grep" ];
       syntaxValidation = "warn";
       display = {
-        read = "compact";
         grep = "compact";
         edit = "expanded";
         write = "expanded";

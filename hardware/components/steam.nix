@@ -37,14 +37,17 @@
       enable = true;
       capSysNice = false;
       args = [
-        "--backend" "drm" # instead of wayland, use direct rendering to enable HDR & VRR
+        "--backend" "wayland"
         "--fullscreen"
+        "--expose-wayland"
+        "--steam"
+        "--prefer-output" "DP-3"
 
         # Realtime governor
         "--rt"
 
         # Screen specific stuff
-        "--hdr-enabled" "--adaptive-sync"
+        "--adaptive-sync"
         # "--mangoapp"
       ];
     };

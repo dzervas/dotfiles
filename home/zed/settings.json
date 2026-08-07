@@ -16,10 +16,10 @@
 			"max_output_tokens": 512,
 			"api_url": "http://localhost:1337/v1/completions",
 			"prompt_format": "zeta2_1",
-			"model": "zeta",
+			"model": "zeta-2.1",
 		},
 		"disabled_globs": [".private"],
-		"provider": "zed",
+		"provider": "open_ai_compatible_api",
 	},
 	"telemetry": {
 		"diagnostics": true,

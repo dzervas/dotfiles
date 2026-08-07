@@ -10,8 +10,11 @@ _: {
 
   hardware.nvidia = {
     modesetting.enable = true;
-    powerManagement.enable = false;
-    powerManagement.finegrained = false;
+    powerManagement = {
+      enable = true;
+      finegrained = false;
+      kernelSuspendNotifier = true;
+    };
     open = true;
     nvidiaSettings = true;
   };

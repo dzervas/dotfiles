@@ -181,7 +181,7 @@
           mode = {
             width = 2560;
             height = 1440;
-            refresh = 119.998;
+            refresh = 143.856;
           };
           position = {
             x = 0;
@@ -195,7 +195,7 @@
           mode = {
             width = 2560;
             height = 1440;
-            refresh = 119.998;
+            refresh = 143.856;
           };
         };
         "BOE NE135A1M-NY1" = {
@@ -237,12 +237,11 @@
               app-id = "org.telegram.desktop";
               title = "Telegram";
             }
-            {
-              app-id = "^$";
-              title = "^$";
-            }
           ];
           open-floating = true;
+          border.enable = false;
+          shadow.enable = true;
+          focus-ring.enable = false;
         }
         {
           matches = [
@@ -250,16 +249,17 @@
             { app-id = "com.mitchellh.ghostty"; }
           ];
           open-maximized = false;
-          # open-maximized-to-edges = true;
+          open-maximized-to-edges = true;
         }
         {
           matches = [
             {
               title = ".+";
-              app-id = "^steam_app_.*";
+              app-id = "^(steam_app_.*|helldivers2.exe)";
             }
           ];
           open-fullscreen = true;
+          open-on-workspace = "3-game";
           variable-refresh-rate = true;
         }
         {
@@ -267,6 +267,10 @@
             {
               app-id = "steam";
               title = "^notificationtoasts_.*";
+            }
+            {
+              app-id = "^$";
+              title = "^$";
             }
           ];
 
