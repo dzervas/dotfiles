@@ -94,6 +94,7 @@
         ".github/prompts"
         ".pi"
         ".mcp.json"
+        ".nix"
       ];
     };
 

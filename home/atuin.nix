@@ -6,6 +6,17 @@
 }:
 let
   llamaSwapModelsDir = "${config.home.homeDirectory}/.local/share/llama-swap";
+  # p run -d --name zeta -p 127.0.0.1:1337:8000 --ipc=host --device nvidia.com/gpu=all -e PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True -e VLLM_SERVER_DEV_MODE=1 -v ~/.cache/vllm:/root/.cache/vllm -v ~/.cache/huggingface:/root/.cache/huggingface vllm/vllm-openai:latest LeaderboardModel1/zeta-2.1-autoround-W4A16 \
+  #           --served-model-name zeta-2.1 \
+  #           --max-model-len 6K \
+  #           --max-num-seqs 1 \
+  #           --gpu-memory-utilization 0.50 \
+  #           --enable-prefix-caching \
+  #           --no-enable-chunked-prefill \
+  #           --max-num-batched-tokens 8K \
+  #           --kv-cache-dtype fp8 \
+  #           --enable-sleep-mode \
+  #           --speculative-config '{"method": "ngram","num_speculative_tokens": 12,"prompt_lookup_min": 2,"prompt_lookup_max": 4}'
 
   llamaSwapConfig = pkgs.writeText "llama-swap-config.yaml" ''
     healthCheckTimeout: 600

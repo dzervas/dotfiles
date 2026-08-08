@@ -19,6 +19,7 @@
       "libvirtd"
       "podman"
       "vboxusers"
+      "kvm"
 
       "lp"
     ];

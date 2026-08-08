@@ -90,6 +90,7 @@ const DEFAULT_RULES: Rule[] = [
 				"^get_search_content$",
 
 				"^workflow$",
+				"^readSeek_\\w+$",
 			],
 		},
 	},

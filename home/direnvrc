@@ -125,3 +125,23 @@ function use_mcp() {
 # occasionally leak onto stdout, making direnv try to execute words like
 # "Running" as shell commands.  Force non-TUI quiet mode for direnv activations.
 eval "$(devenv direnvrc | sed 's/local devenv_cmd=("${DEVENV_BIN}")/local devenv_cmd=("${DEVENV_BIN}" --quiet --no-tui)/')"
+
+# Preserve devenv's generated implementation so the wrapper can select a source.
+eval "$(declare -f use_devenv | sed '1s/use_devenv/_use_devenv/')"
+
+function use_devenv() {
+	if test "$#" -gt 0 && test "${1#-}" = "$1" && test -e "$1"; then
+		local source="$1"
+		shift
+		watch_file "$source/default.nix" "$source/devenv.nix" "$source/devenv.lock" "$source/devenv.yaml" "$source/devenv.local.nix" "$source/devenv.local.yaml"
+		_use_devenv --from "path:$source" "$@"
+	elif test -f devenv.nix && test -f .nix/default.nix; then
+		log_error "both devenv.nix and .nix/default.nix exist; pass the desired directory to 'use devenv'"
+		return 1
+	elif test -f .nix/default.nix; then
+		watch_file .nix/default.nix .nix/devenv.lock .nix/devenv.yaml .nix/devenv.local.nix .nix/devenv.local.yaml
+		_use_devenv --from path:.nix "$@"
+	else
+		_use_devenv "$@"
+	fi
+}
