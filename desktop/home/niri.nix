@@ -29,11 +29,11 @@
       prefer-no-csd = true;
 
       workspaces = {
-        "1-web".open-on-output = "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002445";
-        "2-work".open-on-output = "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002445";
-        "3-game".open-on-output = "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002445";
-        "1-term".open-on-output = "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002448";
-        "2-chat".open-on-output = "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002448";
+        "1-web".open-on-output = "GIGA-BYTE TECHNOLOGY CO., LTD. M27Q 24290B002445";
+        "2-work".open-on-output = "GIGA-BYTE TECHNOLOGY CO., LTD. M27Q 24290B002445";
+        "3-game".open-on-output = "GIGA-BYTE TECHNOLOGY CO., LTD. M27Q 24290B002445";
+        "1-term".open-on-output = "GIGA-BYTE TECHNOLOGY CO., LTD. M27Q 24290B002448";
+        "2-chat".open-on-output = "GIGA-BYTE TECHNOLOGY CO., LTD. M27Q 24290B002448";
       };
 
       spawn-at-startup = [
@@ -173,7 +173,7 @@
         };
       };
       outputs = {
-        "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002445" = {
+        "GIGA-BYTE TECHNOLOGY CO., LTD. M27Q 24290B002445" = {
           enable = true;
           focus-at-startup = true;
           variable-refresh-rate = "on-demand";
@@ -188,7 +188,7 @@
             y = 0;
           };
         };
-        "GIGA-BYTE TECHNOLOGY CO. LTD. M27Q 24290B002448" = {
+        "GIGA-BYTE TECHNOLOGY CO., LTD. M27Q 24290B002448" = {
           enable = true;
           variable-refresh-rate = "on-demand";
           scale = 1;

@@ -1,12 +1,7 @@
 _: {
   services.xserver.videoDrivers = [ "nvidia" ];
 
-  boot = {
-    kernelModules = [ "kvm-amd" ];
-    # Fixes white flickering after resume/unlock
-    kernelParams = [ "amdgpu.sg_display=0" ];
-    initrd.kernelModules = [ "amdgpu" ];
-  };
+  boot.initrd.kernelModules = [ "nvidia" ];
 
   hardware.nvidia = {
     modesetting.enable = true;

@@ -79,6 +79,7 @@ in {
   };
 
   # Work around intermittent suspend failures on Navi 10 during resume.
-  boot.kernelParams = [ "amd_iommu=off" ];
+  # boot.kernelParams = [ "amd_iommu=off" ];
+  boot.kernelModules = [ "kvm-amd" ];
   hardware.cpu.amd.updateMicrocode = true;
 }

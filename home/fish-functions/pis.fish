@@ -133,6 +133,7 @@ bwrap \
 	--ro-bind $HOME/.pi/agent/settings.json $HOME/.pi/agent/settings.json \
 	--ro-bind $HOME/.pi/agent/auth.json $HOME/.pi/agent/auth.json \
 	--ro-bind $HOME/.pi/agent/node_modules $HOME/.pi/agent/node_modules \
+	--ro-bind $HOME/.pi/agent/npm $HOME/.pi/agent/npm \
 	--ro-bind $HOME/.pi/agent/extensions $HOME/.pi/agent/extensions \
 	--ro-bind $HOME/.pi/agent/skills $HOME/.pi/agent/skills \
 	--ro-bind $HOME/.pi/agent/AGENTS.md $HOME/.pi/agent/AGENTS.md \
