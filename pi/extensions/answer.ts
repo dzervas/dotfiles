@@ -72,7 +72,7 @@ Example output:
   ]
 }`;
 
-const CODEX_MODEL_ID = "gpt-5.4-mini";
+const CODEX_MODEL_ID = "gpt-5.3-codex-spark";
 const HAIKU_MODEL_ID = "claude-haiku-4-5";
 
 /**

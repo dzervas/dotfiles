@@ -9,19 +9,14 @@
 final: prev: rec {
   buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix { };
   claude-chrome = prev.callPackage ./claude-chrome.nix { };
-  lmstudio-python = prev.callPackage ./lmstudio-python.nix { };
-  # nix-update:voxtype
-  voxtype = prev.callPackage ./voxtype.nix { };
-  # nix-update:webctl
-  webctl = prev.callPackage ./webctl.nix { };
+  # nix-update:cursortab-nvim --custom-dep server
+  cursortab-nvim = prev.callPackage ./cursortab-nvim.nix { };
   # nix-update:codex-latest
   codex-latest = prev.callPackage ./codex.nix { };
   # nix-update:anytype-cli
   anytype-cli = prev.callPackage ./anytype-cli.nix { };
   # nix-update :n8n-cli --version-regex 'n8n@(2\.\d+\.\d+)'
   n8n-cli = prev.callPackage ./n8n-cli.nix { };
-  # nix-update :playwright-cli --version-regex 'n8n@(2\.\d+\.\d+)'
-  playwright-cli = prev.callPackage ./playwright-cli.nix { };
 
   python = prev.python3.override {
     self = python;

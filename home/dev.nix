@@ -69,7 +69,6 @@
         pyserial
         frida-python
 
-        lmstudio-python
         openai-agents
 
         # pip magic # BinaryNinja needs these

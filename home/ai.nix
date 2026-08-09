@@ -61,8 +61,14 @@ let
        "skills/engineering/wayfinder/SKILL.md"
        "skills/engineering/domain-modeling/SKILL.md"
        "skills/engineering/research/SKILL.md"
+       "skills/engineering/prototype/SKILL.md"
+       "skills/engineering/tdd/SKILL.md"
+       "skills/engineering/diagnosing-bugs/SKILL.md"
+       "skills/engineering/codebase-design/SKILL.md"
+       "skills/engineering/code-review/SKILL.md"
        "skills/productivity/grill-me/SKILL.md"
        "skills/productivity/grilling/SKILL.md"
+       "skills/productivity/writing-for-agents/SKILL.md"
      ];
    }
   ];
@@ -204,6 +210,7 @@ in
       openspec
       piExtensionBump
       snyk
+      codegraph
     ];
 
     sessionVariables = {

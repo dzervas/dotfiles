@@ -1,8 +1,8 @@
-{ inputs, ... }: let
+{ inputs, pkgs, ... }: let
   inherit (inputs.nixvim.lib.nixvim) utils;
 in {
-  programs.nixvim.plugins = {
-    blink-cmp = {
+  programs.nixvim = {
+    plugins.blink-cmp = {
       enable = true;
       setupLspCapabilities = true;
 
@@ -32,7 +32,9 @@ in {
               function()
                 -- Apart from copilot, suggestion engines need to get deferred
                 -- otherwise they throw a "can't edit buffer" error.
-                if package.loaded["sidekick"] ~= nil then
+                if package.loaded["cursortab"] ~= nil and require("cursortab").accept() then
+                  return true
+                elseif package.loaded["sidekick"] ~= nil then
                   return require("sidekick").nes_jump_or_apply()
                 elseif package.loaded["copilot"] ~= nil and require("copilot.suggestion").is_visible() then
                   return require("copilot.suggestion").accept()
@@ -90,5 +92,28 @@ in {
         signature.enabled = true;
       };
     };
+
+    extraPlugins = [ pkgs.cursortab-nvim ];
+    extraConfigLua = ''
+      require("cursortab").setup({
+        keymaps = {
+          accept = false,
+          partial_accept = "<C-Right>",
+          trigger = "<A-\\>",
+        },
+        behavior = {
+          ignore_gitignored = false,
+        },
+        provider = {
+          type = "zeta-2.1",
+          url = "http://localhost:1337",
+          model = "zeta-2.1",
+        },
+        blink = {
+          enabled = false,
+          ghost_text = true,
+        },
+      })
+    '';
   };
 }

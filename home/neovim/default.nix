@@ -32,6 +32,7 @@ in {
 
   programs.nixvim = {
     enable = true;
+    wrapRc = true;
     nixpkgs.config.allowUnfree = true;
 
     defaultEditor = true;
