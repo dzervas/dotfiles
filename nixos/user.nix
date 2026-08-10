@@ -17,7 +17,6 @@
       "gamemode"
 
       "libvirtd"
-      "podman"
       "vboxusers"
       "kvm"
 
