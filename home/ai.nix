@@ -46,7 +46,6 @@ let
   piPackages = [
     "npm:pi-mcp-adapter@2.20.1"
     "npm:pi-web-access@0.18.0"
-    # "npm:pi-readseek@0.9.9"
     "npm:@gotgenes/pi-anthropic-auth@2.0.1"
     "npm:@gotgenes/pi-subagents@19.2.1"
     {
@@ -107,16 +106,6 @@ let
         reviewer.model = piSettings.defaultModel; # Code reviewer
       };
     };
-
-    # readseek = {
-    #   overrideTools = [ "edit" "write" "grep" ];
-    #   syntaxValidation = "warn";
-    #   display = {
-    #     grep = "compact";
-    #     edit = "expanded";
-    #     write = "expanded";
-    #   };
-    # };
   };
 
   piExtensionBump = pkgs.writeShellApplication {

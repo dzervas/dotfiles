@@ -138,6 +138,9 @@ bwrap \
 	--ro-bind $HOME/.pi/agent/skills $HOME/.pi/agent/skills \
 	--ro-bind $HOME/.pi/agent/AGENTS.md $HOME/.pi/agent/AGENTS.md \
 	--bind $HOME/.pi/agent/sessions $HOME/.pi/agent/sessions \
+	--bind $HOME/.pi/agent/mcp-cache.json $HOME/.pi/agent/mcp-cache.json \
+	--bind $HOME/.pi/agent/mcp-oauth $HOME/.pi/agent/mcp-oauth \
+	--bind $HOME/.pi/agent/mcp.json $HOME/.pi/agent/mcp.json \
 	--bind $HOME/.pi/workflows $HOME/.pi/workflows \
 	--bind $HOME/.pi/readseek $HOME/.pi/readseek \
 	--bind $HOME/.pi/agent/run-history.jsonl $HOME/.pi/agent/run-history.jsonl \
