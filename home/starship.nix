@@ -85,24 +85,18 @@
           symbol = " ";
           style = "bg:${bgColorHex} bold yellow";
         };
+        env_var = {
+          IN_NIX_SHELL = {
+            format = "[$symbol$env_value]($style)";
+            style = "fg:#00AFFF";
+            symbol = "󱄅 ";
+          };
 
-        env_var.IN_NIX_SHELL = {
-          format = "[$symbol$env_value]($style)";
-          style = "fg:#00AFFF";
-          symbol = "󱄅 ";
-        };
-
-        # Agentty env_var modules — only render when the var is set
-        env_var.AGENTTY_MODE = {
-          format = "[${leftSepString} 󱞁 $env_value ](fg:#F6C177 bg:${bgColorHex})";
-        };
-
-        env_var.AGENTTY_SESSION = {
-          format = "[ 󰉖 $env_value ](fg:#C4A7E7 bg:${bgColorHex})";
-        };
-
-        env_var.AGENTTY_MODEL = {
-          format = "[ 󰘦 $env_value ](fg:#9CCFD8 bg:${bgColorHex})";
+          # Agentty env_var modules — only render when the var is set
+          AGENTTY_MODE.format = "[${leftSepString} 󱞁 $env_value ](fg:#F6C177 bg:${bgColorHex})";
+          AGENTTY_SESSION.format = "[ 󰉖 $env_value ](fg:#C4A7E7 bg:${bgColorHex})";
+          AGENTTY_MODEL.format = "[ 󰘦 $env_value ](fg:#9CCFD8 bg:${bgColorHex})";
+          
         };
 
         direnv = {
@@ -130,6 +124,8 @@
             Music = " ";
             Pictures = " ";
             "Lab/dotfiles" = "󱄅 ";
+            "Lab/work" = "󰢷 ";
+            "Lab/homelab" = " ";
           };
         };
 

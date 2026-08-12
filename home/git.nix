@@ -95,6 +95,7 @@
         ".pi"
         ".mcp.json"
         ".nix"
+        "AGENTS.local.md"
       ];
     };
 
