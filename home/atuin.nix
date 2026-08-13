@@ -17,7 +17,7 @@ let
   #           --kv-cache-dtype fp8 \
   #           --enable-sleep-mode \
   #           --speculative-config '{"method": "ngram","num_speculative_tokens": 12,"prompt_lookup_min": 2,"prompt_lookup_max": 4}'
-  # docker run --d --name ornith --gpus all --shm-size=8g -p 1338:8080 -v "$HOME/.cache/huggingface:/root/.cache/huggingface" ghcr.io/ggml-org/llama.cpp:server-cuda \
+  # d run --d --name ornith --gpus all --shm-size=8g -p 1338:8080 -v "$HOME/.cache/huggingface:/root/.cache/huggingface" ghcr.io/ggml-org/llama.cpp:server-cuda \
   # --hf-repo s-batman/Ornith-1.0-35B-NVFP4-MTP-GGUF --hf-file ornith-1.0-35b-MXFP4_MOE-MTP.gguf --tools all --host 0.0.0.0 --port 8080 -c 100000 -np 1 -ngl all --cpu-moe -ncmoe 24 --spec-type draft-mtp --spec-draft-n-max 3 -fa on -ctk q4_0 -ctv q4_0 -t 16 -tb 16 -b 2048 -ub 512
 
   llamaSwapConfig = pkgs.writeText "llama-swap-config.yaml" ''

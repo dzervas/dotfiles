@@ -44,7 +44,7 @@ let
 
   # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
   piPackages = [
-    "npm:pi-mcp-adapter@2.20.1"
+    "npm:pi-mcp-adapter@2.21.0"
     "npm:pi-web-access@0.18.0"
     "npm:@gotgenes/pi-anthropic-auth@2.0.1"
     "npm:@gotgenes/pi-subagents@19.2.1"
@@ -124,16 +124,16 @@ let
       ai_nix="''${DOTFILES_PATH:-${config.home.homeDirectory}/Lab/dotfiles}/home/ai.nix"
       specs=(${lib.escapeShellArgs piPackagesSources})
       cutoff="$(date -u -d '7 days ago' +%F)"
+      original_specs=()
       resolved_specs=()
 
       for spec in "''${specs[@]}"; do
         case "$spec" in
           npm:*@*) ;;
-          *)
-            echo "Pi package must be pinned as npm:<package>@<version>: $spec" >&2
-            exit 1
-            ;;
+          *) continue ;;
         esac
+
+        original_specs+=("$spec")
 
         package_version="''${spec#npm:}"
         package="''${package_version%@*}"
@@ -166,28 +166,26 @@ let
         resolved_specs+=("npm:$package@$selected")
       done
 
-      block="$({
-        echo "  piPackages = ["
-        for spec in "''${resolved_specs[@]}"; do
-          echo "    \"$spec\""
-        done
-        echo "  ];"
-      })"
-
-      PI_PACKAGES_BLOCK="$block" AI_NIX="$ai_nix" python3 -c '
-      import os
-      import re
+      python3 - "$ai_nix" "''${#original_specs[@]}" \
+        "''${original_specs[@]}" "''${resolved_specs[@]}" <<'PY'
+      import sys
       from pathlib import Path
 
-      path = Path(os.environ["AI_NIX"])
-      block = os.environ["PI_PACKAGES_BLOCK"]
+      path = Path(sys.argv[1])
+      count = int(sys.argv[2])
+      original_specs = sys.argv[3:3 + count]
+      resolved_specs = sys.argv[3 + count:]
       text = path.read_text()
-      new_text, count = re.subn(r"  piPackages = \[\n.*?\n  \];", block, text, count=1, flags=re.S)
-      if count != 1:
-        raise SystemExit(f"Could not find piPackages block in {path}")
-      if new_text != text:
-        path.write_text(new_text)
-      '
+
+      for original, resolved in zip(original_specs, resolved_specs, strict=True):
+          needle = f'"{original}"'
+          occurrences = text.count(needle)
+          if occurrences != 1:
+              print(f"Warning: expected 1 occurrence of {needle}, found {occurrences}")
+              continue
+          text = text.replace(needle, f'"{resolved}"', 1)
+      path.write_text(text)
+      PY
     '';
   };
 in

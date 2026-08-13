@@ -9,7 +9,7 @@
 final: prev: rec {
   buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix { };
   claude-chrome = prev.callPackage ./claude-chrome.nix { };
-  # nix-update:cursortab-nvim --custom-dep server
+  # nix-update:cursortab-nvim --subpackage server
   cursortab-nvim = prev.callPackage ./cursortab-nvim.nix { };
   # nix-update:codex-latest
   codex-latest = prev.callPackage ./codex.nix { };
@@ -32,16 +32,16 @@ final: prev: rec {
   # Broken:
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
     finalAttrs: _prevAttrs: rec {
-      version = "0.84.0";
+      version = "0.84.1";
 
       src = final.fetchFromGitHub {
         owner = "earendil-works";
         repo = "pi";
         tag = "v${version}";
-        hash = "sha256-qySIyclHsWUo/Uap9rCl97amvKBbHfRXlOB16t8t3Ns=";
+        hash = "sha256-lg+I4S/aAjazjhGZU567ow+rksoNiqOqjHl//TjAMes=";
       };
 
-      npmDepsHash = "sha256-pIpwMAmSWjJKM5P+jltU/L/vS+d5JWNJYiIChfSZGOE=";
+      npmDepsHash = "sha256-tufyZQRPAUeDtiq0UQodbKA/Y9xUAvNT8K+NWFjkeME=";
 
       npmDeps = final.fetchNpmDeps {
         inherit (finalAttrs) src;
@@ -51,7 +51,7 @@ final: prev: rec {
 
       modelData = final.fetchurl {
         url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${version}.tgz";
-        hash = "sha256-WWDOeXctyqZZmC8LENp3qeMvapehFSu7LMfsZh/LzOo=";
+        hash = "sha256-araJGJ58s95c2xJjEqPmDorDX+XuXxtj0A9xHIpDDHM=";
       };
     }
   );
