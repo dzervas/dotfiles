@@ -93,27 +93,27 @@ in {
       };
     };
 
-    extraPlugins = [ pkgs.cursortab-nvim ];
-    extraConfigLua = ''
-      require("cursortab").setup({
-        keymaps = {
-          accept = false,
-          partial_accept = "<C-Right>",
-          trigger = "<A-\\>",
-        },
-        behavior = {
-          ignore_gitignored = false,
-        },
-        provider = {
-          type = "zeta-2.1",
-          url = "http://localhost:1337",
-          model = "zeta-2.1",
-        },
-        blink = {
-          enabled = false,
-          ghost_text = true,
-        },
-      })
-    '';
+    # extraPlugins = [ pkgs.cursortab-nvim ];
+    # extraConfigLua = ''
+    #   require("cursortab").setup({
+    #     keymaps = {
+    #       accept = false,
+    #       partial_accept = "<C-Right>",
+    #       trigger = "<A-\\>",
+    #     },
+    #     behavior = {
+    #       ignore_gitignored = false,
+    #     },
+    #     provider = {
+    #       type = "zeta-2.1",
+    #       url = "http://localhost:1337",
+    #       model = "zeta-2.1",
+    #     },
+    #     blink = {
+    #       enabled = false,
+    #       ghost_text = true,
+    #     },
+    #   })
+    # '';
   };
 }

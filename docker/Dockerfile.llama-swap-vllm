@@ -1,0 +1,28 @@
+FROM ghcr.io/mostlygeek/llama-swap:unified-cuda
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      build-essential \
+      python3-dev \
+      cuda-nvcc-12-9 \
+      libcurand-dev-12-9 \
+ && rm -rf /var/lib/apt/lists/*
+
+ENV CC=/usr/bin/gcc
+ENV CXX=/usr/bin/g++
+
+# vllm 0.26 uses cuda 12.9
+# TODO: Auto-find the correct vllm based on the cuda version
+ARG VLLM_VERSION=0.26.0
+ENV UV_LINK_MODE=copy
+
+# https://github.com/vllm-project/vllm/releases
+RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
+  uv venv /opt/vllm --python /usr/bin/python3 && \
+  uv pip install \
+    --python /opt/vllm/bin/python \
+    --torch-backend=cu129 \
+    "https://github.com/vllm-project/vllm/releases/download/v${VLLM_VERSION}/vllm-${VLLM_VERSION}+cu129-cp38-abi3-manylinux_2_28_x86_64.whl"
+
+ENV PATH="/opt/vllm/bin:/usr/local/cuda/bin:${PATH}"
+ENV CUDA_HOME=/usr/local/cuda

@@ -26,44 +26,56 @@ let
   # -hf mrexodia/Ornith-1.0-35B-AEON-Ultimate-Uncensored-MTP-GGUF:Q4_K_M --tools all --host 0.0.0.0 --port 8080 -c 100000 -np 1 -ngl all --cpu-moe -ncmoe 24 --spec-type draft-mtp --spec-draft-n-max 3 -fa on -ctk q4_0 -ctv q4_0 -t 16 -tb 16 -b 2048 -ub 512
 
   # TODO: pkgs.writers.writeYAML
-  llamaSwapConfig = pkgs.writeText "llama-swap-config.yaml" ''
-logLevel: debug
-logToStdout: both
+  llamaSwapConfig = pkgs.writers.writeYAML "llama-swap-config.yaml" {
+    logToStdout = "both";
+    healthCheckTimeout = 300;
 
-models:
-  zeta:
-    cmd: >
-      sh -ec '
-        curl -fsS -X POST http://zeta:8080/wake_up >/dev/null;
-        exec sleep infinity
-      '
+    models = {
+      "zeta-2.1" = {
+        cmd = ''vllm serve --host 127.0.0.1 --port ''${PORT} --config /vllm-zeta.yaml'';
+        aliases = ["zeta"];
+      };
+      ornith = {
+        # ik-llama does not support model preset
+        cmd = lib.concatStringsSep " " [
+          ''ik-llama-server --host 127.0.0.1 --port ''${PORT}''
+          "--model /root/.cache/huggingface/hub/models--mrexodia--Ornith-1.0-35B-AEON-Ultimate-Uncensored-MTP-GGUF/snapshots/68515e939a1cb6c6809a302ee2f820cae2a4fc7e/Ornith-1.0-35B-AEON-Ultimate-Uncensored-MTP-Q4_K_M.gguf"
+          # ik-llama not built with cuda so it can't download a model
+          # "--hf-repo mrexodia/Ornith-1.0-35B-AEON-Ultimate-Uncensored-MTP-GGUF"
+          # "--hf-file Ornith-1.0-35B-AEON-Ultimate-Uncensored-MTP-Q4_K_M.gguf"
+          "--jinja"
+          "--parallel 1"
+          "--n-gpu-layers 999"
+          "--flash-attn on"
+          "--cache-type-k q4_0"
+          "--cache-type-v q4_0"
+          "--threads 16"
+          "--batch-size 2048"
+          "--ubatch-size 512"
+          "--ctx-size 100000"
+          "--cpu-moe"
+          "--spec-type mtp:n_max=3,p_min=0.0"
+          "--merge-up-gate-experts"
+          "--run-time-repack"
+          "--mlock"
+        ];
+        aliases = ["ornith"];
+      };
+    };
 
-    cmdStop: >
-      sh -ec '
-        curl -fsS -X POST "http://zeta:8080/sleep?level=1&mode=abort" >/dev/null;
-        kill $${PID}
-      '
-
-  ornith:
-    cmd: sh -ec 'exec sleep infinity'
-    cmdStop: >
-      sh -ec '
-        curl -X POST --json '{"model": "${agentModel}"}' http://llama-agent:8080/models/unload
-        kill $${PID}
-      '
-
-routing:
-  router:
-    use: group
-    settings:
-      groups:
-        gpu:
-          swap: true
-          exclusive: true
-          members:
-            - zeta
-            - ornith
-  '';
+    store.path = "/data/llama-swap.sqlite";
+    routing.router = {
+      use = "group";
+      settings.groups.gpu = {
+        swap = true;
+        exclusive = true;
+        members = [
+          "zeta"
+          "ornith"
+        ];
+      };
+    };
+  };
 
   llamaAgentConfig = pkgs.writeText "llama.ini" (lib.generators.toINIWithGlobalSection {} {
     globalSection.version = 1;
@@ -91,21 +103,34 @@ routing:
     };
   });
 
+  vllmZetaConfig = pkgs.writers.writeYAML "config.yaml" {
+    model = zetaModel;
+
+    served-model-name = "zeta-2.1";
+    max-model-len = "6K";
+    max-num-seqs = 1;
+    gpu-memory-utilization = 0.50;
+    enable-prefix-caching = true;
+    no-enable-chunked-prefill = true;
+    max-num-batched-tokens = "8K";
+    kv-cache-dtype = "fp8";
+    speculative-config = ''{"method": "ngram","num_speculative_tokens": 12,"prompt_lookup_min": 2,"prompt_lookup_max": 4}'';
+  };
+
   # TODO: pkgs.writers.writeTOML
-  atuinAiConfig = pkgs.writeText "atuin-ai-config.toml" ''
-    port = 11337
-    endpoint = "http://llama-swap:1337/v1"
-    default_model = "ornith"
+  atuinAiConfig = pkgs.writers.writeTOML "atuin-ai-config.toml" {
+    port = 11337;
+    endpoint = "http://llama-swap:1337/v1";
+    default_model = "ornith";
+    request.body.stream_options = { include_usage = true; };
 
-    [request.body]
-    stream_options = { include_usage = true }
-
-    [[models]]
-    alias = "ornith"
-    name = "Ornith 1.0 35B"
-    description = "Local Ornith via llama-swap"
-    model = "ornith"
-  '';
+    models = [{
+      alias = "ornith";
+      name = "Ornith 1.0 35B";
+      description = "Local Ornith via llama-swap";
+      model = "ornith";
+    }];
+  };
 
   # Copy-pasta of https://github.com/nix-community/home-manager/blob/master/modules/programs/atuin.nix#L172C7-L180
   atuinFishConfig =
@@ -155,6 +180,11 @@ in
       driver = "bridge";
     };
 
+    builds.llama-swap-vllm = {
+      file = "/home/dzervas/Lab/dotfiles/docker/Dockerfile.llama-swap-vllm";
+      # tags = ["latest"];
+    };
+
     containers = {
       atuin-ai = {
         image = "ghcr.io/atuinsh/atuin-ai-server:latest";
@@ -166,7 +196,7 @@ in
       };
 
       llama-swap = {
-        image = "ghcr.io/mostlygeek/llama-swap:cpu";
+        image = "homemanager/llama-swap-vllm";
         description = "Local LLM model swapper";
         network = [ "local-ai.network" ];
         networkAlias = [ "llama-swap" ];
@@ -175,53 +205,26 @@ in
         exec = "-config /etc/llama-swap/config/config.yaml -listen 0.0.0.0:1337 -watch-config";
         volumes = [
           "${llamaSwapConfig}:/etc/llama-swap/config/config.yaml:ro"
-          "${llamaSwapModelsDir}:/models"
-        ];
-        extraConfig.Container.GroupAdd = "keep-groups";
-      };
-
-      llama-agent = {
-        image = "ghcr.io/ggml-org/llama.cpp:server-cuda";
-        description = "LLamma for agent model";
-        network = [ "local-ai.network" ];
-        networkAlias = [ "llama-agent" ];
-        devices = [ "nvidia.com/gpu=all" ];
-        exec = "--models-preset /models.ini";
-        volumes = [
-          "${llamaAgentConfig}:/models.ini:ro"
-          "${hfCache}:/root/.cache/huggingface"
-        ];
-        extraConfig.Container.GroupAdd = "keep-groups";
-      };
-
-      zeta = {
-        image = "vllm/vllm-openai:latest";
-        description = "LLamma for agent model";
-        network = [ "local-ai.network" ];
-        networkAlias = [ "zeta" ];
-        devices = [ "nvidia.com/gpu=all" ];
-        environment = {
-          PYTORCH_CUDA_ALLOC_CONF = "expandable_segments:True";
-          VLLM_SERVER_DEV_MODE = "1";
-        };
-        # TODO: Make this a proper config
-        exec = ''${zetaModel} \
-          --served-model-name zeta-2.1 \
-          --max-model-len 6K \
-          --max-num-seqs 1 \
-          --gpu-memory-utilization 0.50 \
-          --enable-prefix-caching \
-          --no-enable-chunked-prefill \
-          --max-num-batched-tokens 8K \
-          --kv-cache-dtype fp8 \
-          --enable-sleep-mode \
-          --speculative-config '{"method": "ngram","num_speculative_tokens": 12,"prompt_lookup_min": 2,"prompt_lookup_max": 4}'
-        '';
-        volumes = [
+          # "${llamaSwapModelsDir}:/models"
           "/home/dzervas/CryptVMs/vllm:/root/.cache/vllm"
           "${hfCache}:/root/.cache/huggingface"
+          "${llamaAgentConfig}:/llama-agent-models.ini:ro"
+          "${vllmZetaConfig}:/vllm-zeta.yaml:ro"
+          "/home/dzervas/.local/share/llama-swap:/data"
         ];
         extraConfig.Container.GroupAdd = "keep-groups";
+      };
+
+      openwebui = {
+        image = "ghcr.io/open-webui/open-webui";
+        description = "Local LLM model web UI";
+        network = [ "local-ai.network" ];
+        networkAlias = [ "openwebui" ];
+        ports = [ "127.0.0.1:1338:8080" ];
+        environment.OPENAI_BASE_URL = "http://llama-swap:1337/v1";
+        volumes = [
+          "/home/dzervas/.local/share/openwebui/:/app/backend/data"
+        ];
       };
     };
   };

@@ -39,9 +39,9 @@
 		},
 		"pi-acp": {
 			"default_config_options": {
-    "model": "cliproxyapi/claude-opus-5"
-   },
-   "type": "registry",
+				"model": "cliproxyapi/claude-opus-5",
+			},
+			"type": "registry",
 		},
 		"claude-acp": {
 			"type": "registry",
