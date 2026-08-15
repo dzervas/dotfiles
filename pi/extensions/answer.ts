@@ -29,6 +29,7 @@ import {
 	visibleWidth,
 	wrapTextWithAnsi,
 } from "@earendil-works/pi-tui";
+import { extractMarkedQuestions } from "./lib/question-extraction";
 
 // Structured output format for question extraction
 interface ExtractedQuestion {
@@ -450,55 +451,62 @@ export default function (pi: ExtensionAPI) {
 			return;
 		}
 
-		// Select the best model for extraction (prefer Codex mini, then haiku)
-		const extractionModel = await selectExtractionModel(ctx.model, ctx.modelRegistry);
+		// Explicit ❓ blocks are deterministic. In particular, a following ➡️ block is
+		// the assistant's recommendation, not an answer that makes the question resolved.
+		let extractionResult: ExtractionResult | null = {
+			questions: extractMarkedQuestions(lastAssistantText),
+		};
 
-		// Run extraction with loader UI
-		const extractionResult = await ctx.ui.custom<ExtractionResult | null>(
-			(tui, theme, _kb, done) => {
-				const loader = new BorderedLoader(
-					tui,
-					theme,
-					`Extracting questions using ${extractionModel.id}...`,
-				);
-				loader.onAbort = () => done(null);
+		if (extractionResult.questions.length === 0) {
+			// Select the best model for unmarked prose (prefer Codex mini, then haiku)
+			const extractionModel = await selectExtractionModel(ctx.model, ctx.modelRegistry);
 
-				const doExtract = async () => {
-					const auth = await ctx.modelRegistry.getApiKeyAndHeaders(extractionModel);
-					if (!auth.ok) {
-						throw new Error(auth.error);
-					}
-					const userMessage: UserMessage = {
-						role: "user",
-						content: [{ type: "text", text: lastAssistantText! }],
-						timestamp: Date.now(),
+			extractionResult = await ctx.ui.custom<ExtractionResult | null>(
+				(tui, theme, _kb, done) => {
+					const loader = new BorderedLoader(
+						tui,
+						theme,
+						`Extracting questions using ${extractionModel.id}...`,
+					);
+					loader.onAbort = () => done(null);
+
+					const doExtract = async () => {
+						const auth = await ctx.modelRegistry.getApiKeyAndHeaders(extractionModel);
+						if (!auth.ok) {
+							throw new Error(auth.error);
+						}
+						const userMessage: UserMessage = {
+							role: "user",
+							content: [{ type: "text", text: lastAssistantText! }],
+							timestamp: Date.now(),
+						};
+
+						const response = await complete(
+							extractionModel,
+							{ systemPrompt: SYSTEM_PROMPT, messages: [userMessage] },
+							{ apiKey: auth.apiKey, headers: auth.headers, signal: loader.signal },
+						);
+
+						if (response.stopReason === "aborted") {
+							return null;
+						}
+
+						const responseText = response.content
+							.filter((c): c is { type: "text"; text: string } => c.type === "text")
+							.map((c) => c.text)
+							.join("\n");
+
+						return parseExtractionResult(responseText);
 					};
 
-					const response = await complete(
-						extractionModel,
-						{ systemPrompt: SYSTEM_PROMPT, messages: [userMessage] },
-						{ apiKey: auth.apiKey, headers: auth.headers, signal: loader.signal },
-					);
+					doExtract()
+						.then(done)
+						.catch(() => done(null));
 
-					if (response.stopReason === "aborted") {
-						return null;
-					}
-
-					const responseText = response.content
-						.filter((c): c is { type: "text"; text: string } => c.type === "text")
-						.map((c) => c.text)
-						.join("\n");
-
-					return parseExtractionResult(responseText);
-				};
-
-				doExtract()
-					.then(done)
-					.catch(() => done(null));
-
-				return loader;
-			},
-		);
+					return loader;
+				},
+			);
+		}
 
 		if (extractionResult === null) {
 			ctx.ui.notify("Cancelled", "info");
