@@ -115,6 +115,35 @@ function stopJob(job: Job): string {
 	return `Stopping background job #${job.id}.`;
 }
 
+function isJobFinished(job: Job): boolean {
+	return job.status !== "running" && job.status !== "stopping";
+}
+
+function waitForJob(job: Job, timeoutSeconds: number | undefined, signal?: AbortSignal): Promise<boolean> {
+	if (isJobFinished(job)) return Promise.resolve(true);
+	if (signal?.aborted) return Promise.reject(new Error(`Waiting for background job #${job.id} was cancelled`));
+
+	return new Promise((resolve, reject) => {
+		let timeout: ReturnType<typeof setTimeout> | undefined;
+		const interval = setInterval(() => {
+			if (isJobFinished(job)) finish(true);
+		}, 100);
+		const onAbort = () => finish(false, new Error(`Waiting for background job #${job.id} was cancelled`));
+		const finish = (completed: boolean, error?: Error) => {
+			clearInterval(interval);
+			if (timeout) clearTimeout(timeout);
+			signal?.removeEventListener("abort", onAbort);
+			if (error) reject(error);
+			else resolve(completed);
+		};
+
+		signal?.addEventListener("abort", onAbort, { once: true });
+		if (timeoutSeconds !== undefined) {
+			timeout = setTimeout(() => finish(false), timeoutSeconds * 1000);
+		}
+	});
+}
+
 function createDelegate(ctx: ExtensionContext) {
 	const settings = SettingsManager.create(ctx.cwd, undefined, {
 		projectTrusted: ctx.isProjectTrusted(),
@@ -175,7 +204,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 	let terminalEnabled = false;
 	let parentIdle = true;
 	let refreshInterval: ReturnType<typeof setInterval> | undefined;
-	const pendingNotifications = new Map<number, Job>();
+	const waitingJobIds = new Set<number>();
 	const currentRegistry = (ctx?: ExtensionContext): JobRegistry => {
 		if (ctx) {
 			const currentSessionId = ctx.sessionManager.getSessionId();
@@ -221,7 +250,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 	};
 
 	const notifyJob = (job: Job) => {
-		if (!uiCtx) return;
+		if (!uiCtx || waitingJobIds.has(job.id)) return;
 		pi.sendMessage(
 			{
 				customType: "background-bash",
@@ -229,7 +258,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 				display: true,
 				details: { id: job.id, status: job.status, command: job.command, cwd: job.cwd },
 			},
-			{ triggerTurn: true, deliverAs: "followUp" },
+			{ triggerTurn: true, deliverAs: "steer" },
 		);
 	};
 
@@ -243,10 +272,10 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 
 	pi.registerTool({
 		...builtin,
-		description: `${builtin.description} Set background=true to return immediately with a manageable job ID.`,
+		description: `${builtin.description} Set background=true to return immediately with a manageable job ID; completion is delivered automatically.`,
 		promptGuidelines: [
 			...(builtin.promptGuidelines ?? []),
-			"Use bash with background=true for long-running commands, then use background_jobs to inspect or stop them.",
+			"Use bash with background=true for long-running commands. Completion is delivered automatically, so do not poll. Use background_jobs to inspect output, stop a job, or wait only when the task explicitly requires synchronous completion.",
 		],
 		parameters,
 		async execute(toolCallId, params, signal, onUpdate, ctx) {
@@ -290,15 +319,14 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 				.finally(() => {
 					job.endedAt = Date.now();
 					refreshActivity();
-					if (ctx.isIdle()) notifyJob(job);
-					else pendingNotifications.set(job.id, job);
+					notifyJob(job);
 				});
 
 			return {
 				content: [
 					{
 						type: "text",
-						text: `Started background job #${job.id}. Use background_jobs to inspect or stop it.`,
+						text: `Started background job #${job.id}. Completion will be delivered automatically; use background_jobs to inspect, wait for, or stop it.`,
 					},
 				],
 				details: undefined,
@@ -309,19 +337,32 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 	pi.registerTool({
 		name: "background_jobs",
 		label: "Background Jobs",
-		description: "List, inspect, or stop background bash jobs started by bash with background=true.",
+		description: "List, inspect, wait for, or stop background bash jobs started by bash with background=true.",
 		promptSnippet: "Manage background bash jobs",
 		parameters: Type.Object({
-			action: StringEnum(["list", "inspect", "stop"] as const),
-			id: Type.Optional(Type.Integer({ description: "Job ID required for inspect and stop" })),
+			action: StringEnum(["list", "inspect", "wait", "stop"] as const),
+			id: Type.Optional(Type.Integer({ description: "Job ID required for inspect, wait, and stop" })),
+			timeout: Type.Optional(Type.Number({ minimum: 0, description: "Maximum seconds to wait" })),
 		}),
-		async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+		async execute(_toolCallId, params, signal, _onUpdate, ctx) {
 			const registry = currentRegistry(ctx);
 			let text: string;
 			if (params.action === "list") text = formatJobs(registry);
 			else {
 				const job = requireJob(registry, params.id);
-				text = params.action === "inspect" ? inspectJob(job) : stopJob(job);
+				if (params.action === "inspect") text = inspectJob(job);
+				else if (params.action === "stop") text = stopJob(job);
+				else {
+					waitingJobIds.add(job.id);
+					try {
+						const completed = await waitForJob(job, params.timeout, signal);
+						text = completed
+							? inspectJob(job)
+							: `Timed out waiting for background job #${job.id}.\n\n${inspectJob(job)}`;
+					} finally {
+						waitingJobIds.delete(job.id);
+					}
+				}
 			}
 			refreshActivity();
 			return { content: [{ type: "text", text }], details: {} };
@@ -341,8 +382,6 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 	});
 	pi.on("agent_settled", () => {
 		parentIdle = true;
-		for (const job of pendingNotifications.values()) notifyJob(job);
-		pendingNotifications.clear();
 		refreshActivity();
 		terminalActivity.refresh();
 	});
@@ -352,7 +391,6 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 		uiCtx = ctx;
 		terminalEnabled = ctx.mode === "tui";
 		parentIdle = ctx.isIdle();
-		pendingNotifications.clear();
 		refreshActivity();
 	});
 
@@ -360,7 +398,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 		uiCtx = undefined;
 		terminalEnabled = false;
 		stopRefreshLoop();
-		pendingNotifications.clear();
+		waitingJobIds.clear();
 		terminalActivity.setActive(terminalActivitySource, false);
 		ctx.ui.setWidget("background-bash", undefined);
 		if (event.reason === "reload" || !registry) return;
