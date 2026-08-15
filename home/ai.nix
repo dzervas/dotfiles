@@ -78,6 +78,7 @@ let
     collapseChangelog = true;
     enableInstallTelemetry = false;
     showHardwareCursor = true;
+    showCacheMissNotices = true;
     transport = "auto";
     terminal = {
       showTerminalProgress = true;
@@ -89,7 +90,7 @@ let
     npmCommand = [ "${nodejs}/bin/npm" ];
 
     defaultModel = builtins.elemAt enabledModels 0;
-    defaultProvider = "cliproxyapi";
+    # defaultProvider = "cliproxyapi";
     defaultThinkingLevel = "medium";
     enabledModels = [ "gpt-5.6-sol" "claude-opus-5" "gpt-5.6-terra" "claude-fable-5" ];
 

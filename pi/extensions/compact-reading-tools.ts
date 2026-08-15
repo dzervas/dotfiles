@@ -1,9 +1,13 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import {
 	createFindTool,
+	createGrepTool,
 	createLsTool,
+	createReadTool,
 	type FindToolDetails,
+	type GrepToolDetails,
 	type LsToolDetails,
+	type ReadToolDetails,
 } from "@earendil-works/pi-coding-agent";
 import { Container, Text } from "@earendil-works/pi-tui";
 
@@ -17,6 +21,20 @@ function textContent(result: { content: Array<{ type: string; text?: string }> }
 
 function nonEmptyLineCount(value: string): number {
 	return value.split("\n").filter((line) => line.trim().length > 0).length;
+}
+
+function resultBody(value: string): string {
+	return value.replace(/\n\n\[[^\n]*\]$/, "");
+}
+
+function lineCount(value: string): number {
+	const body = resultBody(value);
+	return body.length === 0 ? 0 : body.split("\n").length;
+}
+
+function grepMatchCount(value: string): number {
+	if (value === "No matches found") return 0;
+	return resultBody(value).split("\n").filter((line) => /:\d+: /.test(line)).length;
 }
 
 function short(value: unknown, fallback = "."): string {
@@ -33,6 +51,37 @@ function status(theme: any, isPartial: boolean, isError: boolean): string {
 
 export default function compactReadingTools(pi: ExtensionAPI) {
 	const cwd = process.cwd();
+
+	const read = createReadTool(cwd);
+	pi.registerTool({
+		name: "read",
+		label: read.label,
+		description: read.description,
+		parameters: read.parameters,
+		renderShell: "self",
+		execute: (toolCallId, params, signal, onUpdate) =>
+			read.execute(toolCallId, params, signal, onUpdate),
+		renderCall(args, theme, context) {
+			if (!context.isPartial) return hidden();
+			const path = short(args?.path, "<path>");
+			let line = `${status(theme, true, false)} ${theme.fg("toolTitle", theme.bold("Read"))} ${theme.fg("accent", path)}`;
+			if (args?.offset) line += theme.fg("dim", ` offset=${args.offset}`);
+			if (args?.limit) line += theme.fg("dim", ` limit=${args.limit}`);
+			return new Text(line, 0, 0);
+		},
+		renderResult(result, _options, theme, context) {
+			const args = context.args;
+			const path = short(args?.path, "<path>");
+			let line = `${status(theme, false, context.isError)} ${theme.fg("toolTitle", theme.bold("Read"))} ${theme.fg("accent", path)}`;
+			if (args?.offset) line += theme.fg("dim", ` offset=${args.offset}`);
+			if (args?.limit) line += theme.fg("dim", ` limit=${args.limit}`);
+			const details = result.details as ReadToolDetails | undefined;
+			const isImage = result.content.some((content) => content.type === "image");
+			line += theme.fg("dim", isImage ? " image" : ` ${lineCount(textContent(result))} lines`);
+			if (details?.truncation?.truncated) line += theme.fg("warning", " truncated");
+			return new Text(line, 0, 0);
+		},
+	});
 
 	const find = createFindTool(cwd);
 	pi.registerTool({
@@ -61,6 +110,41 @@ export default function compactReadingTools(pi: ExtensionAPI) {
 			line += theme.fg("dim", ` ${nonEmptyLineCount(textContent(result))} files`);
 			if (details?.resultLimitReached)
 				line += theme.fg("warning", ` limit=${details.resultLimitReached}`);
+			if (details?.truncation?.truncated) line += theme.fg("warning", " truncated");
+			return new Text(line, 0, 0);
+		},
+	});
+
+	const grep = createGrepTool(cwd);
+	pi.registerTool({
+		name: "grep",
+		label: grep.label,
+		description: grep.description,
+		parameters: grep.parameters,
+		renderShell: "self",
+		execute: (toolCallId, params, signal, onUpdate) =>
+			grep.execute(toolCallId, params, signal, onUpdate),
+		renderCall(args, theme, context) {
+			if (!context.isPartial) return hidden();
+			const pattern = short(args?.pattern, "<pattern>");
+			const where = short(args?.path, ".");
+			let line = `${status(theme, true, false)} ${theme.fg("toolTitle", theme.bold("Grep"))} ${theme.fg("accent", pattern)} ${theme.fg("dim", `in ${where}`)}`;
+			if (args?.glob) line += theme.fg("dim", ` glob=${short(args.glob)}`);
+			if (args?.limit) line += theme.fg("dim", ` limit=${args.limit}`);
+			return new Text(line, 0, 0);
+		},
+		renderResult(result, _options, theme, context) {
+			const args = context.args;
+			const pattern = short(args?.pattern, "<pattern>");
+			const where = short(args?.path, ".");
+			let line = `${status(theme, false, context.isError)} ${theme.fg("toolTitle", theme.bold("Grep"))} ${theme.fg("accent", pattern)} ${theme.fg("dim", `in ${where}`)}`;
+			if (args?.glob) line += theme.fg("dim", ` glob=${short(args.glob)}`);
+			if (args?.limit) line += theme.fg("dim", ` limit=${args.limit}`);
+			const details = result.details as GrepToolDetails | undefined;
+			line += theme.fg("dim", ` ${grepMatchCount(textContent(result))} matches`);
+			if (details?.matchLimitReached)
+				line += theme.fg("warning", ` limit=${details.matchLimitReached}`);
+			if (details?.linesTruncated) line += theme.fg("warning", " lines-truncated");
 			if (details?.truncation?.truncated) line += theme.fg("warning", " truncated");
 			return new Text(line, 0, 0);
 		},
