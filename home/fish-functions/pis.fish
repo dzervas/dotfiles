@@ -131,13 +131,13 @@ bwrap \
 	--ro-bind /etc/profiles/per-user/$USER/ /etc/profiles/per-user/$USER/ \
 	--bind $sandbox_home $HOME \
 	--ro-bind $HOME/.pi/agent/settings.json $HOME/.pi/agent/settings.json \
-	--ro-bind $HOME/.pi/agent/auth.json $HOME/.pi/agent/auth.json \
 	--ro-bind $HOME/.pi/agent/node_modules $HOME/.pi/agent/node_modules \
 	--ro-bind $HOME/.pi/agent/npm $HOME/.pi/agent/npm \
 	--ro-bind $HOME/.pi/agent/extensions $HOME/.pi/agent/extensions \
 	--ro-bind $HOME/.pi/agent/skills $HOME/.pi/agent/skills \
 	--ro-bind $HOME/.pi/agent/AGENTS.md $HOME/.pi/agent/AGENTS.md \
 	--bind $HOME/.pi/agent/sessions $HOME/.pi/agent/sessions \
+	--bind $HOME/.pi/agent/auth.json $HOME/.pi/agent/auth.json \
 	--bind $HOME/.pi/agent/mcp-cache.json $HOME/.pi/agent/mcp-cache.json \
 	--bind $HOME/.pi/agent/mcp-oauth $HOME/.pi/agent/mcp-oauth \
 	--bind $HOME/.pi/agent/mcp.json $HOME/.pi/agent/mcp.json \
