@@ -5,6 +5,7 @@
 
   # BTRFS filesystem (within LUKS)
   system_fs = "/dev/mapper/cryptroot"; # The BTRFS is in RAID1 so the UUID is the same for both disks
+  cachePath = "/etc/nix/cache/private-key.pem";
 in {
   imports = [
     # ./components/amd.nix
@@ -78,8 +79,15 @@ in {
     sha256 = "sha256-3gH1F4MAM2bKhfHWZrEvCasY8T+rQVxWnKBfHmtTOrM=";
   };
 
-  # Work around intermittent suspend failures on Navi 10 during resume.
-  # boot.kernelParams = [ "amd_iommu=off" ];
   boot.kernelModules = [ "kvm-amd" ];
   hardware.cpu.amd.updateMicrocode = true;
+
+  services.nix-serve = {
+    enable = true;
+    package = pkgs.nix-serve-ng;
+
+    secretKeyFile = cachePath;
+    port = 5000;
+    openFirewall = false;
+  };
 }

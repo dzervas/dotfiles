@@ -72,4 +72,9 @@ in {
     url = "https://unsplash.com/photos/hQNY2WP-qY4/download?ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzIwMzUyNTA4fA&force=true";
     sha256 = "sha256-gw+BkfVkuzMEI8ktiLoHiBMupiUS9AoiB+acFTCt36g=";
   };
+
+  nix.settings = {
+    extra-substituters = [ "http://desktop.ts.dzerv.art:5000" ];
+    extra-trusted-public-keys = [ "desktop:ZG/C5Lm9aBbvrtL0drMCxEvGBmTim20lmXNIp0XpcZ8=" ];
+  };
 }

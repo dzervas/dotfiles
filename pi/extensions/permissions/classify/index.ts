@@ -8,7 +8,7 @@
 
 import type { Classifier, PermissionSubject } from "../types";
 import { classifyBash } from "./bash";
-import { classifyWithLocalLlm } from "./local-llm";
+// import { classifyWithLocalLlm } from "./local-llm";
 
 const CLASSIFIERS: Classifier[] = [
 	classifyBash,
@@ -20,7 +20,7 @@ export async function classify(
 	options: { signal?: AbortSignal; localLlm?: boolean } = {},
 ): Promise<PermissionSubject> {
 	for (const classifier of CLASSIFIERS) subject.findings.push(...(await classifier(subject)));
-	if (options.localLlm) await classifyWithLocalLlm(subject, options.signal);
+	// if (options.localLlm) await classifyWithLocalLlm(subject, options.signal);
 	return subject;
 }
 

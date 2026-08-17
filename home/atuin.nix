@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  hostName,
   ...
 }:
 let
@@ -171,8 +172,7 @@ in
 
   # Local AI containers share a bridge network with container-name DNS.
   services.podman = {
-    enable = true;
-    # enable = false;
+    enable = hostName == "desktop";
     enableTypeChecks = true;
 
     networks.local-ai = {
@@ -200,7 +200,7 @@ in
         description = "Local LLM model swapper";
         network = [ "local-ai.network" ];
         networkAlias = [ "llama-swap" ];
-        ports = [ "127.0.0.1:1337:1337" ];
+        ports = [ "1337:1337" ];
         devices = [ "nvidia.com/gpu=all" ];
         exec = "-config /etc/llama-swap/config/config.yaml -listen 0.0.0.0:1337 -watch-config";
         volumes = [
@@ -220,7 +220,7 @@ in
         description = "Local LLM model web UI";
         network = [ "local-ai.network" ];
         networkAlias = [ "openwebui" ];
-        ports = [ "127.0.0.1:1338:8080" ];
+        ports = [ "1338:8080" ];
         environment.OPENAI_BASE_URL = "http://llama-swap:1337/v1";
         volumes = [
           "/home/dzervas/.local/share/openwebui/:/app/backend/data"

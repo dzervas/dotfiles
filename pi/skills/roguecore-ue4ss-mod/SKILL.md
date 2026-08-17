@@ -1,6 +1,7 @@
 ---
 name: roguecore-ue4ss-mod
 description: Build UE4SS Lua mods for Deep Rock Galactic Rogue Core (and DRG-family UE5 games). Use when the user wants to create, debug, or package a mod for RogueCore / Deep Rock Galactic that hooks game functions, reads/edits UObjects, modifies UI/menus, sorts/filters lists, or adds keybinds — covers SDK dumping, the FSD/RogueCore API surface, UE4SS Lua idioms, on-screen UI text, and distribution.
+disable-model-invocation: true
 ---
 
 # RogueCore / DRG-family UE4SS Lua Modding

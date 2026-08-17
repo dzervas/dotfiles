@@ -293,7 +293,7 @@
 
           default-column-width.proportion = 0.5;
           open-maximized = false;
-          # open-maximized-to-edges = false;
+          open-maximized-to-edges = false;
           block-out-from = "screen-capture";
         }
 
@@ -305,7 +305,7 @@
               at-startup = true;
             }
           ];
-          # open-maximized-to-edges = false;
+          open-maximized-to-edges = true;
           open-on-workspace = "1-web";
           open-focused = true;
         }
@@ -321,6 +321,7 @@
             }
           ];
           open-on-workspace = "2-work";
+          open-maximized-to-edges = true;
         }
         {
           matches = [
@@ -330,6 +331,7 @@
             }
           ];
           open-on-workspace = "3-game";
+          open-maximized-to-edges = true;
         }
         {
           matches = [
@@ -339,6 +341,7 @@
             }
           ];
           open-on-workspace = "1-term";
+          open-maximized-to-edges = true;
         }
         {
           matches = [
