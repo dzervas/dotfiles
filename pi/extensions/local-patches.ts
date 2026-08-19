@@ -23,16 +23,6 @@ interface Patch {
 
 const PATCHES: Patch[] = [
 	{
-		// pi always passes an explicit `expanded: false` in both the render options
-		// and the render context, so `defaultExpanded` (which carries the
-		// readseek.display.<tool> setting) is never reached and `"expanded"` has no
-		// effect. Tradeoff: tools set to "expanded" ignore the global collapse toggle.
-		name: "pi-readseek: honor readseek.display.<tool> = expanded",
-		file: "pi-readseek/dist/index.ts",
-		find: "return context?.expanded ?? options?.expanded ?? defaultExpanded;",
-		replace: "return (context?.expanded ?? options?.expanded ?? false) || defaultExpanded;",
-	},
-	{
 		// AgentSession.prompt() resolves after a provider failure and records an
 		// assistant message with stopReason "error". Without this check, pi-subagents
 		// reports success and returns stale text from an earlier assistant message.

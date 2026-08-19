@@ -150,7 +150,7 @@ in
     # daemon.enable = true;
     flags = [ "--disable-up-arrow" ];
 
-    enableFishIntegration = false; # To use pty-proxy
+    # enableFishIntegration = false; # To use pty-proxy
 
     settings = {
       enter_accept = false;
@@ -235,7 +235,7 @@ in
 
   xdg.configFile."atuin-ai/config.toml".source = atuinAiConfig;
 
-  programs.fish.interactiveShellInit = ''
-    source ${atuinFishConfig}
-  '';
+  # programs.fish.interactiveShellInit = ''
+  #   source ${atuinFishConfig}
+  # '';
 }
