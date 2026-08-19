@@ -44,8 +44,8 @@ let
 
   # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
   piPackages = [
-    "npm:pi-mcp-adapter@2.21.2"
-    "npm:pi-web-access@0.21.0"
+    "npm:pi-mcp-adapter@2.23.0"
+    "npm:pi-web-access@0.22.0"
     "npm:@gotgenes/pi-anthropic-auth@2.0.3"
     "npm:@gotgenes/pi-subagents@19.2.2"
     {

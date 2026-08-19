@@ -14,7 +14,7 @@
 	"edit_predictions": {
 		"open_ai_compatible_api": {
 			"max_output_tokens": 512,
-			"api_url": "http://localhost:1337/v1/completions",
+			"api_url": "http://desktop.ts.dzerv.art:1337/v1/completions",
 			"prompt_format": "zeta2_1",
 			"model": "zeta-2.1",
 		},
