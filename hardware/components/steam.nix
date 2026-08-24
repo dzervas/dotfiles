@@ -35,21 +35,8 @@
 
     gamescope = {
       enable = true;
-      capSysNice = false;
-      args = [
-        "--backend" "wayland"
-        "--fullscreen"
-        "--expose-wayland"
-        "--steam"
-        "--prefer-output" "DP-3"
-
-        # Realtime governor
-        "--rt"
-
-        # Screen specific stuff
-        "--adaptive-sync"
-        # "--mangoapp"
-      ];
+      capSysNice = true;
+      enableWsi = true; # Vulkan Window Subsystem Integration
     };
 
     steam = {
@@ -58,12 +45,27 @@
       localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
       protontricks.enable = true;
       extest.enable = true; # Steam input on wayland
-      gamescopeSession.enable = true;
 
       extraCompatPackages = with pkgs; [
         proton-ge-bin
-        # wine-discord-ipc-bridge
+        # wine-discord-ipc-bridge # Broken
       ];
+
+      gamescopeSession = {
+        enable = true;
+        args = [
+          "--fullscreen"
+          "--steam"
+          "--prefer-output" "DP-3"
+
+          # Realtime governor
+          "--rt"
+
+          # Screen specific stuff
+          "--adaptive-sync"
+          # "--mangoapp"
+        ];
+      };
     };
   };
 }
