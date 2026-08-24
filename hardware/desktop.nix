@@ -59,20 +59,6 @@ in {
   environment.etc.crypttab.text = "cryptvms UUID=acf3064a-68a3-4b8a-897d-e1e717e56b12 /etc/cryptsetup_cryptvms luks,discard,nofail";
   swapDevices = [{ device = "/home/dzervas/CryptVMs/swapfile"; }];
 
-  # BTRFS dedup daemon
-  services.beesd.filesystems = {
-    root = {
-      spec = "LABEL=linux-add";
-      # Recommended accoding to the docs: https://github.com/Zygo/bees/blob/master/docs/config.md
-      hashTableSizeMB = 128;
-      extraOptions = [
-        "--thread-count" "8"
-        "--loadavg-target" "8" # Target system load - if above it throttle down
-        "--throttle-factor" "1.5" # Target btrfs queue processing speed vs the baseline (1.5 = 50% slowdown)
-      ];
-    };
-  };
-
   stylix.image = pkgs.fetchurl {
     # Photo by Wren Meinberg on Unsplash: https://unsplash.com/photos/forest-covered-with-fogs-Fs-bcmsV-hA
     url = "https://images.unsplash.com/photo-1524252500348-1bb07b83f3be";
@@ -82,12 +68,33 @@ in {
   boot.kernelModules = [ "kvm-amd" ];
   hardware.cpu.amd.updateMicrocode = true;
 
-  services.nix-serve = {
-    enable = true;
-    package = pkgs.nix-serve-ng;
+  services = {
+    # BTRFS dedup daemon
+    beesd.filesystems = {
+      root = {
+        spec = "LABEL=linux-add";
+        # Recommended accoding to the docs: https://github.com/Zygo/bees/blob/master/docs/config.md
+        hashTableSizeMB = 128;
+        extraOptions = [
+          "--thread-count" "8"
+          "--loadavg-target" "8" # Target system load - if above it throttle down
+          "--throttle-factor" "1.5" # Target btrfs queue processing speed vs the baseline (1.5 = 50% slowdown)
+        ];
+      };
+    };
 
-    secretKeyFile = cachePath;
-    port = 5000;
-    openFirewall = false;
+    nix-serve = {
+      enable = true;
+      package = pkgs.nix-serve-ng;
+
+      secretKeyFile = cachePath;
+      port = 5000;
+      openFirewall = false;
+    };
+
+    # Fix the weird empty USB3 tree constant autosuspend for the desktop USB hub
+    udev.extraRules = ''
+      ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="05e3", ATTR{idProduct}=="0626", TEST=="power/control", ATTR{power/control}="on"
+    '';
   };
 }
