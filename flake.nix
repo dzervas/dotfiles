@@ -110,7 +110,7 @@
     nixvim.url = "github:nix-community/nixvim";
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
 
-    nix-private.url = "path:.github/dummy";
+    nix-private.url = "git+ssh://git@git.vpn.dzerv.art/dzervas/nix-private";
     nix-private.inputs.nixpkgs.follows = "nixpkgs";
 
     # HyprLand

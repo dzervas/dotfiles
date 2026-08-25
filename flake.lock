@@ -68,6 +68,22 @@
         "type": "github"
       }
     },
+    "cracks": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1787782801,
+        "narHash": "sha256-/ShDD0jnoVTppU5m0I+R5emPnA6ALLczxmPwEdlupXA=",
+        "ref": "refs/heads/main",
+        "rev": "9b61de52c7a0738368030daa429574bf3cad7e6b",
+        "revCount": 240,
+        "type": "git",
+        "url": "ssh://git@git.vpn.dzerv.art/dzervas/cracks"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@git.vpn.dzerv.art/dzervas/cracks"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1787326676,
@@ -250,11 +266,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787540599,
-        "narHash": "sha256-MHwk52ty3NsLhq9a1IbIfBJZlCUJIdiUYFo52JLK9hY=",
+        "lastModified": 1787778830,
+        "narHash": "sha256-GnLPpDT727E6VpDlALP8JeP1BbSQ17H0HiEEYq6Ql4w=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "03f4cd46bc1dd4f3a96da778d2ce9f7ce39dd450",
+        "rev": "6b449e35980e1b75dd17da2d6d9b66e757194f1c",
         "type": "github"
       },
       "original": {
@@ -275,11 +291,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787571731,
-        "narHash": "sha256-tflJ5j78ZkBrIo5QzB8ykMN8hYLyBajHVMEmec1nUUg=",
+        "lastModified": 1787658383,
+        "narHash": "sha256-I+zCjwAtkmgnet+08H+7HV8qJjf6BoFMYsX/8lMiW/s=",
         "owner": "nix-community",
         "repo": "lanzaboote",
-        "rev": "bfc757a93ab33570e6c5517a4998f7307ff00a11",
+        "rev": "69cf334f9dbc11213c6228c97e9b32924d51443f",
         "type": "github"
       },
       "original": {
@@ -298,11 +314,11 @@
         "xwayland-satellite-unstable": "xwayland-satellite-unstable"
       },
       "locked": {
-        "lastModified": 1787604286,
-        "narHash": "sha256-g3iPXE6QqKh2syG3DqpXRE4BwDMaow/bpOVRRNamxvg=",
+        "lastModified": 1787786071,
+        "narHash": "sha256-/c+xtPD4JRaCz6QROat2RGeEs4Ke1VIYmVRi3yLqAis=",
         "owner": "epireyn",
         "repo": "niri-flake",
-        "rev": "be96397ba25ca144d1ddd3c5458fae802ebf865a",
+        "rev": "027b2efb9fa5c91ce77b3855038fc22054851961",
         "type": "github"
       },
       "original": {
@@ -346,19 +362,24 @@
     },
     "nix-private": {
       "inputs": {
+        "cracks": "cracks",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "path": ".github/dummy",
-        "type": "path"
+        "lastModified": 1787784192,
+        "narHash": "sha256-wqHjRrkmoP4gN9LNn2SSeGqm/zE/BxYklHXPCh/PWNk=",
+        "ref": "refs/heads/main",
+        "rev": "75032ecbc69d3390dae74faaf3fb5f0cfcb3a2be",
+        "revCount": 87,
+        "type": "git",
+        "url": "ssh://git@git.vpn.dzerv.art/dzervas/nix-private"
       },
       "original": {
-        "path": ".github/dummy",
-        "type": "path"
-      },
-      "parent": []
+        "type": "git",
+        "url": "ssh://git@git.vpn.dzerv.art/dzervas/nix-private"
+      }
     },
     "nixos-hardware": {
       "inputs": {
@@ -397,11 +418,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1787621192,
-        "narHash": "sha256-CUj1Be2a2bLNTJ2CnvF+3dwmehAHCPygE8wu3L432B0=",
+        "lastModified": 1787788826,
+        "narHash": "sha256-8GGBq1xwmUTpMx5j+U6E4hIYKJXBK6X7MNkq+wwOxgU=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "b63c04484cc3e29b0d6e89a7d3bf065bb87a836c",
+        "rev": "f0cd761ae43facb8036571f973b376f125be9188",
         "type": "github"
       },
       "original": {
@@ -413,11 +434,11 @@
     },
     "nixpkgs-stable": {
       "locked": {
-        "lastModified": 1787525875,
-        "narHash": "sha256-sKbMlkDCBVmAjUVT94LwhVtET/YEMtZaFdn5UduWxz8=",
+        "lastModified": 1787753485,
+        "narHash": "sha256-BZWCi9ZRJiARTuKTbbtvFTj7t1TK4G3UEckT3HyNfRg=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "a3b98866eecd08edac6e61a3081e69540a35020f",
+        "rev": "062346a6d85bc4b49dfaa61c986e9c5be21217d1",
         "type": "github"
       },
       "original": {
@@ -481,11 +502,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1787607029,
-        "narHash": "sha256-tV9ko8KNqSDp3gLnSvFm8Fux0RqUCEDEBwPtXJFSEos=",
+        "lastModified": 1787691219,
+        "narHash": "sha256-CjeJTOjrluiDuL0W/YBFkSBOQjBYmdKwj7hWAJ4PIh0=",
         "owner": "nix-community",
         "repo": "nixvim",
-        "rev": "b1173f007cac2c83c1d314291ae90f386bd2fb35",
+        "rev": "ebec1ae277a50b16e7d6682edd009ef585d68261",
         "type": "github"
       },
       "original": {
@@ -632,11 +653,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787540965,
-        "narHash": "sha256-48/4bbmK3W3Av3YPnrFb/tVQXPvBwU6kyM3Pb13VVD8=",
+        "lastModified": 1787713867,
+        "narHash": "sha256-ZRYTEvDb8QZLCHRoMyIZle9V3Bvw905m0teeo1RvI7M=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "ab450d47a3f906d19de1b332915bfc6e5b29c853",
+        "rev": "494680f9ffa2b4bf9f2df0f442c7096e44adfa00",
         "type": "github"
       },
       "original": {
@@ -663,11 +684,11 @@
         "tinted-zed": "tinted-zed"
       },
       "locked": {
-        "lastModified": 1787175104,
-        "narHash": "sha256-tzNjlb0loxeWlipvxSNAUUihloeTZoyGFhEen87yM9k=",
+        "lastModified": 1787771653,
+        "narHash": "sha256-DkkJSBOXWV/mja5Vy8az5g1KpZlsbUwlmH0BsQhowaQ=",
         "owner": "danth",
         "repo": "stylix",
-        "rev": "a9e5a76a1b75b137f266e4f445e1eaba82e9783e",
+        "rev": "5e3809851f486e7fc7e84b40f174c74b60ecc784",
         "type": "github"
       },
       "original": {

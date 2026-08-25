@@ -1,0 +1,25 @@
+{
+	"version": 2,
+	"defaultAction": "ask",
+	"allowRoots": ["/nix/store", "/home/dzervas/.pi/agent"],
+	"denyRoots": [],
+	"rules": [
+		{
+			"action": "allow",
+			"tool": {
+				"kind": "builtin",
+				"name": "^bash$"
+			},
+			"match": {
+				"raw": ["nix (eval|flake metadata) ", "tsc"]
+			}
+		},
+		{
+			"action": "allow",
+			"tool": {
+				"kind": "mcp",
+				"server": "^(nixos|nixvim_docs)$"
+			}
+		}
+	]
+}
