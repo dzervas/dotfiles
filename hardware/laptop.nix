@@ -73,8 +73,8 @@ in {
     sha256 = "sha256-gw+BkfVkuzMEI8ktiLoHiBMupiUS9AoiB+acFTCt36g=";
   };
 
-  nix.settings = {
-    extra-substituters = [ "http://desktop.ts.dzerv.art:5000" ];
-    extra-trusted-public-keys = [ "desktop:ZG/C5Lm9aBbvrtL0drMCxEvGBmTim20lmXNIp0XpcZ8=" ];
-  };
+  # nix.settings = {
+  #   extra-substituters = [ "http://desktop.ts.dzerv.art:5000" ];
+  #   extra-trusted-public-keys = [ "desktop:ZG/C5Lm9aBbvrtL0drMCxEvGBmTim20lmXNIp0XpcZ8=" ];
+  # };
 }

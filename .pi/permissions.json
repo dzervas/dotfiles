@@ -1,7 +1,7 @@
 {
 	"version": 2,
 	"defaultAction": "ask",
-	"allowRoots": ["/nix/store", "/home/dzervas/.pi/agent"],
+	"allowRoots": [],
 	"denyRoots": [],
 	"rules": [
 		{
