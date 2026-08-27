@@ -35,6 +35,11 @@ let
       "zeta-2.1" = {
         cmd = ''vllm serve --host 127.0.0.1 --port ''${PORT} --config /vllm-zeta.yaml'';
         aliases = ["zeta"];
+        capabilities = {
+          "in" = ["text"];
+          out = ["text"];
+          context = 6144;
+        };
       };
       ornith = {
         # ik-llama does not support model preset
@@ -68,65 +73,79 @@ let
           "--min-p 0"
 
           # "--reasoning-budget 4096"
-          # ''--reasoning-budget-message " \n\n[Thinking budget exceeded. Transitioning to a best-effort final answer: ]\n\n"''
+          ''--reasoning-budget-message " \n\n[Thinking budget exceeded. Transitioning to a best-effort final answer: ]\n\n"''
         ];
         aliases = ["ornith"];
+        capabilities = {
+          "in" = ["text" "image"];
+          out = ["text"];
+          context = 262144;
+        };
       };
 
-      qwen3.cmd = lib.concatStringsSep " " [
-        ''ik-llama-server --host 127.0.0.1 --port ''${PORT}''
-        "--model /root/.cache/huggingface/hub/models--vcruz305--Qwen3.8-27B-AEON-ULTIMATE-UNCENSORED-GGUF/snapshots/b1b47502a84d9f92226fdcf7ef14556436e889ba/Qwen3.8-27B-AEON-ULTIMATE-UNCENSORED-Q3_K_M.gguf"
+      qwen3 = {
+        cmd = lib.concatStringsSep " " [
+          ''ik-llama-server --host 127.0.0.1 --port ''${PORT}''
+          "--model /root/.cache/huggingface/hub/models--vcruz305--Qwen3.8-27B-AEON-ULTIMATE-UNCENSORED-GGUF/snapshots/b1b47502a84d9f92226fdcf7ef14556436e889ba/Qwen3.8-27B-AEON-ULTIMATE-UNCENSORED-Q3_K_M.gguf"
 
-        # Agent/tool parsing
-        "--jinja"
-        "--peg"
-        "--reasoning-format deepseek"
+          # Agent/tool parsing
+          "--jinja"
+          "--peg"
+          "--reasoning-format deepseek"
 
-        # Single agent sequence
-        "--parallel 1"
+          # Single agent sequence
+          "--parallel 1"
 
-        # GPU
-        # "--n-gpu-layers 999"
-        "--flash-attn on"
+          # GPU
+          # "--n-gpu-layers 999"
+          "--flash-attn on"
 
-        "--cache-type-k q4_0"
-        "--cache-type-v q4_0"
+          "--cache-type-k q4_0"
+          "--cache-type-v q4_0"
 
-        "--fit"
-        "--fit-margin 2048"
+          "--fit"
+          "--fit-margin 2048"
 
-        # 16 GB 5080: leave headroom
-        "--cache-type-k q4_0"
-        "--cache-type-v q4_0"
-        "--ctx-size 131072"
+          # 16 GB 5080: leave headroom
+          "--cache-type-k q4_0"
+          "--cache-type-v q4_0"
+          "--ctx-size 131072"
 
-        # Avoid giant prefill buffers
-        "--batch-size 256"
-        "--ubatch-size 128"
+          # Avoid giant prefill buffers
+          "--batch-size 256"
+          "--ubatch-size 128"
 
-        "--threads 16"
+          "--threads 16"
 
-        # ik_llama optimizations
-        "--run-time-repack"
-        "--mlock"
+          # ik_llama optimizations
+          "--run-time-repack"
+          "--mlock"
 
-        # Qwen3.8 thinking-mode sampling
-        "--temp 1.0"
-        "--top-k 20"
-        "--top-p 0.95"
-        "--min-p 0"
-        "--presence-penalty 0"
-        "--repeat-penalty 1.0"
+          # Qwen3.8 thinking-mode sampling
+          "--temp 1.0"
+          "--top-k 20"
+          "--top-p 0.95"
+          "--min-p 0"
+          "--presence-penalty 0"
+          "--repeat-penalty 1.0"
 
-        # Looping fix
-        "--reasoning-budget 4096"
-        ''--reasoning-budget-message " \n\n[Thinking budget exceeded. Transitioning to a best-effort final answer: ]\n\n"''
+          # Looping fix
+          "--reasoning-budget 4096"
+          ''--reasoning-budget-message " \n\n[Thinking budget exceeded. Transitioning to a best-effort final answer: ]\n\n"''
 
-        # Draft model
-        "--spec-type ngram-mod:n_max=64,n_min=2,ngram_size_n=8"
-        "--spec-type mtp:n_max=3,p_min=0.0"
-        "--spec-autotune"
-      ];
+          # Draft model
+          "--spec-type ngram-mod:n_max=64,n_min=2,ngram_size_n=8"
+          "--spec-type mtp:n_max=3,p_min=0.0"
+          "--spec-autotune"
+        ];
+
+        capabilities = {
+          "in" = ["text"];
+          out = ["text"];
+          context = 131072;
+          thinking = true;
+        };
+      };
     };
 
     store.path = "/data/llama-swap.sqlite";
