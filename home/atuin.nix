@@ -7,7 +7,7 @@
 }:
 let
   zetaModel = "LeaderboardModel1/zeta-2.1-autoround-W4A16";
-  agentModel = "mrexodia/Ornith-1.0-35B-AEON-Ultimate-Uncensored-MTP-GGUF:Q4_K_M";
+  agentModel = "TizzyT566/Ornith-1.5-35B-A3B-NVFP4-GGUF:NVFP4";
 
   hfCache = "/home/dzervas/CryptVMs/huggingface/";
   llamaSwapModelsDir = "${config.home.homeDirectory}/.local/share/llama-swap";
@@ -39,29 +39,94 @@ let
       ornith = {
         # ik-llama does not support model preset
         cmd = lib.concatStringsSep " " [
-          ''ik-llama-server --host 127.0.0.1 --port ''${PORT}''
-          "--model /root/.cache/huggingface/hub/models--mrexodia--Ornith-1.0-35B-AEON-Ultimate-Uncensored-MTP-GGUF/snapshots/68515e939a1cb6c6809a302ee2f820cae2a4fc7e/Ornith-1.0-35B-AEON-Ultimate-Uncensored-MTP-Q4_K_M.gguf"
+          ''llama-server --host 127.0.0.1 --port ''${PORT}''
+          "--model /root/.cache/huggingface/hub/models--TizzyT566--Ornith-1.5-35B-A3B-NVFP4-GGUF/snapshots/fb7c2d9ea1e9b1d2a0d569d57c459cf752bfbef2/Ornith-1.5-35B-A3B-NVFP4.gguf"
+          "--mmproj /root/.cache/huggingface/hub/models--TizzyT566--Ornith-1.5-35B-A3B-NVFP4-GGUF/snapshots/fb7c2d9ea1e9b1d2a0d569d57c459cf752bfbef2/mmproj-Ornith-1.5-35B-BF16.gguf"
           # ik-llama not built with cuda so it can't download a model
           # "--hf-repo mrexodia/Ornith-1.0-35B-AEON-Ultimate-Uncensored-MTP-GGUF"
           # "--hf-file Ornith-1.0-35B-AEON-Ultimate-Uncensored-MTP-Q4_K_M.gguf"
           "--jinja"
           "--parallel 1"
-          "--n-gpu-layers 999"
           "--flash-attn on"
           "--cache-type-k q4_0"
           "--cache-type-v q4_0"
           "--threads 16"
           "--batch-size 2048"
           "--ubatch-size 512"
-          "--ctx-size 100000"
+          "--ctx-size 262144"
           "--cpu-moe"
-          "--spec-type mtp:n_max=3,p_min=0.0"
-          "--merge-up-gate-experts"
-          "--run-time-repack"
           "--mlock"
+
+          "--spec-type draft-mtp"
+          "--spec-draft-n-max 3"
+          "--spec-draft-p-min 0.6"
+
+          # Avoid repeating
+          "--temp 0.6"
+          "--top-k 20"
+          "--top-p 0.95"
+          "--min-p 0"
+
+          # "--reasoning-budget 4096"
+          # ''--reasoning-budget-message " \n\n[Thinking budget exceeded. Transitioning to a best-effort final answer: ]\n\n"''
         ];
         aliases = ["ornith"];
       };
+
+      qwen3.cmd = lib.concatStringsSep " " [
+        ''ik-llama-server --host 127.0.0.1 --port ''${PORT}''
+        "--model /root/.cache/huggingface/hub/models--vcruz305--Qwen3.8-27B-AEON-ULTIMATE-UNCENSORED-GGUF/snapshots/b1b47502a84d9f92226fdcf7ef14556436e889ba/Qwen3.8-27B-AEON-ULTIMATE-UNCENSORED-Q3_K_M.gguf"
+
+        # Agent/tool parsing
+        "--jinja"
+        "--peg"
+        "--reasoning-format deepseek"
+
+        # Single agent sequence
+        "--parallel 1"
+
+        # GPU
+        # "--n-gpu-layers 999"
+        "--flash-attn on"
+
+        "--cache-type-k q4_0"
+        "--cache-type-v q4_0"
+
+        "--fit"
+        "--fit-margin 2048"
+
+        # 16 GB 5080: leave headroom
+        "--cache-type-k q4_0"
+        "--cache-type-v q4_0"
+        "--ctx-size 131072"
+
+        # Avoid giant prefill buffers
+        "--batch-size 256"
+        "--ubatch-size 128"
+
+        "--threads 16"
+
+        # ik_llama optimizations
+        "--run-time-repack"
+        "--mlock"
+
+        # Qwen3.8 thinking-mode sampling
+        "--temp 1.0"
+        "--top-k 20"
+        "--top-p 0.95"
+        "--min-p 0"
+        "--presence-penalty 0"
+        "--repeat-penalty 1.0"
+
+        # Looping fix
+        "--reasoning-budget 4096"
+        ''--reasoning-budget-message " \n\n[Thinking budget exceeded. Transitioning to a best-effort final answer: ]\n\n"''
+
+        # Draft model
+        "--spec-type ngram-mod:n_max=64,n_min=2,ngram_size_n=8"
+        "--spec-type mtp:n_max=3,p_min=0.0"
+        "--spec-autotune"
+      ];
     };
 
     store.path = "/data/llama-swap.sqlite";
