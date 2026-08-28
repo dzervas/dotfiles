@@ -7,10 +7,9 @@
 }:
 let
   zetaModel = "LeaderboardModel1/zeta-2.1-autoround-W4A16";
-  agentModel = "TizzyT566/Ornith-1.5-35B-A3B-NVFP4-GGUF:NVFP4";
-
   hfCache = "/home/dzervas/CryptVMs/huggingface/";
   llamaSwapModelsDir = "${config.home.homeDirectory}/.local/share/llama-swap";
+  qwenFixedChatTemplate = ./qwen-fixed-chat-template.jinja;
 
   # d run -d --name zeta -p 127.0.0.1:1337:8000 --ipc=host --gpus all -e PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True -e VLLM_SERVER_DEV_MODE=1 -v ~/.cache/vllm:/root/.cache/vllm -v ~/.cache/huggingface:/root/.cache/huggingface vllm/vllm-openai:latest LeaderboardModel1/zeta-2.1-autoround-W4A16 \
   #           --served-model-name zeta-2.1 \
@@ -42,44 +41,47 @@ let
         };
       };
       ornith = {
-        # ik-llama does not support model preset
+        # Reproduce offmonreal's measured TurboQuant Q4 donor-MTP recipe first.
         cmd = lib.concatStringsSep " " [
-          ''llama-server --host 127.0.0.1 --port ''${PORT}''
-          "--model /root/.cache/huggingface/hub/models--TizzyT566--Ornith-1.5-35B-A3B-NVFP4-GGUF/snapshots/fb7c2d9ea1e9b1d2a0d569d57c459cf752bfbef2/Ornith-1.5-35B-A3B-NVFP4.gguf"
-          "--mmproj /root/.cache/huggingface/hub/models--TizzyT566--Ornith-1.5-35B-A3B-NVFP4-GGUF/snapshots/fb7c2d9ea1e9b1d2a0d569d57c459cf752bfbef2/mmproj-Ornith-1.5-35B-BF16.gguf"
-          # ik-llama not built with cuda so it can't download a model
-          # "--hf-repo mrexodia/Ornith-1.0-35B-AEON-Ultimate-Uncensored-MTP-GGUF"
-          # "--hf-file Ornith-1.0-35B-AEON-Ultimate-Uncensored-MTP-Q4_K_M.gguf"
+          ''turboquant-server --host 127.0.0.1 --port ''${PORT}''
+          "--model /root/.cache/huggingface/hub/models--offmonreal--Ornith-1.5-35B-MaxQuality-MTP-GGUF/snapshots/33b1d387e9fca2bf07e0a949d3db25f4babc389f/Ornith-1.5-35B_Q4_K_M_imatrix_MTP.gguf"
           "--jinja"
+          # Remove this override to A/B against the GGUF's embedded Ornith template.
+          "--chat-template-file /qwen-fixed-chat-template.jinja"
+          "--reasoning-format deepseek"
           "--parallel 1"
+
+          "--fit off"
+          "--n-gpu-layers 99"
+          "--n-cpu-moe 0"
+          "--override-tensor"
+          (lib.escapeShellArg ''blk\.(1[89]|2[0-9]|3[0-9])\.ffn_.*_exps\.weight=CPU'')
+          "--no-mmap"
+
+          "--ctx-size 131072"
           "--flash-attn on"
-          "--cache-type-k q4_0"
-          "--cache-type-v q4_0"
-          "--threads 16"
-          "--batch-size 2048"
+          # TurboQuant upgrades symmetric turbo K on this 8:1 GQA model anyway.
+          "--cache-type-k q8_0"
+          "--cache-type-v turbo3"
+          "--batch-size 32768"
           "--ubatch-size 512"
-          "--ctx-size 262144"
-          "--cpu-moe"
-          "--mlock"
+          "--threads 16"
+          "--cache-reuse 256"
 
           "--spec-type draft-mtp"
-          "--spec-draft-n-max 3"
-          "--spec-draft-p-min 0.6"
+          "--spec-draft-n-max 2"
 
-          # Avoid repeating
           "--temp 0.6"
           "--top-k 20"
           "--top-p 0.95"
           "--min-p 0"
-
-          # "--reasoning-budget 4096"
-          ''--reasoning-budget-message " \n\n[Thinking budget exceeded. Transitioning to a best-effort final answer: ]\n\n"''
         ];
         aliases = ["ornith"];
         capabilities = {
-          "in" = ["text" "image"];
+          "in" = ["text"];
           out = ["text"];
-          context = 262144;
+          context = 131072;
+          thinking = true;
         };
       };
 
@@ -162,32 +164,6 @@ let
     };
   };
 
-  llamaAgentConfig = pkgs.writeText "llama.ini" (lib.generators.toINIWithGlobalSection {} {
-    globalSection.version = 1;
-    sections = {
-      "*" = {
-        parallel = 1;
-        n-gpu-layers = "all";
-
-        flash-attn = "on";
-        cache-type-k = "q4_0";
-        cache-type-v = "q4_0";
-
-        threads = 16;
-        batch-size = 2048;
-        ubatch-size = 512;
-      };
-      ${agentModel} = {
-        ctx-size = 100000;
-        cpu-moe = true;
-        n-cpu-moe = 24; # Lower consumes more VRAM but it's about as fast
-
-        spec-type = "draft-mtp";
-        spec-draft-n-max = 3;
-      };
-    };
-  });
-
   vllmZetaConfig = pkgs.writers.writeYAML "config.yaml" {
     model = zetaModel;
 
@@ -211,7 +187,7 @@ let
 
     models = [{
       alias = "ornith";
-      name = "Ornith 1.0 35B";
+      name = "Ornith 1.5 35B MaxQuality";
       description = "Local Ornith via llama-swap";
       model = "ornith";
     }];
@@ -289,10 +265,10 @@ in
         exec = "-config /etc/llama-swap/config/config.yaml -listen 0.0.0.0:1337 -watch-config";
         volumes = [
           "${llamaSwapConfig}:/etc/llama-swap/config/config.yaml:ro"
-          # "${llamaSwapModelsDir}:/models"
+          "${llamaSwapModelsDir}/models:/models:ro"
           "/home/dzervas/CryptVMs/vllm:/root/.cache/vllm"
           "${hfCache}:/root/.cache/huggingface"
-          "${llamaAgentConfig}:/llama-agent-models.ini:ro"
+          "${qwenFixedChatTemplate}:/qwen-fixed-chat-template.jinja:ro"
           "${vllmZetaConfig}:/vllm-zeta.yaml:ro"
           "/home/dzervas/.local/share/llama-swap:/data"
         ];
@@ -314,7 +290,7 @@ in
   };
 
   home.activation.createLlamaSwapModelsDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    run mkdir -p ${lib.escapeShellArg llamaSwapModelsDir}
+    run mkdir -p ${lib.escapeShellArg "${llamaSwapModelsDir}/models"}
   '';
 
   xdg.configFile."atuin-ai/config.toml".source = atuinAiConfig;

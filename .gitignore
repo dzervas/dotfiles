@@ -27,6 +27,7 @@
 !home/katerc
 !home/*.sh
 !home/*.json
+!home/*.jinja
 !home/*.mp3
 !home/zed/*.json
 !home/fish-functions/*.fish
@@ -59,3 +60,9 @@
 
 !docker
 !docker/Dockerfile.*
+# !docs
+# !docs/local-llm-coding-agent-research.md
+# !local-llm-lab
+# !local-llm-lab/index.html
+# !local-llm-long-horizon
+# !local-llm-long-horizon/**

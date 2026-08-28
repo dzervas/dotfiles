@@ -5,8 +5,8 @@ import type { Model, OpenAICompletionsCompat } from "@earendil-works/pi-ai";
  * llama-swap model provider.
  *
  * Registers llama-swap as an OpenAI-completions provider (the same API the
- * native llama.cpp provider uses) and discovers each model's accurate
- * context size and capabilities straight from llama-swap's /v1/models.
+ * native llama.cpp provider uses) and discovers model metadata from
+ * llama-swap's /v1/models, with local fallbacks for omitted capabilities.
  *
  * Configuration (env vars):
  *   LLAMA_SWAP_URL   - API base URL (default http://127.0.0.1:1337/v1)
@@ -24,11 +24,10 @@ import type { Model, OpenAICompletionsCompat } from "@earendil-works/pi-ai";
 
 const DEFAULT_BASE_URL = process.env.LLAMA_SWAP_URL ?? "http://127.0.0.1:1337/v1";
 
-// Maps pi thinking levels to the `reasoning_effort` value llama.cpp/llama-swap
-// accepts. "off" is intentionally omitted so it stays available and sends no
-// reasoning_effort. Levels llama.cpp has no native value for are clamped to
-// the nearest supported effort.
+// Maps pi thinking levels to values consumed by each model's compatibility
+// format. Levels without a native distinction are clamped to the nearest one.
 const THINKING_LEVEL_MAP = {
+	off: "off",
 	minimal: "low",
 	low: "low",
 	medium: "medium",
@@ -37,15 +36,22 @@ const THINKING_LEVEL_MAP = {
 };
 
 // Per-model-id compat overrides, matched by substring on the model id.
-// qwen3 in this repo runs with `--reasoning-format deepseek`, which needs the
-// `thinking` field rather than `reasoning_effort`.
 const MODEL_COMPAT: Record<string, OpenAICompletionsCompat> = {
+	ornith: {
+		thinkingFormat: "chat-template",
+		chatTemplateKwargs: {
+			enable_thinking: { $var: "thinking.enabled" },
+			reasoning_effort: { $var: "thinking.effort" },
+			preserve_thinking: true,
+		},
+	},
+	// qwen3 in this repo runs with `--reasoning-format deepseek`.
 	qwen3: { thinkingFormat: "deepseek" },
 };
 
 // Fallback heuristic for thinking support when a model has no `capabilities`
-// block. Only used if capabilities don't explicitly say otherwise.
-const THINKING_HINTS = ["qwen", "deepseek", "thought", "thinking", "qwq"];
+// block. llama-swap currently omits configured capabilities from /v1/models.
+const THINKING_HINTS = ["ornith", "qwen", "deepseek", "thought", "thinking", "qwq"];
 
 interface LlamaSwapCapabilities {
 	in?: string[];
