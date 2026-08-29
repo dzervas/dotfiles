@@ -46,9 +46,17 @@ let
           ''turboquant-server --host 127.0.0.1 --port ''${PORT}''
           "--model /root/.cache/huggingface/hub/models--offmonreal--Ornith-1.5-35B-MaxQuality-MTP-GGUF/snapshots/33b1d387e9fca2bf07e0a949d3db25f4babc389f/Ornith-1.5-35B_Q4_K_M_imatrix_MTP.gguf"
           "--jinja"
-          # Remove this override to A/B against the GGUF's embedded Ornith template.
-          "--chat-template-file /qwen-fixed-chat-template.jinja"
+          # Use the GGUF's embedded Ornith template; the Qwen override caused
+          # repeated analysis loops in long-horizon tool runs.
           "--reasoning-format deepseek"
+          # Pi supplies a per-level token budget only when thinking is enabled;
+          # this message is injected before an exhausted block is closed.
+          "--reasoning-budget-message"
+          (lib.escapeShellArg ''
+
+            [Reasoning budget reached. Do not continue analysis outside the thinking block. Immediately make the best next tool call, preferably a focused test or code edit, or provide the final answer.]
+
+          '')
           "--parallel 1"
 
           "--fit off"
@@ -68,13 +76,18 @@ let
           "--threads 16"
           "--cache-reuse 256"
 
-          "--spec-type draft-mtp"
-          "--spec-draft-n-max 2"
+          # Disabled while confirming the long-horizon benchmark result: the only
+          # clean pass so far came without donor-MTP speculation.
+          # "--spec-type draft-mtp"
+          # "--spec-draft-n-max 2"
 
           "--temp 0.6"
           "--top-k 20"
           "--top-p 0.95"
           "--min-p 0"
+
+          "--presence-penalty 0"
+          "--repeat-penalty 1.0"
         ];
         aliases = ["ornith"];
         capabilities = {
@@ -87,58 +100,49 @@ let
 
       qwen3 = {
         cmd = lib.concatStringsSep " " [
-          ''ik-llama-server --host 127.0.0.1 --port ''${PORT}''
-          "--model /root/.cache/huggingface/hub/models--vcruz305--Qwen3.8-27B-AEON-ULTIMATE-UNCENSORED-GGUF/snapshots/b1b47502a84d9f92226fdcf7ef14556436e889ba/Qwen3.8-27B-AEON-ULTIMATE-UNCENSORED-Q3_K_M.gguf"
+          ''turboquant-server --host 127.0.0.1 --port ''${PORT}''
+          # Qwen publishes safetensors only (FP8 ~27 GB, NVFP4 ~21 GB of weights),
+          # so neither first-party artifact fits 16 GB. This is unsloth's vanilla
+          # quant of Qwen/Qwen3.8-27B, not a fine-tune.
+          "--model /root/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/4ca720788d1e01f1bff70c033e0d0028fd02e502/Qwen3.8-27B-UD-IQ3_XXS.gguf"
 
           # Agent/tool parsing
           "--jinja"
-          "--peg"
           "--reasoning-format deepseek"
 
           # Single agent sequence
           "--parallel 1"
 
-          # GPU
-          # "--n-gpu-layers 999"
-          "--flash-attn on"
+          # Dense 27B: every layer runs per token, so any CPU-resident layer
+          # collapses decode. Everything stays resident; never let the fitter
+          # spill. The vision projector is omitted deliberately (saves 0.86 GiB).
+          "--fit off"
+          "--n-gpu-layers 99"
+          "--no-mmap"
 
-          "--cache-type-k q4_0"
-          "--cache-type-v q4_0"
-
-          "--fit"
-          "--fit-margin 2048"
-
-          # 16 GB 5080: leave headroom
-          "--cache-type-k q4_0"
-          "--cache-type-v q4_0"
+          # Hybrid attention: only 16 of 64 layers hold a KV cache (4 KV heads,
+          # head_dim 256), so q8_0 costs 34,816 B/token and 128K fits in 4.25 GiB.
+          # The other 48 Gated DeltaNet layers hold a fixed 0.146 GiB state.
+          # VRAM ladder if this OOMs: --cache-type-v turbo3 (saves ~1.1 GiB),
+          # then --ctx-size 98304, then UD-Q2_K_XL weights.
           "--ctx-size 131072"
+          "--flash-attn on"
+          "--cache-type-k q8_0"
+          "--cache-type-v q8_0"
 
-          # Avoid giant prefill buffers
-          "--batch-size 256"
-          "--ubatch-size 128"
-
+          # Matches the Ornith profile: ubatch 512 avoids the long-prefill VMM OOM.
+          "--batch-size 32768"
+          "--ubatch-size 512"
           "--threads 16"
+          "--cache-reuse 256"
 
-          # ik_llama optimizations
-          "--run-time-repack"
-          "--mlock"
-
-          # Qwen3.8 thinking-mode sampling
+          # Qwen3.8 thinking-mode sampling, from the official model card.
           "--temp 1.0"
           "--top-k 20"
           "--top-p 0.95"
           "--min-p 0"
           "--presence-penalty 0"
           "--repeat-penalty 1.0"
-
-          # Looping fix
-          "--reasoning-budget 4096"
-          ''--reasoning-budget-message " \n\n[Thinking budget exceeded. Transitioning to a best-effort final answer: ]\n\n"''
-
-          # Draft model
-          "--spec-type ngram-mod:n_max=64,n_min=2,ngram_size_n=8"
-          "--spec-type mtp:n_max=3,p_min=0.0"
-          "--spec-autotune"
         ];
 
         capabilities = {
@@ -159,6 +163,7 @@ let
         members = [
           "zeta"
           "ornith"
+          "qwen3"
         ];
       };
     };
