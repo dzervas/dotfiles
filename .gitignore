@@ -28,6 +28,7 @@
 !home/*.sh
 !home/*.json
 !home/*.jinja
+!home/*.yaml
 !home/*.mp3
 !home/zed/*.json
 !home/fish-functions/*.fish

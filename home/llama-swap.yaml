@@ -1,0 +1,158 @@
+# llama-swap configuration, mounted read-only straight from this repository.
+#
+# The container runs with `-watch-config`, which polls this file every 2s and
+# reloads on change: edit here and the next model load picks it up, with no
+# `nixos-rebuild` and no container restart. In-flight requests are drained and
+# running models are stopped, so a reload costs one model load.
+#
+# Force a reload of a specific model without waiting for a request:
+#   curl -X POST http://127.0.0.1:1337/upstream/ornith/unload
+#   curl -sS http://127.0.0.1:1337/v1/models
+#
+# `cmd` is one command spread over several lines, not a shell script: the first
+# line is the executable and every later line is an argument. Comment-only lines
+# are stripped by llama-swap. There is no shell here, so no pipes, redirects or
+# command substitution; quote any single argument that contains spaces.
+
+healthCheckTimeout: 300
+logToStdout: both
+
+models:
+  ornith:
+    aliases:
+      - ornith
+    capabilities:
+      context: 131072
+      in:
+        - text
+      out:
+        - text
+      thinking: true
+    cmd: |
+      turboquant-server --host 127.0.0.1 --port ${PORT}
+      --model /root/.cache/huggingface/hub/models--offmonreal--Ornith-1.5-35B-MaxQuality-MTP-GGUF/snapshots/33b1d387e9fca2bf07e0a949d3db25f4babc389f/Ornith-1.5-35B_Q4_K_M_imatrix_MTP.gguf
+
+      # Agent/tool parsing. The GGUF's embedded template is used deliberately:
+      # the third-party Qwen override produced worse tool formatting.
+      --jinja
+      --reasoning-format deepseek
+
+      # Pi supplies a per-request token budget only when thinking is enabled.
+      # Do not add a server-wide --reasoning-budget: it corrupts thinking-off
+      # replies by injecting this message into ordinary output.
+      --reasoning-budget-message '[Reasoning budget reached. Do not continue analysis outside the thinking block. Immediately make the best next tool call, preferably a focused test or code edit, or provide the final answer.]'
+
+      --parallel 1
+
+      # 35B-A3B MoE: expert tensors for layers 18-39 live on the CPU, everything
+      # else stays resident. Peak measured at 15,294 MiB with ~545 MiB free.
+      --fit off
+      --n-gpu-layers 99
+      --n-cpu-moe 0
+      --override-tensor 'blk\.(1[89]|2[0-9]|3[0-9])\.ffn_.*_exps\.weight=CPU'
+      --no-mmap
+
+      --ctx-size 131072
+      --flash-attn on
+      # TurboQuant upgrades symmetric turbo K on this 8:1 GQA model anyway.
+      --cache-type-k q8_0
+      --cache-type-v turbo3
+
+      # ubatch 512 avoids the long-prefill CUDA VMM OOM seen at ~65k tokens.
+      --batch-size 32768
+      --ubatch-size 512
+      --threads 16
+      --cache-reuse 256
+
+      # Donor-MTP speculation. Measured 71% draft acceptance, but it showed no
+      # reliability benefit on the long-horizon benchmark, no throughput win at
+      # agent context lengths, and it OOMs when the desktop holds ~3.5 GiB.
+      # --spec-type draft-mtp
+      # --spec-draft-n-max 2
+
+      --temp 0.6
+      --top-k 20
+      --top-p 0.95
+      --min-p 0
+      --presence-penalty 0
+      --repeat-penalty 1.0
+
+  qwen3:
+    aliases:
+      - qwen3.8
+    capabilities:
+      context: 131072
+      in:
+        - text
+      out:
+        - text
+      thinking: true
+    cmd: |
+      turboquant-server --host 127.0.0.1 --port ${PORT}
+      # Qwen ships safetensors only (FP8 ~27 GB, NVFP4 ~21 GB of weights), so no
+      # first-party artifact fits 16 GB. This is unsloth's vanilla quant of
+      # Qwen/Qwen3.8-27B, not a fine-tune.
+      --model /root/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/4ca720788d1e01f1bff70c033e0d0028fd02e502/Qwen3.8-27B-UD-IQ3_XXS.gguf
+
+      --jinja
+      --reasoning-format deepseek
+      --parallel 1
+
+      # Dense 27B: every layer runs on every token, so a single CPU-resident
+      # layer collapses decode. Nothing may spill. The vision projector is
+      # omitted on purpose (0.86 GiB) and so is the separate MTP head (1.28 GiB).
+      --fit off
+      --n-gpu-layers 99
+      --no-mmap
+
+      # Hybrid attention: only 16 of 64 layers hold a KV cache (4 KV heads,
+      # head_dim 256), so q8_0 costs 34,816 B/token and 128k fits in 4.25 GiB.
+      # The other 48 Gated DeltaNet layers hold a fixed 0.146 GiB state.
+      # If this OOMs: --cache-type-v turbo3 (~1.1 GiB), then --ctx-size 98304,
+      # then step down to UD-IQ3_S or UD-Q2_K_XL weights.
+      --ctx-size 131072
+      --flash-attn on
+      --cache-type-k q8_0
+      --cache-type-v q8_0
+
+      --batch-size 32768
+      --ubatch-size 512
+      --threads 16
+      --cache-reuse 256
+
+      # Thinking-mode sampling from the official Qwen3.8 model card. For
+      # non-thinking use the card recommends temp 0.7, top-p 0.8, presence 1.5.
+      --temp 1.0
+      --top-k 20
+      --top-p 0.95
+      --min-p 0
+      --presence-penalty 0
+      --repeat-penalty 1.0
+
+  zeta-2.1:
+    aliases:
+      - zeta
+    capabilities:
+      context: 6144
+      in:
+        - text
+      out:
+        - text
+    cmd: vllm serve --host 127.0.0.1 --port ${PORT} --config /vllm-zeta.yaml
+
+# One model at a time on the single GPU: loading any member evicts the others.
+routing:
+  router:
+    use: group
+    settings:
+      groups:
+        gpu:
+          swap: true
+          exclusive: true
+          members:
+            - zeta
+            - ornith
+            - qwen3
+
+store:
+  path: /data/llama-swap.sqlite
