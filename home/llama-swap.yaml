@@ -81,7 +81,9 @@ models:
     aliases:
       - qwen3.8
     capabilities:
-      context: 131072
+      context: 98304
+      # This server does not surface max_output_tokens in /v1/models, so the
+      # per-model output budget lives in pi/extensions/llama-swap.ts instead.
       in:
         - text
       out:
@@ -108,8 +110,60 @@ models:
       # Hybrid attention: only 16 of 64 layers hold a KV cache (4 KV heads,
       # head_dim 256), so q8_0 costs 34,816 B/token and 128k fits in 4.25 GiB.
       # The other 48 Gated DeltaNet layers hold a fixed 0.146 GiB state.
-      # If this OOMs: --cache-type-v turbo3 (~1.1 GiB), then --ctx-size 98304,
-      # then step down to UD-IQ3_S or UD-Q2_K_XL weights.
+      # IQ3_S is ~1055 MiB larger than IQ3_XXS, so context pays for the quality.
+      # IQ3_S at 65536 stopped loading once the desktop grew: it wants ~13.4 GiB
+      # and only 12909 MiB were free, which killed two benchmark runs with
+      # "upstream command exited prematurely". IQ3_XXS at 98304 loads with
+      # 13226 MiB free and buys 50% more context, which matters more than the
+      # quant step for long runs. 131072 with q8_0 V needs 4352 MiB and OOMed.
+      --ctx-size 98304
+      --flash-attn on
+      --cache-type-k q8_0
+      --cache-type-v turbo3
+
+      --batch-size 32768
+      --ubatch-size 512
+      --threads 16
+      --cache-reuse 256
+
+      # Thinking-mode sampling from the official Qwen3.8 model card. For
+      # non-thinking use the card recommends temp 0.7, top-p 0.8, presence 1.5.
+      --temp 1.0
+      --top-k 20
+      --top-p 0.95
+      --min-p 0
+      --presence-penalty 0
+      --repeat-penalty 1.0
+
+  ornith9:
+    aliases:
+      - ornith-9b
+    capabilities:
+      context: 131072
+      in:
+        - text
+      out:
+        - text
+      thinking: true
+    cmd: |
+      turboquant-server --host 127.0.0.1 --port ${PORT}
+      # First-party GGUF. 9B dense with hybrid attention: only 8 of 32 layers
+      # hold a KV cache, so Q8_0 weights and a 131072 cache fit together.
+      --model /root/.cache/huggingface/hub/models--ornith-ai--Ornith-1.5-9B-GGUF/snapshots/abdd624b12ebf020b767fff532ff44fe552b28c3/Ornith-1.5-9B-Q8_0.gguf
+
+      --jinja
+      --reasoning-format deepseek
+      --parallel 1
+
+      # Weights 9.114 GiB + q8_0 KV at 131072 (2.13 GiB) = 11.24 GiB of ~13.6.
+      # Nothing is offloaded and the vision projector is not loaded.
+      --fit off
+      --n-gpu-layers 99
+      --no-mmap
+
+      # 8 full-attention layers x 4 KV heads x 256 head_dim x (K+V):
+      # 32768 B/token at fp16, 17408 B/token at q8_0. Deliberately not turbo3:
+      # at this size VRAM is not scarce, so avoid the fork-specific KV format.
       --ctx-size 131072
       --flash-attn on
       --cache-type-k q8_0
@@ -120,9 +174,8 @@ models:
       --threads 16
       --cache-reuse 256
 
-      # Thinking-mode sampling from the official Qwen3.8 model card. For
-      # non-thinking use the card recommends temp 0.7, top-p 0.8, presence 1.5.
-      --temp 1.0
+      # Same official Ornith 1.5 sampling as the 35B.
+      --temp 0.6
       --top-k 20
       --top-p 0.95
       --min-p 0
@@ -152,6 +205,7 @@ routing:
           members:
             - zeta
             - ornith
+            - ornith9
             - qwen3
 
 store:

@@ -52,6 +52,19 @@ const THINKING_LEVEL_MAPS: Record<string, typeof THINKING_LEVEL_MAP> = {
 	qwen3: QWEN_THINKING_LEVEL_MAP,
 };
 
+// llama-swap does not report max_output_tokens, and pi's 8192 fallback is far
+// below what a reasoning model needs: Qwen3.8 budgets reasoning separately from
+// the response and its own SWE evaluations run at 32768. At 8192 the model
+// exhausted the budget inside a single thinking block and never emitted a call.
+const MODEL_MAX_OUTPUT_TOKENS: Record<string, number> = {
+	qwen3: 32768,
+};
+
+// llama-swap never reports max_output_tokens, so pi's 8192 fallback applied to
+// every local model. Reasoning models routinely exceed that inside one thinking
+// block and get truncated with stopReason "length" before emitting a tool call.
+const LLAMA_SWAP_MAX_OUTPUT_TOKENS = 32768;
+
 // Unlike chat-template effort hints, llama.cpp's reasoning budget is enforced
 // by the sampler: it closes the thinking block before max_tokens is exhausted.
 const ORNITH_REASONING_BUDGETS: Record<string, number> = {
@@ -130,8 +143,10 @@ export default function (pi: ExtensionAPI) {
 	const apiKey = process.env.LLAMA_SWAP_API_KEY;
 	const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined;
 
+	// Exact id, not a substring: these budgets were tuned against the 35B-A3B and
+	// never demonstrably fixed its looping, so they must not leak onto ornith9.
 	pi.on("before_provider_request", (event, ctx) => {
-		if (ctx.model?.provider !== "llama-swap" || !ctx.model.id.toLowerCase().includes("ornith")) return;
+		if (ctx.model?.provider !== "llama-swap" || ctx.model.id.toLowerCase() !== "ornith") return;
 		if (!isRecord(event.payload)) return;
 
 		const payload = ORNITH_TEMPERATURE === undefined
@@ -169,7 +184,11 @@ export default function (pi: ExtensionAPI) {
 				const reasoning = capsReasoning ?? nameSupportsThinking(entry.id, entry.name);
 
 				const context = resolveContext(entry) ?? 128_000;
-				const maxTokens = entry.max_output_tokens ?? caps?.max_output_tokens ?? 8192;
+				const maxTokens =
+					matchMaxOutputTokens(entry.id) ??
+					entry.max_output_tokens ??
+					caps?.max_output_tokens ??
+					LLAMA_SWAP_MAX_OUTPUT_TOKENS;
 
 				const compat = matchCompat(entry.id);
 
@@ -191,6 +210,14 @@ export default function (pi: ExtensionAPI) {
 			});
 		},
 	});
+}
+
+function matchMaxOutputTokens(id: string): number | undefined {
+	const normalizedId = id.toLowerCase();
+	for (const [key, value] of Object.entries(MODEL_MAX_OUTPUT_TOKENS)) {
+		if (normalizedId.includes(key)) return value;
+	}
+	return undefined;
 }
 
 function matchThinkingLevelMap(id: string): typeof THINKING_LEVEL_MAP {

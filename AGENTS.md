@@ -33,7 +33,22 @@ hardware/          # Per-machine: desktop.nix, laptop.nix, iso.nix
 desktop/           # DE configs: hyprland (primary), kde, sway, cosmic
   home/components/ # waybar, rofi, hyprlock, hypridle, swaync
 overlays/          # Custom packages + pinned versions
+pi/extensions/     # TypeScript Pi agent extensions (NOT Nix; symlinked to ~/.pi/agent/extensions)
+  llama-swap.ts    # Local model provider: model catalog, thinking transport, output caps
+  titlebar-spinner.ts, background-bash.ts, permissions/, todo/, ...
+  pi-subagents-workflows/  # Workflow runtime, widget, and terminal activity signaling
 ```
+
+**`pi/extensions/` is TypeScript, not Nix.** Terminal/agent UI behaviour (tab-title spinner,
+Ghostty OSC activity signaling, workflow widgets) lives there, not in `home/ghostty.nix`.
+
+Run a focused extension test from the repository root with:
+
+```bash
+node --experimental-transform-types --test pi/extensions/pi-subagents-workflows/terminal-progress.test.ts
+```
+
+Node needs an explicit `.ts` suffix on relative imports when running tests this way.
 
 ## Machines
 
