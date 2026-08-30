@@ -39,6 +39,7 @@
       enableWsi = true; # Vulkan Window Subsystem Integration
     };
 
+    # NOTE: `echo unShaderBackgroundProcessingThreads 32 >> ~/.local/share/Steam/steam_dev.cfg` to raise the number of threads processing the Vulkan shaders
     steam = {
       enable = true;
       # remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play

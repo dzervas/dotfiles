@@ -18,6 +18,19 @@ final: prev: {
   # nix-update :n8n-cli --version-regex 'n8n@(2\.\d+\.\d+)'
   n8n-cli = prev.callPackage ./n8n-cli.nix { };
 
+  _1password-gui = prev._1password-gui.overrideAttrs (oldAttrs: {
+     postInstall = (oldAttrs.postInstall or "") + ''
+       patchelf --set-interpreter \
+         "$(patchelf --print-interpreter "$out/share/1password/op-ssh-sign")" \
+         "$out/share/1password/1password-mcp"
+       patchelf --set-rpath \
+         "$(patchelf --print-rpath "$out/share/1password/op-ssh-sign")" \
+         "$out/share/1password/1password-mcp"
+
+       ln -s "$out/share/1password/1password-mcp" "$out/bin/1password-mcp"
+     '';
+   });
+
   # nix-update:pi-coding-agent-latest --custom-dep modelData
   # Broken:
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (

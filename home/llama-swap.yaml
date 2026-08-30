@@ -36,6 +36,7 @@ models:
       # the third-party Qwen override produced worse tool formatting.
       --jinja
       --reasoning-format deepseek
+      --preserve-thinking
 
       # Pi supplies a per-request token budget only when thinking is enabled.
       # Do not add a server-wide --reasoning-budget: it corrupts thinking-off
@@ -98,6 +99,7 @@ models:
 
       --jinja
       --reasoning-format deepseek
+      --preserve-thinking
       --parallel 1
 
       # Dense 27B: every layer runs on every token, so a single CPU-resident
@@ -167,6 +169,7 @@ models:
       --jinja
       --reasoning-format deepseek
       --parallel 4
+      --preserve-thinking
 
       # Weights 9.114 GiB + q8_0 KV at 131072 (2.13 GiB) = 11.24 GiB of ~13.6.
       # Nothing is offloaded and the vision projector is not loaded.

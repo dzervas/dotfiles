@@ -1,5 +1,5 @@
 { config, ... }: {
-  hardware.bluetooth = {
+  hardware.bluetooth = rec {
     enable = true;
     powerOnBoot = config.networking.hostName != "laptop";
     settings = {
@@ -12,7 +12,8 @@
         # https://github.com/bluez/bluez/blob/master/src/main.conf#L133-L144
         # KernelExperimental = "6fbaf188-05e0-496a-9885-d6ddfdb4e03e"; # ISO socket, for LE Audio
       };
-      LE.EnableAdvMonInterleaveScan = "true";
+      Policy.AutoEnable = builtins.toString powerOnBoot;
+      LE.EnableAdvMonInterleaveScan = "1";
     };
   };
 
