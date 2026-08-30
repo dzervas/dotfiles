@@ -69,8 +69,6 @@
         pyserial
         frida-python
 
-        openai-agents
-
         # pip magic # BinaryNinja needs these
         # mcp # AI
       ]

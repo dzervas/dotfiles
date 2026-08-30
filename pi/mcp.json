@@ -1,0 +1,19 @@
+{
+	"settings": {
+		"showStatusIcon": true,
+		"mcpFooterStatus": "off",
+		"hostConfigDiscovery": "prompt",
+		"approveTools": ["github_delete_*", "notion_update_*"],
+		"elicitation": true
+	},
+	"mcpServers": {
+		"nix": {
+			"command": "fish",
+			"args": ["-c", "sand -lc 'nix run github:utensils/mcp-nixos'"]
+		},
+		"context7": {
+			"url": "https://mcp.context7.com/mcp/oauth",
+			"auth": "oauth"
+		}
+	}
+}

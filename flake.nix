@@ -108,7 +108,7 @@
     stylix.url = "github:danth/stylix";
     flatpak.url = "github:gmodena/nix-flatpak";
     nixvim.url = "github:nix-community/nixvim";
-    nixvim.inputs.nixpkgs.follows = "nixpkgs";
+    # nixvim.inputs.nixpkgs.follows = "nixpkgs";
 
     nix-private.url = "git+ssh://git@git.vpn.dzerv.art/dzervas/nix-private";
     nix-private.inputs.nixpkgs.follows = "nixpkgs";

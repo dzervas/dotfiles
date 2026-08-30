@@ -30,12 +30,30 @@
       # ${pkgs.devenv}/bin/devenv hook fish | source
     '';
     plugins = [
-      { name = "autopair"; inherit (pkgs.fishPlugins.autopair) src; }
-      { name = "fzf-fish"; inherit (pkgs.fishPlugins.fzf-fish) src; }
-      { name = "puffer"; inherit (pkgs.fishPlugins.puffer) src; }
-      { name = "fifc"; inherit (pkgs.fishPlugins.fifc) src; }
-      { name = "bass"; inherit (pkgs.fishPlugins.bass) src; }
-      { name = "colored-man-pages"; inherit (pkgs.fishPlugins.colored-man-pages) src; }
+      {
+        name = "autopair";
+        inherit (pkgs.fishPlugins.autopair) src;
+      }
+      {
+        name = "fzf-fish";
+        inherit (pkgs.fishPlugins.fzf-fish) src;
+      }
+      {
+        name = "puffer";
+        inherit (pkgs.fishPlugins.puffer) src;
+      }
+      {
+        name = "fifc";
+        inherit (pkgs.fishPlugins.fifc) src;
+      }
+      {
+        name = "bass";
+        inherit (pkgs.fishPlugins.bass) src;
+      }
+      {
+        name = "colored-man-pages";
+        inherit (pkgs.fishPlugins.colored-man-pages) src;
+      }
       # { name = "sudope"; inherit (pkgs.fishPlugins.plugin-sudope) src; } # alt-esc for sudo
     ];
 
@@ -84,8 +102,13 @@
         body = builtins.readFile ./fish-functions/needs-update.fish;
         description = "Check if a newer nixpkgs version is available";
       };
+      sand = {
+        body = builtins.readFile ./fish-functions/sand.fish;
+        description = "Run bash inside a bubblewrap sandbox";
+        wraps = "bash";
+      };
       pis = {
-        body = builtins.readFile ./fish-functions/pis.fish;
+        body = ''sand -lc 'pi --extension "$HOME/.pi/agent/sandbox.ts" $@' -- $argv'';
         description = "Run pi inside a bubblewrap sandbox";
         wraps = "pi";
       };

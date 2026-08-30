@@ -81,7 +81,7 @@ models:
     aliases:
       - qwen3.8
     capabilities:
-      context: 98304
+      context: 65536
       # This server does not surface max_output_tokens in /v1/models, so the
       # per-model output budget lives in pi/extensions/llama-swap.ts instead.
       in:
@@ -113,10 +113,23 @@ models:
       # IQ3_S is ~1055 MiB larger than IQ3_XXS, so context pays for the quality.
       # IQ3_S at 65536 stopped loading once the desktop grew: it wants ~13.4 GiB
       # and only 12909 MiB were free, which killed two benchmark runs with
-      # "upstream command exited prematurely". IQ3_XXS at 98304 loads with
-      # 13226 MiB free and buys 50% more context, which matters more than the
-      # quant step for long runs. 131072 with q8_0 V needs 4352 MiB and OOMed.
-      --ctx-size 98304
+      # "upstream command exited prematurely".
+      #
+      # IQ3_XXS at 98304 loaded, but left only ~600 MiB for the compositor and
+      # took the machine down: at 80k tokens the CUDA context failed inside
+      # launch_fattn, the server aborted with a null deref, llama-swap restarted
+      # it seven times in 150s, and the display stack then failed every
+      # nv_drm_gem_alloc_nvkms_memory_ioctl until the box needed a hard reset.
+      # This GPU also drives the desktop, so a model may not claim all of it.
+      # 65536 leaves roughly 1.9 GiB of headroom. 131072 with q8_0 V needs
+      # 4352 MiB and OOMed.
+      --ctx-size 65536
+
+      # Hybrid recurrent layers cannot be recomputed, so the server snapshots
+      # their state: 32 checkpoints x 149.6 MiB is 4.8 GiB. That memory is host
+      # RAM rather than VRAM, so it did not cause the crash above, but it is
+      # still 4.8 GiB of RAM for no benefit at this context size.
+      --ctx-checkpoints 4
       --flash-attn on
       --cache-type-k q8_0
       --cache-type-v turbo3
@@ -153,7 +166,7 @@ models:
 
       --jinja
       --reasoning-format deepseek
-      --parallel 1
+      --parallel 4
 
       # Weights 9.114 GiB + q8_0 KV at 131072 (2.13 GiB) = 11.24 GiB of ~13.6.
       # Nothing is offloaded and the vision projector is not loaded.
@@ -170,7 +183,7 @@ models:
       --cache-type-v q8_0
 
       --batch-size 32768
-      --ubatch-size 512
+      --ubatch-size 1024
       --threads 16
       --cache-reuse 256
 

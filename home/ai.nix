@@ -38,7 +38,6 @@ let
       wrapProgram $out/bin/pi \
         --prefix NODE_PATH : ${piExtensionNodeModules}/node_modules \
         --prefix NODE_PATH : ${piCodingAgentNodeModules}/node_modules
-        # --prefix NODE_OPTIONS " " "--conditions=import"
     '';
   };
 
@@ -53,23 +52,23 @@ let
       # Disable tps.ts that shows elapsed n stuff, it's ugly
       extensions = [ "index.ts" ];
     }
-   {
-     source = "git:github.com/mattpocock/skills";
-     skills = [
-       "skills/engineering/grill-with-docs/SKILL.md"
-       "skills/engineering/wayfinder/SKILL.md"
-       "skills/engineering/domain-modeling/SKILL.md"
-       "skills/engineering/research/SKILL.md"
-       "skills/engineering/prototype/SKILL.md"
-       "skills/engineering/tdd/SKILL.md"
-       "skills/engineering/diagnosing-bugs/SKILL.md"
-       "skills/engineering/codebase-design/SKILL.md"
-       "skills/engineering/code-review/SKILL.md"
-       "skills/productivity/grill-me/SKILL.md"
-       "skills/productivity/grilling/SKILL.md"
-       "skills/productivity/writing-for-agents/SKILL.md"
-     ];
-   }
+    {
+      source = "git:github.com/mattpocock/skills";
+      skills = [
+        "skills/engineering/grill-with-docs/SKILL.md"
+        "skills/engineering/wayfinder/SKILL.md"
+        "skills/engineering/domain-modeling/SKILL.md"
+        "skills/engineering/research/SKILL.md"
+        "skills/engineering/prototype/SKILL.md"
+        "skills/engineering/tdd/SKILL.md"
+        "skills/engineering/diagnosing-bugs/SKILL.md"
+        "skills/engineering/codebase-design/SKILL.md"
+        "skills/engineering/code-review/SKILL.md"
+        "skills/productivity/grill-me/SKILL.md"
+        "skills/productivity/grilling/SKILL.md"
+        "skills/productivity/writing-for-agents/SKILL.md"
+      ];
+    }
   ];
   piPackagesSources = map (p: p.source or p) piPackages;
 
@@ -92,20 +91,31 @@ let
     defaultModel = builtins.elemAt enabledModels 0;
     # defaultProvider = "cliproxyapi";
     defaultThinkingLevel = "medium";
-    enabledModels = [ "gpt-5.6-sol" "claude-opus-5" "gpt-5.6-terra" "claude-fable-5" ];
+    enabledModels = [
+      "gpt-5.6-sol"
+      "claude-opus-5"
+      "gpt-5.6-terra"
+      "claude-fable-5"
+
+      "qwen3"
+      "ornith"
+      "ornith9"
+    ];
 
     subagents = {
       defaultModel = "claude-sonnet-5";
-      agentOverrides = let
-        smallModel = "claude-haiku-4-5";
-      in {
-        scout.model = smallModel; # Local file recon
-        researcher.model = smallModel; # Web recon
-        delegate.model = smallModel; # Small worker
+      agentOverrides =
+        let
+          smallModel = "claude-haiku-4-5";
+        in
+        {
+          scout.model = smallModel; # Local file recon
+          researcher.model = smallModel; # Web recon
+          delegate.model = smallModel; # Small worker
 
-        oracle.model = piSettings.defaultModel; # Plan reviewer
-        reviewer.model = piSettings.defaultModel; # Code reviewer
-      };
+          oracle.model = piSettings.defaultModel; # Plan reviewer
+          reviewer.model = piSettings.defaultModel; # Code reviewer
+        };
     };
   };
 
@@ -212,6 +222,8 @@ in
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/extensions";
       ".pi/agent/skills".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/skills";
+      ".pi/agent/mcp.json".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/mcp.json";
       ".pi/agent/node_modules".source = piExtensionNodeModules + "/node_modules";
     };
   };

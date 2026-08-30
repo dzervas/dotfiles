@@ -20,7 +20,7 @@
 			"model": "zeta-2.1",
 		},
 		"disabled_globs": [".private"],
-		"provider": "open_ai_compatible_api",
+		"provider": "zed",
 	},
 	"telemetry": {
 		"diagnostics": true,

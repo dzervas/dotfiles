@@ -115,6 +115,7 @@ bwrap \
 	--dev /dev \
 	--tmpfs /tmp \
 	--ro-bind /nix/store /nix/store \
+	--ro-bind /run/binfmt /run/binfmt \
 	--ro-bind /bin /bin \
 	--ro-bind /usr/bin /usr/bin \
 	--ro-bind /etc/nix /etc/nix \
@@ -149,10 +150,10 @@ bwrap \
 	--bind $project_dir $project_dir \
 	--ro-bind $HOME/.config/jj $HOME/.config/jj \
 	--ro-bind $HOME/.config/git $HOME/.config/git \
+	--ro-bind $HOME/.config/fish $HOME/.config/fish \
 	$bwrap_mounts \
 	$bwrap_env \
 	--chdir $project_dir \
 	--setenv HOME $HOME \
 	--setenv CI 1 \
-	-- \
-	bash -lc 'pi --extension "$HOME/.pi/agent/sandbox.ts" "$@"' -- $pi_args
+	-- bash $pi_args

@@ -37,6 +37,7 @@
 !nixos/vimrc
 !overlays
 !pi
+!pi/*.json
 !pi/extensions
 !pi/skills
 !pi/extensions/lib
