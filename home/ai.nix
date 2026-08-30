@@ -43,10 +43,10 @@ let
 
   # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
   piPackages = [
-    "npm:pi-mcp-adapter@2.26.0"
-    "npm:pi-web-access@0.23.0"
-    "npm:@gotgenes/pi-anthropic-auth@2.0.3"
-    "npm:@gotgenes/pi-subagents@19.3.2"
+    "npm:pi-mcp-adapter@2.27.0"
+    "npm:pi-web-access@0.24.2"
+    "npm:@gotgenes/pi-anthropic-auth@2.0.6"
+    "npm:@gotgenes/pi-subagents@19.3.5"
     {
       source = "npm:@router-for-me/pi-cliproxyapi-provider@1.4.13";
       # Disable tps.ts that shows elapsed n stuff, it's ugly

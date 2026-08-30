@@ -80,11 +80,13 @@ difficulty to cost - do NOT just inherit the parent model. Prefer delegating ove
 doing everything inline when a task is parallelizable, isolatable, or benefits from
 a fresh/independent context. Available models:
 
+- `ornith9` - 9B local model. It's completely free and fast. Use it for the simplest of tasks but as much
+  as you want - summaries, explorations n stuff
+- `gpt-5.6-luna` or `gpt-5.3-codex-spark` - It's dumber than the above but good enough for recon/summaries/etc.
+  and more efficient and fast. Spark is almost free and extremely fast.
 - `gpt-5.6-terra` or `claude-opus-5` - DEFAULT workhorse. Cheap, abundant sub, strong at coding and long
   multi-step workflows. Use for the bulk of delegated work: recon, research,
   routine implementation, and anything run in parallel or high volume.
-- `gpt-5.6-luna` or `gpt-5.3-codex-spark` - It's dumber than the above but good enough for recon/summaries/etc.
-  and more efficient and fast. Spark is almost free and extremely fast.
 - `claude-fable-5` (only use medium effort) or `gpt-5.6-sol` (high effort) - Last resort, hardest ceiling.
   Most capable model, for themost ambitious long-horizon work only.
 

@@ -67,17 +67,14 @@ const LLAMA_SWAP_MAX_OUTPUT_TOKENS = 32768;
 
 // Unlike chat-template effort hints, llama.cpp's reasoning budget is enforced
 // by the sampler: it closes the thinking block before max_tokens is exhausted.
-// Keyed by exact model id, because these numbers are tuned per model and must
-// not leak onto untested ones such as ornith9.
-//
-// Qwen3.8 ignores the effort hint outright: a long agent run at "low" produced
-// 3775 thinking characters per turn against roughly 2300 at "medium", and spent
-// 14 of its 17 minutes of model time inside thinking blocks. Its effort values
-// are mapped through QWEN_THINKING_LEVEL_MAP first, so the keys are the mapped
-// names rather than pi's own levels.
-const MODEL_REASONING_BUDGETS: Record<string, Record<string, number>> = {
-	ornith: { low: 512, medium: 1024, high: 2048 },
-	qwen3: { low: 512, medium: 1024, xhigh: 2048 },
+// These are intentionally shared by every llama-swap reasoning model, including
+// model variants such as ornith9. The keys are the mapped effort names rather
+// than pi's own levels.
+const REASONING_BUDGETS: Record<string, number> = {
+	low: 1024,
+	medium: 2048,
+	high: 4096,
+	xhigh: 8192,
 };
 
 // Per-model-id compat overrides, matched by substring on the model id.
@@ -150,23 +147,21 @@ export default function (pi: ExtensionAPI) {
 	const apiKey = process.env.LLAMA_SWAP_API_KEY;
 	const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined;
 
-	// Exact id, not a substring: these budgets are tuned per model and must not
-	// leak onto untested ones such as ornith9.
 	pi.on("before_provider_request", (event, ctx) => {
 		if (ctx.model?.provider !== "llama-swap") return;
-		const modelId = ctx.model.id.toLowerCase();
-		const budgets = MODEL_REASONING_BUDGETS[modelId];
-		if (!budgets) return;
 		if (!isRecord(event.payload)) return;
 
+		const modelId = ctx.model.id.toLowerCase();
 		const payload = ORNITH_TEMPERATURE === undefined || modelId !== "ornith"
 			? event.payload
 			: { ...event.payload, temperature: ORNITH_TEMPERATURE };
 		const kwargs = isRecord(payload.chat_template_kwargs) ? payload.chat_template_kwargs : undefined;
-		if (kwargs?.enable_thinking === false) return payload === event.payload ? undefined : payload;
+		if (ctx.model.reasoning !== true || kwargs?.enable_thinking !== true) {
+			return payload === event.payload ? undefined : payload;
+		}
 
-		const effort = typeof kwargs?.reasoning_effort === "string" ? kwargs.reasoning_effort : "medium";
-		const budget = budgets[effort] ?? budgets.medium;
+		const effort = typeof kwargs.reasoning_effort === "string" ? kwargs.reasoning_effort : "medium";
+		const budget = REASONING_BUDGETS[effort] ?? REASONING_BUDGETS.medium;
 
 		return { ...payload, thinking_budget_tokens: budget };
 	});

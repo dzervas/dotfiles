@@ -104,7 +104,6 @@ end
 
 mkdir -p $sandbox_home/.pi/agent/extensions $sandbox_home/.config/{jj,git}
 
-# TODO: ro-bind pi extensions
 # --bind /nix/var/nix/daemon-socket /nix/var/nix/daemon-socket \
 bwrap \
 	--unshare-all \
