@@ -6,6 +6,7 @@
 }:
 let
   nodejs = pkgs.nodejs_22; # tree-sitter does not work with nodejs_24
+  pi-coding-agent-package = pkgs.pi-coding-agent;
   piImportNpmLock = pkgs.callPackage (pkgs.path + "/pkgs/build-support/node/import-npm-lock") {
     callPackages = pkgs.newScope { inherit nodejs; };
   };
@@ -23,12 +24,12 @@ let
   };
   piCodingAgentNodeModules = pkgs.runCommand "pi-coding-agent-node-modules" { } ''
     mkdir -p $out/node_modules/@earendil-works
-    ln -s ${pkgs.pi-coding-agent}/lib/node_modules/pi-monorepo \
+    ln -s ${pi-coding-agent-package}/lib/node_modules/pi-monorepo \
       $out/node_modules/@earendil-works/pi-coding-agent
   '';
   piCodingAgent = pkgs.symlinkJoin {
     name = "pi-coding-agent-with-extension-node-path";
-    paths = [ pkgs.pi-coding-agent ];
+    paths = [ pi-coding-agent-package ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
     # Pi realpaths symlinked extensions before loading them, so bare imports
     # need to resolve from the extension dependency closure while pi runs.
@@ -43,12 +44,12 @@ let
 
   # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
   piPackages = [
-    "npm:pi-mcp-adapter@2.27.0"
-    "npm:pi-web-access@0.24.2"
+    "npm:pi-mcp-adapter@2.29.0"
+    "npm:pi-web-access@0.25.0"
     "npm:@gotgenes/pi-anthropic-auth@2.0.6"
     "npm:@gotgenes/pi-subagents@19.3.5"
     {
-      source = "npm:@router-for-me/pi-cliproxyapi-provider@1.4.13";
+      source = "npm:@router-for-me/pi-cliproxyapi-provider@1.4.14";
       # Disable tps.ts that shows elapsed n stuff, it's ugly
       extensions = [ "index.ts" ];
     }
@@ -95,7 +96,8 @@ let
       "gpt-5.6-sol"
       "claude-opus-5"
       "gpt-5.6-terra"
-      "claude-fable-5"
+      "gpt-6-astra"
+      "claude-fable-5-1"
 
       "qwen3"
       "ornith"
