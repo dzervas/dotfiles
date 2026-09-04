@@ -6,7 +6,7 @@
 }:
 let
   nodejs = pkgs.nodejs_22; # tree-sitter does not work with nodejs_24
-  pi-coding-agent-package = pkgs.pi-coding-agent;
+  pi-coding-agent-package = pkgs.pi-coding-agent-latest;
   piImportNpmLock = pkgs.callPackage (pkgs.path + "/pkgs/build-support/node/import-npm-lock") {
     callPackages = pkgs.newScope { inherit nodejs; };
   };
@@ -231,7 +231,10 @@ in
   };
 
   programs = {
-    codex.enable = true;
+    codex = {
+      enable = true;
+      package = pkgs.codex-latest;
+    };
     pi-coding-agent = {
       enable = true;
       package = piCodingAgent;

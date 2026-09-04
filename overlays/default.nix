@@ -11,7 +11,7 @@ final: prev: {
   claude-chrome = prev.callPackage ./claude-chrome.nix { };
   # nix-update:cursortab-nvim --subpackage server
   cursortab-nvim = prev.callPackage ./cursortab-nvim.nix { };
-  # nix-update:codex-latest
+  # nix-update:codex-latest --custom-dep platformSrc
   codex-latest = prev.callPackage ./codex.nix { };
   # nix-update:anytype-cli
   anytype-cli = prev.callPackage ./anytype-cli.nix { };
@@ -34,13 +34,13 @@ final: prev: {
   # nix-update:pi-coding-agent-latest --custom-dep modelData
   # Broken:
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
-    finalAttrs: _prevAttrs: rec {
+    finalAttrs: prevAttrs: {
       version = "0.85.0";
 
       src = final.fetchFromGitHub {
         owner = "earendil-works";
         repo = "pi";
-        tag = "v${version}";
+        tag = "v${finalAttrs.version}";
         hash = "sha256-gznGlneVCx3htxRiJq0/futm4qLR9Bzfv3UwP3ES9v0=";
       };
 
@@ -53,9 +53,38 @@ final: prev: {
       };
 
       modelData = final.fetchurl {
-        url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${version}.tgz";
+        url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${finalAttrs.version}.tgz";
         hash = "sha256-RhiL2stVWgdGagER85Y/IJMqFhmeTWz7jUSn/l/G40I=";
       };
+
+      # Required when a new package is introduced in upstream vs nix packaged
+      # If no longer required comment it out, don't remove it, might be needed later
+      buildPhase = ''
+        runHook preBuild
+
+        npx tsgo -p packages/tui/tsconfig.build.json
+        npx tsgo -p packages/telemetry/tsconfig.build.json
+        npx tsgo -p packages/ai/tsconfig.build.json
+        npx tsgo -p packages/chord/tsconfig.build.json
+        npx tsgo -p packages/agent/tsconfig.build.json
+        npx tsgo -p packages/protocol/tsconfig.build.json
+        npx tsgo -p packages/client/tsconfig.build.json
+        npx tsgo -p packages/server/tsconfig.build.json
+        npm run build --workspace=packages/coding-agent
+
+        runHook postBuild
+      '';
+
+      # If the above required new packages, this needs to patch them
+      postInstall = ''
+        local nm="$out/lib/node_modules/pi-monorepo/node_modules"
+        for ws in @earendil-works/chord:packages/chord \
+                  @earendil-works/pi-server:packages/server; do
+          IFS=: read -r pkg src <<< "$ws"
+          rm "$nm/$pkg"
+          cp -r "$src" "$nm/$pkg"
+        done
+      '' + prevAttrs.postInstall;
     }
   );
 }
