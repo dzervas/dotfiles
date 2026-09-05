@@ -18,6 +18,17 @@ final: prev: {
   # nix-update :n8n-cli --version-regex 'n8n@(2\.\d+\.\d+)'
   n8n-cli = prev.callPackage ./n8n-cli.nix { };
 
+  # nix-update:brave
+  # TODO: This uses the nightly releases
+  # https://github.com/Mic92/nix-update/issues/639
+  brave = prev.brave.overrideAttrs (finalAttrs: _oldAttrs: {
+    version = "1.94.121";
+    src = final.fetchurl {
+      url = "https://github.com/brave/brave-browser/releases/download/v${finalAttrs.version}/brave-browser_${finalAttrs.version}_amd64.deb";
+      sha256 = "21d7ac36b64a408dc598bb6ec3db84b07b2cbca854d26b28055a2fb5b94a2e77";
+    };
+  });
+
   _1password-gui = prev._1password-gui.overrideAttrs (oldAttrs: {
      postInstall = (oldAttrs.postInstall or "") + ''
        patchelf --set-interpreter \

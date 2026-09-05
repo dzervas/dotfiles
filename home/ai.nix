@@ -44,10 +44,10 @@ let
 
   # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
   piPackages = [
-    "npm:pi-mcp-adapter@2.29.0"
-    "npm:pi-web-access@0.25.0"
+    "npm:pi-mcp-adapter@2.31.0"
+    "npm:pi-web-access@0.27.0"
     "npm:@gotgenes/pi-anthropic-auth@2.0.6"
-    "npm:@gotgenes/pi-subagents@19.3.5"
+    "npm:@gotgenes/pi-subagents@20.1.0"
     {
       source = "npm:@router-for-me/pi-cliproxyapi-provider@1.4.14";
       # Disable tps.ts that shows elapsed n stuff, it's ugly
@@ -95,9 +95,9 @@ let
     enabledModels = [
       "gpt-5.6-sol"
       "claude-opus-5"
-      "gpt-5.6-terra"
       "gpt-6-astra"
       "claude-fable-5-1"
+      "gpt-5.6-terra"
 
       "qwen3"
       "ornith"
