@@ -25,7 +25,6 @@ in {
         polkit-agent = "https://github.com/noctalia-dev/noctalia-plugins";
         pomodoro = "https://github.com/noctalia-dev/noctalia-plugins";
         privacy-indicator = "https://github.com/noctalia-dev/noctalia-plugins";
-        tailscale = "https://github.com/noctalia-dev/noctalia-plugins";
         zed-provider = "https://github.com/noctalia-dev/noctalia-plugins";
       };
     };

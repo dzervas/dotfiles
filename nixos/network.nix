@@ -1,4 +1,8 @@
-{ pkgs, ... }: {
+{ config, pkgs, ... }: {
+  environment.systemPackages = with pkgs; [
+    wireguard-tools
+  ];
+
   networking = {
     # nameservers = [ "8.8.8.8" "1.1.1.1" ];
 
@@ -10,7 +14,7 @@
       # cloudflare for everything else
       dns = "systemd-resolved";
       appendNameservers = [ "8.8.8.8" "1.1.1.1" ];
-      unmanaged = ["zt+" "tailscale+" "tun+"];
+      unmanaged = ["zt+" "tailscale+" "tun+" "homelab0"];
     };
 
     firewall = {
@@ -20,27 +24,41 @@
         8181
       ];
     };
+
+    wireguard.interfaces.homelab0 = {
+      privateKeyFile = "/etc/wireguard-homelab-privkey";
+      ips = [(
+        if config.networking.hostName == "desktop" then "10.50.50.4"
+        else if config.networking.hostName == "laptop" then "10.50.50.5"
+        else ""
+      )];
+      peers = [
+        {
+          allowedIPs = ["10.50.50.0/24" "10.43.0.0/24"];
+          endpoint = "fra0.dzerv.art:51821";
+          publicKey = "WMQJuh8heXBILop4k0AM53XM7/Q5xyy1Y03c3nGG7DU=";
+        }
+        {
+          allowedIPs = ["10.50.50.0/24" "10.43.0.0/24"];
+          endpoint = "fra1.dzerv.art:51821";
+          publicKey = "WMQJuh8heXBILop4k0AM53XM7/Q5xyy1Y03c3nGG7DU=";
+        }
+      ];
+    };
   };
 
   systemd = {
     network.wait-online.enable = false;
     services.NetworkManager-wait-online.enable = false;
-
-    # Fix Tailscale connectivity after suspend/resume
-    services."tailscaled-resume" = {
-      description = "Restart Tailscale after resume";
-      after = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
-      wantedBy = [ "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = "${pkgs.systemd}/bin/systemctl restart tailscaled.service";
-      };
-    };
   };
 
   services = {
     resolved = {
       enable = true;
+      dnsDelegates.homelab0.Delegate = {
+        Domains = "~vpn.dzerv.art";
+        DNS = "10.43.0.53";
+      };
       settings.Resolve = {
         # Global fallback DNS
         # FallbackDns = config.networking.nameservers;
@@ -48,14 +66,6 @@
         # dnssec = "allow-downgrade";
         DNSOverTLS = "opportunistic";
       };
-    };
-
-    tailscale = {
-      enable = true;
-      openFirewall = true;
-      disableUpstreamLogging = true;
-      disableTaildrop = true;
-      extraDaemonFlags = [ "--no-logs-no-support" ];
     };
 
     printing = {

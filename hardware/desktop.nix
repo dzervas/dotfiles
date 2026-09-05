@@ -11,6 +11,7 @@ in {
     # ./components/amd.nix
     ./components/nvidia.nix
     ./components/boot.nix
+    ./components/pch-fan.nix
     # ./components/libvirt.nix
     ./components/peripherals.nix
     ./components/restic.nix
