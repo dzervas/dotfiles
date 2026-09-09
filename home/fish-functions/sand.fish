@@ -146,6 +146,7 @@ bwrap \
 	--bind $HOME/.pi/agent/run-history.jsonl $HOME/.pi/agent/run-history.jsonl \
 	--ro-bind $HOME/Lab/dotfiles/pi/sandbox.ts $HOME/.pi/agent/sandbox.ts \
 	--bind $project_dir $project_dir \
+	--bind $HOME/.config/gcx $HOME/.config/gcx \
 	--ro-bind $HOME/.config/jj $HOME/.config/jj \
 	--ro-bind $HOME/.config/git $HOME/.config/git \
 	--ro-bind $HOME/.config/fish $HOME/.config/fish \

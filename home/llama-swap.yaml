@@ -82,7 +82,7 @@ models:
     aliases:
       - qwen3.8
     capabilities:
-      context: 65536
+      context: 100000
       # This server does not surface max_output_tokens in /v1/models, so the
       # per-model output budget lives in pi/extensions/llama-swap.ts instead.
       in:
@@ -93,18 +93,22 @@ models:
     cmd: |
       turboquant-server --host 127.0.0.1 --port ${PORT}
       # Qwen ships safetensors only (FP8 ~27 GB, NVFP4 ~21 GB of weights), so no
-      # first-party artifact fits 16 GB. This is unsloth's vanilla quant of
-      # Qwen/Qwen3.8-27B, not a fine-tune.
-      --model /root/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/4ca720788d1e01f1bff70c033e0d0028fd02e502/Qwen3.8-27B-UD-IQ3_XXS.gguf
+      # first-party artifact fits 16 GB. This is ISTA-DASLab's GSQ-RCO quant of
+      # Qwen/Qwen3.8-27B, not a fine-tune: a per-tensor mixed-precision search
+      # at a fixed 3.00 bpw budget, so it is 0.45 GiB smaller than the unsloth
+      # UD-IQ3_XXS it replaces (9.73 vs 10.18 GiB) while scoring above unsloth's
+      # 2.3 GiB larger UD-IQ3_S on AIME25 and LiveCodeBench v6.
+      --model /root/.cache/huggingface/hub/models--ISTA-DASLab--Qwen3.8-27B-GSQ-RCO-GGUF/snapshots/d562806dbafae37109975e970aae91b43e73b440/Qwen3.8-27B-GSQ-RCO-IQ3_XXS-mtp.gguf
 
       --jinja
       --reasoning-format deepseek
-      --preserve-thinking
+      # --preserve-thinking
       --parallel 1
 
       # Dense 27B: every layer runs on every token, so a single CPU-resident
       # layer collapses decode. Nothing may spill. The vision projector is
-      # omitted on purpose (0.86 GiB) and so is the separate MTP head (1.28 GiB).
+      # omitted on purpose (mmproj-Qwen3.8-27B-BF16.gguf, 0.87 GiB); the MTP
+      # head is not, it ships quantized inside this -mtp build for 0.32 GiB.
       --fit off
       --n-gpu-layers 99
       --no-mmap
@@ -125,7 +129,7 @@ models:
       # This GPU also drives the desktop, so a model may not claim all of it.
       # 65536 leaves roughly 1.9 GiB of headroom. 131072 with q8_0 V needs
       # 4352 MiB and OOMed.
-      --ctx-size 65536
+      --ctx-size 100000
 
       # Hybrid recurrent layers cannot be recomputed, so the server snapshots
       # their state: 32 checkpoints x 149.6 MiB is 4.8 GiB. That memory is host
@@ -141,11 +145,18 @@ models:
       --threads 16
       --cache-reuse 256
 
+      # Self-speculation from the embedded MTP head. The 35B records that
+      # draft-mtp OOMs when the desktop holds ~3.5 GiB; this model leaves more
+      # slack than the quant it replaced, but the draft path still wants its own
+      # buffers, so comment these two out first if the server fails to load.
+      --spec-type draft-mtp
+      --spec-draft-n-max 2
+
       # Thinking-mode sampling from the official Qwen3.8 model card. For
       # non-thinking use the card recommends temp 0.7, top-p 0.8, presence 1.5.
-      --temp 1.0
+      --temp 0.7
       --top-k 20
-      --top-p 0.95
+      --top-p 0.8
       --min-p 0
       --presence-penalty 0
       --repeat-penalty 1.0

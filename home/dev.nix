@@ -80,9 +80,8 @@
     strace
 
     # Cloud stuff
+    gcx
     kubectl
-    kubectl-doctor
-    kubectl-linstor
     calicoctl
     cilium-cli
     kubectx

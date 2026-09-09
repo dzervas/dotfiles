@@ -34,6 +34,7 @@
       unzip
       usbutils
       wget
+      yq-go
 
       nix-serve-ng
       rust-script
