@@ -17,12 +17,14 @@ final: prev: {
   anytype-cli = prev.callPackage ./anytype-cli.nix { };
   # nix-update :n8n-cli --version-regex 'n8n@(2\.\d+\.\d+)'
   n8n-cli = prev.callPackage ./n8n-cli.nix { };
+  # nix-update :docker-mcp
+  docker-mcp = prev.callPackage ./docker-mcp.nix { };
 
   # nix-update:brave
   # TODO: This uses the nightly releases
   # https://github.com/Mic92/nix-update/issues/639
   brave = prev.brave.overrideAttrs (finalAttrs: _oldAttrs: {
-    version = "1.94.121";
+    version = "1.98.11";
     src = final.fetchurl {
       url = "https://github.com/brave/brave-browser/releases/download/v${finalAttrs.version}/brave-browser_${finalAttrs.version}_amd64.deb";
       sha256 = "21d7ac36b64a408dc598bb6ec3db84b07b2cbca854d26b28055a2fb5b94a2e77";
@@ -45,7 +47,7 @@ final: prev: {
   # nix-update:pi-coding-agent-latest --custom-dep modelData
   # Broken:
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
-    finalAttrs: prevAttrs: {
+    finalAttrs: _prevAttrs: {
       version = "0.85.1";
 
       src = final.fetchFromGitHub {
@@ -70,32 +72,32 @@ final: prev: {
 
       # Required when a new package is introduced in upstream vs nix packaged
       # If no longer required comment it out, don't remove it, might be needed later
-      buildPhase = ''
-        runHook preBuild
-
-        npx tsgo -p packages/tui/tsconfig.build.json
-        npx tsgo -p packages/telemetry/tsconfig.build.json
-        npx tsgo -p packages/ai/tsconfig.build.json
-        npx tsgo -p packages/chord/tsconfig.build.json
-        npx tsgo -p packages/agent/tsconfig.build.json
-        npx tsgo -p packages/protocol/tsconfig.build.json
-        npx tsgo -p packages/client/tsconfig.build.json
-        npx tsgo -p packages/server/tsconfig.build.json
-        npm run build --workspace=packages/coding-agent
-
-        runHook postBuild
-      '';
+      # buildPhase = ''
+      #   runHook preBuild
+      #
+      #   npx tsgo -p packages/tui/tsconfig.build.json
+      #   npx tsgo -p packages/telemetry/tsconfig.build.json
+      #   npx tsgo -p packages/ai/tsconfig.build.json
+      #   npx tsgo -p packages/chord/tsconfig.build.json
+      #   npx tsgo -p packages/agent/tsconfig.build.json
+      #   npx tsgo -p packages/protocol/tsconfig.build.json
+      #   npx tsgo -p packages/client/tsconfig.build.json
+      #   npx tsgo -p packages/server/tsconfig.build.json
+      #   npm run build --workspace=packages/coding-agent
+      #
+      #   runHook postBuild
+      # '';
 
       # If the above required new packages, this needs to patch them
-      postInstall = ''
-        local nm="$out/lib/node_modules/pi-monorepo/node_modules"
-        for ws in @earendil-works/chord:packages/chord \
-                  @earendil-works/pi-server:packages/server; do
-          IFS=: read -r pkg src <<< "$ws"
-          rm "$nm/$pkg"
-          cp -r "$src" "$nm/$pkg"
-        done
-      '' + prevAttrs.postInstall;
+      # postInstall = ''
+      #   local nm="$out/lib/node_modules/pi-monorepo/node_modules"
+      #   for ws in @earendil-works/chord:packages/chord \
+      #             @earendil-works/pi-server:packages/server; do
+      #     IFS=: read -r pkg src <<< "$ws"
+      #     rm "$nm/$pkg"
+      #     cp -r "$src" "$nm/$pkg"
+      #   done
+      # '' + _prevAttrs.postInstall;
     }
   );
 }
