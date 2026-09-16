@@ -1,13 +1,17 @@
-FROM nvidia/cuda:12.9.1-devel-ubuntu24.04 AS turboquant-build
+FROM nvidia/cuda:12.9.1-devel-ubuntu24.04 AS base
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends build-essential cmake git \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /src
+
+FROM base AS turboquant-build
 
 ARG TURBOQUANT_COMMIT=c26cbdffcf6fc9b7430cd6b117757e9a3f70b7ea
 
 RUN mkdir -p /src/turboquant
 WORKDIR /src/turboquant
-
-RUN apt-get update \
- && apt-get install -y --no-install-recommends build-essential cmake git \
- && rm -rf /var/lib/apt/lists/*
 
 RUN  git init \
  && git remote add origin https://github.com/TheTom/llama-cpp-turboquant.git \
@@ -16,7 +20,23 @@ RUN  git init \
 
 RUN cmake -B build \
       -DGGML_CUDA=ON \
-      -DGGML_NATIVE=OFF \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DLLAMA_BUILD_TESTS=OFF \
+      -DLLAMA_BUILD_UI=OFF \
+      -DLLAMA_USE_PREBUILT_UI=OFF \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_CUDA_ARCHITECTURES=120
+
+RUN cmake --build build --config Release -j"$(nproc)" --target llama-server
+
+FROM base AS prism-build
+
+RUN git clone --depth=1 --branch prism https://github.com/PrismML-Eng/llama.cpp /src/prism
+
+WORKDIR /src/prism
+
+RUN cmake -B build \
+      -DGGML_CUDA=ON \
       -DBUILD_SHARED_LIBS=OFF \
       -DLLAMA_BUILD_TESTS=OFF \
       -DLLAMA_BUILD_UI=OFF \
@@ -29,6 +49,7 @@ RUN cmake --build build --config Release -j"$(nproc)" --target llama-server
 FROM ghcr.io/mostlygeek/llama-swap:unified-cuda
 
 COPY --from=turboquant-build /src/turboquant/build/bin/llama-server /usr/local/bin/turboquant-server
+COPY --from=prism-build /src/prism/build/bin/llama-server /usr/local/bin/prism-server
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
