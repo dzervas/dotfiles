@@ -19,11 +19,6 @@
   gtk.enable = true;
   qt.enable = true;
 
-  services.flameshot.settings.General = {
-    disabledGrimWarning = true;
-    useGrimAdapter = true; # Requires grim!
-  };
-
   programs.niri = {
     settings = {
       prefer-no-csd = true;
@@ -91,10 +86,7 @@
         "Mod+Shift+Period".action.move-workspace-to-monitor-right = [ ];
         "Mod+Shift+Tab".action.move-window-to-monitor-previous = [ ];
 
-        # "Print".action.spawn-sh = "flameshot gui";
-        # Flameshot workaround by https://github.com/niri-wm/niri/discussions/1737
-        "Print".action.spawn-sh =
-          ''${pkgs.grim}/bin/grim -t ppm -g "$(${pkgs.slurp}/bin/slurp -d)" - | ${pkgs.satty}/bin/satty -f - --initial-tool=arrow --copy-command=wl-copy --actions-on-escape="save-to-clipboard,exit" --brush-smooth-history-size=5 --disable-notifications'';
+        "Print".action.spawn-sh = "flameshot gui";
 
         "XF86AudioPlay".action.spawn-sh = "playerctl play-pause";
         "XF86AudioPause".action.spawn-sh = "playerctl play-pause";
@@ -355,6 +347,11 @@
             }
           ];
           open-on-workspace = "2-chat";
+        }
+        {
+          matches = [{ title = "flameshot"; }];
+          open-floating = true;
+          open-fullscreen = false;
         }
       ];
 
