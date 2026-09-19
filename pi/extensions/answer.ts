@@ -366,7 +366,7 @@ class QnAComponent implements Component {
 		// Context if present
 		if (q.context) {
 			lines.push(padToWidth(emptyBoxLine()));
-			const contextText = this.gray(`> ${q.context}`);
+			const contextText = this.dim(`> ${q.context}`);
 			const wrappedContext = wrapTextWithAnsi(contextText, contentWidth - 2);
 			for (const line of wrappedContext) {
 				lines.push(padToWidth(boxLine(line)));

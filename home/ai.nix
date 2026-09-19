@@ -104,20 +104,16 @@ let
       "ornith9"
     ];
 
-    subagents = {
-      defaultModel = "claude-sonnet-5";
-      agentOverrides =
-        let
-          smallModel = "claude-haiku-4-5";
-        in
-        {
-          scout.model = smallModel; # Local file recon
-          researcher.model = smallModel; # Web recon
-          delegate.model = smallModel; # Small worker
+    subagents = rec {
+      defaultModel = "gpt-5.6-terra";
+      agentOverrides = {
+        scout.model = "qwen3"; # Local file recon
+        researcher.model = agentOverrides.scout.model; # Web recon
+        delegate.model = defaultModel; # Small worker
 
-          oracle.model = piSettings.defaultModel; # Plan reviewer
-          reviewer.model = piSettings.defaultModel; # Code reviewer
-        };
+        oracle.model = piSettings.defaultModel; # Plan reviewer
+        reviewer.model = piSettings.defaultModel; # Code reviewer
+      };
     };
   };
 

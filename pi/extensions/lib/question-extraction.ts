@@ -36,7 +36,7 @@ export function extractMarkedQuestions(text: string): MarkedQuestion[] {
 			questions.push({
 				question,
 				...(recommendation
-					? { context: `Assistant recommendation: ${recommendation}` }
+					? { context: recommendation }
 					: {}),
 			});
 		}

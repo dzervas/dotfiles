@@ -22,21 +22,21 @@ interface Patch {
 }
 
 const PATCHES: Patch[] = [
-	{
-		// AgentSession.prompt() resolves after a provider failure and records an
-		// assistant message with stopReason "error". Without this check, pi-subagents
-		// reports success and returns stale text from an earlier assistant message.
-		name: "pi-subagents: fail initial runs on terminal provider errors",
-		file: "@gotgenes/pi-subagents/src/lifecycle/subagent-session.ts",
-		find: "      await session.prompt(effectivePrompt);\n      this.meta.lifecycle.completed({",
-		replace: "      await session.prompt(effectivePrompt);\n      const response = session.messages.at(-1);\n      if (response?.role === \"assistant\" && response.stopReason === \"error\") {\n        throw new Error(response.errorMessage || \"Subagent model request failed\");\n      }\n      this.meta.lifecycle.completed({",
-	},
-	{
-		name: "pi-subagents: fail resumed runs on terminal provider errors",
-		file: "@gotgenes/pi-subagents/src/lifecycle/subagent-session.ts",
-		find: "      await session.prompt(prompt);\n    } finally {",
-		replace: "      await session.prompt(prompt);\n      const response = session.messages.at(-1);\n      if (response?.role === \"assistant\" && response.stopReason === \"error\") {\n        throw new Error(response.errorMessage || \"Subagent model request failed\");\n      }\n    } finally {",
-	},
+	// {
+	// 	// AgentSession.prompt() resolves after a provider failure and records an
+	// 	// assistant message with stopReason "error". Without this check, pi-subagents
+	// 	// reports success and returns stale text from an earlier assistant message.
+	// 	name: "pi-subagents: fail initial runs on terminal provider errors",
+	// 	file: "@gotgenes/pi-subagents/src/lifecycle/subagent-session.ts",
+	// 	find: "      await session.prompt(effectivePrompt);\n      this.meta.lifecycle.completed({",
+	// 	replace: "      await session.prompt(effectivePrompt);\n      const response = session.messages.at(-1);\n      if (response?.role === \"assistant\" && response.stopReason === \"error\") {\n        throw new Error(response.errorMessage || \"Subagent model request failed\");\n      }\n      this.meta.lifecycle.completed({",
+	// },
+	// {
+	// 	name: "pi-subagents: fail resumed runs on terminal provider errors",
+	// 	file: "@gotgenes/pi-subagents/src/lifecycle/subagent-session.ts",
+	// 	find: "      await session.prompt(prompt);\n    } finally {",
+	// 	replace: "      await session.prompt(prompt);\n      const response = session.messages.at(-1);\n      if (response?.role === \"assistant\" && response.stopReason === \"error\") {\n        throw new Error(response.errorMessage || \"Subagent model request failed\");\n      }\n    } finally {",
+	// },
 ];
 
 const MODULES_DIR = join(homedir(), ".pi", "agent", "npm", "node_modules");

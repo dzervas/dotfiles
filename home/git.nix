@@ -148,18 +148,19 @@
           "stash()" = ''bookmarks(glob:"stash/*") | tags(glob:"stash/*") | description(glob:"Stash: *")'';
         };
 
-        aliases = 
+        aliases =
         let
-          command = cmd: ["util" "exec" "--" "fish" "-c" cmd ""];
+          # fish has no $0, so a trailing "" would become $argv[1] and shift
+          # every user arg one slot right (unlike bash, where it becomes $0).
+          command = cmd: ["util" "exec" "--" "fish" "-c" cmd];
         in
         {
           d = ["diff"];
           s = ["status"];
           ll = ["log" "-r" "::"];
-          # TODO: Use `jj bookmark advance` instead
-          # https://github.com/jj-vcs/jj/releases/tag/v0.39.0
-          tug = [ "bookmark" "move" "--from" "closest_bookmark(latest_non_empty())" "--to" "latest_non_empty()" ];
+          tug = [ "bookmark" "advance" "--to" "latest_non_empty()" ];
           init = ["git" "init" "--colocate"];
+          sync = ["git" "fetch" "--all-remotes"];
 
           # Default command
           statuslog = command "jj status && echo && jj log --limit 5";
@@ -176,14 +177,14 @@
           '';
           oops = command "echo 'Going to squash on immutable and push. You sure?' && read && jj squash --ignore-immutable && jj push";
           pull = command ''
-            if test "$(jj log -r @ -T empty --no-graph --color never)" = "false"
-              echo "Dirty working copy - commit or fetch & new manually"
-              exit 1
-            end
-
             set -l previous_bookmark (jj log -r 'latest_non_empty()' -T 'self.bookmarks()' --no-graph --color=never)
-            jj git fetch
-            jj new "$previous_bookmark"
+            jj sync
+
+            if test "$(jj log -r @ -T empty --no-graph --color never)" = "false"
+              echo "Dirty working copy - new manually"
+            else
+              jj new "$previous_bookmark"
+            end
           '';
           push = command "jj tug && jj git push";
 
