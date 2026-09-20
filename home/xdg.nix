@@ -69,6 +69,8 @@
         "x-scheme-handler/slack" = "Slack.desktop";
         "x-scheme-handler/atuin" = "Atuin.desktop";
         "x-scheme-handler/tg" = "Telegram.desktop";
+        "x-scheme-handler/zeditor" = "Zed.desktop";
+        "x-scheme-handler/zed" = "Zed.desktop";
       };
     };
   };

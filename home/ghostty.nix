@@ -37,6 +37,8 @@
         "performable:alt+r=toggle_command_palette"
         "performable:alt+shift+r=reload_config"
       ];
+
+      # TODO: Add support for file hyperlinks to open in zed
     };
   };
 

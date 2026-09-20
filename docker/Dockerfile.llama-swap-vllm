@@ -77,3 +77,4 @@ RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
 
 ENV PATH="/opt/vllm/bin:/usr/local/cuda/bin:${PATH}"
 ENV CUDA_HOME=/usr/local/cuda
+ENV LLAMA_SWAP_WATCH_CONFIG='true'

@@ -9,7 +9,28 @@
   ];
 
   programs = {
-    difftastic.options.display = "side-by-side";
+    delta = {
+      enable = true;
+      enableJujutsuIntegration = true;
+      enableGitIntegration = true;
+      options = {
+        side-by-side = true;
+
+        true-color = "always";
+        syntax-theme = "Monokai Extended";
+
+        hyperlinks = true;
+        hyperlinks-file-link-format = "zed://file/{path}:{line}";
+
+        line-numbers-left-format = "{nm:^3}│";
+        line-numbers-right-format = "│{nm:^3}│";
+        line-numbers-minus-style = "red bold";
+        line-numbers-plus-style = "green bold";
+        line-numbers-zero-style = "white";
+
+        merge.conflictStyle = "zdiff3";
+      };
+    };
 
     git = {
       enable = true;
@@ -65,12 +86,6 @@
         };
 
         difftool.prompt = false;
-
-        # TODO: Use diffnav
-        difftastic = {
-          enable = true;
-          enableAsDifftool = true;
-        };
       };
 
       signing.signByDefault = true;
@@ -229,7 +244,6 @@
           backends.ssh.allowed-signers = config.programs.git.settings.gpg.ssh.allowedSignersFile;
         };
         ui = {
-          pager = ":builtin";
           default-command = "statuslog";
           show-cryptographic-signatures = true;
         };
