@@ -81,7 +81,7 @@ models:
     aliases:
       - qwen3.8
     capabilities:
-      context: 65535
+      context: 100000
       in:
         - text
       out:
@@ -89,8 +89,8 @@ models:
       thinking: true
     cmd: |
       llama-server --host 127.0.0.1 --port ${PORT}
-      --ctx-size 65535
-      --fit-ctx 65535
+      --ctx-size 100000
+      --fit-ctx 100000
       --model /root/.cache/huggingface/hub/models--ISTA-DASLab--Qwen3.8-27B-GSQ-RCO-GGUF/snapshots/d562806dbafae37109975e970aae91b43e73b440/Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf
 
       --parallel 1

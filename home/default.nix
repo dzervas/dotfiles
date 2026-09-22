@@ -121,6 +121,8 @@
       anytype-cli
 
       # ladybird # broken
+      # warp-terminal
+      zenity
     ];
 
     sessionVariables.TERMINAL = config.setup.terminal;

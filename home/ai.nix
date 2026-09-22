@@ -43,13 +43,13 @@ let
   };
 
   # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
+  # "npm:@gotgenes/pi-anthropic-auth@2.0.8"
   piPackages = [
     "npm:pi-mcp-adapter@2.33.0"
-    "npm:pi-web-access@0.29.0"
-    "npm:@gotgenes/pi-anthropic-auth@2.0.8"
-    "npm:@gotgenes/pi-subagents@21.7.0"
+    "npm:pi-web-access@0.31.0"
+    "npm:@gotgenes/pi-subagents@21.7.6"
     {
-      source = "npm:@router-for-me/pi-cliproxyapi-provider@1.4.15";
+      source = "npm:@router-for-me/pi-cliproxyapi-provider@1.4.19";
       # Disable tps.ts that shows elapsed n stuff, it's ugly
       extensions = [ "index.ts" ];
     }
@@ -93,21 +93,17 @@ let
     # defaultProvider = "cliproxyapi";
     defaultThinkingLevel = "medium";
     enabledModels = [
-      "gpt-5.6-sol"
-      "claude-opus-5"
+      "gpt-6-sol"
+      "claude-opus-5-5"
       "gpt-6-astra"
       "claude-fable-5-1"
-      "gpt-5.6-terra"
-
       "qwen3"
-      "ornith"
-      "ornith9"
     ];
 
     subagents = rec {
       defaultModel = "gpt-5.6-terra";
       agentOverrides = {
-        scout.model = "gpt-5.6-luna"; # Local file recon
+        scout.model = "gpt-6-luna"; # Local file recon
         researcher.model = agentOverrides.scout.model; # Web recon
         delegate.model = defaultModel; # Small worker
 

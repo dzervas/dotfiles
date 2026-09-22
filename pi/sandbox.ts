@@ -28,6 +28,10 @@ function updateUi(ctx: ExtensionContext) {
 	ctx.ui.setStatus("sandbox", ctx.ui.theme.fg("success", "󰆧 sandbox"));
 }
 
+export function factory() {
+	return {};
+}
+
 export default function sandboxExtension(pi: ExtensionAPI) {
 	publish(pi);
 
