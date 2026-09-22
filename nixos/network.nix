@@ -27,6 +27,8 @@
 
     wireguard.interfaces.homelab0 = {
       privateKeyFile = "/etc/wireguard-homelab-privkey";
+      dynamicEndpointRefreshSeconds = 50;
+      mtu = 1300;
       ips = [(
         if config.networking.hostName == "desktop" then "10.50.50.4"
         else if config.networking.hostName == "laptop" then "10.50.50.5"
@@ -35,13 +37,9 @@
       peers = [
         {
           allowedIPs = ["10.50.50.0/24" "10.43.0.0/24"];
-          endpoint = "fra0.dzerv.art:51821";
+          endpoint = "wg.dzerv.art:25820";
           publicKey = "WMQJuh8heXBILop4k0AM53XM7/Q5xyy1Y03c3nGG7DU=";
-        }
-        {
-          allowedIPs = ["10.50.50.0/24" "10.43.0.0/24"];
-          endpoint = "fra1.dzerv.art:51821";
-          publicKey = "WMQJuh8heXBILop4k0AM53XM7/Q5xyy1Y03c3nGG7DU=";
+          persistentKeepalive = 25;
         }
       ];
     };

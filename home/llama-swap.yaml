@@ -81,66 +81,49 @@ models:
     aliases:
       - qwen3.8
     capabilities:
-      context: 256000
-      # This server does not surface max_output_tokens in /v1/models, so the
-      # per-model output budget lives in pi/extensions/llama-swap.ts instead.
+      context: 65535
       in:
         - text
       out:
         - text
       thinking: true
     cmd: |
-      prism-server --host 127.0.0.1 --port ${PORT}
-      --ctx-size 256000
-      # Qwen ships safetensors only (FP8 ~27 GB, NVFP4 ~21 GB of weights), so no
-      # first-party artifact fits 16 GB. This is ISTA-DASLab's GSQ-RCO quant of
-      # Qwen/Qwen3.8-27B, not a fine-tune: a per-tensor mixed-precision search
-      # at a fixed 3.00 bpw budget, so it is 0.45 GiB smaller than the unsloth
-      # UD-IQ3_XXS it replaces (9.73 vs 10.18 GiB) while scoring above unsloth's
-      # 2.3 GiB larger UD-IQ3_S on AIME25 and LiveCodeBench v6.
-      --model /root/.cache/huggingface/hub/models--prism-ml--Ternary-Bonsai-2-27B-gguf/snapshots/6ed5e12bf84b7a63069882c91dd9e9218647d17b/Ternary-Bonsai-2-27B-PTQ1_0.gguf
-      # --model /root/.cache/huggingface/hub/models--prism-ml--Ternary-Bonsai-2-27B-gguf/snapshots/6ed5e12bf84b7a63069882c91dd9e9218647d17b/Ternary-Bonsai-2-27B-PQ2_0.gguf
-      # --mmproj /root/.cache/huggingface/hub/models--prism-ml--Ternary-Bonsai-2-27B-gguf/snapshots/6ed5e12bf84b7a63069882c91dd9e9218647d17b/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf
+      llama-server --host 127.0.0.1 --port ${PORT}
+      --ctx-size 65535
+      --fit-ctx 65535
+      --model /root/.cache/huggingface/hub/models--ISTA-DASLab--Qwen3.8-27B-GSQ-RCO-GGUF/snapshots/d562806dbafae37109975e970aae91b43e73b440/Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf
 
-      --jinja
-      --reasoning-format deepseek
-      --parallel 2
+      --parallel 1
 
-      # Dense 27B: every layer runs on every token, so a single CPU-resident
-      # layer collapses decode. Nothing may spill. The vision projector is
-      # omitted on purpose (mmproj-Qwen3.8-27B-BF16.gguf, 0.87 GiB); the MTP
-      # head is not, it ships quantized inside this -mtp build for 0.32 GiB.
-      --fit off
-      --n-gpu-layers 99
+      --fit on
+      # --fit-target 6144
+      # --n-gpu-layers 99
       # --no-mmap
 
-      --ctx-checkpoints 4
-      --checkpoint-min-step 8192
+      # --ctx-checkpoints 4
+      # --checkpoint-min-step 8192
 
       --flash-attn on
-      --cache-type-k q4_0
-      --cache-type-v q4_0
+      --cache-type-k q8_0
+      --cache-type-v q8_0
 
-      --batch-size 32768
-      --ubatch-size 512
+      # --batch-size 256
+      # --ubatch-size 512
       --threads 16
       --cache-reuse 256
 
-      # Self-speculation from the embedded MTP head. The 35B records that
-      # draft-mtp OOMs when the desktop holds ~3.5 GiB; this model leaves more
-      # slack than the quant it replaced, but the draft path still wants its own
-      # buffers, so comment these two out first if the server fails to load.
       # --spec-type draft-mtp
       # --spec-draft-n-max 2
+      --reasoning-effort medium
 
       # Thinking-mode sampling from the official Qwen3.8 model card. For
       # non-thinking use the card recommends temp 0.7, top-p 0.8, presence 1.5.
-      --temp 1.0
+      --temp 0.6
       --top-p 0.95
       --top-k 20
       --min-p 0
       --presence-penalty 0
-      --repeat-penalty 1.0
+      # --repeat-penalty 1.0
 
   ornith9:
     aliases:

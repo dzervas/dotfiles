@@ -170,7 +170,7 @@
           command = cmd: ["util" "exec" "--" "fish" "-c" cmd];
         in
         {
-          d = ["diff"];
+          d = ["diff" "all() ~ glob:\"**/*.lock\""]; # Exclude *.lock files
           s = ["status"];
           ll = ["log" "-r" "::"];
           tug = [ "bookmark" "advance" "--to" "latest_non_empty()" ];

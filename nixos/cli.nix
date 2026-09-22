@@ -77,7 +77,20 @@
       watch = "command watch -c ";
 
       # Useful aliases
-      docker_prune = "docker system df && docker image prune -a --filter 'until=168h' -f && docker container prune -f && docker builder prune -f && docker volume prune -f && docker system df";
+      docker-prune = ''
+        docker system df && \
+        podman system df && \
+        podman system prune -a && \
+        podman container prune && \
+        docker container prune && \
+        docker image prune -a --filter 'until=168h' -f && \
+        podman system prune -a --filter 'until=168h' -f && \
+        docker builder prune && \
+        docker volume prune && \
+        podman volume prune && \
+        docker system df && \
+        podman system df
+      '';
       open = "xdg-open";
       passgen = "tr -dc A-Za-z0-9 </dev/urandom | head -c ";
       reboot = "read -P 'Are you sure?' && systemctl reboot";
