@@ -63,6 +63,8 @@
         # Stuff break with forced dnssec :/
         # dnssec = "allow-downgrade";
         DNSOverTLS = "opportunistic";
+
+        MulticastDNS = false; # Avahi owns mDNS, both on port 5353 conflict
       };
     };
 
@@ -71,8 +73,11 @@
       drivers = with pkgs; [ brlaser ];
     };
 
-    # resolved already handles this
-    avahi.enable = false;
+    avahi = {
+      enable = true;
+      nssmdns4 = true;     # resolve *.local hostnames
+      openFirewall = true; # UDP 5353, otherwise mDNS replies get dropped
+    };
     netclient.enable = true;
   };
 
