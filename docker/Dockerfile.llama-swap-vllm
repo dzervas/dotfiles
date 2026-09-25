@@ -1,7 +1,7 @@
 FROM nvidia/cuda:12.9.1-devel-ubuntu24.04 AS base
 
 RUN apt-get update \
- && apt-get install -y --no-install-recommends build-essential cmake git \
+ && apt-get install -y --no-install-recommends build-essential cmake git wget curl \
  && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /src
@@ -29,11 +29,19 @@ RUN cmake -B build \
 
 RUN cmake --build build --config Release -j"$(nproc)" --target llama-server
 
-FROM base AS prism-build
+FROM base AS latest-build
 
-RUN git clone --depth=1 --branch prism https://github.com/PrismML-Eng/llama.cpp /src/prism
+RUN mkdir -p /src/latest
+WORKDIR /src/latest
+RUN  git init \
+ && git remote add origin https://github.com/ggml-org/llama.cpp \
+ && git fetch --depth=1 origin "4df29be4f4c3673f428170fda944a5b19f743bb8" \
+ && git checkout FETCH_HEAD \
+ && wget -O HauhauCS-FastMTP-llama.cpp.patch \
+  https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF/resolve/main/HauhauCS-FastMTP-llama.cpp.patch \
+&& git apply HauhauCS-FastMTP-llama.cpp.patch
 
-WORKDIR /src/prism
+WORKDIR /src/latest
 
 RUN cmake -B build \
       -DGGML_CUDA=ON \
@@ -49,7 +57,7 @@ RUN cmake --build build --config Release -j"$(nproc)" --target llama-server
 FROM ghcr.io/mostlygeek/llama-swap:unified-cuda
 
 COPY --from=turboquant-build /src/turboquant/build/bin/llama-server /usr/local/bin/turboquant-server
-COPY --from=prism-build /src/prism/build/bin/llama-server /usr/local/bin/prism-server
+COPY --from=latest-build /src/latest/build/bin/llama-server /usr/local/bin/latest-server
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
