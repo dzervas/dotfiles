@@ -13,6 +13,7 @@
     ./brave.nix
     ./dev.nix
     ./direnv.nix
+    ./docker-secrets-engine.nix
     ./easyeffects
     # ./firefox.nix
     ./firmware.nix

@@ -46,13 +46,9 @@ let
   # "npm:@gotgenes/pi-anthropic-auth@2.0.8"
   piPackages = [
     "npm:pi-mcp-adapter@2.33.0"
-    "npm:pi-web-access@0.31.0"
-    "npm:@gotgenes/pi-subagents@21.7.6"
-    {
-      source = "npm:@router-for-me/pi-cliproxyapi-provider@1.4.19";
-      # Disable tps.ts that shows elapsed n stuff, it's ugly
-      extensions = [ "index.ts" ];
-    }
+    "npm:pi-web-access@0.33.0"
+    "npm:@gotgenes/pi-subagents@21.8.0"
+    "npm:pi-cliproxyapi-provider@0.15.48"
     {
       source = "git:github.com/mattpocock/skills";
       skills = [
@@ -89,26 +85,30 @@ let
     packages = piPackages;
     npmCommand = [ "${nodejs}/bin/npm" ];
 
+    pi-cliproxyapi-provider = {
+      gpt56ContextWindow = "full";
+    };
+
     defaultModel = builtins.elemAt enabledModels 0;
     # defaultProvider = "cliproxyapi";
     defaultThinkingLevel = "medium";
     enabledModels = [
-      "gpt-6-sol"
       "claude-opus-5-5"
+      "gpt-6-sol"
       "gpt-6-astra"
       "claude-fable-5-1"
       "qwen3"
     ];
 
     subagents = rec {
-      defaultModel = "gpt-5.6-terra";
+      defaultModel = "claude-sonnet-5-5";
       agentOverrides = {
-        scout.model = "gpt-6-luna"; # Local file recon
-        researcher.model = agentOverrides.scout.model; # Web recon
-        delegate.model = defaultModel; # Small worker
+        scout.model = defaultModel; # Local file recon
+        researcher.model = defaultModel; # Web recon
+        delegate.model = "gpt-6-sol"; # Small worker
 
         oracle.model = piSettings.defaultModel; # Plan reviewer
-        reviewer.model = piSettings.defaultModel; # Code reviewer
+        reviewer.model = "gpt-6-astra"; # Code reviewer
       };
     };
   };
@@ -220,6 +220,41 @@ in
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/mcp.json";
       ".pi/agent/node_modules".source = piExtensionNodeModules + "/node_modules";
     };
+
+    # Docker MCP rejects symlinks whose targets escape its catalog directory.
+    activation.installMcpServers = let
+      # docker mcp feature enable profiles
+      # docker mcp profile create --name pi
+      # docker mcp catalog create mcp/local --title "Local MCP servers"
+      # docker mcp catalog server add mcp/local --server file://nixos.yaml
+      # docker mcp profile server add pi --server catalog://mcp/local/nixos
+      mcpServers = {
+        nixos = {
+          title = "NixOS";
+          description = "NixOS package and option documentation";
+          type = "server";
+          image = "ghcr.io/utensils/mcp-nixos:latest";
+        };
+      };
+
+      mcpServerFiles = lib.mapAttrs (
+        name: server:
+        (pkgs.formats.yaml { }).generate "mcp-${name}.yaml" ({ inherit name; } // server)
+      ) mcpServers;
+    in lib.hm.dag.entryAfter [ "writeBoundary" ] (
+        lib.concatStringsSep "\n" (
+          lib.mapAttrsToList (
+            name: file:
+            ''
+              server=${lib.escapeShellArg "${config.home.homeDirectory}/.docker/mcp/catalogs/${name}.yaml"}
+              if [ -L "$server" ]; then
+                run ${pkgs.coreutils}/bin/rm -- "$server"
+              fi
+              run ${pkgs.coreutils}/bin/install -Dm644 ${file} "$server"
+            ''
+          ) mcpServerFiles
+        )
+      );
   };
 
   programs = {
@@ -239,3 +274,7 @@ in
     };
   };
 }
+
+# `qwen3` is a local Qwen3.8 27B model. It is always free and fast, so prefer it liberally for simple
+# delegated work such as reconnaissance, searching, summaries, mechanical inspection, and other low-risk tasks.
+# Escalate when the task requires stronger reasoning or when its output is insufficient.

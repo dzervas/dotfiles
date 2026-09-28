@@ -11,6 +11,7 @@
       dig
       dmidecode
       docker-sbx
+      docker-mcp
       fd
       file
       fzf
@@ -39,6 +40,9 @@
       nix-serve-ng
       rust-script
     ];
+
+    # Docker's Nix wrapper searches the directories in this variable for CLI plugins.
+    sessionVariables.DOCKER_CLI_PLUGIN_DIRS = "${pkgs.docker-mcp}/libexec/docker/cli-plugins:${pkgs.docker-secrets-engine}/libexec/docker/cli-plugins";
 
     shellAliases = {
       # Quick aliases for common commands

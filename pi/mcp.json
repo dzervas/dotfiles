@@ -7,10 +7,11 @@
 		"elicitation": true
 	},
 	"mcpServers": {
-		"nix": {
-			"command": "fish",
-			"args": ["-c", "sand -lc 'nix run github:utensils/mcp-nixos'"]
+		"mcp-gateway": {
+			"command": "docker",
+			"args": ["mcp", "gateway", "run", "--profile", "pi"]
 		},
+
 		"context7": {
 			"url": "https://mcp.context7.com/mcp/oauth",
 			"auth": "oauth"

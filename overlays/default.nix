@@ -17,14 +17,16 @@ final: prev: {
   anytype-cli = prev.callPackage ./anytype-cli.nix { };
   # nix-update :n8n-cli --version-regex 'n8n@(2\.\d+\.\d+)'
   n8n-cli = prev.callPackage ./n8n-cli.nix { };
-  # nix-update :docker-mcp
+  # nix-update:docker-mcp
   docker-mcp = prev.callPackage ./docker-mcp.nix { };
+  # nix-update:docker-secrets-engine
+  docker-secrets-engine = prev.callPackage ./docker-secrets-engine.nix { };
 
   # nix-update:brave
   # TODO: This uses the nightly releases
   # https://github.com/Mic92/nix-update/issues/639
   brave = prev.brave.overrideAttrs (finalAttrs: _oldAttrs: {
-    version = "1.98.27";
+    version = "1.98.41";
     src = final.fetchurl {
       url = "https://github.com/brave/brave-browser/releases/download/v${finalAttrs.version}/brave-browser_${finalAttrs.version}_amd64.deb";
       sha256 = "21d7ac36b64a408dc598bb6ec3db84b07b2cbca854d26b28055a2fb5b94a2e77";

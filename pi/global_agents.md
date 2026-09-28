@@ -97,10 +97,10 @@ Treat CodeGraph as an index, not ground truth. Verify important conclusions agai
 
 ### Delegation
 
-Delegate when a task is independently parallelizable, benefits from isolated context, or a genuinely independent investigation or review would improve the result.
+Delegate when a task is independently parallelizable, benefits from isolated context,
+or a genuinely independent investigation or review would improve the result.
 
 Do not delegate trivial tasks or duplicate the same work without a reason.
 
-Use the cheapest suitable specialized agent. Agent definitions should determine their normal model and tool access.
-
-`qwen3` is a local Qwen3.8 27B model. It is always free and fast, so prefer it liberally for simple delegated work such as reconnaissance, searching, summaries, mechanical inspection, and other low-risk tasks. Escalate when the task requires stronger reasoning or when its output is insufficient.
+Use the cheapest suitable specialized agent.
+Agent definitions should determine their normal model and tool access.
