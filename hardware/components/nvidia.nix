@@ -1,4 +1,6 @@
 _: {
+  imports = [ ./nvidia-booted-userspace.nix ];
+
   services.xserver.videoDrivers = [ "nvidia" ];
 
   boot.initrd.kernelModules = [ "nvidia" ];

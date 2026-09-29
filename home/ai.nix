@@ -86,11 +86,11 @@ let
     npmCommand = [ "${nodejs}/bin/npm" ];
 
     pi-cliproxyapi-provider = {
-      gpt56ContextWindow = "full";
+      gpt56ContextWindow = "full"; # 1M context for GPT 5.6/6
     };
 
     defaultModel = builtins.elemAt enabledModels 0;
-    # defaultProvider = "cliproxyapi";
+    defaultProvider = "cpa";
     defaultThinkingLevel = "medium";
     enabledModels = [
       "claude-opus-5-5"

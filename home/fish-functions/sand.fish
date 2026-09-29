@@ -136,6 +136,7 @@ bwrap \
 	--ro-bind $HOME/.pi/agent/npm $HOME/.pi/agent/npm \
 	--ro-bind $HOME/.pi/agent/extensions $HOME/.pi/agent/extensions \
 	--ro-bind $HOME/.pi/agent/skills $HOME/.pi/agent/skills \
+	--ro-bind $HOME/.pi/agent/pi-cliproxyapi-provider $HOME/.pi/agent/pi-cliproxyapi-provider \
 	--ro-bind $HOME/.pi/agent/AGENTS.md $HOME/.pi/agent/AGENTS.md \
 	--bind $HOME/.pi/agent/sessions $HOME/.pi/agent/sessions \
 	--bind $HOME/.pi/agent/auth.json $HOME/.pi/agent/auth.json \
