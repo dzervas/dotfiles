@@ -94,7 +94,7 @@ let
     defaultThinkingLevel = "medium";
     enabledModels = [
       "claude-opus-5-5"
-      "gpt-6-sol"
+      "gpt-6.1-sol"
       "gpt-6-astra"
       "claude-fable-5-1"
       "qwen3"
@@ -105,7 +105,7 @@ let
       agentOverrides = {
         scout.model = defaultModel; # Local file recon
         researcher.model = defaultModel; # Web recon
-        delegate.model = "gpt-6-sol"; # Small worker
+        delegate.model = "gpt-6.1-sol"; # Small worker
 
         oracle.model = piSettings.defaultModel; # Plan reviewer
         reviewer.model = "gpt-6-astra"; # Code reviewer

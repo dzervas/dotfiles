@@ -112,6 +112,81 @@
       lsusb = "cyme";
       find = "fd";
     };
+
+    etc."codex/hooks/check-danger-mode.sh".source = pkgs.writeShellScript  "check-danger-mode.sh" ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      input="$(cat)"
+
+      if test -d ~/.cache; then
+          mode="$(jq -r '.permission_mode // empty' <<<"$input")"
+
+          if [[ "$mode" != "default" && "$mode" != "acceptEdits" ]]; then
+              jq -n '{
+                continue: false,
+                stopReason: "danger-full-access requires on-request approval policy"
+              }'
+              exit 0
+          fi
+      fi
+
+      echo '{"continue":true}'
+    '';
+    etc."codex/requirements.toml".source = pkgs.writers.writeTOML "requirements.toml" {
+      allowed_approval_policies = [ "never" "on-request" ];
+      default_permissions = "sandboxed";
+      # allowed_permission_profiles = { sandboxed = true; ":danger-full-access" = true; };
+      allowed_permission_profiles = { sandboxed = true; };
+
+      allow_managed_hooks_only = true;
+      allowed_approvals_reviewers = ["user"];
+      browser_use.allow_history_access = false;
+      check_for_update_on_startup = false;
+      features.computer_use = false;
+      feedback.enabled = false;
+
+      hooks = {
+        managed_dir = "/etc/codex/hooks";
+        SessionStart = [{
+          type = "command";
+          command = "/etc/codex/hooks/check-danger-mode.sh";
+          timeout = 5;
+          statusMessage = "Checking permission policy vs approval policy";
+        }];
+      };
+
+      permissions.sandboxed = {
+        extends = ":workspace";
+        network.enabled = true;
+        filesystem = {
+          glob_scan_max_depth = 8;
+
+          # Deny everything first
+          ":root" = "deny";
+          ":slash_tmp" = "deny";
+
+          # NixOS runtime/toolchain
+          "/nix/store" = "read";
+          "/run/binfmt" = "read";
+          "/run/current-system/sw" = "read";
+          "/bin" = "read";
+          "/usr/bin" = "read";
+
+          "/etc/nix" = "read";
+          "/etc/ssl" = "read";
+
+          # "/etc/static/profiles/per-user/dzervas" = "read";
+
+          # tooling/config
+          "~/.config/gcx" = "write";
+          "~/.config/jj" = "read";
+          "~/.config/git" = "read";
+          "~/.config/fish" = "read";
+        };
+      };
+      
+    };
   };
 
   # Set fish as the default shell
