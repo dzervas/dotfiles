@@ -219,6 +219,10 @@ in
       ".pi/agent/mcp.json".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/mcp.json";
       ".pi/agent/node_modules".source = piExtensionNodeModules + "/node_modules";
+      ".codex/AGENTS.md".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/global_agents.md";
+      ".codex/skills/global".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/skills";
     };
 
     # Docker MCP rejects symlinks whose targets escape its catalog directory.

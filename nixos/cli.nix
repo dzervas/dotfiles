@@ -117,18 +117,16 @@
       #!/usr/bin/env bash
       set -euo pipefail
 
-      input="$(cat)"
+      mode="$(${pkgs.jq}/bin/jq -r '.permission_mode // empty')"
 
       if test -d ~/.cache; then
-          mode="$(jq -r '.permission_mode // empty' <<<"$input")"
-
-          if [[ "$mode" != "default" && "$mode" != "acceptEdits" ]]; then
-              jq -n '{
-                continue: false,
-                stopReason: "danger-full-access requires on-request approval policy"
-              }'
-              exit 0
-          fi
+        if [[ "$mode" != "default" && "$mode" != "acceptEdits" ]]; then
+            ${pkgs.jq}/bin/jq -n '{
+              continue: false,
+              stopReason: "Codex requires on-request approval policy"
+            }'
+            exit 0
+        fi
       fi
 
       echo '{"continue":true}'
@@ -149,10 +147,12 @@
       hooks = {
         managed_dir = "/etc/codex/hooks";
         SessionStart = [{
-          type = "command";
-          command = "/etc/codex/hooks/check-danger-mode.sh";
-          timeout = 5;
-          statusMessage = "Checking permission policy vs approval policy";
+          hooks = [{
+            type = "command";
+            command = "/etc/codex/hooks/check-danger-mode.sh";
+            timeout = 5;
+            statusMessage = "Checking approval policy";
+          }];
         }];
       };
 
@@ -173,19 +173,16 @@
           "/bin" = "read";
           "/usr/bin" = "read";
 
-          "/etc/nix" = "read";
-          "/etc/ssl" = "read";
-
-          # "/etc/static/profiles/per-user/dzervas" = "read";
+          "/etc" = "read";
 
           # tooling/config
           "~/.config/gcx" = "write";
           "~/.config/jj" = "read";
           "~/.config/git" = "read";
           "~/.config/fish" = "read";
+          "~/.codex/packages" = "read";
         };
       };
-      
     };
   };
 

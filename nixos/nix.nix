@@ -17,9 +17,6 @@ _: {
       # Keep more derivations in memory
       keep-derivations = true;
       keep-outputs = true;
-
-      # Only allow wheel users to run nix
-      trusted-users = [ "@wheel" "root" ];
     };
   };
 }
