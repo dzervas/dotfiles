@@ -50,7 +50,8 @@ function notify(title: string, body: string): void {
 }
 
 export default function (pi: ExtensionAPI) {
-	pi.on("agent_end", async () => {
+	pi.on("agent_settled", async (_event, ctx) => {
+		if (ctx.mode !== "tui") return;
 		notify("Pi", "Ready for input");
 	});
 }

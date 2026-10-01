@@ -1,9 +1,9 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import {
-	createFindTool,
-	createGrepTool,
-	createLsTool,
-	createReadTool,
+	createFindToolDefinition,
+	createGrepToolDefinition,
+	createLsToolDefinition,
+	createReadToolDefinition,
 	type FindToolDetails,
 	type GrepToolDetails,
 	type LsToolDetails,
@@ -52,15 +52,12 @@ function status(theme: any, isPartial: boolean, isError: boolean): string {
 export default function compactReadingTools(pi: ExtensionAPI) {
 	const cwd = process.cwd();
 
-	const read = createReadTool(cwd);
+	const read = createReadToolDefinition(cwd);
 	pi.registerTool({
-		name: "read",
-		label: read.label,
-		description: read.description,
-		parameters: read.parameters,
+		...read,
 		renderShell: "self",
-		execute: (toolCallId, params, signal, onUpdate) =>
-			read.execute(toolCallId, params, signal, onUpdate),
+		execute: (toolCallId, params, signal, onUpdate, ctx) =>
+			createReadToolDefinition(ctx.cwd).execute(toolCallId, params, signal, onUpdate, ctx),
 		renderCall(args, theme, context) {
 			if (!context.isPartial) return hidden();
 			const path = short(args?.path, "<path>");
@@ -83,15 +80,12 @@ export default function compactReadingTools(pi: ExtensionAPI) {
 		},
 	});
 
-	const find = createFindTool(cwd);
+	const find = createFindToolDefinition(cwd);
 	pi.registerTool({
-		name: "find",
-		label: find.label,
-		description: find.description,
-		parameters: find.parameters,
+		...find,
 		renderShell: "self",
-		execute: (toolCallId, params, signal, onUpdate) =>
-			find.execute(toolCallId, params, signal, onUpdate),
+		execute: (toolCallId, params, signal, onUpdate, ctx) =>
+			createFindToolDefinition(ctx.cwd).execute(toolCallId, params, signal, onUpdate, ctx),
 		renderCall(args, theme, context) {
 			if (!context.isPartial) return hidden();
 			const pattern = short(args?.pattern, "<pattern>");
@@ -115,15 +109,12 @@ export default function compactReadingTools(pi: ExtensionAPI) {
 		},
 	});
 
-	const grep = createGrepTool(cwd);
+	const grep = createGrepToolDefinition(cwd);
 	pi.registerTool({
-		name: "grep",
-		label: grep.label,
-		description: grep.description,
-		parameters: grep.parameters,
+		...grep,
 		renderShell: "self",
-		execute: (toolCallId, params, signal, onUpdate) =>
-			grep.execute(toolCallId, params, signal, onUpdate),
+		execute: (toolCallId, params, signal, onUpdate, ctx) =>
+			createGrepToolDefinition(ctx.cwd).execute(toolCallId, params, signal, onUpdate, ctx),
 		renderCall(args, theme, context) {
 			if (!context.isPartial) return hidden();
 			const pattern = short(args?.pattern, "<pattern>");
@@ -150,15 +141,12 @@ export default function compactReadingTools(pi: ExtensionAPI) {
 		},
 	});
 
-	const ls = createLsTool(cwd);
+	const ls = createLsToolDefinition(cwd);
 	pi.registerTool({
-		name: "ls",
-		label: ls.label,
-		description: ls.description,
-		parameters: ls.parameters,
+		...ls,
 		renderShell: "self",
-		execute: (toolCallId, params, signal, onUpdate) =>
-			ls.execute(toolCallId, params, signal, onUpdate),
+		execute: (toolCallId, params, signal, onUpdate, ctx) =>
+			createLsToolDefinition(ctx.cwd).execute(toolCallId, params, signal, onUpdate, ctx),
 		renderCall(args, theme, context) {
 			if (!context.isPartial) return hidden();
 			const path = short(args?.path, ".");

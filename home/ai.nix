@@ -42,11 +42,7 @@ let
     '';
   };
 
-  # TODO: @hypabolic/pi-hypa, does tool call compaction on the fly
-  # "npm:@gotgenes/pi-anthropic-auth@2.0.8"
   piPackages = [
-    "npm:pi-mcp-adapter@2.33.0"
-    "npm:pi-web-access@0.33.0"
     "npm:@gotgenes/pi-subagents@21.8.0"
     "npm:pi-cliproxyapi-provider@0.15.48"
     {
@@ -76,6 +72,9 @@ let
     showHardwareCursor = true;
     showCacheMissNotices = true;
     transport = "auto";
+    tuiMode = "regular";
+    outputPad = 0;
+    cacheWarming = "idle";
     terminal = {
       showTerminalProgress = true;
       clearOnShrink = true;
@@ -83,6 +82,9 @@ let
     warnings.anthropicExtraUsage = false;
 
     packages = piPackages;
+    defaultTools = [ "+codemode" "+tool_search" ];
+    # native-tools.ts loads the same factories in CLI and SDK child sessions.
+    extensions = [ "-builtin:mcp" "-builtin:codemode" "-builtin:tool-search" ];
     npmCommand = [ "${nodejs}/bin/npm" ];
 
     pi-cliproxyapi-provider = {
@@ -224,41 +226,6 @@ in
       ".codex/skills/global".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/skills";
     };
-
-    # Docker MCP rejects symlinks whose targets escape its catalog directory.
-    activation.installMcpServers = let
-      # docker mcp feature enable profiles
-      # docker mcp profile create --name pi
-      # docker mcp catalog create mcp/local --title "Local MCP servers"
-      # docker mcp catalog server add mcp/local --server file://nixos.yaml
-      # docker mcp profile server add pi --server catalog://mcp/local/nixos
-      mcpServers = {
-        nixos = {
-          title = "NixOS";
-          description = "NixOS package and option documentation";
-          type = "server";
-          image = "ghcr.io/utensils/mcp-nixos:latest";
-        };
-      };
-
-      mcpServerFiles = lib.mapAttrs (
-        name: server:
-        (pkgs.formats.yaml { }).generate "mcp-${name}.yaml" ({ inherit name; } // server)
-      ) mcpServers;
-    in lib.hm.dag.entryAfter [ "writeBoundary" ] (
-        lib.concatStringsSep "\n" (
-          lib.mapAttrsToList (
-            name: file:
-            ''
-              server=${lib.escapeShellArg "${config.home.homeDirectory}/.docker/mcp/catalogs/${name}.yaml"}
-              if [ -L "$server" ]; then
-                run ${pkgs.coreutils}/bin/rm -- "$server"
-              fi
-              run ${pkgs.coreutils}/bin/install -Dm644 ${file} "$server"
-            ''
-          ) mcpServerFiles
-        )
-      );
   };
 
   programs = {

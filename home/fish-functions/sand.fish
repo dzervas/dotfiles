@@ -102,14 +102,14 @@ for name in $unshared_env_vars
 	set bwrap_env $bwrap_env --unsetenv $name
 end
 
-mkdir -p $sandbox_home/.pi/agent/extensions $sandbox_home/.config/{jj,git}
+mkdir -p $sandbox_home/.pi/agent/extensions $sandbox_home/.config/{jj,git} $HOME/.pi/agent/memory
 
-# --bind /nix/var/nix/daemon-socket /nix/var/nix/daemon-socket \
+# Native MCP OAuth state stays writable in this persistent sandbox home.
+# Keep host keyrings and Docker sockets outside the sandbox.
 bwrap \
 	--unshare-all \
 	--share-net \
 	--die-with-parent \
-	--new-session \
 	--proc /proc \
 	--dev /dev \
 	--tmpfs /tmp \
@@ -139,11 +139,10 @@ bwrap \
 	--ro-bind $HOME/.pi/agent/pi-cliproxyapi-provider $HOME/.pi/agent/pi-cliproxyapi-provider \
 	--ro-bind $HOME/.pi/agent/AGENTS.md $HOME/.pi/agent/AGENTS.md \
 	--bind $HOME/.pi/agent/sessions $HOME/.pi/agent/sessions \
+	--bind $HOME/.pi/agent/memory $HOME/.pi/agent/memory \
 	--bind $HOME/.pi/agent/auth.json $HOME/.pi/agent/auth.json \
-	--bind $HOME/.pi/agent/mcp-oauth $HOME/.pi/agent/mcp-oauth \
 	--bind $HOME/.pi/agent/mcp.json $HOME/.pi/agent/mcp.json \
-	--bind $HOME/.pi/workflows $HOME/.pi/workflows \
-	--bind $HOME/.pi/readseek $HOME/.pi/readseek \
+	--ro-bind-try $HOME/.cache/pi-mcp-gateway/authorization $HOME/.cache/pi-mcp-gateway/authorization \
 	--bind $HOME/.pi/agent/run-history.jsonl $HOME/.pi/agent/run-history.jsonl \
 	--ro-bind $HOME/Lab/dotfiles/pi/sandbox.ts $HOME/.pi/agent/sandbox.ts \
 	--bind $project_dir $project_dir \

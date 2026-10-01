@@ -18,7 +18,7 @@ export default function continueExtension(pi: ExtensionAPI): void {
 
 	pi.registerCommand("continue", {
 		description: "Resume the stopped turn without adding a message to the context",
-		handler: (_args: string | undefined, ctx: ExtensionContext) => {
+		handler: async (_args: string | undefined, ctx: ExtensionContext) => {
 			if (!ctx.isIdle()) {
 				ctx.ui.notify("Agent is already running", "warning");
 				return;

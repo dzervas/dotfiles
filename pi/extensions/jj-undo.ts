@@ -8,6 +8,13 @@ const CUSTOM_TYPE = "jj-undo";
 const JJ_CONFIG_ARGS = ["--config", "signing.backend=none"];
 const JJ_TIMEOUT_MS = 30_000;
 
+function hasRunningSubagents(): boolean {
+	const service = (globalThis as Record<symbol, unknown>)[Symbol.for("@gotgenes/pi-subagents:service")] as
+		| { hasRunning(): boolean }
+		| undefined;
+	return service?.hasRunning() ?? false;
+}
+
 type CheckpointData = {
 	version: 1;
 	kind: "checkpoint";
@@ -154,6 +161,7 @@ export default function jjUndo(pi: ExtensionAPI) {
 	}
 
 	async function checkpointBeforeTurn(ctx: ExtensionContext): Promise<void> {
+		if (ctx.mode !== "tui") return;
 		await withJjLock(async () => {
 			const operationId = await snapshotIfJjRepo(ctx);
 			if (!operationId) return;
@@ -170,6 +178,7 @@ export default function jjUndo(pi: ExtensionAPI) {
 	}
 
 	async function lifecycleSnapshot(ctx: ExtensionContext, eventName: string): Promise<void> {
+		if (ctx.mode !== "tui") return;
 		try {
 			await withJjLock(async () => {
 				await snapshotIfJjRepo(ctx);
@@ -184,6 +193,10 @@ export default function jjUndo(pi: ExtensionAPI) {
 		await ctx.waitForIdle();
 
 		await withJjLock(async () => {
+			if (hasRunningSubagents()) {
+				notify(ctx, "jj undo: stop running subagents before restoring repository state", "warning");
+				return;
+			}
 			const cwd = ctx.cwd;
 			if (!(await isJjRepo(pi, cwd))) {
 				notify(ctx, "jj undo: not a jj repo", "error");

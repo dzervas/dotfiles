@@ -9,7 +9,8 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 import { ScrollableDialogue } from "./lib/scrollable-dialogue";
-import { terminalActivity } from "./pi-subagents-workflows/terminal-progress";
+import { ToolExecutionTiming } from "./lib/tool-execution-timing";
+import { terminalActivity } from "./lib/terminal-progress";
 
 const REGISTRY_KEY = Symbol.for("dzervas.pi.background-jobs");
 
@@ -263,6 +264,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 	};
 
 	const builtin = createBashToolDefinition(process.cwd());
+	const executionTiming = new ToolExecutionTiming();
 	const parameters = Type.Object({
 		...builtin.parameters.properties,
 		background: Type.Optional(
@@ -278,10 +280,21 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 			"Use bash with background=true for long-running commands. Completion is delivered automatically, so do not poll. Use background_jobs to inspect output, stop a job, or wait only when the task explicitly requires synchronous completion.",
 		],
 		parameters,
+		renderCall(args, theme, context) {
+			return builtin.renderCall!(args, theme, executionTiming.context(context));
+		},
+		renderResult(result, options, theme, context) {
+			const nativeResult = result as Parameters<NonNullable<typeof builtin.renderResult>>[0];
+			return builtin.renderResult!(nativeResult, options, theme, executionTiming.context(context));
+		},
 		async execute(toolCallId, params, signal, onUpdate, ctx) {
 			const registry = currentRegistry(ctx);
 			const delegate = createDelegate(ctx);
 			const input = { command: params.command, timeout: params.timeout };
+			if (ctx.mode === "tui") {
+				executionTiming.start(toolCallId);
+				onUpdate?.({ content: [], details: undefined });
+			}
 			if (!params.background) return delegate.execute(toolCallId, input, signal, onUpdate, ctx);
 
 			const job: Job = {
@@ -310,7 +323,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 				.then((result) => {
 					job.output = resultText(result.content);
 					job.details = result.details;
-					job.status = "completed";
+					job.status = "isError" in result && result.isError === true ? "failed" : "completed";
 				})
 				.catch((error: unknown) => {
 					job.error = error instanceof Error ? error.message : String(error);
@@ -395,6 +408,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 	});
 
 	pi.on("session_shutdown", (event, ctx) => {
+		executionTiming.clear();
 		uiCtx = undefined;
 		terminalEnabled = false;
 		stopRefreshLoop();

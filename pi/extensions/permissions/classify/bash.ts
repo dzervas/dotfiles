@@ -20,7 +20,8 @@ const COMPLEX_TYPES = new Set([
 ]);
 
 const parser = new Parser();
-parser.setLanguage(Bash);
+// tree-sitter-bash types its native language handle as unknown.
+parser.setLanguage(Bash as unknown as Parser.Language);
 
 type WalkAcc = {
 	findings: Finding[];

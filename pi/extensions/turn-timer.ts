@@ -74,5 +74,6 @@ export default function turnTimer(pi: ExtensionAPI) {
 		if (!ctx.hasUI) return;
 		stopTimer();
 		ctx.ui.setStatus(STATUS_KEY, undefined);
+		uiCtx = undefined;
 	});
 }

@@ -39,6 +39,9 @@
 !pi
 !pi/*.json
 !pi/extensions
+!pi/benchmarks
+!pi/benchmarks/memory
+!pi/benchmarks/memory/*.py
 !pi/skills
 !pi/extensions/lib
 !pi/extensions/permissions

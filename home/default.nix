@@ -9,6 +9,7 @@
   imports = [
     ./1password.nix
     ./ai.nix
+    ./pi-mcp-gateway.nix
     ./atuin.nix
     ./brave.nix
     ./dev.nix

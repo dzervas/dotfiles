@@ -70,11 +70,11 @@ const ConfigSchema = z.object({
 	rules: z.array(RuleSchema).default([]),
 });
 
-// Web search and fetch are read-only network lookups that should never block.
+// Orchestration tools dispatch their nested calls through the permission gate.
 const DEFAULT_RULES: Rule[] = [
 	{
 		action: "allow",
-		comment: "Web search/fetch are always allowed",
+		comment: "Allow orchestration and local utility tools",
 		tool: {
 			kind: "custom",
 			name: [
@@ -82,15 +82,12 @@ const DEFAULT_RULES: Rule[] = [
 				"^subagent$",
 				"^get_subagent_result$",
 				"^todo$",
+				"^memory$",
+				"^memory_search$",
 				"^background_jobs$",
 
-				"^web_search$",
-				"^web_read$",
-				"^fetch_content$",
-				"^get_search_content$",
-
-				"^workflow$",
-				"^readSeek_\\w+$",
+				"^codemode$",
+				"^tool_search$",
 			],
 		},
 	},
@@ -186,7 +183,7 @@ function toolSelector(subject: PermissionSubject) {
 export function saveRule(subject: PermissionSubject) {
 	const source = fs.existsSync(CONFIG_PATHS[1]) ? CONFIG_PATHS[1] : CONFIG_PATHS[2];
 	const parsed = fs.existsSync(source) ? readConfigFile(source) : undefined;
-	const local = !parsed
+	const local: Config = !parsed
 		? { version: 2, defaultAction: "ask" as Action, allowRoots: [], denyRoots: [], rules: [] }
 		: coerceConfig(parsed);
 

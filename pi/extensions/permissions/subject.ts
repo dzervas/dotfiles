@@ -2,48 +2,15 @@
 // (builtin/custom/MCP) plus paths for the trivially path-shaped builtin tools.
 // Bash commands are analyzed later by the classifier pipeline (classify/).
 
-import * as fs from "node:fs";
-import * as os from "node:os";
-import * as path from "node:path";
 import { isToolCallEventType, type ToolCallEvent } from "@earendil-works/pi-coding-agent";
+import { memoryPaths } from "../memory/store.ts";
+import { mcpIdentity } from "./mcp";
 import { pushPath } from "./paths";
 import type { PermissionSubject, ToolKind } from "./types";
 
-const MCP_CACHE_PATH = path.join(os.homedir(), ".pi", "agent", "mcp-cache.json");
-
-// MCP tools are registered as `${serverPrefix}_${toolName}` by pi-mcp-adapter,
-// where the server prefix is the server name with dashes turned into underscores.
-// Read the live server list to recover the originating server via longest-prefix match.
-function loadMcpServers(): string[] {
-	try {
-		const parsed = JSON.parse(fs.readFileSync(MCP_CACHE_PATH, "utf8")) as { servers?: unknown };
-		const names = Array.isArray(parsed.servers)
-			? parsed.servers.filter((server): server is string => typeof server === "string")
-			: typeof parsed.servers === "object" && parsed.servers !== null
-				? Object.keys(parsed.servers)
-				: [];
-		return names
-			.map((server) => server.replace(/-/gu, "_"))
-			.sort((left, right) => right.length - left.length);
-	} catch {
-		return [];
-	}
-}
-
-function parseMcp(toolName: string) {
-	const legacy = toolName.split("__");
-	if (legacy[0] === "mcp") return { server: legacy[1], tool: legacy[2] };
-
-	for (const server of loadMcpServers()) {
-		if (toolName.startsWith(`${server}_`))
-			return { server, tool: toolName.slice(server.length + 1) };
-	}
-	return undefined;
-}
-
 // Extract any meaningful info from the event to create a subject
-export function normalize(event: ToolCallEvent): PermissionSubject {
-	const mcp = parseMcp(event.toolName);
+export function normalize(event: ToolCallEvent, cwd = process.cwd()): PermissionSubject {
+	const mcp = mcpIdentity(event.toolName, event.input);
 	let toolKind: ToolKind = "custom";
 
 	// TODO: Access these procedurally
@@ -87,6 +54,15 @@ export function normalize(event: ToolCallEvent): PermissionSubject {
 		);
 	else if (isToolCallEventType("ls", event))
 		pushPath(subject.paths, typeof event.input.path === "string" ? event.input.path : ".", "list");
+
+	if (event.toolName === "memory" || event.toolName === "memory_search") {
+		const paths = memoryPaths(cwd);
+		const scope = event.input.scope;
+		const selected = scope === "global" || scope === "project"
+			? [paths[scope]] : event.toolName === "memory" ? [paths.project] : Object.values(paths);
+		const access = event.toolName === "memory" && event.input.action !== "list" ? "write" : "read";
+		for (const file of selected) pushPath(subject.paths, file, access);
+	}
 
 	return subject;
 }

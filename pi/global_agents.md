@@ -47,6 +47,7 @@ Prefer simple, direct solutions over generalized ones.
 * Prefer extending an existing suitable abstraction over creating a parallel one.
 * Keep abstractions cohesive. If an implementation grows into clearly separate responsibilities, split them into focused components rather than growing a single catch-all abstraction.
 * Keep changes local when a local solution is sufficient.
+* Shell commands already start in the session working directory; run them directly when no directory change is needed.
 
 Avoid:
 

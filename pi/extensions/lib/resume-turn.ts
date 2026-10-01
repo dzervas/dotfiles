@@ -36,14 +36,18 @@ function shouldStripFromContext(message: InspectableMessage): boolean {
 	return isResumeSentinel(message) || isFailedAssistantTurn(message);
 }
 
+const registeredApis = new WeakSet<ExtensionAPI>();
+
 /**
  * Register the single `context` handler that keeps resumed turns clean. Guarded
  * so multiple extensions can call it without stacking duplicate handlers.
  */
 export function registerResumeContextStripper(pi: ExtensionAPI): void {
-	const g = globalThis as typeof globalThis & { __DZERVAS_RESUME_STRIPPER__?: boolean };
-	if (g.__DZERVAS_RESUME_STRIPPER__) return;
-	g.__DZERVAS_RESUME_STRIPPER__ = true;
+	if (registeredApis.has(pi)) return;
+	registeredApis.add(pi);
+	pi.on("session_shutdown", () => {
+		registeredApis.delete(pi);
+	});
 
 	pi.on("context", (event) => {
 		const messages = event.messages as InspectableMessage[];

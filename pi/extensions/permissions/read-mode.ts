@@ -10,8 +10,8 @@ import type {
 import { askPermission } from "./ask";
 import { askReasons, type PermissionSubject } from "./types";
 
-const READ_MODE_TOOLS = ["read", "bash", "grep", "find", "ls", "questionnaire"];
-const ALLOWED_CUSTOM_TOOLS = new Set(["questionnaire", "todo"]);
+const READ_MODE_TOOLS = ["read", "bash", "grep", "find", "ls", "questionnaire", "codemode", "tool_search", "memory", "memory_search"];
+const ALLOWED_CUSTOM_TOOLS = new Set(["questionnaire", "todo", "codemode", "tool_search", "memory", "memory_search"]);
 
 type ReadModeState = {
 	enabled: boolean;

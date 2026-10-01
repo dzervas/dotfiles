@@ -1,3 +1,4 @@
+import { withHumanInput } from "./lib/human-input.ts";
 import {
 	createBashToolDefinition,
 	createEditToolDefinition,
@@ -8,6 +9,7 @@ import {
 	createWriteToolDefinition,
 	type ExtensionAPI,
 	type ExtensionContext,
+	type ToolDefinition,
 } from "@earendil-works/pi-coding-agent";
 import {
 	PERMISSIONS_ASK_BROKER_KEY,
@@ -57,11 +59,11 @@ function formatGenericCall(subject: PermissionSubject) {
 
 function formatToolCall(subject: PermissionSubject, ctx: ExtensionContext) {
 	const definitions = getToolDefinitions(ctx.cwd);
-	const definition = definitions[subject.toolName as keyof typeof definitions];
+	const definition = definitions[subject.toolName as keyof typeof definitions] as ToolDefinition<any, any, any> | undefined;
 	if (!definition?.renderCall) return formatGenericCall(subject);
 	try {
 		const component = definition.renderCall(subject.input as any, ctx.ui.theme, {
-			args: subject.input,
+			args: subject.input as any,
 			toolCallId: `permissions:${subject.toolName}`,
 			invalidate: () => {},
 			lastComponent: undefined,
@@ -83,8 +85,7 @@ function formatToolCall(subject: PermissionSubject, ctx: ExtensionContext) {
 	}
 }
 
-// Choose a syntax-highlighted body for the dialog. Bash and the context-mode
-// execute tools carry source/commands worth highlighting; everything else
+// Choose a syntax-highlighted body for shell commands and CodeMode scripts; everything else
 // falls back to the renderCall/generic key-value dump as plain text.
 function formatBody(
 	subject: PermissionSubject,
@@ -95,50 +96,17 @@ function formatBody(
 
 	const input = subject.input ?? {};
 
-	// ctx_execute / ctx_execute_file: a single code block in its own language.
-	if (
-		(subject.toolName === "ctx_execute" || subject.toolName === "ctx_execute_file") &&
-		typeof input.code === "string"
-	)
-		return {
-			body: input.code,
-			language: typeof input.language === "string" ? input.language : undefined,
-		};
-
-	// ctx_batch_execute: show each command on its own line, highlighted as shell.
-	if (subject.toolName === "ctx_batch_execute" && Array.isArray(input.commands))
-		return {
-			body: (input.commands as Array<{ label?: string; command?: string }>)
-				.map((entry) => `# ${entry.label ?? ""}\n${entry.command ?? ""}`)
-				.join("\n\n"),
-			language: "bash",
-		};
+	if (subject.toolName === "codemode" && typeof input.code === "string")
+		return { body: input.code, language: "javascript" };
 
 	return { body: formatToolCall(subject, ctx) };
-}
-
-function classifierEmoji(action: "allow" | "ask" | "deny", confidence: number): string {
-	if (confidence < 90) return "❔ ";
-	if (action === "allow") return "✅ ";
-	if (action === "deny") return "🛑 ";
-	return "⚠️ ";
-}
-function classifierDetails(subject: PermissionSubject): string[] | undefined {
-	const advice = subject.llmAdvice;
-	if (!advice) return undefined;
-
-	const emoji = classifierEmoji(advice.action, advice.confidence);
-
-	return [
-		`${emoji}Local LLM classifier (advisory only): ${advice.action} (${advice.confidence}%)`,
-		`LLM reason: ${advice.reason}`,
-	];
 }
 
 // Renders the permission dialog on the given (UI-bearing) session context and
 // returns the raw decision. No side effects — callers apply rule saves and
 // steer messages against the session that actually asked.
 async function renderPermissionDialog(
+	pi: ExtensionAPI,
 	ctx: ExtensionContext,
 	subject: PermissionSubject,
 	reason: string,
@@ -156,7 +124,7 @@ async function renderPermissionDialog(
 
 	const title = label ? `󱅞 Permission request — ${label}` : "󱅞 Permission request";
 
-	const result = await ctx.ui.custom<DialogueResult | null>((tui, theme, _kb, done) =>
+	const result = await withHumanInput(pi, () => ctx.ui.custom<DialogueResult | null>((tui, theme, _kb, done) =>
 		new ScrollableDialogue(
 			tui,
 			theme,
@@ -165,14 +133,12 @@ async function renderPermissionDialog(
 				body,
 				language,
 				reason: `Reason: ${reason}`,
-				details: classifierDetails(subject),
 				options,
 				messagePrompt: "Append message to agent:",
 			},
 			done,
 		),
-	);
-
+	));
 	if (!result) return null;
 	return { value: result.value as PermissionAskAnswer["value"], message: result.message };
 }
@@ -194,6 +160,7 @@ function isPermissionAskRequest(value: unknown): value is PermissionAskRequest {
 // in-process sessions (parent + subagents), so a single dialog queue serializes
 // every prompt onto one terminal and a single ctx points at the UI session.
 let uiCtx: ExtensionContext | undefined;
+let uiPi: ExtensionAPI | undefined;
 let dialogChain: Promise<unknown> = Promise.resolve();
 
 // Serialize all dialogs (same-session and bridged) so concurrent subagents
@@ -210,9 +177,10 @@ function enqueue<T>(fn: () => Promise<T>): Promise<T> {
 // The bridge target: no-UI sessions (subagents) look this up on globalThis and
 // call it to surface their prompt on the UI session's terminal.
 const broker: PermissionAskBroker = async (subject, reason) => {
-	if (!uiCtx) return undefined;
+	if (!uiCtx || !uiPi) return undefined;
 	const ctx = uiCtx;
-	const answer = await enqueue(() => renderPermissionDialog(ctx, subject, reason, "subagent"));
+	const pi = uiPi;
+	const answer = await enqueue(() => renderPermissionDialog(pi, ctx, subject, reason, "subagent"));
 	return answer ?? undefined;
 };
 
@@ -222,6 +190,7 @@ export default function permissionPromptExtension(pi: ExtensionAPI) {
 	const registerBrokerIfUI = (ctx: ExtensionContext) => {
 		if (!ctx.hasUI) return;
 		uiCtx = ctx;
+		uiPi = pi;
 		(globalThis as Record<PropertyKey, unknown>)[PERMISSIONS_ASK_BROKER_KEY] = broker;
 		registeredBroker = true;
 	};
@@ -232,7 +201,11 @@ export default function permissionPromptExtension(pi: ExtensionAPI) {
 	pi.on("session_shutdown", async () => {
 		if (!registeredBroker) return;
 		const g = globalThis as Record<PropertyKey, unknown>;
-		if (g[PERMISSIONS_ASK_BROKER_KEY] === broker) delete g[PERMISSIONS_ASK_BROKER_KEY];
+		if (g[PERMISSIONS_ASK_BROKER_KEY] === broker) {
+			delete g[PERMISSIONS_ASK_BROKER_KEY];
+			uiCtx = undefined;
+			uiPi = undefined;
+		}
 		registeredBroker = false;
 	});
 
@@ -243,7 +216,7 @@ export default function permissionPromptExtension(pi: ExtensionAPI) {
 		if (data.ctx.hasUI) uiCtx = data.ctx;
 		data.accept();
 
-		void enqueue(() => renderPermissionDialog(data.ctx, data.subject, data.reason)).then(
+		void enqueue(() => renderPermissionDialog(pi, data.ctx, data.subject, data.reason)).then(
 			(answer) => {
 				if (!answer) return data.resolve({ block: true, reason: "Blocked by user" });
 				if (answer.value === "allow-save") data.ctx.ui.notify(data.saveRule(), "info");

@@ -31,12 +31,10 @@ function isSandboxed() {
 export default function permissionsExtension(pi: ExtensionAPI) {
 	const readMode = createReadMode(pi);
 	let sandboxed = isSandboxed();
-	let disablePermissions = sandboxed;
+	let disablePermissions = false;
 
 	pi.events.on(PI_SANDBOX_STATE_EVENT, (state) => {
-		const wasSandboxed = sandboxed;
 		sandboxed = Boolean((state as SandboxState | undefined)?.enabled);
-		if (sandboxed && !wasSandboxed) disablePermissions = true;
 
 		if (sandboxed) {
 			pi.registerCommand("yolo", {
@@ -100,7 +98,7 @@ export default function permissionsExtension(pi: ExtensionAPI) {
 	pi.on("tool_call", async (event, ctx) => {
 		if (permissionsDisabled()) return { block: false, reason: "Permissions disabled in sandbox" };
 
-		const subject = await classify(normalize(event), { signal: ctx.signal, localLlm: true });
+		const subject = await classify(normalize(event, ctx.cwd));
 		if (readMode.enabled) {
 			const readModeDecision = readMode.decide(subject, ctx);
 			if (readModeDecision) return readModeDecision;

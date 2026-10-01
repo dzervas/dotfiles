@@ -251,8 +251,8 @@ export default function limitWaitExtension(pi: ExtensionAPI): void {
 	}
 
 	async function handleLimit(ctx: ExtensionContext, errorText: string): Promise<void> {
-		// Already committed to waiting (or headless): retry silently, no modal.
-		if (waiting || !ctx.hasUI) {
+		// Already committed to waiting: retry silently, no modal.
+		if (waiting) {
 			waiting = true;
 			armEscapeCancel(ctx);
 			scheduleRetry(ctx, errorText);
@@ -288,6 +288,7 @@ export default function limitWaitExtension(pi: ExtensionAPI): void {
 	});
 
 	pi.on("agent_end", async (event, ctx) => {
+		if (ctx.mode !== "tui") return;
 		latestCtx = ctx;
 		const last = lastAssistant(event.messages as InspectableMessage[]);
 
@@ -308,9 +309,17 @@ export default function limitWaitExtension(pi: ExtensionAPI): void {
 		if (waiting) stopWaiting(ctx);
 	});
 
+	pi.on("session_shutdown", () => {
+		clearTimers();
+		escUnsub?.();
+		escUnsub = undefined;
+		latestCtx = undefined;
+		waiting = false;
+	});
+
 	pi.registerCommand("limit-cancel", {
 		description: "Cancel the pending usage-limit retry wait",
-		handler: (_args: string | undefined, ctx: ExtensionContext) => {
+		handler: async (_args: string | undefined, ctx: ExtensionContext) => {
 			if (!waiting) {
 				ctx.ui.notify("No usage-limit wait is active", "info");
 				return;
