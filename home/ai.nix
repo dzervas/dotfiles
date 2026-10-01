@@ -262,6 +262,9 @@ in
   };
 
   programs = {
+    # Grok Build's custom sandbox profiles only extend built-in access grants,
+    # so they cannot match Codex's restricted filesystem allowlist through config alone.
+    # They force access to /run, /var and other dirs
     codex = {
       enable = true;
       package = pkgs.codex-latest;

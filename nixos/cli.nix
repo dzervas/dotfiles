@@ -113,24 +113,6 @@
       find = "fd";
     };
 
-    etc."codex/hooks/check-danger-mode.sh".source = pkgs.writeShellScript  "check-danger-mode.sh" ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-
-      mode="$(${pkgs.jq}/bin/jq -r '.permission_mode // empty')"
-
-      if test -d ~/.cache; then
-        if [[ "$mode" != "default" && "$mode" != "acceptEdits" ]]; then
-            ${pkgs.jq}/bin/jq -n '{
-              continue: false,
-              stopReason: "Codex requires on-request approval policy"
-            }'
-            exit 0
-        fi
-      fi
-
-      echo '{"continue":true}'
-    '';
     etc."codex/requirements.toml".source = pkgs.writers.writeTOML "requirements.toml" {
       allowed_approval_policies = [ "never" "on-request" ];
       default_permissions = "sandboxed";
@@ -143,18 +125,6 @@
       check_for_update_on_startup = false;
       features.computer_use = false;
       feedback.enabled = false;
-
-      hooks = {
-        managed_dir = "/etc/codex/hooks";
-        SessionStart = [{
-          hooks = [{
-            type = "command";
-            command = "/etc/codex/hooks/check-danger-mode.sh";
-            timeout = 5;
-            statusMessage = "Checking approval policy";
-          }];
-        }];
-      };
 
       permissions.sandboxed = {
         extends = ":workspace";
