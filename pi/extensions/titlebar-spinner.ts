@@ -14,7 +14,7 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 import { HUMAN_INPUT_EVENT, type HumanInputEvent } from "./lib/human-input.ts";
 import { activeTaskSuffix, renderTasks, TODO_CHANGED_EVENT } from "./todo/state.ts";
 
-const INPUT_FRAMES = ["", ""];
+const INPUT_FRAMES = [" ", " "];
 const BRAILLE_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
 export function getBaseTitle(pi: Pick<ExtensionAPI, "getSessionName">): string {

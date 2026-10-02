@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   imports = [
     ./1password.nix
     # ./apparmor.nix
@@ -63,36 +63,23 @@
     upower.enable = true;
     # tuned.enable = true;
 
+    # Better getty
+    kmscon = {
+      enable = lib.mkDefault true;
+      config = {
+        font-name = config.stylix.fonts.monospace.name;
+        font-size = lib.mkForce 18;
+        hwaccel = true;
+        libseat = true; # Cleaner graphical/tty switch without black screen
+        xkb-layout = "us,gr";
+        xkb-options = "grp:alt_space_toggle,caps:escape";
+      };
+    };
+
     pipewire = {
       enable = true;
       pulse.enable = true;
       wireplumber.enable = true;
     };
-
-    # open-webui = {
-    #   enable = true;
-    #   port = 1111;
-    #   environment = {
-    #     ANONYMIZED_TELEMETRY = "False";
-    #     DO_NOT_TRACK = "True";
-    #     SCARF_NO_ANALYTICS = "True";
-    #
-    #     WEBUI_AUTH = "False";
-    #   };
-    # };
-    #
-    # ollama = {
-    #   enable = true;
-    #   models = "/home/dzervas/CryptVMs/ollama/models";
-    #   loadModels = [
-    #     # Tiny coder - for CLI agent mostly
-    #     "qwen2.5-coder:1.5b" # 3b?
-    #     # Tool focused
-    #     "ibm/granite4:tiny-h"
-    #
-    #     # General purpose
-    #     "gpt-oss:20b"
-    #   ];
-    # };
   };
 }

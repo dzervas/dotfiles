@@ -3,7 +3,8 @@ _: {
 
   services.xserver.videoDrivers = [ "nvidia" ];
 
-  boot.initrd.kernelModules = [ "nvidia" ];
+  # Baloons the initrd image
+  # boot.initrd.kernelModules = [ "nvidia" ];
 
   hardware.nvidia = {
     modesetting.enable = true;

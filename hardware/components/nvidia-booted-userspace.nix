@@ -72,11 +72,15 @@ in {
   # Point them at the booted generation during activation instead.
   systemd.tmpfiles.settings.graphics-driver = lib.mkForce {};
   system.activationScripts.bootedGraphicsDrivers.text = ''
+    # On boot, activation runs before stage 2 creates /run/booted-system, and the
+    # generation being activated is the one being booted.
+    booted=/run/booted-system
+    [ -e "$booted" ] || booted="$systemConfig"
     link_booted_graphics() {
       local path="$1" generation_link="$2" target="" type rule_path mode user group age rule_target
       if [ -e "$generation_link" ]; then
         target="$generation_link"
-      elif [ -f /run/booted-system/etc/tmpfiles.d/graphics-driver.conf ]; then
+      elif [ -f "$booted/etc/tmpfiles.d/graphics-driver.conf" ]; then
         # Older generations have no graphics-drivers link; recover their original
         # graphics environment from the tmpfiles rule that installed it.
         while read -r type rule_path mode user group age rule_target; do
@@ -84,7 +88,7 @@ in {
             target="$rule_target"
             break
           fi
-        done < /run/booted-system/etc/tmpfiles.d/graphics-driver.conf
+        done < "$booted/etc/tmpfiles.d/graphics-driver.conf"
       fi
       if [ -n "$target" ]; then
         ln -sfnT "$target" "$path.tmp"
@@ -93,16 +97,16 @@ in {
         echo "Cannot find the booted graphics environment for $path" >&2
       fi
     }
-    link_booted_graphics /run/opengl-driver /run/booted-system/graphics-drivers
+    link_booted_graphics /run/opengl-driver "$booted/graphics-drivers"
     ${lib.optionalString graphics.enable32Bit ''
-      link_booted_graphics /run/opengl-driver-32 /run/booted-system/graphics-drivers-32
+      link_booted_graphics /run/opengl-driver-32 "$booted/graphics-drivers-32"
     ''}
-    if [ -e /run/booted-system/nvidia-bin ]; then
-      bin=/run/booted-system/nvidia-bin
+    if [ -e "$booted/nvidia-bin" ]; then
+      bin="$booted/nvidia-bin"
     else
       # Before this module's first boot, the old generation only exposes the
       # driver tools through its system PATH.
-      old_smi=$(readlink -f /run/booted-system/sw/bin/nvidia-smi)
+      old_smi=$(readlink -f "$booted/sw/bin/nvidia-smi")
       bin=$(dirname "$(dirname "$old_smi")")
     fi
     ln -sfnT "$bin" /run/nvidia-booted-bin.tmp

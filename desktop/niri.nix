@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   home-manager.sharedModules = [ ./home/niri.nix ];
 
@@ -11,11 +11,14 @@
 
   services = {
     dbus.implementation = "broker";
-    displayManager.sddm = {
+    # Autologin once per boot (disk is LUKS); after logout/crash fall back to tuigreet
+    greetd = {
       enable = true;
-      # theme = "chili";
-      # extraPackages = [ pkgs.sddm-chili-theme ]; # Broken
-      wayland.enable = true;
+      useTextGreeter = true;
+      settings = {
+        initial_session = { user = "dzervas"; command = "niri-session"; };
+        default_session.command = "${lib.getExe pkgs.tuigreet} --time --remember --cmd niri-session";
+      };
     };
 
     # XFCE File management
@@ -25,6 +28,8 @@
     tumbler.enable = true;
   };
 
+  # greetd's PAM stack includes login. Autologin skips auth, so the keyring
+  # only auto-unlocks on tuigreet logins
   security.pam.services.login.enableGnomeKeyring = true;
   environment.systemPackages = with pkgs; [
     file-roller

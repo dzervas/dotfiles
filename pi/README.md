@@ -7,17 +7,23 @@ entries are disabled to avoid registering them twice. This requires Pi 1.0.0.
 ## Docker MCP boundary
 
 `home/pi-mcp-gateway.nix` starts a host user service that owns Docker access.
-Its declarative server list currently contains only the NixOS documentation image.
-The gateway uses an explicit server list, so dynamic server-management tools are
-not exposed. Pi connects over authenticated Streamable HTTP on loopback; it has
-no Docker or host keyring socket. Container mounts and launch options are owned
-by the host configuration, not supplied by Pi.
+It loads the existing Docker MCP `pi` profile, including its configured servers
+and tool allowlists. Pi connects over authenticated Streamable HTTP on loopback;
+it has no Docker or host keyring socket. Container mounts and launch options are
+owned by the host profile, not supplied by Pi. Gateway management tools follow
+Docker's `dynamic-tools` feature setting; `--profile` does not disable them like
+`--servers` did.
+
+Gateway 0.44.1 drops `DOCKER_HOST` when spawning container-backed servers. The
+service supplies a local `docker` launcher through `PATH` that explicitly selects
+the user's rootless socket. This works around the prebuilt gateway's environment
+bug without giving Pi Docker access or changing Docker commands in normal shells.
 
 Gateway authorization is generated under `~/.cache/pi-mcp-gateway/` with private
 permissions. Only the authorization header file is made available inside `sand`.
-The gateway's environment file and Docker configuration stay outside. Add local
-servers to the declarative list rather than putting `docker run` or `npx` in
-Pi's MCP configuration.
+The gateway's environment file and Docker configuration stay outside. Manage
+servers through the Docker MCP `pi` profile rather than putting `docker run` or
+`npx` in Pi's MCP configuration.
 
 After rebuilding the configuration, check:
 

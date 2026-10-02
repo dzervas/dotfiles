@@ -29,7 +29,7 @@ final: prev: {
   # TODO: This uses the nightly releases
   # https://github.com/Mic92/nix-update/issues/639
   brave = prev.brave.overrideAttrs (finalAttrs: _oldAttrs: {
-    version = "1.98.41";
+    version = "1.99.9";
     src = final.fetchurl {
       url = "https://github.com/brave/brave-browser/releases/download/v${finalAttrs.version}/brave-browser_${finalAttrs.version}_amd64.deb";
       sha256 = "21d7ac36b64a408dc598bb6ec3db84b07b2cbca854d26b28055a2fb5b94a2e77";
@@ -83,18 +83,18 @@ final: prev: {
         runHook postBuild
       '';
 
-      # Required when a new package is introduced in upstream vs nix packaged       
+      # Required when a new package is introduced in upstream vs nix packaged
       # If no longer required comment it out, don't remove it, might be needed later
       # Preserve the new runtime workspaces before the inherited symlink cleanup.
-      postInstall = ''
-        local nm="$out/lib/node_modules/pi-monorepo/node_modules"
-        for ws in @earendil-works/pi-codemode:packages/codemode \
-                  @earendil-works/pi-mcp:packages/mcp; do
-          IFS=: read -r pkg src <<< "$ws"
-          rm "$nm/$pkg"
-          cp -r "$src" "$nm/$pkg"
-        done
-      '' + _prevAttrs.postInstall;
+      # postInstall = ''
+      #   local nm="$out/lib/node_modules/pi-monorepo/node_modules"
+      #   for ws in @earendil-works/pi-codemode:packages/codemode \
+      #             @earendil-works/pi-mcp:packages/mcp; do
+      #     IFS=: read -r pkg src <<< "$ws"
+      #     rm "$nm/$pkg"
+      #     cp -r "$src" "$nm/$pkg"
+      #   done
+      # '' + _prevAttrs.postInstall;
     }
   );
 }

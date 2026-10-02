@@ -42,6 +42,12 @@
 
 	// Theme
 	"buffer_font_family": "Maple Mono NF",
+	"buffer_font_features": {
+		"cv06": true,
+		"cv09": true,
+		"cv61": true,
+		"cv62": true,
+	},
 	"buffer_font_size": 18,
 	"agent_buffer_font_size": 17,
 	"icon_theme": "Colored Zed Icons Theme Dark",

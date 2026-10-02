@@ -83,7 +83,7 @@ let
     warnings.anthropicExtraUsage = false;
 
     packages = piPackages;
-    defaultTools = [ "+codemode" "+tool_search" ];
+    defaultTools = [ "+codemode" ]; # "+tool_search" results in busted cache when tools change
     # native-tools.ts loads the same factories in CLI and SDK child sessions.
     extensions = [ "-builtin:mcp" "-builtin:codemode" "-builtin:tool-search" ];
     npmCommand = [ "${nodejs}/bin/npm" ];

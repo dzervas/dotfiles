@@ -5,7 +5,7 @@
       "headers": {
         "Authorization": "!cat ~/.cache/pi-mcp-gateway/authorization"
       },
-      "description": "Documentation from the fixed host-managed Docker MCP servers",
+      "description": "Kagi web search and page retrieval, Context7/NixOS documentation, GitHub, and Grafana",
       "exposure": "codemode"
     }
   }

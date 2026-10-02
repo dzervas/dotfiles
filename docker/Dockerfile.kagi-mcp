@@ -39,3 +39,7 @@ USER 10001:10001
 WORKDIR /tmp
 ENTRYPOINT ["/usr/local/bin/kagi"]
 CMD ["mcp"]
+
+# docker build -f docker/Dockerfile.kagi-mcp -t pi-kagi-mcp:local .
+# docker mcp profile server add pi --server docker://pi-kagi-mcp:local
+# systemctl --user restart pi-mcp-gateway

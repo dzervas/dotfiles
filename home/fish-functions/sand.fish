@@ -86,6 +86,10 @@ while test $index -le (count $argv)
 end
 
 set -l project_dir (pwd)
+set -l project_mount_dir $project_dir
+if string match -q "$HOME/Lab/work/*" -- $project_dir
+	set project_mount_dir "$HOME/Lab/work"
+end
 set -l sandbox_id (printf '%s' $project_dir | sha256sum | cut -d' ' -f1)
 set -l sandbox_home "$HOME/.cache/pi/sandboxes/$sandbox_id/home"
 set -l dotfiles_extensions_dir "$HOME/Lab/dotfiles/pi/extensions"
@@ -93,7 +97,7 @@ set -l sandbox_extension "$dotfiles_extensions_dir/sandbox.ts"
 mkdir -p $sandbox_home
 
 if string match -q "$HOME/*" -- $project_dir
-	set -l project_parent_in_home (string replace "$HOME/" '' -- (dirname $project_dir))
+	set -l project_parent_in_home (string replace "$HOME/" '' -- (dirname $project_mount_dir))
 	mkdir -p "$sandbox_home/$project_parent_in_home"
 end
 
@@ -146,7 +150,7 @@ bwrap \
 	--ro-bind-try $HOME/.cache/pi-mcp-gateway/authorization $HOME/.cache/pi-mcp-gateway/authorization \
 	--bind $HOME/.pi/agent/run-history.jsonl $HOME/.pi/agent/run-history.jsonl \
 	--ro-bind $HOME/Lab/dotfiles/pi/sandbox.ts $HOME/.pi/agent/sandbox.ts \
-	--bind $project_dir $project_dir \
+	--bind $project_mount_dir $project_mount_dir \
 	--bind $HOME/.config/gcx $HOME/.config/gcx \
 	--ro-bind $HOME/.config/jj $HOME/.config/jj \
 	--ro-bind $HOME/.config/git $HOME/.config/git \

@@ -6,15 +6,12 @@
 }:
 let
   gatewayDir = "${config.home.homeDirectory}/.cache/pi-mcp-gateway";
-  catalogPath = "${config.home.homeDirectory}/.docker/mcp/catalogs/pi-fixed.yaml";
-  # Only this declarative set can be started by the gateway. No host mounts.
-  servers.nixos = {
-    title = "NixOS";
-    description = "NixOS package and option documentation";
-    type = "server";
-    image = "ghcr.io/utensils/mcp-nixos:latest";
-  };
-  catalog = (pkgs.formats.yaml { }).generate "pi-mcp-catalog.yaml" { registry = servers; };
+  # Gateway v0.44.1 drops DOCKER_HOST from stdio children, but preserves PATH.
+  # Keep the workaround service-local until upstream forwards Docker's environment.
+  rootlessDocker = pkgs.writeShellScriptBin "docker" ''
+    exec ${pkgs.docker}/bin/docker \
+      --host "unix:///run/user/$(${pkgs.coreutils}/bin/id -u)/docker.sock" "$@"
+  '';
   prepareAuth = pkgs.writeShellScript "pi-mcp-gateway-auth" ''
     exec ${pkgs.python3}/bin/python3 - ${lib.escapeShellArg gatewayDir} <<'PY'
     import os
@@ -35,35 +32,28 @@ let
   '';
 in
 {
-  # The CLI validates catalog paths, so materialize it instead of symlinking to /nix/store.
-  home.activation.installPiMcpCatalog = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    run ${pkgs.coreutils}/bin/install -Dm644 ${catalog} ${lib.escapeShellArg catalogPath}
-  '';
-
   systemd.user.services.pi-mcp-gateway = {
     Unit = {
-      Description = "Fixed Docker MCP servers for Pi";
+      Description = "Docker MCP pi profile for Pi";
       Requires = [ "docker.service" ];
       After = [ "docker.service" ];
     };
     Service = {
       Environment = [
         "DOCKER_HOST=unix://%t/docker.sock"
+        "PATH=${rootlessDocker}/bin:${config.home.profileDirectory}/bin:/run/current-system/sw/bin"
         "DOCKER_CLI_PLUGIN_DIRS=${pkgs.docker-mcp}/libexec/docker/cli-plugins"
         "DOCKER_MCP_IN_CONTAINER=1"
       ];
       EnvironmentFile = "-${gatewayDir}/environment";
       ExecStartPre = prepareAuth;
-      # --servers also disables the gateway's dynamic server-management tools.
       ExecStart = lib.escapeShellArgs [
           "${pkgs.docker}/bin/docker"
           "mcp"
           "gateway"
           "run"
-          "--servers"
-          (lib.concatStringsSep "," (builtins.attrNames servers))
-          "--catalog"
-          catalogPath
+          "--profile"
+          "pi"
           "--transport"
           "streaming"
           "--host"

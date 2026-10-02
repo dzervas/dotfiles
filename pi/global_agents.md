@@ -33,6 +33,7 @@ Do not guess when the answer can be cheaply verified.
 * Inspect relevant code, configuration, tests, logs, history, and documentation before drawing conclusions.
 * For diagnosing failures, establish the observed behavior and likely cause before changing code.
 * Search the web when an important fact may be version-dependent, recently changed, unfamiliar, or uncertain.
+* For general web search, use the gateway's Kagi tools. Discover them with `searchTools("kagi")` in codemode, inspect the matching tool schemas, and call their returned names. Prefer these tools over shell-based web search.
 * Prefer primary sources such as official documentation, source code, release notes, and issue trackers.
 * Do not browse when the repository or local tools already provide the authoritative answer.
 
