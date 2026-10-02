@@ -81,14 +81,15 @@
       watch = "command watch -c ";
 
       # Useful aliases
+      # Images labelled local.keep (home/docker-mcp-builder.nix) survive pruning.
       docker-prune = ''
         docker system df && \
         podman system df && \
-        podman system prune -a && \
+        podman system prune -a --filter 'label!=local.keep' && \
         podman container prune && \
         docker container prune && \
-        docker image prune -a --filter 'until=168h' -f && \
-        podman system prune -a --filter 'until=168h' -f && \
+        docker image prune -a --filter 'until=168h' --filter 'label!=local.keep' -f && \
+        podman system prune -a --filter 'until=168h' --filter 'label!=local.keep' -f && \
         docker builder prune && \
         docker volume prune && \
         podman volume prune && \
@@ -165,7 +166,7 @@
   virtualisation = {
     containers = {
       enable = true;
-      registries.search = [ "docker.io" ];
+      registries.settings.unqualified-search-registries = [ "docker.io" ];
     };
 
     docker = {

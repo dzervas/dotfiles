@@ -266,11 +266,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790955005,
-        "narHash": "sha256-EEQKUylD8zuRTmDFX4rbwsHQ+iZhqqOldYcFN8SLcE0=",
+        "lastModified": 1790972726,
+        "narHash": "sha256-TVgDIhNGx2bLl1fBOr13YOMJTiMKEoxpxT8leF7hh/8=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "0560d64401a6d5370732a69d08bc4a6b135962d9",
+        "rev": "47c54aec43c13a728094881551db60b5cc4cc16e",
         "type": "github"
       },
       "original": {
@@ -368,11 +368,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788176462,
-        "narHash": "sha256-pf3FLpmoDlBRre3WuGtZ4mTvl7yy4L4FesELAU9PoKo=",
+        "lastModified": 1790980009,
+        "narHash": "sha256-YoV90Sizu2ZQYEJkmlvY4vjVd3xEQc89CyWZkOfES7s=",
         "ref": "refs/heads/main",
-        "rev": "58dccf33a91279d27c4fffeeae3b326bd5e5eb0b",
-        "revCount": 90,
+        "rev": "049f263ad43ce81eabd0ac7bdb6a1aca0572743d",
+        "revCount": 91,
         "type": "git",
         "url": "ssh://git@git.vpn.dzerv.art/dzervas/nix-private"
       },
@@ -418,11 +418,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1790968772,
-        "narHash": "sha256-vNI199UBlWGxjrrSBJHw39sOe/U7V/wDvMSfoT16axc=",
+        "lastModified": 1790979109,
+        "narHash": "sha256-xM+ynEFs5TJcE5zPeOuOEsGeXM12QtySMnJrBLpxiA4=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "b8c96de74acd706c2b5d6c1f461e8cbe94c76f29",
+        "rev": "bd9baa89a4a9f3198612d09f140de6d484824179",
         "type": "github"
       },
       "original": {

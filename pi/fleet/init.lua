@@ -373,6 +373,12 @@ function M.start(opts)
           elseif row and row.sessions then row.collapsed = not row.collapsed; render()
           else open(row, true) end
         end,
+        -- Only switches to live agents; dead sessions still need Enter to start.
+        ["<2-LeftMouse>"] = function()
+          local mouse = vim.fn.getmousepos()
+          local row = mouse.winid == sidebar.win and rows[mouse.line]
+          if row and not row.sessions and not row.more and state(row) ~= "inactive" then open(row, true) end
+        end,
         n = function() new_directory(false) end,
         N = function() new_directory(true) end,
         s = snooze_session,

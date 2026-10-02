@@ -6,7 +6,12 @@
         "Authorization": "!cat ~/.cache/pi-mcp-gateway/authorization"
       },
       "description": "Kagi web search and page retrieval, Context7/NixOS documentation, GitHub, and Grafana",
-      "exposure": "codemode"
+      "exposure": "codemode",
+      "toolExposure": {
+        "kagi_search": "direct",
+        "kagi_quick": "direct",
+        "kagi_summarize": "direct"
+      }
     }
   }
 }

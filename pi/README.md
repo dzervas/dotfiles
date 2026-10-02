@@ -16,8 +16,31 @@ Docker's `dynamic-tools` feature setting; `--profile` does not disable them like
 
 Gateway 0.44.1 drops `DOCKER_HOST` when spawning container-backed servers. The
 service supplies a local `docker` launcher through `PATH` that explicitly selects
-the user's rootless socket. This works around the prebuilt gateway's environment
+the user's rootless socket. The gateway plugin is started directly rather than
+through `docker mcp`: nixpkgs' `docker` wrapper prepends its own `libexec/docker`
+(containing the real CLI) to `PATH`, which would shadow the launcher. This works around the prebuilt gateway's environment
 bug without giving Pi Docker access or changing Docker commands in normal shells.
+
+With `--profile`, the gateway passes container secrets as `se://` references
+(e.g. `KAGI_SESSION_TOKEN=se://docker/mcp/kagi.session_token`) and ignores
+`--secrets`. Only Docker Desktop resolves these, so plain Docker servers would
+receive the literal reference. The launcher runs through `docker pass run`, which
+resolves them from the secrets engine before `docker run` copies them into the
+container. The launcher also restores `HOME`, which the gateway strips too;
+`docker pass` locates the engine socket under `~/.cache`.
+
+The Kagi server image `kagi-mcp:local` is built from `docker/Dockerfile.kagi-mcp`
+by `docker-mcp-builder.service` (`home/docker-mcp-builder.nix`), which builds every
+`docker/Dockerfile.*-mcp` into rootless Docker. Podman's image store is separate, so
+Podman builds are not visible to the gateway. Activation also installs
+`~/.docker/mcp/catalogs/pi-kagi.yaml`. It declares the `kagi.session_token` secret,
+because image labels cannot bind secrets. Add the server once:
+
+```fish
+docker mcp secret set kagi.session_token   # token on stdin
+docker mcp profile server add pi --server file://pi-kagi.yaml
+systemctl --user restart pi-mcp-gateway
+```
 
 Gateway authorization is generated under `~/.cache/pi-mcp-gateway/` with private
 permissions. Only the authorization header file is made available inside `sand`.

@@ -8,7 +8,7 @@ After applying the Home Manager configuration, run `pifleet`. Before rebuilding,
 fish home/fish-functions/pifleet.fish
 ```
 
-The manager runs on the host. Selecting a saved session starts Pi through the existing `sand.fish` sandbox, with `--session` and an explicit cwd taken from the JSONL header. No agent starts merely because you open the manager. Hidden terminals keep running; closing the manager stops its agents.
+The manager runs on the host. Selecting a saved session starts Pi through the existing `sand.fish` sandbox, with `--session` and an explicit cwd taken from the JSONL header. Before entering the sandbox, the launcher loads the session directory's direnv environment the way the shell hook does: blocked `.envrc` files print direnv's error and the agent starts without them, and secrets listed in `sand.fish` are still stripped. No agent starts merely because you open the manager. Hidden terminals keep running; closing the manager stops its agents.
 
 | Key | Action |
 | --- | --- |
@@ -17,6 +17,7 @@ The manager runs on the host. Selecting a saved session starts Pi through the ex
 | Ctrl-f | Search user/assistant message text across session files, with surrounding-message preview |
 | Alt-down in an agent terminal | Leave terminal input and move to the previous window |
 | Enter in the sidebar | Open a session or expand/collapse a project |
+| Double-click in the sidebar | Switch to a running session; dead sessions are ignored |
 | n in the sidebar | Start immediately in the highlighted session/project directory |
 | N in the sidebar | Choose a directory, prefilled from the highlighted session/project |
 | s in the sidebar | Snooze; press again to clear an existing reminder |

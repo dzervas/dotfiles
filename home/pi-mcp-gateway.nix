@@ -8,10 +8,33 @@ let
   gatewayDir = "${config.home.homeDirectory}/.cache/pi-mcp-gateway";
   # Gateway v0.44.1 drops DOCKER_HOST from stdio children, but preserves PATH.
   # Keep the workaround service-local until upstream forwards Docker's environment.
+  # The gateway runs standalone: nixpkgs' docker wrapper would prepend its
+  # libexec/docker (containing the real CLI) to PATH and shadow this one.
+  # Profile secrets reach containers as se:// references, which only Docker
+  # Desktop resolves; docker pass run resolves them for plain Docker. It finds
+  # the engine socket under ~/.cache, but the gateway strips HOME as well.
   rootlessDocker = pkgs.writeShellScriptBin "docker" ''
-    exec ${pkgs.docker}/bin/docker \
+    export HOME=${lib.escapeShellArg config.home.homeDirectory}
+    exec ${pkgs.docker-secrets-engine}/bin/docker-pass run -- \
+      ${pkgs.docker}/bin/docker \
       --host "unix:///run/user/$(${pkgs.coreutils}/bin/id -u)/docker.sock" "$@"
   '';
+  # Built by docker-mcp-builder.nix.
+  kagiImage = "kagi-mcp:local";
+  kagiServerPath = "${config.home.homeDirectory}/.docker/mcp/catalogs/pi-kagi.yaml";
+  kagiServer = (pkgs.formats.yaml { }).generate "pi-kagi.yaml" {
+    name = "kagi";
+    title = "Kagi";
+    type = "server";
+    image = kagiImage;
+    description = "Kagi search, summarize, extract, quick answer and news";
+    secrets = [
+      {
+        name = "kagi.session_token";
+        env = "KAGI_SESSION_TOKEN";
+      }
+    ];
+  };
   prepareAuth = pkgs.writeShellScript "pi-mcp-gateway-auth" ''
     exec ${pkgs.python3}/bin/python3 - ${lib.escapeShellArg gatewayDir} <<'PY'
     import os
@@ -32,11 +55,22 @@ let
   '';
 in
 {
+  # The CLI rejects server files that resolve outside its catalog directory, so
+  # materialize it instead of symlinking to /nix/store.
+  home.activation.installPiKagiServer = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    run ${pkgs.coreutils}/bin/install -Dm644 ${kagiServer} ${lib.escapeShellArg kagiServerPath}
+  '';
+
   systemd.user.services.pi-mcp-gateway = {
     Unit = {
       Description = "Docker MCP pi profile for Pi";
       Requires = [ "docker.service" ];
-      After = [ "docker.service" ];
+      # Kagi is optional; a failed image build must not block the other servers.
+      Wants = [ "docker-mcp-builder.service" ];
+      After = [
+        "docker.service"
+        "docker-mcp-builder.service"
+      ];
     };
     Service = {
       Environment = [
@@ -48,8 +82,7 @@ in
       EnvironmentFile = "-${gatewayDir}/environment";
       ExecStartPre = prepareAuth;
       ExecStart = lib.escapeShellArgs [
-          "${pkgs.docker}/bin/docker"
-          "mcp"
+          "${pkgs.docker-mcp}/libexec/docker/cli-plugins/docker-mcp"
           "gateway"
           "run"
           "--profile"

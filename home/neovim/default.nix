@@ -116,6 +116,21 @@ in {
         event = "FileType";
         pattern = builtins.concatStringsSep "," ["nix" "hcl" "tf" "yml" "yaml"];
       }
+      {
+        desc = "Drop terminal row padding from yanks";
+        event = "TextYankPost";
+        pattern = "*";
+        # TUIs (e.g. Pi) pad rows with literal spaces to the terminal width
+        callback = utils.mkRaw ''
+          function()
+            local event = vim.v.event
+            if vim.bo.buftype ~= "terminal" or event.operator ~= "y" then return end
+            local lines = vim.tbl_map(function(line) return (line:gsub("%s+$", "")) end, event.regcontents)
+            vim.fn.setreg(event.regname, lines, event.regtype)
+            if event.regname == "" then vim.fn.setreg("0", lines, event.regtype) end
+          end
+        '';
+      }
     ];
 
     diagnostic.settings = {

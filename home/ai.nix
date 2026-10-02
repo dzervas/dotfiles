@@ -225,6 +225,12 @@ in
       ".pi/agent/mcp.json".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/mcp.json";
       ".pi/agent/node_modules".source = piExtensionNodeModules + "/node_modules";
+      ".pi/agent/subagents.json".text = builtins.toJSON {
+        maxConcurrent = 16;
+        consumedSessionRetentionMinutes = 4 * 60;
+        unconsumedSessionRetentionMinutes = 24 * 60;
+        abortAllOnInterrupt = false;
+      };
       ".codex/AGENTS.md".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/global_agents.md";
       ".codex/skills/global".source =

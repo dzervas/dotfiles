@@ -6,20 +6,21 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Changes with every release, so a new release invalidates the cached download below.
+ADD https://github.com/Microck/kagi-cli/releases/latest/download/release-notes.json /release-notes.json
+
 RUN set -eu; \
     case "$TARGETARCH" in \
-      amd64) \
-        target=x86_64-unknown-linux-gnu; \
-        sha=0cd2105aaf2de0f681338bda87c0866e8ce47b3d81da9a5effb15a4fdc04e202 ;; \
-      arm64) \
-        target=aarch64-unknown-linux-gnu; \
-        sha=ec7f4f437b392ab43f856fcb39410b53965a969af77a981d460ad9fe2b4789f2 ;; \
+      amd64) target=x86_64-unknown-linux-gnu ;; \
+      arm64) target=aarch64-unknown-linux-gnu ;; \
       *) printf 'Unsupported architecture: %s\n' "$TARGETARCH" >&2; exit 1 ;; \
     esac; \
+    latest=$(curl -fsSLo /dev/null -w '%{url_effective}' --retry 3 \
+      https://github.com/Microck/kagi-cli/releases/latest); \
+    tag=${latest##*/}; \
     curl -fsSL --retry 3 \
-      "https://github.com/Microck/kagi-cli/releases/download/v0.20.1/kagi-v0.20.1-${target}" \
+      "https://github.com/Microck/kagi-cli/releases/download/${tag}/kagi-${tag}-${target}" \
       -o /kagi; \
-    printf '%s  /kagi\n' "$sha" | sha256sum -c -; \
     chmod 0755 /kagi
 
 FROM debian:trixie-slim
@@ -40,6 +41,9 @@ WORKDIR /tmp
 ENTRYPOINT ["/usr/local/bin/kagi"]
 CMD ["mcp"]
 
-# docker build -f docker/Dockerfile.kagi-mcp -t pi-kagi-mcp:local .
-# docker mcp profile server add pi --server docker://pi-kagi-mcp:local
+# Built as kagi-mcp:local by docker-mcp-builder.service
+# (home/pi-mcp-gateway.nix). One-time setup:
+# docker mcp secret set kagi.session_token
+# docker mcp profile server add pi --server file://pi-kagi.yaml
 # systemctl --user restart pi-mcp-gateway
+# docker mcp profile tools pi --disable kagi.kagi_extract --disable kagi.kagi_fastgpt --disable kagi.kagi_enrich_web --disable kagi.kagi_enrich_news --disable kagi.kagi_history_list --disable kagi.kagi_history_stats --disable kagi.kagi_site_pref_list --disable kagi.kagi_assistant_custom_list --disable kagi.kagi_lens_list --disable kagi.kagi_custom_bang_list --disable kagi.kagi_redirect_list --disable kagi.kagi_auth_check

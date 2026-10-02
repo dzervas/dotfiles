@@ -152,6 +152,30 @@ for line in sys.stdin:
   assert(vim.fn.jobwait({ a.job }, 0)[1] == -1)
   assert(fleet.projects()[1].encoded == "--home-dzervas-Lab-work-job-ops--", "working folder was not promoted")
   local job, buffer = a.job, a.buf
+  -- Double-click switches to live agents only; dead sessions stay unstarted.
+  local function double_click(text)
+    local line
+    for index, value in ipairs(sidebar_lines()) do if value:find(text, 1, true) then line = index end end
+    assert(line, "missing sidebar row: " .. text)
+    api.nvim_set_current_win(fleet.sidebar().win)
+    local getmousepos = vim.fn.getmousepos
+    vim.fn.getmousepos = function() return { winid = fleet.sidebar().win, line = line } end
+    vim.fn.maparg("<2-LeftMouse>", "n", false, true).callback()
+    vim.fn.getmousepos = getmousepos
+  end
+  vim.cmd.stopinsert()
+  for _, project in ipairs(fleet.projects()) do
+    if project.encoded == "--home-dzervas-Lab-work-job-ops--" then project.collapsed = false end
+  end
+  vim.wait(300)
+  api.nvim_win_set_buf(fleet.main(), api.nvim_create_buf(false, true))
+  double_click("Live importer")
+  assert(vim.wait(1000, function() return api.nvim_get_current_win() == fleet.main() and api.nvim_win_get_buf(fleet.main()) == buffer end),
+    "double-click did not switch to the live agent")
+  vim.cmd.stopinsert()
+  double_click("Geometry")
+  assert(find("b").job == nil and api.nvim_win_get_buf(fleet.main()) == buffer, "double-click started a dead session")
+  fleet.open(a, false)
   assert(vim.o.titlestring == "  " .. a.project.label)
   -- A hidden waiting agent must animate the orchestrator, including fullscreen.
   local b = find("b")

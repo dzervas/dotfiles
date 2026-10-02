@@ -1,11 +1,14 @@
 { config, lib, pkgs, ... }: {
   setup.runner = "rofi -show combi";
+
   programs.rofi = let
     # Used to denote that a value should not be quoted within CSS
     inherit (config.lib.formats.rasi) mkLiteral;
     inherit (lib) mkForce;
   in {
     enable = true;
+
+    settings.font = "${config.stylix.fonts.monospace.name} ${toString config.stylix.fonts.sizes.popups}";
 
     location = "center";
     plugins = with pkgs; [ rofi-calc ];

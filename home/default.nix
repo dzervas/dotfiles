@@ -14,6 +14,7 @@
     ./brave.nix
     ./dev.nix
     ./direnv.nix
+    ./docker-mcp-builder.nix
     ./docker-secrets-engine.nix
     ./easyeffects
     # ./firefox.nix
@@ -150,6 +151,9 @@
     };
 
     targets.zed.enable = false;
+    # Stylix sets the deprecated programs.rofi.font, even when rofi is disabled.
+    # The font is set in desktop/home/components/rofi.nix instead
+    targets.rofi.fonts.enable = false;
   };
 
   # Enable the mid-click paste to gsettings-based apps (e.g. ghostty)
