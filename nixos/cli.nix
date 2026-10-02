@@ -143,6 +143,9 @@
           "/bin" = "read";
           "/usr/bin" = "read";
 
+          # Skills
+          "/home/dzervas/.pi/agent/git/" = "read";
+
           "/etc" = "read";
 
           # tooling/config

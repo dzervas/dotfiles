@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
 import test from "node:test";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import titlebar from "./titlebar-spinner.ts";
-import { withHumanInput } from "./lib/human-input.ts";
-import { evictSession, setRenderSession, setTasks, TODO_CHANGED_EVENT } from "./todo/state.ts";
+import titlebar from "../titlebar-spinner.ts";
+import { withHumanInput } from "./human-input.ts";
+import { evictSession, setRenderSession, setTasks, TODO_CHANGED_EVENT } from "../todo/state.ts";
 
 function harness(mode = "tui") {
 	const handlers = new Map<string, (event: unknown, ctx: ExtensionContext) => unknown>();

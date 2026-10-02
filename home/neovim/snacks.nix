@@ -2,6 +2,34 @@
 let
   inherit (inputs.nixvim.lib.nixvim) utils;
   listAndAttrs = action: attrs: utils.listToUnkeyedAttrs [ action ] // attrs;
+  terminalTitle = ''
+    function(self)
+      local terminals = Snacks.terminal.list()
+      table.sort(terminals, function(a, b) return vim.b[a.buf].snacks_terminal.id < vim.b[b.buf].snacks_terminal.id end)
+      local titles = {}
+      for _, terminal in ipairs(terminals) do
+        local label = ("%d: %s"):format(vim.b[terminal.buf].snacks_terminal.id,
+          vim.b[terminal.buf].term_title or "Terminal")
+        titles[#titles + 1] = { terminal == self and (" [" .. label .. "] ") or (" " .. label .. " "), "FloatBorder" }
+      end
+      self:set_title(titles)
+    end
+  '';
+  cycleTerminal = direction: utils.mkRaw ''
+    function(self)
+      local terminals = Snacks.terminal.list()
+      table.sort(terminals, function(a, b)
+        return vim.b[a.buf].snacks_terminal.id < vim.b[b.buf].snacks_terminal.id
+      end)
+      for i, terminal in ipairs(terminals) do
+        if terminal == self then
+          self:hide()
+          terminals[((i - 1 + (${toString direction})) % #terminals) + 1]:show():focus()
+          return
+        end
+      end
+    end
+  '';
 in
 {
   programs.nixvim = {
@@ -51,6 +79,8 @@ in
             easing = "linear";
           };
         };
+
+        styles.notification.focusable = false;
 
         # Notification system (integrates with vim.notify)
         notifier = {
@@ -153,9 +183,37 @@ in
               height = default_size;
               width = default_size;
 
-              wo.winbar = "(%{b:snacks_terminal.id}/%{luaeval('#Snacks.terminal.list()')}) %{get(b:, 'term_title', 'No Title')}";
-
-              # TODO: These don't work :/
+              wo.winbar = "";
+              title_pos = "left";
+              on_win = utils.mkRaw terminalTitle;
+              on_buf = utils.mkRaw ''
+                function(self)
+                  local update_title = ${terminalTitle}
+                  -- Register before Snacks' auto-close handler removes the window.
+                  vim.api.nvim_create_autocmd("TermClose", {
+                    group = self.augroup,
+                    buffer = self.buf,
+                    callback = function()
+                      if vim.v.event.status ~= 0 or not self:win_valid() then return end
+                      local id = vim.b[self.buf].snacks_terminal.id
+                      vim.schedule(function()
+                        local terminals = Snacks.terminal.list()
+                        table.sort(terminals, function(a, b) return vim.b[a.buf].snacks_terminal.id < vim.b[b.buf].snacks_terminal.id end)
+                        local previous = terminals[#terminals]
+                        for _, terminal in ipairs(terminals) do
+                          if vim.b[terminal.buf].snacks_terminal.id < id then previous = terminal end
+                        end
+                        if previous then previous:show():focus() end
+                      end)
+                    end,
+                  })
+                  self:on({ "TermRequest", "TextChanged", "TextChangedT" }, function()
+                    vim.schedule(function()
+                      if self:win_valid() then update_title(self) end
+                    end)
+                  end, { buf = true })
+                end
+              '';
             };
           };
         styles.terminal.keys =
@@ -173,13 +231,21 @@ in
               ]
               // {
                 inherit desc mode;
-                expr = true;
               };
           in
           {
             new = keymap {
               key = "<A-Return>";
-              action = utils.mkRaw "function() Snacks.terminal.open() end";
+              action = utils.mkRaw ''
+                function(self)
+                  local count = 0
+                  for _, terminal in ipairs(Snacks.terminal.list()) do
+                    count = math.max(count, vim.b[terminal.buf].snacks_terminal.id)
+                  end
+                  self:hide()
+                  Snacks.terminal.open(nil, { count = count + 1 })
+                end
+              '';
               desc = "Open another terminal";
               mode = [
                 "n"
@@ -188,7 +254,7 @@ in
             };
             next = keymap {
               key = "<A-Right>";
-              action = utils.mkRaw "function() Snacks.terminal.next() end";
+              action = cycleTerminal 1;
               desc = "Go to next terminal";
               mode = [
                 "n"
@@ -197,29 +263,21 @@ in
             };
             prev = keymap {
               key = "<A-Left>";
-              action = utils.mkRaw "function() Snacks.terminal.prev() end";
+              action = cycleTerminal (-1);
               desc = "Go to previous terminal";
               mode = [
                 "n"
                 "t"
               ];
             };
-            term_normal = keymap {
-              key = "<Esc>";
-              action = utils.mkRaw ''
-                function(self)
-                  self.esc_timer = self.esc_timer or (vim.uv or vim.loop).new_timer()
-                  if self.esc_timer:is_active() then
-                    self.esc_timer:stop()
-                    vim.cmd("stopinsert")
-                  else
-                    self.esc_timer:start(200, 0, function() end)
-                    return "<esc>"
-                  end
-                end
-              '';
-              desc = "Double escape to normal mode";
-              mode = "t";
+            toggle = keymap {
+              key = "<A-Esc>";
+              action = "hide";
+              desc = "Hide terminal";
+              mode = [
+                "n"
+                "t"
+              ];
             };
           };
 
@@ -267,42 +325,6 @@ in
           };
         };
       };
-
-      luaConfig.post = ''
-        function Snacks.terminal.get_buf_id()
-          local terminals = Snacks.terminal.list()
-          if #terminals <= 1 then return end
-
-          local current_buf = vim.api.nvim_get_current_buf()
-          local current_idx = nil
-          for i, term in ipairs(terminals) do
-            if term.buf == current_buf then
-              current_idx = i
-              break
-            end
-          end
-
-          if not current_idx then return nil, nil end
-
-          return current_idx, #terminals
-        end
-
-        function Snacks.terminal.next()
-          local current_idx, terminals_count = Snacks.terminal.get_buf_id()
-          if not current_idx then return end
-          local next_idx = (current_idx % terminals_count) + 1
-          Snacks.terminal.get(current_idx):hide()
-          Snacks.terminal.get(next_idx):show()
-        end
-
-        function Snacks.terminal.prev()
-          local current_idx, terminals_count = Snacks.terminal.get_buf_id()
-          if not current_idx then return end
-          local prev_idx = ((current_idx - 2 + terminals_count) % terminals_count) + 1
-          Snacks.terminal.get(current_idx):hide()
-          Snacks.terminal.get(prev_idx):show()
-        end
-      '';
     };
 
     # Keybindings for snacks functionality

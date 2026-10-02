@@ -153,7 +153,7 @@ in {
     };
 
     extraConfig = ''
-      font pango:Iosevka 10
+      font pango:Maple Mono NF 10
       hide_edge_borders both
       show_marks yes
 

@@ -14,6 +14,13 @@
       cursor-style = "block";
       cursor-style-blink = false;
       font-family = config.stylix.fonts.monospace.name;
+      # Web builder for features: https://font.subf.dev/en/playground/?normal
+      font-feature = [
+        "cv06"
+        "cv09"
+        "cv61"
+        "cv62"
+      ];
       font-size = config.stylix.fonts.sizes.terminal;
       gtk-single-instance = true;
       shell-integration-features = "no-cursor"; # Fish sets cursor as bar

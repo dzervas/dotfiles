@@ -2,6 +2,12 @@
   inherit (inputs.nixvim.lib.nixvim) utils;
 in {
   programs.nixvim = {
+    opts = {
+      title = true;
+      titlelen = 0;
+      titlestring = "  %{fnamemodify(getcwd(), ':~')} %{expand('%:.')}";
+    };
+
     plugins = {
       # Buffer view helpers
       barbar = {

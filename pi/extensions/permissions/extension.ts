@@ -31,10 +31,16 @@ function isSandboxed() {
 export default function permissionsExtension(pi: ExtensionAPI) {
 	const readMode = createReadMode(pi);
 	let sandboxed = isSandboxed();
-	let disablePermissions = false;
+	let disablePermissions = sandboxed;
+	let sandboxDefaultApplied = sandboxed;
 
-	pi.events.on(PI_SANDBOX_STATE_EVENT, (state) => {
-		sandboxed = Boolean((state as SandboxState | undefined)?.enabled);
+	function updateSandboxState(enabled: boolean) {
+		sandboxed = enabled;
+		if (!sandboxed) disablePermissions = false;
+		else if (!sandboxDefaultApplied) {
+			disablePermissions = true;
+			sandboxDefaultApplied = true;
+		}
 
 		if (sandboxed) {
 			pi.registerCommand("yolo", {
@@ -54,6 +60,10 @@ export default function permissionsExtension(pi: ExtensionAPI) {
 				},
 			});
 		}
+	}
+	updateSandboxState(sandboxed);
+	pi.events.on(PI_SANDBOX_STATE_EVENT, (state) => {
+		updateSandboxState(Boolean((state as SandboxState | undefined)?.enabled));
 	});
 
 	function permissionsDisabled() {

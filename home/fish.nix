@@ -112,6 +112,11 @@
         description = "Run pi inside a bubblewrap sandbox";
         wraps = "pi";
       };
+      pifleet = {
+        body = builtins.readFile ./fish-functions/pifleet.fish;
+        description = "Manage sandboxed Pi sessions in Neovim";
+        wraps = "nvim";
+      };
       rebuild = {
         body = builtins.readFile ./fish-functions/rebuild.fish;
         description = "Rebuild the system";

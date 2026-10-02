@@ -17,20 +17,20 @@ let
   catalog = (pkgs.formats.yaml { }).generate "pi-mcp-catalog.yaml" { registry = servers; };
   prepareAuth = pkgs.writeShellScript "pi-mcp-gateway-auth" ''
     exec ${pkgs.python3}/bin/python3 - ${lib.escapeShellArg gatewayDir} <<'PY'
-      import os
-      import secrets
-      import sys
-      from pathlib import Path
+    import os
+    import secrets
+    import sys
+    from pathlib import Path
 
-      os.umask(0o077)
-      directory = Path(sys.argv[1])
-      directory.mkdir(parents=True, exist_ok=True, mode=0o700)
-      environment = directory / "environment"
-      authorization = directory / "authorization"
-      if not environment.exists() or not authorization.exists():
-          token = secrets.token_urlsafe(32)
-          environment.write_text(f"MCP_GATEWAY_AUTH_TOKEN={token}\n")
-          authorization.write_text(f"Bearer {token}\n")
+    os.umask(0o077)
+    directory = Path(sys.argv[1])
+    directory.mkdir(parents=True, exist_ok=True, mode=0o700)
+    environment = directory / "environment"
+    authorization = directory / "authorization"
+    if not environment.exists() or not authorization.exists():
+        token = secrets.token_urlsafe(32)
+        environment.write_text(f"MCP_GATEWAY_AUTH_TOKEN={token}\n")
+        authorization.write_text(f"Bearer {token}\n")
     PY
   '';
 in

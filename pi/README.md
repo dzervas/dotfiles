@@ -121,3 +121,25 @@ what deserves a note, with guidance to avoid secrets, transient progress, guesse
 and facts readily recovered from code. Local models can later suggest shortening
 or duplicate merges on demand. Keep personal project notes out of version control
 using the repository's local exclude file when appropriate.
+
+
+## Experimental Pi Durable
+
+The `pi-durable` package installs a separate `pi-durable` command alongside Pi.
+After `rebuild`, run `pi-durable` for a new session or `pi-durable --continue`
+(`-c`) to reopen the newest Durable session for the current directory.
+
+It runs upstream's experimental coding-agent TUI through its source resolver,
+with the Durable SDK and its dependencies also compiled for library use under
+`lib/pi-durable/packages/durable/dist` in the package output. The source version,
+offline npm cache and provider model catalog follow `pi-coding-agent-latest`.
+
+The demo shares Pi's settings and authentication, while keeping its SQLite
+sessions under `~/.pi/agent/experimental/durable-sessions`. It has its own
+extension registry: the normal Pi extensions, including our permission dialogs,
+are not loaded by this demo. Its command-line options currently support only
+`--continue` / `-c`; model selection happens in the TUI.
+
+## Neovim session manager
+
+`pifleet` opens the opt-in [Snacks session tree](fleet/README.md) using normal Neovim configuration. It launches sandboxed Pi terminals, searches saved messages, and stores snooze reminders. Before rebuilding, run `fish home/fish-functions/pifleet.fish` from the dotfiles repository.

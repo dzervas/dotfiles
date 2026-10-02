@@ -26,10 +26,8 @@ in
 
     fonts = {
       monospace = {
-        package = pkgs.nerd-fonts.iosevka;
-        name = "Iosevka Nerd Font";
-        # package = pkgs.maple-mono.NF;
-        # name = "Maple Mono NF";
+        package = pkgs.maple-mono.NF;
+        name = "Maple Mono NF";
       };
       sizes = {
         desktop = 12;

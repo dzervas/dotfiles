@@ -9,6 +9,9 @@
 final: prev: {
   buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix { };
   claude-chrome = prev.callPackage ./claude-chrome.nix { };
+  pi-durable = prev.callPackage ./pi-durable.nix {
+    inherit (final) pi-coding-agent-latest;
+  };
   # nix-update:cursortab-nvim --subpackage server
   cursortab-nvim = prev.callPackage ./cursortab-nvim.nix { };
   # nix-update:codex-latest --custom-dep platformSrc
@@ -47,7 +50,6 @@ final: prev: {
    });
 
   # nix-update:pi-coding-agent-latest --custom-dep modelData
-  # Broken:
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
     finalAttrs: _prevAttrs: {
       version = "1.0.0";
@@ -72,34 +74,27 @@ final: prev: {
         hash = "sha256-85uZwpuFmPF1sQhA5dKoGYPnwM5crk19+DoQB0R9LCs=";
       };
 
-      # Required when a new package is introduced in upstream vs nix packaged
-      # If no longer required comment it out, don't remove it, might be needed later
-      # buildPhase = ''
-      #   runHook preBuild
-      #
-      #   npx tsgo -p packages/tui/tsconfig.build.json
-      #   npx tsgo -p packages/telemetry/tsconfig.build.json
-      #   npx tsgo -p packages/ai/tsconfig.build.json
-      #   npx tsgo -p packages/chord/tsconfig.build.json
-      #   npx tsgo -p packages/agent/tsconfig.build.json
-      #   npx tsgo -p packages/protocol/tsconfig.build.json
-      #   npx tsgo -p packages/client/tsconfig.build.json
-      #   npx tsgo -p packages/server/tsconfig.build.json
-      #   npm run build --workspace=packages/coding-agent
-      #
-      #   runHook postBuild
-      # '';
+      # Use upstream's offline build order and TypeScript compiler.
+      buildPhase = ''
+        runHook preBuild
 
-      # If the above required new packages, this needs to patch them
-      # postInstall = ''
-      #   local nm="$out/lib/node_modules/pi-monorepo/node_modules"
-      #   for ws in @earendil-works/chord:packages/chord \
-      #             @earendil-works/pi-server:packages/server; do
-      #     IFS=: read -r pkg src <<< "$ws"
-      #     rm "$nm/$pkg"
-      #     cp -r "$src" "$nm/$pkg"
-      #   done
-      # '' + _prevAttrs.postInstall;
+        npm run build:offline
+
+        runHook postBuild
+      '';
+
+      # Required when a new package is introduced in upstream vs nix packaged       
+      # If no longer required comment it out, don't remove it, might be needed later
+      # Preserve the new runtime workspaces before the inherited symlink cleanup.
+      postInstall = ''
+        local nm="$out/lib/node_modules/pi-monorepo/node_modules"
+        for ws in @earendil-works/pi-codemode:packages/codemode \
+                  @earendil-works/pi-mcp:packages/mcp; do
+          IFS=: read -r pkg src <<< "$ws"
+          rm "$nm/$pkg"
+          cp -r "$src" "$nm/$pkg"
+        done
+      '' + _prevAttrs.postInstall;
     }
   );
 }

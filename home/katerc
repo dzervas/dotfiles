@@ -84,7 +84,7 @@ Color Theme=Dracula
 Line Height Multiplier=1
 Show Indentation Lines=true
 Show Whole Bracket Expression=false
-Text Font=Iosevka,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+Text Font=Maple Mono NF,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
 Word Wrap Marker=true
 
 [KTextEditor View]

@@ -41,7 +41,7 @@
 	},
 
 	// Theme
-	"buffer_font_family": "Iosevka Nerd Font Propo",
+	"buffer_font_family": "Maple Mono NF",
 	"buffer_font_size": 18,
 	"agent_buffer_font_size": 17,
 	"icon_theme": "Colored Zed Icons Theme Dark",

@@ -36,7 +36,7 @@
         text = "cmd[update:100] date +'%H:%M'";
 
         font_size = 80;
-        font_family = "Iosevka Term Extrabold";
+        font_family = "Maple Mono NF ExtraBold";
 
         position = "0, -200";
         halign = "center";
@@ -46,7 +46,7 @@
         text = "cmd[update:1000] date +'%A, %-d %B %Y'";
 
         font_size = 34;
-        font_family = "Iosevka Term Extrabold";
+        font_family = "Maple Mono NF ExtraBold";
 
         position = "0, -325";
         halign = "center";
@@ -56,7 +56,7 @@
         text = "cmd[update:1000] if [ $ATTEMPTS -gt 0 ]; then echo 🕵️‍♂️ $ATTEMPTS; fi";
 
         font_size = 40;
-        font_family = "Iosevka Term Extrabold";
+        font_family = "Maple Mono NF ExtraBold";
 
         position = "0, 100";
         halign = "center";

@@ -39,6 +39,9 @@
 !pi
 !pi/*.json
 !pi/extensions
+!pi/fleet
+!pi/fleet/*.lua
+!pi/fleet/*.fish
 !pi/benchmarks
 !pi/benchmarks/memory
 !pi/benchmarks/memory/*.py

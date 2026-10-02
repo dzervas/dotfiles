@@ -43,7 +43,7 @@ let
   };
 
   piPackages = [
-    "npm:@gotgenes/pi-subagents@21.8.0"
+    "npm:@gotgenes/pi-subagents@21.8.1"
     "npm:pi-cliproxyapi-provider@0.15.48"
     {
       source = "git:github.com/mattpocock/skills";
@@ -75,6 +75,7 @@ let
     tuiMode = "regular";
     outputPad = 0;
     cacheWarming = "idle";
+    theme = "dark-classic"; # pre-v1 dark palette, see pi/themes/
     terminal = {
       showTerminalProgress = true;
       clearOnShrink = true;
@@ -200,6 +201,7 @@ in
   home = {
     packages = with pkgs; [
       lmstudio
+      pi-durable
       bubblewrap # for codex
       openspec
       piExtensionBump
@@ -218,6 +220,8 @@ in
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/extensions";
       ".pi/agent/skills".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/skills";
+      ".pi/agent/themes".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/themes";
       ".pi/agent/mcp.json".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/mcp.json";
       ".pi/agent/node_modules".source = piExtensionNodeModules + "/node_modules";
