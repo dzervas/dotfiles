@@ -2,7 +2,7 @@
 { config, inputs, lib, modulesPath, pkgs, ... }: let
   keys_str = builtins.fetchurl {
     url = "https://github.com/dzervas.keys";
-    sha256 = "sha256:1wpgdqrvjqy9lldc6wns3i31sm1ic9yf7354q2c9j5hsfl2pbynh";
+    sha256 = "sha256:0rncd8f8z1lhji65ddh6r4jx62nk499vcda5c06gbrfa1s9f7275";
   };
 
   keys_lines = lib.strings.splitString "\n" keys_str;
@@ -13,8 +13,9 @@ in {
     (modulesPath + "/installer/cd-dvd/channel.nix")
   ];
 
+  image.fileName = "dzervas-nixos-${config.system.nixos.label}.iso";
+
   isoImage = {
-    isoName = lib.mkForce "dzervas-nixos-${config.system.nixos.label}.iso";
     squashfsCompression = "zstd -Xcompression-level 9";
     makeEfiBootable = true;
     makeUsbBootable = true;
@@ -50,4 +51,7 @@ in {
   # Pin nixpkgs to the flake input, so that the packages installed
   # come from the flake inputs.nixpkgs.url.
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
+
+  fonts.fontconfig.enable = true; # kmscon requires it
+  boot.zfs.forceImportRoot = false; # warning
 }

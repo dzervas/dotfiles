@@ -135,6 +135,7 @@ bwrap \
 	--ro-bind /etc/profiles/per-user/$USER/ /etc/profiles/per-user/$USER/ \
 	--bind $sandbox_home $HOME \
 	--ro-bind $HOME/.pi/agent/settings.json $HOME/.pi/agent/settings.json \
+	--ro-bind $HOME/.pi/agent/subagents.json $HOME/.pi/agent/subagents.json \
 	--ro-bind $HOME/.pi/agent/models.json $HOME/.pi/agent/models.json \
 	--ro-bind $HOME/.pi/agent/node_modules $HOME/.pi/agent/node_modules \
 	--ro-bind $HOME/.pi/agent/npm $HOME/.pi/agent/npm \
