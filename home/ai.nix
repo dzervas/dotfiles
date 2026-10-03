@@ -44,7 +44,7 @@ let
 
   piPackages = [
     "npm:@gotgenes/pi-subagents@21.8.1"
-    "npm:pi-cliproxyapi-provider@0.15.48"
+    "npm:pi-cliproxyapi-provider@0.15.52"
     {
       source = "git:github.com/mattpocock/skills";
       skills = [
@@ -90,6 +90,7 @@ let
 
     pi-cliproxyapi-provider = {
       gpt56ContextWindow = "full"; # 1M context for GPT 5.6/6
+      modelOverrides."gpt-6.1-sol".contextWindow = 1050000; # Not updated yet?
     };
 
     defaultModel = builtins.elemAt enabledModels 0;

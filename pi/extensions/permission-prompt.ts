@@ -120,8 +120,6 @@ async function renderPermissionDialog(
 		{ value: "deny", label: "No", allowMessage: true },
 	];
 
-	process.stderr.write("\x07"); // ring the terminal bell to flag the prompt
-
 	const title = label ? `󱅞 Permission request — ${label}` : "󱅞 Permission request";
 
 	const result = await withHumanInput(pi, () => ctx.ui.custom<DialogueResult | null>((tui, theme, _kb, done) =>

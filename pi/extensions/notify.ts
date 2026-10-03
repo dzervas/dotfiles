@@ -2,7 +2,8 @@
  * https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/examples/extensions/notify.ts
  * Pi Notify Extension
  *
- * Sends a native terminal notification when Pi agent is done and waiting for input.
+ * Rings the terminal bell and sends a native notification when a dialog needs input
+ * or the Pi agent is done.
  * Supports multiple terminal protocols:
  * - OSC 777: Ghostty, iTerm2, WezTerm, rxvt-unicode
  * - OSC 99: Kitty
@@ -10,6 +11,7 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { HUMAN_INPUT_EVENT, type HumanInputEvent } from "./lib/human-input.ts";
 
 function windowsToastScript(title: string, body: string): string {
 	const type = "Windows.UI.Notifications";
@@ -40,6 +42,8 @@ function notifyWindows(title: string, body: string): void {
 }
 
 function notify(title: string, body: string): void {
+	// The BEL terminating an OSC sequence does not ring the terminal bell.
+	process.stdout.write("\x07");
 	if (process.env.WT_SESSION) {
 		notifyWindows(title, body);
 	} else if (process.env.KITTY_WINDOW_ID) {
@@ -50,6 +54,21 @@ function notify(title: string, body: string): void {
 }
 
 export default function (pi: ExtensionAPI) {
+	let interactive = false;
+
+	pi.on("session_start", (_event, ctx) => {
+		interactive = ctx.mode === "tui";
+	});
+
+	pi.events.on(HUMAN_INPUT_EVENT, (value) => {
+		const event = value as HumanInputEvent;
+		if (interactive && event.waiting) notify("Pi", "Input required");
+	});
+
+	pi.on("session_shutdown", () => {
+		interactive = false;
+	});
+
 	pi.on("agent_settled", async (_event, ctx) => {
 		if (ctx.mode !== "tui") return;
 		notify("Pi", "Ready for input");

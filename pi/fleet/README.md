@@ -23,7 +23,7 @@ The manager runs on the host. Selecting a saved session starts Pi through the ex
 | s in the sidebar | Snooze; press again to clear an existing reminder |
 | q in the sidebar | Hide the sidebar |
 
-The terminal title shows `  <selected project label>`. When any managed agent needs human input, including a hidden agent, it alternates `` / `` once per second. Working and idle agents do not trigger this animation.
+The terminal title shows `  <selected project label> [<running>/<idle>]`. When any managed agent is non-idle (working or waiting for input), a braille spinner animates before the chat bubble, including for hidden agents. The counts include all managed live agents; exited agents are excluded. When any managed agent needs human input, the chat bubble also alternates `` / `` once per second. When all agents are idle, the spinner disappears and the bubble stays static. Dialog and completion notifications from managed agents, including hidden ones, are forwarded to the outer terminal with a bell (OSC 777).
 
 If the highlighted row has no existing directory available, both **n** and **N** ask for a directory with `$HOME` prefilled. Project paths come from their session headers, never from the lossy encoded folder names.
 

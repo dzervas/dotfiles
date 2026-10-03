@@ -19,6 +19,11 @@ local function write(name, session_name)
 end
 write("a", "Importer")
 write("b", "Geometry")
+local original_stdout, terminal_notifications = io.stdout, {}
+io.stdout = {
+  write = function(_, text) terminal_notifications[#terminal_notifications + 1] = text end,
+  flush = function() end,
+}
 local ok, err = pcall(function()
   local Sessions = dofile(root .. "/sessions.lua")
   local cache = {}
@@ -40,6 +45,8 @@ for line in sys.stdin:
  if line.strip() == 'switch': report(file.replace('/a.jsonl','/b.jsonl'))
  if line.strip() == 'wait': print('\033]0; π - input needed\007',end='',flush=True)
  if line.strip() == 'idle': print('\033]0;π - idle\007',end='',flush=True)
+ if line.strip() == 'notify-wait': print('\007\033]777;notify;Pi;Input required\007',end='',flush=True)
+ if line.strip() == 'notify-done': print('\007\033]777;notify;Pi;Ready for input\033\\',end='',flush=True)
 ]]
   -- Inactive folders sort by latest session activity, not their names.
   local cadara = test_dir .. "/sessions/--home-dzervas-Lab-cadara--"
@@ -176,25 +183,48 @@ for line in sys.stdin:
   double_click("Geometry")
   assert(find("b").job == nil and api.nvim_win_get_buf(fleet.main()) == buffer, "double-click started a dead session")
   fleet.open(a, false)
-  assert(vim.o.titlestring == "  " .. a.project.label)
+  local function title_matches(icon, running, idle)
+    local suffix = icon .. "  " .. a.project.label .. " [" .. running .. "/" .. idle .. "]"
+    if running == 0 then return vim.o.titlestring == suffix end
+    for _, spinner in ipairs({ "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }) do
+      if vim.o.titlestring == spinner .. " " .. suffix then return true end
+    end
+    return false
+  end
+  assert(title_matches("", 1, 0), "working agent did not add spinner and counts")
+  local first_title = vim.o.titlestring
+  assert(vim.wait(500, function() return vim.o.titlestring ~= first_title end), "braille spinner did not animate")
   -- A hidden waiting agent must animate the orchestrator, including fullscreen.
   local b = find("b")
   fleet.open(b, false)
   assert(vim.wait(2000, function() return fleet.state(b) == "busy" end))
   local background_job = b.job
   fleet.open(a, false)
+  assert(#terminal_notifications == 0, "non-notification terminal requests escaped to the host")
+  vim.fn.chansend(background_job, "notify-wait\n")
+  assert(vim.wait(1000, function() return #terminal_notifications == 1 end), "hidden agent notification did not reach the outer terminal")
+  assert(terminal_notifications[1] == "\7\27]777;notify;Pi;Input required\7", "dialog notification or standalone bell was lost")
+  vim.fn.chansend(job, "notify-done\n")
+  assert(vim.wait(1000, function() return #terminal_notifications == 2 end), "completion notification did not reach the outer terminal")
+  assert(terminal_notifications[2] == "\7\27]777;notify;Pi;Ready for input\7", "ST-terminated completion notification was lost")
   vim.fn.chansend(background_job, "wait\n")
   assert(vim.wait(2000, function() return fleet.state(b) == "waiting" end))
   fleet.toggle()
-  assert(vim.wait(2000, function() return vim.o.titlestring == "  " .. a.project.label end), "hidden waiting agent did not animate title")
-  assert(vim.wait(1500, function() return vim.o.titlestring == "  " .. a.project.label end), "title did not alternate after one second")
+  assert(vim.wait(2000, function() return title_matches("", 2, 0) end), "hidden waiting agent did not animate title")
+  assert(vim.wait(1500, function() return title_matches("", 2, 0) end), "title did not alternate after one second")
   vim.fn.chansend(background_job, "idle\n")
   assert(vim.wait(2000, function() return fleet.state(b) == "idle" end))
-  assert(vim.wait(500, function() return vim.o.titlestring == "  " .. a.project.label end))
+  assert(vim.wait(500, function() return title_matches("", 1, 1) end))
   vim.wait(1100)
-  assert(vim.o.titlestring == "  " .. a.project.label, "idle agent kept title flashing")
+  assert(title_matches("", 1, 1), "idle agent kept chat bubble flashing")
+  vim.fn.chansend(job, "idle\n")
+  assert(vim.wait(2000, function() return title_matches("", 0, 2) end), "all-idle agents kept spinner active")
+  local idle_title = vim.o.titlestring
+  vim.wait(300)
+  assert(vim.o.titlestring == idle_title, "all-idle title did not stay static")
   vim.fn.jobstop(background_job)
   assert(vim.wait(2000, function() return b.job == nil end))
+  assert(vim.wait(500, function() return title_matches("", 0, 1) end), "exited agent remained in title counts")
   fleet.toggle()
   vim.fn.chansend(job, "switch\n")
   assert(vim.wait(2000, function() return find("b").buf == buffer end), "Pi session transition did not move terminal ownership")
@@ -241,7 +271,8 @@ for line in sys.stdin:
   vim.fn.jobstop(job); vim.fn.jobstop(second_job)
   assert(vim.wait(2000, function() return #running_b() == 0 end))
 end)
-vim.fn.writefile({ ok and "PASS: discovery, JSONL parsing, title state, session transitions, child reuse, fixed cwd, managed collisions, waiting-only terminal title animation, project activity ordering, inactive folding, contextual new-session keys, navigation, history search/preview, exit" or tostring(err) }, root .. "/check.log")
+io.stdout = original_stdout
+vim.fn.writefile({ ok and "PASS: terminal notification/bell forwarding, discovery, JSONL parsing, title state, session transitions, child reuse, fixed cwd, managed collisions, working spinner and agent counts, waiting chat bubble animation, project activity ordering, inactive folding, contextual new-session keys, navigation, history search/preview, exit" or tostring(err) }, root .. "/check.log")
 vim.api.nvim_create_autocmd("VimLeavePre", { once = true, callback = function()
   vim.fn.delete(test_dir, "rf")
 end })

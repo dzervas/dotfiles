@@ -98,9 +98,12 @@ function M.start(opts)
   vim.o.titlelen = 0
   local waiting_since
   local function update_title()
-    local waiting = false
+    local waiting, running, idle = false, 0, 0
     for _, session in pairs(owned) do
-      if state(session) == "waiting" then waiting = true; break end
+      local current = state(session)
+      if current == "busy" or current == "waiting" then running = running + 1
+      elseif current == "idle" then idle = idle + 1 end
+      if current == "waiting" then waiting = true end
     end
     local icon = ""
     if waiting then
@@ -109,7 +112,9 @@ function M.start(opts)
     else waiting_since = nil end
     local directory = selected and selected.project.label or Sessions.label(Sessions.encode(vim.fn.getcwd()), home)
     -- titlestring treats percent signs as statusline expressions.
-    local title = (icon .. "  " .. directory):gsub("%c", " "):gsub("%%", "%%%%")
+    local spinner = running > 0 and frames[frame % #frames + 1] .. " " or ""
+    local title = (spinner .. icon .. "  " .. directory .. " [" .. running .. "/" .. idle .. "]")
+      :gsub("%c", " "):gsub("%%", "%%%%")
     if vim.o.titlestring ~= title then vim.o.titlestring = title end
   end
   local function marker(session)
@@ -220,6 +225,16 @@ function M.start(opts)
     end, { buffer = session.buf, desc = "Leave agent input and go to previous window" })
     -- Pi owns new/resume/fork; this hook observes its current file, without a control socket.
     api.nvim_create_autocmd("TermRequest", { buffer = session.buf, callback = function(event)
+      local title, body = event.data.sequence:match("^\27%]777;notify;([^;]*);(.*)$")
+      if title then
+        -- Neovim consumes the child OSC and BEL; deliver them to the outer terminal.
+        title, body = title:gsub("%c", " "), body:gsub("%c", " ")
+        vim.schedule(function()
+          io.stdout:write("\7\27]777;notify;" .. title .. ";" .. body .. "\7")
+          io.stdout:flush()
+        end)
+        return
+      end
       local payload = event.data.sequence:match("^\27%]777;pi%-session;([%w+/=]+)")
       if not payload then return end
       local ok, data = pcall(function() return vim.json.decode(vim.base64.decode(payload)) end)
