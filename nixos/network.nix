@@ -22,6 +22,8 @@
       allowedTCPPorts = [
         # Generic ports
         8181
+        # Strata inference
+        1337
       ];
     };
 

@@ -1,18 +1,25 @@
 local M = {}
+-- Running agents outlive :PiFleetReload; everything else belongs to one start() and stop() tears it down.
+local live = package.loaded["pi-fleet.live"] or { owned = {} }
+package.loaded["pi-fleet.live"] = live
 -- Explicit opt-in; normal Neovim never sources this module.
 function M.start(opts)
   opts = opts or {}
+  live.opts = opts
   local Snacks = require("snacks")
   local api = vim.api
   local root = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h")
-  local main = api.nvim_get_current_win()
+  local reloading = live.main ~= nil
+  local main = reloading and api.nvim_win_is_valid(live.main) and live.main or api.nvim_get_current_win()
   local Sessions = dofile(root .. "/sessions.lua")
   local Snooze = dofile(root .. "/snooze.lua")
   local home = vim.fn.expand("~")
   local sessions_dir = vim.fs.normalize(opts.sessions_dir or home .. "/.pi/agent/sessions")
   local state_dir = opts.state_dir or vim.fn.stdpath("state") .. "/pi-fleet"
   vim.fn.mkdir(state_dir, "p")
-  local cache, owned = {}, {}
+  local cache, owned = {}, live.owned
+  -- Seeding the cache makes the scan reuse adopted agents instead of shadowing them.
+  for _, session in pairs(owned) do cache[session.file] = session end
   local snoozes = Snooze.new(state_dir .. "/snoozes.json", opts.notify or function(entry)
     local result = vim.system({ "notify-send", "--app-name=Pi sessions", "--",
       "Pi session reminder", entry.project .. " · " .. entry.name }, { text = true }):wait(1500)
@@ -23,14 +30,16 @@ function M.start(opts)
   local frames = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
   local projects = {}
   local function refresh()
-    local collapsed, expanded = {}, {}
+    local collapsed, expanded, active = {}, {}, {}
     for _, project in ipairs(projects) do
       collapsed[project.encoded], expanded[project.encoded] = project.collapsed, project.show_all
+      active[project.encoded] = project.active
     end
     projects = Sessions.scan(sessions_dir, home, cache)
     local present, groups = {}, {}
     for _, project in ipairs(projects) do
       project.collapsed, project.show_all = collapsed[project.encoded], expanded[project.encoded]
+      project.active = active[project.encoded]
       groups[project.encoded] = project
       for _, session in ipairs(project.sessions) do present[session.file] = true end
     end
@@ -41,7 +50,7 @@ function M.start(opts)
         local encoded = vim.fn.fnamemodify(file, ":h:t")
         local project = groups[encoded]
         if not project then
-          project = { encoded = encoded, label = Sessions.label(encoded, home), sessions = {}, collapsed = collapsed[encoded], show_all = expanded[encoded] }
+          project = { encoded = encoded, label = Sessions.label(encoded, home), sessions = {}, collapsed = collapsed[encoded], show_all = expanded[encoded], active = active[encoded] }
           groups[encoded] = project
           projects[#projects + 1] = project
         end
@@ -86,7 +95,13 @@ function M.start(opts)
         project.activity_rank = math.min(project.activity_rank, rank)
         project.latest_activity = math.max(project.latest_activity, session.modified or 0)
       end
-      if project.collapsed == nil then project.collapsed = project.activity_rank == 2 end
+      -- Starting or stopping a project's last agent resets it: live projects open
+      -- with the default three sessions, idle ones fold into the bottom list.
+      local active = project.activity_rank < 2
+      if project.active ~= active then
+        project.active, project.collapsed = active, not active
+        if active then project.show_all = nil end
+      end
     end
     table.sort(projects, function(a, b)
       if a.activity_rank ~= b.activity_rank then return a.activity_rank < b.activity_rank end
@@ -171,13 +186,26 @@ function M.start(opts)
           highlights[#highlights + 1] = { #lines - 1, "Comment" }
         end
       end
-      lines[#lines + 1] = ""
+      -- Idle projects sit in one dense list below the live ones.
+      if project.active then lines[#lines + 1] = "" end
     end
     local hints = {
       { { "n", " new" }, { "N", " directory" }, { "s", " snooze/clear" } },
       { { "Enter", " open" }, { "Alt-f", " names" } },
       { { "Ctrl-f", " history" }, { "Alt-o", " fullscreen" } },
     }
+    -- The sidebar never scrolls: rows past the window, idle projects first, fold into one line.
+    local budget = api.nvim_win_get_height(sidebar.win) - #hints
+    if #lines > budget then
+      local hidden = 0
+      for line = budget, #lines do
+        if rows[line] and rows[line].sessions then hidden = hidden + 1 end
+        rows[line], lines[line] = nil, nil
+      end
+      lines[budget] = "  ⋯ more" .. (hidden > 0 and " (" .. hidden .. " projects)" or "")
+      highlights = vim.tbl_filter(function(entry) return entry[1] < budget - 1 end, highlights)
+      highlights[#highlights + 1] = { budget - 1, "Comment" }
+    end
     while #lines < api.nvim_win_get_height(sidebar.win) - #hints do lines[#lines + 1] = "" end
     local hint_keys = {}
     for _, hint in ipairs(hints) do
@@ -201,6 +229,7 @@ function M.start(opts)
     end
     for line, row in pairs(rows) do if row == current_row then cursor[1] = line; break end end
     api.nvim_win_set_cursor(sidebar.win, { math.min(cursor[1], #lines), 0 })
+    api.nvim_win_call(sidebar.win, function() vim.fn.winrestview({ topline = 1 }) end)
   end
   local function ensure_main()
     if api.nvim_win_is_valid(main) then return end
@@ -210,21 +239,10 @@ function M.start(opts)
     vim.cmd.vsplit()
     main = api.nvim_get_current_win()
   end
-  local function spawn(session)
-    ensure_main()
-    if vim.fn.isdirectory(session.cwd) ~= 1 then
-      vim.notify("Session directory no longer exists: " .. session.cwd, vim.log.levels.WARN)
-      return false
-    end
-    session.launch_cwd = session.cwd
-    session.buf = api.nvim_create_buf(false, true)
-    vim.bo[session.buf].bufhidden = "hide"
-    vim.keymap.set("t", "<A-Down>", function()
-      vim.cmd.stopinsert()
-      vim.cmd.wincmd("W")
-    end, { buffer = session.buf, desc = "Leave agent input and go to previous window" })
-    -- Pi owns new/resume/fork; this hook observes its current file, without a control socket.
-    api.nvim_create_autocmd("TermRequest", { buffer = session.buf, callback = function(event)
+  local agents = api.nvim_create_augroup("PiFleetAgents", { clear = true })
+  -- Pi owns new/resume/fork; this hook observes its current file, without a control socket.
+  local function watch(buf)
+    api.nvim_create_autocmd("TermRequest", { group = agents, buffer = buf, callback = function(event)
       local title, body = event.data.sequence:match("^\27%]777;notify;([^;]*);(.*)$")
       if title then
         -- Neovim consumes the child OSC and BEL; deliver them to the outer terminal.
@@ -242,29 +260,56 @@ function M.start(opts)
       local file = vim.fs.normalize(data.file)
       if file:sub(1, #sessions_dir + 1) ~= sessions_dir .. "/" then return end
       vim.schedule(function()
-        local previous = session
-        local next_session = file == session.file and session or cache[file] or { file = file }
-        if next_session ~= session and next_session.job then
+        local previous = owned[buf]
+        if not previous then return end
+        local next_session = file == previous.file and previous or cache[file] or { file = file }
+        if next_session ~= previous and next_session.job then
           next_session = { file = file, cwd = next_session.cwd, name = next_session.name }
           vim.notify("Two managed agents now share this session file", vim.log.levels.WARN)
         end
-        next_session.cwd = next_session.cwd or session.cwd
-        next_session.launch_cwd = session.launch_cwd
+        next_session.cwd = next_session.cwd or previous.cwd
+        next_session.launch_cwd = previous.launch_cwd
         next_session.name = data.name or next_session.name or "New session"
-        next_session.buf, next_session.job = session.buf, session.job
+        next_session.buf, next_session.job = previous.buf, previous.job
         if next_session ~= previous then previous.buf, previous.job = nil, nil end
-        session, cache[file], owned[next_session.buf] = next_session, next_session, next_session
-        if selected == previous then selected = session end
+        cache[file], owned[buf] = next_session, next_session
+        if selected == previous then selected = next_session end
         refresh(); render()
       end)
     end })
+  end
+  for buf in pairs(owned) do
+    if type(buf) == "number" then
+      if api.nvim_buf_is_valid(buf) then watch(buf) else owned[buf] = nil end
+    end
+  end
+  local function spawn(session)
+    ensure_main()
+    if vim.fn.isdirectory(session.cwd) ~= 1 then
+      vim.notify("Session directory no longer exists: " .. session.cwd, vim.log.levels.WARN)
+      return false
+    end
+    session.launch_cwd = session.cwd
+    local buf = api.nvim_create_buf(false, true)
+    session.buf = buf
+    vim.bo[buf].bufhidden = "hide"
+    vim.keymap.set("t", "<A-Down>", function()
+      vim.cmd.stopinsert()
+      vim.cmd.wincmd("W")
+    end, { buffer = buf, desc = "Leave agent input and go to previous window" })
+    watch(buf)
     local command = opts.command or { "fish", root .. "/run-agent.fish" }
     command = vim.list_extend(vim.deepcopy(command), { "--session", session.file })
     api.nvim_win_call(main, function()
       api.nvim_win_set_buf(main, session.buf)
       vim.cmd.lcd(vim.fn.fnameescape(session.cwd))
+      -- A reload cannot replace this callback, so it reaches the current instance through `live`.
       session.job = vim.fn.jobstart(command, { term = true, cwd = session.cwd, on_exit = function()
-        vim.schedule(function() session.job = nil; owned[session.buf] = nil; refresh(); render() end)
+        vim.schedule(function()
+          local current = live.owned[buf]
+          if current then current.job = nil; live.owned[buf] = nil end
+          if live.changed then live.changed() end
+        end)
       end })
     end)
     if session.job <= 0 then session.job = nil; vim.notify("Unable to start Pi", vim.log.levels.ERROR); return false end
@@ -414,11 +459,15 @@ function M.start(opts)
   vim.keymap.set({ "n", "t" }, "<A-o>", toggle, { desc = "Pi session fullscreen" })
   vim.keymap.set({ "n", "t" }, "<A-f>", function() search(false) end, { desc = "Search Pi session names" })
   vim.keymap.set({ "n", "t" }, "<C-f>", function() search(true) end, { desc = "Search Pi message history" })
-  local welcome = api.nvim_create_buf(false, true)
-  api.nvim_buf_set_lines(welcome, 0, -1, false, { "Pi sessions", "", "Select a session on the left. Press n to start there, or N to choose another directory.",
-    "Alt-o fullscreen · Alt-f session names · Ctrl-f history · Alt-down leave agent input", "", "Only selected agents are started. Pi manages its own session dialogs." })
-  vim.bo[welcome].modifiable = false
-  api.nvim_win_set_buf(main, welcome)
+  if reloading then
+    selected = owned[api.nvim_win_get_buf(main)]
+  else
+    local welcome = api.nvim_create_buf(false, true)
+    api.nvim_buf_set_lines(welcome, 0, -1, false, { "Pi sessions", "", "Select a session on the left. Press n to start there, or N to choose another directory.",
+      "Alt-o fullscreen · Alt-f session names · Ctrl-f history · Alt-down leave agent input", "", "Only selected agents are started. Pi manages its own session dialogs." })
+    vim.bo[welcome].modifiable = false
+    api.nvim_win_set_buf(main, welcome)
+  end
   show_sidebar()
   snoozes.check() -- Includes reminders whose deadline passed while Neovim was closed.
   local checked_at = os.time()
@@ -429,15 +478,26 @@ function M.start(opts)
     if now ~= checked_at then checked_at = now; snoozes.check(now); if now % 5 == 0 then refresh() end end
     render()
   end))
-  api.nvim_create_autocmd("VimLeavePre", { once = true, callback = function()
+  local group = api.nvim_create_augroup("PiFleet", { clear = true })
+  api.nvim_create_autocmd("VimLeavePre", { group = group, once = true, callback = function()
     timer:stop(); timer:close()
-    for _, project in ipairs(projects) do
-      for _, session in ipairs(project.sessions) do
-        if session.job then vim.fn.jobstop(session.job) end
-      end
+    for _, session in pairs(owned) do
+      if session.job then vim.fn.jobstop(session.job) end
     end
   end })
-  return { projects = function() return projects end, state = state, open = open, search = search, toggle = toggle,
+  live.changed = function() refresh(); render() end
+  live.stop = function()
+    live.stop, live.changed, live.main = nil, nil, main
+    timer:stop(); timer:close()
+    api.nvim_clear_autocmds({ group = group })
+    if sidebar then sidebar:close() end
+  end
+  api.nvim_create_user_command("PiFleetReload", function()
+    if live.stop then live.stop() end
+    dofile(root .. "/init.lua").start(live.opts)
+  end, { desc = "Reload Pi fleet code, keeping running agents" })
+  live.api = { projects = function() return projects end, state = state, open = open, search = search, toggle = toggle,
     sidebar = function() return sidebar end, main = function() return main end, snooze = snooze_session, refresh = refresh }
+  return live.api
 end
 return M

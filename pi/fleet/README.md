@@ -22,6 +22,7 @@ The manager runs on the host. Selecting a saved session starts Pi through the ex
 | N in the sidebar | Choose a directory, prefilled from the highlighted session/project |
 | s in the sidebar | Snooze; press again to clear an existing reminder |
 | q in the sidebar | Hide the sidebar |
+| `:PiFleetReload` | Reload the manager's Lua code; running agents, their terminals, and the visible agent are kept |
 
 The terminal title shows `  <selected project label> [<running>/<idle>]`. When any managed agent is non-idle (working or waiting for input), a braille spinner animates before the chat bubble, including for hidden agents. The counts include all managed live agents; exited agents are excluded. When any managed agent needs human input, the chat bubble also alternates `` / `` once per second. When all agents are idle, the spinner disappears and the bubble stays static. Dialog and completion notifications from managed agents, including hidden ones, are forwarded to the outer terminal with a bell (OSC 777).
 
@@ -29,7 +30,7 @@ If the highlighted row has no existing directory available, both **n** and **N**
 
 Other global Neovim shortcuts, statusline, and tabline are retained. Escape and Alt-up reach Pi. Alt-f and Ctrl-f take priority over Pi's word/character-forward shortcuts; arrow keys remain available.
 
-Folders sort by session activity: waiting/working agents first, idle running agents next, then inactive folders. Within each group, the latest session-file update wins; names break ties. Folders containing only inactive sessions start collapsed; manual expansion survives refreshes. Expanded folders show every running, waiting, or idle agent and the three newest inactive sessions. Enter on `[show more...]` reveals older inactive sessions; `[show less...]` folds them again. Both searches always include the full history.
+Folders sort by session activity: waiting/working agents first, idle running agents next, then inactive folders. Within each group, the latest session-file update wins; names break ties. Folders containing only inactive sessions are collapsed into a dense list at the bottom, without blank lines between them. Starting an agent in one moves it up and expands it to the default view; stopping its last agent folds it back. Manual expansion otherwise survives refreshes. The sidebar is exactly as tall as its window and never scrolls; rows that don't fit, idle folders first, fold into a `⋯ more` line. Expanded folders show every running, waiting, or idle agent and the three newest inactive sessions. Enter on `[show more...]` reveals older inactive sessions; `[show less...]` folds them again. Both searches always include the full history.
 
 Sessions are grouped from `~/.pi/agent/sessions/` directory names, with the special Lab/work labels. Directory decoding is for display only: launch paths come from session headers. Names use the latest Pi `session_info`, falling back to the first user prompt. Metadata is cached and refreshed every five seconds. Name previews load on selection; history search streams results through Snacks and uses literal text matching rather than regular expressions. Tool output, reasoning blocks, and image data are excluded. The JSONL file's user/assistant history includes retained branches.
 

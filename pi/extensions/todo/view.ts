@@ -8,6 +8,9 @@
  *   ├ ✓ Study the widget API
  *   ├ ◐ Write the extension
  *   └ ○ Verify replay after compaction
+ *
+ * In fullscreen mode it collapses to the heading while the transcript is
+ * scrolled back, and expands again once the transcript follows output.
  */
 
 import type { ExtensionUIContext, Theme } from "@earendil-works/pi-coding-agent";
@@ -58,10 +61,29 @@ function pickRows(tasks: readonly Task[], budget: number): { rows: readonly Task
 	return { rows, hidden: tasks.length - rows.length };
 }
 
+/** The part of pi-tui's transcript ScrollView the widget reads and nudges. */
+interface Transcript {
+	readonly isFollowingEnd: boolean;
+	scrollBy(lines: number): number;
+}
+
+/**
+ * The fullscreen transcript, or nothing in regular mode where the terminal owns
+ * scrollback. pi-tui exposes it only through the private `getPrimaryScrollView`,
+ * so probe for it rather than break on an upgrade that renames it.
+ */
+function transcriptOf(tui: TUI | undefined): Transcript | undefined {
+	if (tui?.mode !== "fullscreen") return undefined;
+	return (tui as unknown as { getPrimaryScrollView?: () => Transcript }).getPrimaryScrollView?.();
+}
+
 export class TodoWidget {
 	private uiCtx: ExtensionUIContext | undefined;
 	private tui: TUI | undefined;
 	private registered = false;
+	/** Rows the previous frame rendered, to keep the transcript anchored on collapse. */
+	private lastHeight = 0;
+	private collapsed = false;
 	setUICtx(ctx: ExtensionUIContext): void {
 		if (ctx === this.uiCtx) return;
 		this.uiCtx = ctx;
@@ -118,6 +140,21 @@ export class TodoWidget {
 		const color = inProgress > 0 ? "accent" : "dim";
 		const heading = `${theme.fg(color, inProgress > 0 ? "●" : "○")} ${theme.fg(color, "Todos")}  ${theme.fg("dim", `${completed}/${total}`)}`;
 
+		const transcript = transcriptOf(this.tui);
+		const collapse = transcript !== undefined && !transcript.isFollowingEnd;
+		if (collapse) {
+			const lines = [heading, ""];
+			// The freed rows extend the transcript downward. Scrolling back by the
+			// same amount keeps the visible lines in place; otherwise a short scroll
+			// would clamp to the end, resume following, and expand the list again.
+			const freed = this.lastHeight - lines.length;
+			if (!this.collapsed && freed > 0) transcript.scrollBy(-freed);
+			this.collapsed = true;
+			this.lastHeight = lines.length;
+			return lines;
+		}
+		this.collapsed = false;
+
 		const { rows, hidden } = pickRows(tasks, MAX_ROWS - 1);
 		const lines = [heading];
 		rows.forEach((task, index) => {
@@ -127,6 +164,7 @@ export class TodoWidget {
 		if (hidden > 0) lines.push(theme.fg("dim", `└ +${hidden} more`));
 		// Trailing spacer: pi puts no gap between the widget and the editor box.
 		lines.push("");
+		this.lastHeight = lines.length;
 		return lines;
 	}
 }

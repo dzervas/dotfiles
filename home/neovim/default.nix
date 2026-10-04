@@ -88,7 +88,7 @@ in {
       };
       direnv = {
         enable = true;
-        settings.direnv_silent_load = 1;
+        settings.silent_load = 1;
       };
       scope.enable = true; # Scope buffers per-tab
 

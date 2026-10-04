@@ -28,7 +28,7 @@ let
   # TODO: pkgs.writers.writeTOML
   atuinAiConfig = pkgs.writers.writeTOML "atuin-ai-config.toml" {
     port = 11337;
-    endpoint = "http://llama-swap:1337/v1";
+    endpoint = "http://strata:1337/v1";
     default_model = "ornith";
     request.body.stream_options = { include_usage = true; };
 
@@ -98,43 +98,60 @@ in
         description = "Self-hosted Atuin AI server";
         network = [ "local-ai.network" ];
         networkAlias = [ "atuin-ai" ];
-        ports = [ "127.0.0.1:11337:11337" ];
+        ports = [ "11337:11337" ];
         volumes = [ "${atuinAiConfig}:/etc/atuin-ai/config.toml:ro" ];
       };
 
-      llama-swap = {
-        image = "homemanager/llama-swap-vllm";
-        description = "Local LLM model swapper";
+      strata = {
+        image = "homemanager/strata:local";
+        description = "Qwen 3.8 Flash Next engine";
         network = [ "local-ai.network" ];
-        networkAlias = [ "llama-swap" ];
-        ports = [ "1337:1337" ];
+        networkAlias = [ "strata" ];
+        ports = [ "1337:8080" ];
         devices = [ "nvidia.com/gpu=all" ];
-        exec = "-config /etc/llama-swap/config/config.yaml -listen 0.0.0.0:1337 -watch-config";
-        volumes = [
-          # Mounted straight from the repository, not the store: the container
-          # runs with -watch-config, so edits reload without a rebuild.
-          "/home/dzervas/Lab/dotfiles/home/llama-swap.yaml:/etc/llama-swap/config/config.yaml:ro"
-          "${llamaSwapModelsDir}/models:/models:ro"
-          "/home/dzervas/CryptVMs/vllm:/root/.cache/vllm"
-          "${hfCache}:/root/.cache/huggingface"
-          "${qwenFixedChatTemplate}:/qwen-fixed-chat-template.jinja:ro"
-          "${vllmZetaConfig}:/vllm-zeta.yaml:ro"
-          "/home/dzervas/.local/share/llama-swap:/data"
-        ];
+        volumes = [ "/home/dzervas/CryptVMs/strata:/data" ];
         extraConfig.Container.GroupAdd = "keep-groups";
+
+        environment = {
+          CONTEXT = "262144";
+          MODEL = "IQ2_XS";
+          FAMILY = "qwen";
+        };
       };
 
-      openwebui = {
-        image = "ghcr.io/open-webui/open-webui";
-        description = "Local LLM model web UI";
-        network = [ "local-ai.network" ];
-        networkAlias = [ "openwebui" ];
-        ports = [ "1338:8080" ];
-        environment.OPENAI_BASE_URL = "http://llama-swap:1337/v1";
-        volumes = [
-          "/home/dzervas/.local/share/openwebui/:/app/backend/data"
-        ];
-      };
+      # llama-swap = {
+      #   image = "homemanager/llama-swap-vllm";
+      #   description = "Local LLM model swapper";
+      #   network = [ "local-ai.network" ];
+      #   networkAlias = [ "llama-swap" ];
+      #   ports = [ "1337:1337" ];
+      #   devices = [ "nvidia.com/gpu=all" ];
+      #   exec = "-config /etc/llama-swap/config/config.yaml -listen 0.0.0.0:1337 -watch-config";
+      #   volumes = [
+      #     # Mounted straight from the repository, not the store: the container
+      #     # runs with -watch-config, so edits reload without a rebuild.
+      #     "/home/dzervas/Lab/dotfiles/home/llama-swap.yaml:/etc/llama-swap/config/config.yaml:ro"
+      #     "${llamaSwapModelsDir}/models:/models:ro"
+      #     "/home/dzervas/CryptVMs/vllm:/root/.cache/vllm"
+      #     "${hfCache}:/root/.cache/huggingface"
+      #     "${qwenFixedChatTemplate}:/qwen-fixed-chat-template.jinja:ro"
+      #     "${vllmZetaConfig}:/vllm-zeta.yaml:ro"
+      #     "/home/dzervas/.local/share/llama-swap:/data"
+      #   ];
+      #   extraConfig.Container.GroupAdd = "keep-groups";
+      # };
+      #
+      # openwebui = {
+      #   image = "ghcr.io/open-webui/open-webui";
+      #   description = "Local LLM model web UI";
+      #   network = [ "local-ai.network" ];
+      #   networkAlias = [ "openwebui" ];
+      #   ports = [ "1338:8080" ];
+      #   environment.OPENAI_BASE_URL = "http://llama-swap:1337/v1";
+      #   volumes = [
+      #     "/home/dzervas/.local/share/openwebui/:/app/backend/data"
+      #   ];
+      # };
     };
   };
 

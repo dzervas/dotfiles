@@ -83,6 +83,16 @@ for line in sys.stdin:
   end
   fleet.refresh(); fleet.toggle(); fleet.toggle()
   assert(old_count() == 0, "refresh lost the collapsed state")
+  -- Idle projects form one dense list, and the sidebar is exactly as tall as its window.
+  local sidebar_win = fleet.sidebar().win
+  assert(sidebar_lines()[3]:find("▸", 1, true) and sidebar_lines()[4]:find("▸", 1, true), "idle projects were spaced apart")
+  assert(#sidebar_lines() == api.nvim_win_get_height(sidebar_win), "sidebar is not window-height")
+  local full_height = api.nvim_win_get_height(sidebar_win)
+  api.nvim_win_set_height(sidebar_win, 6)
+  assert(vim.wait(1000, function() return #sidebar_lines() == 6 end), "overflowing sidebar was not clipped")
+  assert(sidebar_lines()[3]:find("⋯ more", 1, true), "clipped projects were not summarized")
+  api.nvim_win_set_height(sidebar_win, full_height)
+  assert(vim.wait(1000, function() return #sidebar_lines() == full_height end))
   api.nvim_set_current_win(fleet.sidebar().win)
   local enter = vim.fn.maparg("<CR>", "n", false, true).callback
   api.nvim_win_set_cursor(fleet.sidebar().win, { 3, 0 }); enter()
@@ -113,6 +123,8 @@ for line in sys.stdin:
     end
   end
   assert(#live_old == 2 and old_count() == 4, "live sessions consumed the inactive quota")
+  assert(live_old[1].project.show_all == nil and not live_old[1].project.collapsed, "starting an agent did not reset its project")
+  assert(fleet.projects()[1] == live_old[1].project, "started project did not move up")
   for _, session in ipairs(live_old) do vim.fn.jobstop(session.job) end
   assert(vim.wait(2000, function()
     for _, session in ipairs(live_old) do if session.job then return false end end
@@ -252,6 +264,17 @@ for line in sys.stdin:
   lines[1] = vim.json.encode(header); vim.fn.writefile(lines, files .. "/b.jsonl")
   fleet.refresh(); fleet.open(find("b"), false)
   assert(api.nvim_win_call(fleet.main(), vim.fn.getcwd) == test_dir)
+  -- :PiFleetReload swaps the code but keeps the agent, its window, and its session hook.
+  local live_b, windows = find("b"), #api.nvim_tabpage_list_wins(0)
+  vim.cmd.PiFleetReload()
+  fleet = package.loaded["pi-fleet.live"].api
+  assert(find("b") == live_b and fleet.state(live_b) == "idle", "reload lost a running agent")
+  assert(api.nvim_win_get_buf(fleet.main()) == live_b.buf, "reload replaced the visible agent")
+  assert(#api.nvim_get_autocmds({ group = "PiFleetAgents", buffer = live_b.buf }) == 1, "reload did not rewatch the agent")
+  assert(#api.nvim_tabpage_list_wins(0) == windows, "reload kept the old sidebar")
+  fleet.open(live_b, false)
+  assert(live_b.job == job, "reload restarted a live agent")
+  a = find("a")
   -- Pi may resume a file another managed agent already owns; retain both jobs.
   fleet.open(a, false)
   assert(vim.wait(2000, function() return a.job ~= nil and fleet.state(a) == "busy" end))
@@ -272,7 +295,7 @@ for line in sys.stdin:
   assert(vim.wait(2000, function() return #running_b() == 0 end))
 end)
 io.stdout = original_stdout
-vim.fn.writefile({ ok and "PASS: terminal notification/bell forwarding, discovery, JSONL parsing, title state, session transitions, child reuse, fixed cwd, managed collisions, working spinner and agent counts, waiting chat bubble animation, project activity ordering, inactive folding, contextual new-session keys, navigation, history search/preview, exit" or tostring(err) }, root .. "/check.log")
+vim.fn.writefile({ ok and "PASS: terminal notification/bell forwarding, discovery, JSONL parsing, title state, session transitions, child reuse, fixed cwd, managed collisions, reload keeps agents, working spinner and agent counts, waiting chat bubble animation, project activity ordering, inactive folding, contextual new-session keys, navigation, history search/preview, exit" or tostring(err) }, root .. "/check.log")
 vim.api.nvim_create_autocmd("VimLeavePre", { once = true, callback = function()
   vim.fn.delete(test_dir, "rf")
 end })

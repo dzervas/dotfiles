@@ -9,8 +9,8 @@
       "exposure": "codemode",
       "toolExposure": {
         "kagi_search": "direct",
-        "kagi_quick": "direct",
-        "kagi_summarize": "direct"
+        "kagi_batch_search": "direct",
+        "kagi_quick": "direct"
       }
     }
   }
