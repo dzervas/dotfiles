@@ -28,28 +28,23 @@ let
   # TODO: pkgs.writers.writeTOML
   atuinAiConfig = pkgs.writers.writeTOML "atuin-ai-config.toml" {
     port = 11337;
-    endpoint = "http://strata:1337/v1";
+    endpoint = "http://strata:8080/v1";
+    api_key.cmd = {
+      run = "bash";
+      args = [
+        "-c"
+        "grep -Eo 'sk-strata-\w+'/strata_config.json"
+      ];
+    };
     default_model = "ornith";
     request.body.stream_options = { include_usage = true; };
 
     models = [{
-      alias = "ornith";
-      name = "Ornith 1.5 35B MaxQuality";
-      description = "Local Ornith via llama-swap";
-      model = "ornith";
+      name = "Qwen3.8 Flash Next";
+      description = "Local Qwen Flash Next through strata";
+      model = "qwen";
     }];
   };
-
-  # Copy-pasta of https://github.com/nix-community/home-manager/blob/master/modules/programs/atuin.nix#L172C7-L180
-  atuinFishConfig =
-    pkgs.runCommand "atuin-fish-config.fish"
-      {
-        nativeBuildInputs = [ pkgs.writableTmpDirAsHomeHook ];
-      }
-      ''
-        ${lib.getExe config.programs.atuin.package} pty-proxy init fish > "$out"
-        ${lib.getExe config.programs.atuin.package} ai init fish >> "$out"
-      '';
 in
 {
   programs.atuin = {
@@ -87,10 +82,10 @@ in
       driver = "bridge";
     };
 
-    builds.llama-swap-vllm = {
-      file = "/home/dzervas/Lab/dotfiles/docker/Dockerfile.llama-swap-vllm";
-      # tags = ["latest"];
-    };
+    # builds.llama-swap-vllm = {
+    #   file = "/home/dzervas/Lab/dotfiles/docker/Dockerfile.llama-swap-vllm";
+    #   tags = ["latest"];
+    # };
 
     containers = {
       atuin-ai = {
@@ -99,7 +94,10 @@ in
         network = [ "local-ai.network" ];
         networkAlias = [ "atuin-ai" ];
         ports = [ "11337:11337" ];
-        volumes = [ "${atuinAiConfig}:/etc/atuin-ai/config.toml:ro" ];
+        volumes = [
+          "${atuinAiConfig}:/etc/atuin-ai/config.toml:ro"
+          "/home/dzervas/CryptVMs/strata/config/strata-iq2_xs.json:/strata_config.json:ro"
+        ];
       };
 
       strata = {
@@ -115,7 +113,8 @@ in
         environment = {
           CONTEXT = "262144";
           MODEL = "IQ2_XS";
-          FAMILY = "qwen";
+          FAMILY = "swift";
+          VISION = "yes";
         };
       };
 
@@ -160,8 +159,4 @@ in
   '';
 
   xdg.configFile."atuin-ai/config.toml".source = atuinAiConfig;
-
-  # programs.fish.interactiveShellInit = ''
-  #   source ${atuinFishConfig}
-  # '';
 }

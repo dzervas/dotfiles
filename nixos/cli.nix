@@ -81,7 +81,7 @@
       watch = "command watch -c ";
 
       # Useful aliases
-      # Images labelled local.keep (home/docker-mcp-builder.nix) survive pruning.
+      # Images labelled local.keep survive pruning.
       docker-prune = ''
         docker system df && \
         podman system df && \

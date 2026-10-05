@@ -29,16 +29,14 @@ resolves them from the secrets engine before `docker run` copies them into the
 container. The launcher also restores `HOME`, which the gateway strips too;
 `docker pass` locates the engine socket under `~/.cache`.
 
-The Kagi server image `kagi-mcp:local` is built from `docker/Dockerfile.kagi-mcp`
-by `docker-mcp-builder.service` (`home/docker-mcp-builder.nix`), which builds every
-`docker/Dockerfile.*-mcp` into rootless Docker. Podman's image store is separate, so
-Podman builds are not visible to the gateway. Activation also installs
-`~/.docker/mcp/catalogs/pi-kagi.yaml`. It declares the `kagi.session_token` secret,
-because image labels cannot bind secrets. Add the server once:
+The Kagi server image `git.vpn.dzerv.art/dzervas/homelab/kagi-mcp` is pulled by the
+gateway; `docker/Dockerfile.kagi-mcp` is its source, built and pushed separately.
+Activation installs `~/.docker/mcp/catalogs/pi.yaml`, which declares the
+`kagi.session_token` secret, because image labels cannot bind secrets. Add the
+secret once:
 
 ```fish
 docker mcp secret set kagi.session_token   # token on stdin
-docker mcp profile server add pi --server file://pi-kagi.yaml
 systemctl --user restart pi-mcp-gateway
 ```
 

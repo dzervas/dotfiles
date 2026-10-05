@@ -14,7 +14,6 @@
     ./brave.nix
     ./dev.nix
     ./direnv.nix
-    ./docker-mcp-builder.nix
     ./docker-secrets-engine.nix
     ./easyeffects
     # ./firefox.nix

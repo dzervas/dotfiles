@@ -101,7 +101,7 @@ let
       "gpt-6.1-sol"
       "gpt-6-astra"
       "claude-fable-5-1"
-      "qwen3"
+      "qwen-flash-next"
     ];
 
     subagents = rec {
@@ -223,8 +223,6 @@ in
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/skills";
       ".pi/agent/themes".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/themes";
-      ".pi/agent/mcp.json".source =
-        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/mcp.json";
       ".pi/agent/node_modules".source = piExtensionNodeModules + "/node_modules";
       ".pi/agent/subagents.json".text = builtins.toJSON {
         maxConcurrent = 16;

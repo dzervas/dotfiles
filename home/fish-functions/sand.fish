@@ -148,6 +148,7 @@ bwrap \
 	--bind $HOME/.pi/agent/memory $HOME/.pi/agent/memory \
 	--bind $HOME/.pi/agent/auth.json $HOME/.pi/agent/auth.json \
 	--bind $HOME/.pi/agent/mcp.json $HOME/.pi/agent/mcp.json \
+	--bind $HOME/.pi/agent/mcp-auth.json $HOME/.pi/agent/mcp-auth.json \
 	--ro-bind-try $HOME/.cache/pi-mcp-gateway/authorization $HOME/.cache/pi-mcp-gateway/authorization \
 	--bind $HOME/.pi/agent/run-history.jsonl $HOME/.pi/agent/run-history.jsonl \
 	--ro-bind $HOME/Lab/dotfiles/pi/sandbox.ts $HOME/.pi/agent/sandbox.ts \
