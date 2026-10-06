@@ -10,6 +10,15 @@ import type { Model, Api, UserMessage } from "@earendil-works/pi-ai";
 import { BorderedLoader } from "@earendil-works/pi-coding-agent";
 import { withHumanInput } from "./lib/human-input.ts";
 import { extractMarkedQuestions } from "./lib/question-extraction";
+import { requestAcpForm, supportsAcpForms } from "./lib/acp-form.ts";
+import {
+	questionnaireAnswers,
+	questionnaireForm,
+	type Answer,
+	type Question,
+	type QuestionOption,
+	type QuestionnaireResult,
+} from "./lib/questionnaire-form.ts";
 import type { ExtensionAPI, ExtensionContext, ModelRegistry } from "@earendil-works/pi-coding-agent";
 import {
 	Editor,
@@ -22,36 +31,7 @@ import {
 } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 
-// Types
-interface QuestionOption {
-	value: string;
-	label: string;
-	description?: string;
-}
-
 type RenderOption = QuestionOption & { isOther?: boolean };
-
-interface Question {
-	id: string;
-	label: string;
-	prompt: string;
-	options: QuestionOption[];
-	allowOther: boolean;
-}
-
-interface Answer {
-	id: string;
-	value: string;
-	label: string;
-	wasCustom: boolean;
-	index?: number;
-}
-
-interface QuestionnaireResult {
-	questions: Question[];
-	answers: Answer[];
-	cancelled: boolean;
-}
 
 // Schema
 const QuestionOptionSchema = Type.Object({
@@ -92,6 +72,15 @@ function errorResult(
 }
 
 async function askQuestions(pi: ExtensionAPI, ctx: ExtensionContext, questions: Question[]): Promise<QuestionnaireResult> {
+	if (supportsAcpForms(ctx)) {
+		const content = await withHumanInput(pi, () => requestAcpForm(ctx, questionnaireForm(questions)));
+		return {
+			questions,
+			answers: content ? questionnaireAnswers(questions, content) : [],
+			cancelled: content === undefined,
+		};
+	}
+	if (ctx.mode !== "tui") throw new Error("Questionnaire requires a terminal or an ACP form client");
 	const isMulti = questions.length > 1;
 	const totalTabs = questions.length + 1; // questions + Submit
 
@@ -565,8 +554,8 @@ function parseExtractionResult(text: string): ExtractionResult | null {
 
 function registerAnswerCommand(pi: ExtensionAPI) {
 	const answerHandler = async (ctx: ExtensionContext) => {
-		if (!ctx.hasUI) {
-			ctx.ui.notify("answer requires interactive mode", "error");
+		if (!ctx.hasUI || (ctx.mode !== "tui" && !supportsAcpForms(ctx))) {
+			ctx.ui.notify("answer requires a terminal or an ACP form client", "error");
 			return;
 		}
 
@@ -614,51 +603,47 @@ function registerAnswerCommand(pi: ExtensionAPI) {
 			// Select the best model for unmarked prose (prefer Codex mini, then haiku)
 			const extractionModel = await selectExtractionModel(ctx.model, ctx.modelRegistry);
 
-			extractionResult = await ctx.ui.custom<ExtractionResult | null>(
-				(tui, theme, _kb, done) => {
-					const loader = new BorderedLoader(
-						tui,
-						theme,
-						`Extracting questions using ${extractionModel.id}...`,
-					);
-					loader.onAbort = () => done(null);
+			const doExtract = async (signal?: AbortSignal) => {
+				const auth = await ctx.modelRegistry.getApiKeyAndHeaders(extractionModel);
+				if (!auth.ok) throw new Error(auth.error);
+				const userMessage: UserMessage = {
+					role: "user",
+					content: [{ type: "text", text: lastAssistantText! }],
+					timestamp: Date.now(),
+				};
+				const response = await ctx.modelRegistry.complete(
+					extractionModel,
+					{ systemPrompt: SYSTEM_PROMPT, messages: [userMessage] },
+					{ apiKey: auth.apiKey, headers: auth.headers, signal },
+				);
+				if (response.stopReason === "aborted") return null;
+				const responseText = response.content
+					.filter((c): c is { type: "text"; text: string } => c.type === "text")
+					.map((c) => c.text).join("\n");
+				return parseExtractionResult(responseText);
+			};
 
-					const doExtract = async () => {
-						const auth = await ctx.modelRegistry.getApiKeyAndHeaders(extractionModel);
-						if (!auth.ok) {
-							throw new Error(auth.error);
-						}
-						const userMessage: UserMessage = {
-							role: "user",
-							content: [{ type: "text", text: lastAssistantText! }],
-							timestamp: Date.now(),
-						};
-
-						const response = await ctx.modelRegistry.complete(
-							extractionModel,
-							{ systemPrompt: SYSTEM_PROMPT, messages: [userMessage] },
-							{ apiKey: auth.apiKey, headers: auth.headers, signal: loader.signal },
+			if (supportsAcpForms(ctx)) {
+				ctx.ui.notify(`Extracting questions using ${extractionModel.id}...`, "info");
+				extractionResult = await doExtract(ctx.signal);
+			} else {
+				extractionResult = await ctx.ui.custom<ExtractionResult | null>(
+					(tui, theme, _kb, done) => {
+						const loader = new BorderedLoader(
+							tui,
+							theme,
+							`Extracting questions using ${extractionModel.id}...`,
 						);
+						loader.onAbort = () => done(null);
 
-						if (response.stopReason === "aborted") {
-							return null;
-						}
+						doExtract(loader.signal)
+							.then(done)
+							.catch(() => done(null));
 
-						const responseText = response.content
-							.filter((c): c is { type: "text"; text: string } => c.type === "text")
-							.map((c) => c.text)
-							.join("\n");
-
-						return parseExtractionResult(responseText);
-					};
-
-					doExtract()
-						.then(done)
-						.catch(() => done(null));
-
-					return loader;
-				},
-			);
+						return loader;
+					},
+				);
+			}
 		}
 
 		if (extractionResult === null) {

@@ -1,0 +1,21 @@
+diff --git a/test/unit/pi-rpc-session-path.test.ts b/test/unit/pi-rpc-session-path.test.ts
+--- a/test/unit/pi-rpc-session-path.test.ts
++++ b/test/unit/pi-rpc-session-path.test.ts
+@@ -41,7 +41,7 @@ test('PiRpcProcess passes distinct session paths intact to the pi launcher', async
+       if (process.platform === 'win32') {
+         writeFileSync(launcher, `@echo off\r\n"${process.execPath}" "${fixture}" %*\r\n`)
+       } else {
+-        writeFileSync(launcher, `#!/usr/bin/env node\nrequire('./fake-pi.cjs')\n`)
++        writeFileSync(launcher, `#!${process.execPath}\nrequire('./fake-pi.cjs')\n`)
+         chmodSync(launcher, 0o755)
+       }
+ 
+@@ -72,7 +72,7 @@ test(
+     const root = mkdtempSync(join(tmpdir(), 'pi-acp-cmd-'))
+     writeFakePi(root)
+     const launcher = join(root, 'pi.cmd')
+-    writeFileSync(launcher, "#!/usr/bin/env node\nrequire('./fake-pi.cjs')\n")
++    writeFileSync(launcher, `#!${process.execPath}\nrequire('./fake-pi.cjs')\n`)
+     chmodSync(launcher, 0o755)
+     const sessionDir = join(root, 'my project')
+     mkdirSync(sessionDir)

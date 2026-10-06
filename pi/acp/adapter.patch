@@ -1,0 +1,1336 @@
+diff --git a/src/acp/agent.ts b/src/acp/agent.ts
+index fce55d5..3af3a33 100644
+--- a/src/acp/agent.ts
++++ b/src/acp/agent.ts
+@@ -30,6 +30,8 @@ import { PiRpcProcess } from '../pi-rpc/process.js'
+ import { listPiSessions, findPiSession, readPiSessionTitle } from './pi-sessions.js'
+ import { normalizePiAssistantText, normalizePiMessageText } from './translate/pi-messages.js'
+ import { toolResultToText } from './translate/pi-tools.js'
++import { replayTodoPlan } from './translate/todo.js'
++import { sameProject } from './project-path.js'
+ import {
+   bashCommand,
+   bashExitCode,
+@@ -121,6 +123,7 @@ const pkg = readNearestPackageJson(import.meta.url)
+ 
+ export class PiAcpAgent implements ACPAgent {
+   private readonly conn: AgentSideConnection
++  private supportsForms = false
+   private readonly sessions = new SessionManager()
+   private readonly store = new SessionStore()
+   private readonly restoringSessions = new Map<string, Promise<PiAcpSession>>()
+@@ -194,6 +197,9 @@ export class PiAcpAgent implements ACPAgent {
+       }
+ 
+       const cwd = opts?.cwd ?? stored.cwd
++      if (!sameProject(cwd, stored.cwd)) {
++        throw RequestError.invalidParams('Cannot resume a Pi session in a different project cwd')
++      }
+ 
+       let proc: PiRpcProcess
+       try {
+@@ -214,6 +220,7 @@ export class PiAcpAgent implements ACPAgent {
+         cwd,
+         mcpServers: opts?.mcpServers ?? [],
+         conn: this.conn,
++        supportsForms: this.supportsForms,
+         proc,
+         fileCommands
+       })
+@@ -237,6 +244,7 @@ export class PiAcpAgent implements ACPAgent {
+   }
+ 
+   async initialize(params: InitializeRequest): Promise<InitializeResponse> {
++    this.supportsForms = params.clientCapabilities?.elicitation?.form != null
+     // We currently only support ACP protocol version 1.
+     const supportedVersion = 1
+     const requested = params.protocolVersion
+@@ -286,6 +294,7 @@ export class PiAcpAgent implements ACPAgent {
+       cwd: params.cwd,
+       mcpServers: params.mcpServers,
+       conn: this.conn,
++      supportsForms: this.supportsForms,
+       fileCommands,
+       piCommand: process.env.PI_ACP_PI_COMMAND
+     })
+@@ -373,15 +382,7 @@ export class PiAcpAgent implements ACPAgent {
+           updateNotice
+         })
+ 
+-    if (preludeText)
+-      session.setStartupInfo(preludeText)
+-
+-      // Policy: within a single ACP connection (one client window), keep only one live pi subprocess.
+-      // This avoids leaking subprocesses when clients start new sessions but don't explicitly close old ones.
+-      // It does NOT affect other client windows because they run in separate agent processes.
+-      //
+-      // (Tests sometimes stub out `this.sessions`, so guard the call.)
+-    ;(this.sessions as any).closeAllExcept?.(session.sessionId)
++    if (preludeText) session.setStartupInfo(preludeText)
+ 
+     const response = {
+       sessionId: session.sessionId,
+@@ -412,7 +413,7 @@ export class PiAcpAgent implements ACPAgent {
+           const pi = (await session.proc.getCommands()) as any
+           const { commands } = toAvailableCommandsFromPiGetCommands(pi, {
+             enableSkillCommands,
+-            includeExtensionCommands: false
++            includeExtensionCommands: true
+           })
+ 
+           await this.conn.sessionUpdate({
+@@ -934,17 +935,21 @@ export class PiAcpAgent implements ACPAgent {
+       throw RequestError.invalidParams(`cwd must be an absolute path: ${params.cwd}`)
+     }
+ 
+-    // If the client is re-loading a session that is already active, tear down the existing
+-    // pi subprocess so we can start fresh and re-advertise commands reliably.
+-    // (Some clients may call session/load when restoring from history.)
+-    this.sessions.close(params.sessionId)
+-
+-    this.lastSessionCwd = params.cwd
+-
+     const stored = this.findStoredSession(params.sessionId)
+     if (!stored) {
+       throw RequestError.invalidParams(`Unknown sessionId: ${params.sessionId}`)
+     }
++    if (!sameProject(params.cwd, stored.cwd)) {
++      throw RequestError.invalidParams('Cannot resume a Pi session in a different project cwd')
++    }
++
++    const active = this.sessions.maybeGet?.(params.sessionId)
++    if (active?.isBusy?.()) {
++      throw RequestError.invalidParams('Cannot reload a busy Pi session; finish or cancel its current turn first')
++    }
++    // Wait for actual termination before another process opens the same session file.
++    await this.sessions.close(params.sessionId)
++    this.lastSessionCwd = params.cwd
+ 
+     const enableSkillCommands = getEnableSkillCommands(params.cwd)
+     const session = await this.restoreSession(params.sessionId, {
+@@ -956,16 +961,12 @@ export class PiAcpAgent implements ACPAgent {
+     try {
+       configuration = await getSessionConfiguration(proc)
+     } catch (err) {
+-      this.sessions.close(session.sessionId)
++      await this.sessions.close(session.sessionId)
+       throw err
+     }
+     const { configOptions, models, modes } = configuration
+     const fileCommands = loadSlashCommands(params.cwd)
+ 
+-    // Policy: within a single ACP connection (one Zed window), keep only one live pi subprocess.
+-    // (Tests sometimes stub out `this.sessions`, so guard the call.)
+-    ;(this.sessions as any).closeAllExcept?.(session.sessionId)
+-
+     // (Optional) ensure mapping stays fresh.
+     this.store.upsert({
+       sessionId: params.sessionId,
+@@ -973,6 +974,14 @@ export class PiAcpAgent implements ACPAgent {
+       sessionFile: stored.sessionFile
+     })
+ 
++    // Replay the active branch's latest plan, including entries before compaction.
++    try {
++      const plan = replayTodoPlan(await proc.getEntries())
++      if (plan) await this.conn.sessionUpdate({ sessionId: session.sessionId, update: plan })
++    } catch {
++      // Older Pi versions may not implement get_entries.
++    }
++
+     // Replay full conversation history.
+     const data = (await proc.getMessages()) as any
+     const messages = Array.isArray(data?.messages) ? data.messages : []
+@@ -1090,7 +1099,7 @@ export class PiAcpAgent implements ACPAgent {
+           const pi = (await proc.getCommands()) as any
+           const { commands } = toAvailableCommandsFromPiGetCommands(pi, {
+             enableSkillCommands,
+-            includeExtensionCommands: false
++            includeExtensionCommands: true
+           })
+ 
+           await this.conn.sessionUpdate({
+diff --git a/src/acp/session.ts b/src/acp/session.ts
+index 1c4156a..8e539af 100644
+--- a/src/acp/session.ts
++++ b/src/acp/session.ts
+@@ -1,6 +1,7 @@
+ import type {
+   AgentSideConnection,
+   ContentBlock,
++  ElicitationSchema,
+   McpServer,
+   PermissionOption,
+   SessionUpdate,
+@@ -9,7 +10,6 @@ import type {
+   ToolKind
+ } from '@agentclientprotocol/sdk'
+ import { RequestError } from '@agentclientprotocol/sdk'
+-import { readFileSync } from 'node:fs'
+ import { isAbsolute, resolve as resolvePath } from 'node:path'
+ import {
+   PiRpcProcess,
+@@ -33,6 +33,9 @@ import {
+   isBashTool
+ } from './translate/bash.js'
+ import { toolResultToText } from './translate/pi-tools.js'
++import { todoPlan } from './translate/todo.js'
++import { readProjectSnapshot } from './snapshot-read.js'
++import { zElicitationSchema } from '@agentclientprotocol/sdk/dist/schema/zod.gen.js'
+ 
+ type SessionCreateParams = {
+   cwd: string
+@@ -40,6 +43,7 @@ type SessionCreateParams = {
+   conn: AgentSideConnection
+   fileCommands?: import('./slash-commands.js').FileSlashCommand[]
+   piCommand?: string
++  supportsForms?: boolean
+ }
+ 
+ export type StopReason = 'end_turn' | 'cancelled' | 'error'
+@@ -172,11 +176,12 @@ function toToolCallLocations(args: unknown, cwd: string, line?: number): ToolCal
+ 
+ export class SessionManager {
+   private sessions = new Map<string, PiAcpSession>()
++  private closing = new Map<string, Promise<void>>()
+   private readonly store = new SessionStore()
+ 
+   /** Dispose all sessions and their underlying pi subprocesses. */
+   disposeAll(): void {
+-    for (const [id] of this.sessions) this.close(id)
++    for (const [id] of this.sessions) void this.close(id)
+   }
+ 
+   /** Get a registered session if it exists (no throw). */
+@@ -188,23 +193,17 @@ export class SessionManager {
+    * Dispose a session's underlying pi process and remove it from the manager.
+    * Used when clients explicitly reload a session and we want a fresh pi subprocess.
+    */
+-  close(sessionId: string): void {
++  close(sessionId: string): Promise<void> {
++    const closing = this.closing.get(sessionId)
++    if (closing) return closing
+     const s = this.sessions.get(sessionId)
+-    if (!s) return
+-    try {
+-      s.proc.dispose?.()
+-    } catch {
+-      // ignore
+-    }
+-    this.sessions.delete(sessionId)
+-  }
+-
+-  /** Close all sessions except the one with `keepSessionId`. */
+-  closeAllExcept(keepSessionId: string): void {
+-    for (const [id] of this.sessions) {
+-      if (id === keepSessionId) continue
+-      this.close(id)
+-    }
++    if (!s) return Promise.resolve()
++    const completion = s.dispose().finally(() => {
++      this.sessions.delete(sessionId)
++      this.closing.delete(sessionId)
++    })
++    this.closing.set(sessionId, completion)
++    return completion
+   }
+ 
+   async create(params: SessionCreateParams): Promise<PiAcpSession> {
+@@ -244,6 +243,7 @@ export class SessionManager {
+       proc,
+       conn: params.conn,
+       fileCommands: params.fileCommands ?? [],
++      supportsForms: params.supportsForms,
+       autoTitle: true
+     })
+ 
+@@ -272,6 +272,7 @@ export class SessionManager {
+       proc: params.proc,
+       conn: params.conn,
+       fileCommands: params.fileCommands ?? [],
++      supportsForms: params.supportsForms,
+       autoTitle: false
+     })
+ 
+@@ -294,6 +295,10 @@ export class PiAcpSession {
+   readonly proc: PiRpcProcess
+   private readonly conn: AgentSideConnection
+   private readonly fileCommands: FileSlashCommand[]
++  private readonly supportsForms: boolean
++  private readonly pendingForms = new Map<string, () => Promise<void>>()
++  private disposed = false
++  private disposal: Promise<void> | null = null
+ 
+   // Used to map abort semantics to ACP stopReason.
+   // Applies to the currently running turn.
+@@ -332,6 +337,7 @@ export class PiAcpSession {
+     conn: AgentSideConnection
+     fileCommands?: FileSlashCommand[]
+     autoTitle?: boolean
++    supportsForms?: boolean
+   }) {
+     this.sessionId = opts.sessionId
+     this.cwd = opts.cwd
+@@ -339,9 +345,41 @@ export class PiAcpSession {
+     this.proc = opts.proc
+     this.conn = opts.conn
+     this.fileCommands = opts.fileCommands ?? []
++    this.supportsForms = opts.supportsForms ?? false
+     this.initialTitlePending = opts.autoTitle ?? false
+ 
+     this.proc.onEvent(ev => this.handlePiEvent(ev))
++    void this.conn.closed?.then(() => this.cancelForms()).catch(() => {})
++  }
++
++  isBusy(): boolean {
++    return (
++      this.disposed ||
++      this.pendingTurn !== null ||
++      this.inAgentLoop ||
++      this.turnQueue.length > 0 ||
++      this.pendingForms.size > 0
++    )
++  }
++
++  dispose(): Promise<void> {
++    if (this.disposal) return this.disposal
++    this.disposed = true
++    this.cancelRequested = true
++    this.pendingTurn?.resolve('cancelled')
++    this.pendingTurn = null
++    for (const turn of this.turnQueue.splice(0)) turn.resolve('cancelled')
++    const hadForms = this.pendingForms.size > 0
++    const forms = this.cancelForms()
++    // Idle reload signals immediately; active dialogs get their cancellation first.
++    if (!hadForms) this.proc.dispose?.()
++    this.disposal = forms
++      .finally(async () => {
++        if (typeof this.proc.disposeAndWait === 'function') await this.proc.disposeAndWait()
++        else if (hadForms) this.proc.dispose?.()
++      })
++      .catch(() => {})
++    return this.disposal
+   }
+ 
+   setStartupInfo(text: string) {
+@@ -365,6 +403,7 @@ export class PiAcpSession {
+   }
+ 
+   async prompt(message: string, images: unknown[] = [], title?: string): Promise<StopReason> {
++    if (this.disposed) throw RequestError.invalidParams('Pi session is closing')
+     // pi RPC mode disables slash command expansion, so we do it here.
+     const expandedMessage = expandSlashCommand(message, this.fileCommands)
+ 
+@@ -405,6 +444,7 @@ export class PiAcpSession {
+   async cancel(): Promise<void> {
+     // Cancel current and clear any queued prompts.
+     this.cancelRequested = true
++    await this.cancelForms()
+ 
+     if (this.turnQueue.length) {
+       const queued = this.turnQueue.splice(0, this.turnQueue.length)
+@@ -596,7 +636,8 @@ export class PiAcpSession {
+     this.cancelRequested = false
+     this.inAgentLoop = false
+ 
+-    this.pendingTurn = { title: t.title, resolve: t.resolve, reject: t.reject }
++    const pendingTurn = { title: t.title, resolve: t.resolve, reject: t.reject }
++    this.pendingTurn = pendingTurn
+     void this.maybeAutoTitle(t.title)
+ 
+     // Publish queue depth (0 because we're starting the turn now).
+@@ -608,31 +649,38 @@ export class PiAcpSession {
+     // Kick off pi, but completion is determined by pi events, not the RPC response.
+     // The prompt RPC only acknowledges acceptance; retry, compaction, or queued
+     // continuations may emit multiple `agent_end` events before `agent_settled`.
+-    this.proc.prompt(t.message, t.images).catch(err => {
+-      // If the subprocess errors before we get `agent_settled`, treat as error unless cancelled.
+-      // Also ensure we flush any already-enqueued updates first.
+-      void this.flushEmits().finally(() => {
+-        // If this looks like an auth/config issue, surface AUTH_REQUIRED so clients can offer terminal login.
+-        const authErr = maybeAuthRequiredError(err)
+-        if (authErr) {
+-          this.pendingTurn?.reject(authErr)
+-        } else {
+-          const reason: StopReason = this.cancelRequested ? 'cancelled' : 'error'
+-          this.pendingTurn?.resolve(reason)
++    this.proc
++      .prompt(t.message, t.images)
++      .then(data => {
++        if (data?.disposition === 'handled' && this.pendingTurn === pendingTurn && !this.inAgentLoop) {
++          void this.settleTurn()
+         }
++      })
++      .catch(err => {
++        // If the subprocess errors before we get `agent_settled`, treat as error unless cancelled.
++        // Also ensure we flush any already-enqueued updates first.
++        void this.flushEmits().finally(() => {
++          // If this looks like an auth/config issue, surface AUTH_REQUIRED so clients can offer terminal login.
++          const authErr = maybeAuthRequiredError(err)
++          if (authErr) {
++            this.pendingTurn?.reject(authErr)
++          } else {
++            const reason: StopReason = this.cancelRequested ? 'cancelled' : 'error'
++            this.pendingTurn?.resolve(reason)
++          }
+ 
+-        this.pendingTurn = null
+-        this.inAgentLoop = false
++          this.pendingTurn = null
++          this.inAgentLoop = false
+ 
+-        // If the prompt failed, do not automatically proceed—pi may be unhealthy.
+-        // But we still clear the queueDepth metadata.
+-        this.emit({
+-          sessionUpdate: 'session_info_update',
+-          _meta: { piAcp: { queueDepth: this.turnQueue.length, running: false } }
++          // If the prompt failed, do not automatically proceed—pi may be unhealthy.
++          // But we still clear the queueDepth metadata.
++          this.emit({
++            sessionUpdate: 'session_info_update',
++            _meta: { piAcp: { queueDepth: this.turnQueue.length, running: false } }
++          })
+         })
++        void err
+       })
+-      void err
+-    })
+   }
+ 
+   private handlePiEvent(ev: PiRpcEvent) {
+@@ -768,19 +816,17 @@ export class PiAcpSession {
+           const p = getToolPath(args)
+           if (p) {
+             try {
+-              const abs = isAbsolute(p) ? p : resolvePath(this.cwd, p)
+-              snapshotOldText = readFileSync(abs, 'utf8')
++              snapshotOldText = readProjectSnapshot(this.cwd, p)
+               this.fileSnapshots.set(toolCallId, { path: p, oldText: snapshotOldText })
+ 
+-              if (toolName === 'edit') {
++              if (toolName === 'edit' && snapshotOldText !== null) {
+                 for (const needle of getEditOldTexts(args)) {
+                   line = findUniqueLineNumber(snapshotOldText, needle)
+                   if (typeof line === 'number') break
+                 }
+               }
+             } catch {
+-              snapshotOldText = null
+-              this.fileSnapshots.set(toolCallId, { path: p, oldText: null })
++              // Never fall back to host reads, or treat reader errors as nonexistent files.
+             }
+           }
+         }
+@@ -843,6 +889,10 @@ export class PiAcpSession {
+ 
+         const result = (ev as any).result
+         const isError = Boolean((ev as any).isError)
++        if (ev.toolName === 'todo') {
++          const plan = todoPlan(result, isError)
++          if (plan) this.emit(plan)
++        }
+         if (this.bashToolCallIds.has(toolCallId)) {
+           this.emitBashOutputUpdate({
+             toolCallId,
+@@ -862,8 +912,8 @@ export class PiAcpSession {
+ 
+         if (!isError && snapshot) {
+           try {
+-            const abs = isAbsolute(snapshot.path) ? snapshot.path : resolvePath(this.cwd, snapshot.path)
+-            const newText = readFileSync(abs, 'utf8')
++            const newText = readProjectSnapshot(this.cwd, snapshot.path)
++            if (newText === null) throw new Error('Post-mutation file missing')
+             if (snapshot.oldText === null || newText !== snapshot.oldText) {
+               hasStructuredDiff = true
+               content = [
+@@ -992,14 +1042,7 @@ export class PiAcpSession {
+     }
+ 
+     if (method === 'input' || method === 'editor') {
+-      this.emit({
+-        sessionUpdate: 'agent_message_chunk',
+-        content: {
+-          type: 'text',
+-          text: `Pi ${method} UI request is not supported in ACP yet; cancelling it.`
+-        } satisfies ContentBlock
+-      })
+-      await this.proc.sendExtensionUiResponse({ id, cancelled: true })
++      await this.handleExtensionForm(ev, id)
+       return
+     }
+ 
+@@ -1016,6 +1059,72 @@ export class PiAcpSession {
+     await this.proc.sendExtensionUiResponse({ id, cancelled: true })
+   }
+ 
++  private async cancelForms(): Promise<void> {
++    await Promise.all([...this.pendingForms.values()].map(cancel => cancel()))
++  }
++
++  private async handleExtensionForm(ev: PiRpcEvent, id: string): Promise<void> {
++    let finished = false
++    let release!: () => void
++    const cancelled = new Promise<null>(resolve => {
++      release = () => resolve(null)
++    })
++    const finish = async (value?: string) => {
++      if (finished) return
++      finished = true
++      release()
++      this.pendingForms.delete(id)
++      await this.proc
++        .sendExtensionUiResponse(value === undefined ? { id, cancelled: true } : { id, value })
++        .catch(() => {})
++    }
++    this.pendingForms.set(id, () => finish())
++    if (this.cancelRequested || this.disposed) return finish()
++    if (!this.supportsForms) {
++      this.emit({
++        sessionUpdate: 'agent_message_chunk',
++        content: {
++          type: 'text',
++          text: `Pi ${ev.method} UI request is not supported: this ACP client lacks form elicitation; cancelling it.`
++        }
++      })
++      return finish()
++    }
++    try {
++      const semantic = ev.method === 'editor' && ev.title === '__pi_acp_form_v1__'
++      const form = semantic
++        ? (JSON.parse(stringProp(ev, 'prefill') ?? '') as Record<string, unknown>)
++        : {
++            message: stringProp(ev, 'title') ?? 'Pi input',
++            requestedSchema: {
++              type: 'object',
++              properties: {
++                value: { type: 'string', ...(typeof ev.prefill === 'string' ? { default: ev.prefill } : {}) }
++              },
++              required: ['value']
++            }
++          }
++      if (typeof form.message !== 'string') throw new Error('Invalid form message')
++      zElicitationSchema.parse(form.requestedSchema)
++      // Preserve additional JSON Schema annotations, e.g. oneOf option descriptions.
++      const requestedSchema = form.requestedSchema as ElicitationSchema
++      const response = await Promise.race([
++        this.conn.unstable_createElicitation({
++          sessionId: this.sessionId,
++          mode: 'form',
++          message: form.message,
++          requestedSchema
++        }),
++        cancelled
++      ])
++      if (!response || response.action !== 'accept') return finish()
++      const value = semantic ? JSON.stringify(response.content) : response.content?.value
++      await finish(typeof value === 'string' ? value : undefined)
++    } catch {
++      await finish()
++    }
++  }
++
+   private async handleExtensionSelect(ev: PiRpcEvent, id: string): Promise<void> {
+     const rawOptions = ev.options
+     const options = Array.isArray(rawOptions) ? rawOptions.map(option => String(option)) : []
+diff --git a/src/pi-rpc/process.ts b/src/pi-rpc/process.ts
+index 160cc90..aa57a83 100644
+--- a/src/pi-rpc/process.ts
++++ b/src/pi-rpc/process.ts
+@@ -51,6 +51,7 @@ type PiRpcCommand =
+   | { type: 'switch_session'; id?: string; sessionPath: string }
+   // Messages
+   | { type: 'get_messages'; id?: string }
++  | { type: 'get_entries'; id?: string }
+   // Commands
+   | { type: 'get_commands'; id?: string }
+ 
+@@ -110,9 +111,11 @@ export class PiRpcProcess {
+   private readonly pending = new Map<string, { resolve: (v: PiRpcResponse) => void; reject: (e: unknown) => void }>()
+   private eventHandlers: Array<(ev: PiRpcEvent) => void> = []
+   private readonly preludeLines: string[] = []
++  private readonly exited: Promise<void>
+ 
+   private constructor(child: ChildProcessWithoutNullStreams) {
+     this.child = child
++    this.exited = new Promise(resolve => child.once('exit', () => resolve()))
+ 
+     const rl = readline.createInterface({ input: child.stdout })
+     rl.on('line', line => {
+@@ -247,6 +250,24 @@ export class PiRpcProcess {
+     }
+   }
+ 
++  async disposeAndWait(): Promise<void> {
++    this.dispose()
++    if (this.child.exitCode !== null || this.child.signalCode !== null) return
++    const escalation = setTimeout(() => {
++      try {
++        this.child.kill('SIGKILL')
++      } catch {
++        /* already exited */
++      }
++    }, 5_000)
++    escalation.unref()
++    try {
++      await this.exited
++    } finally {
++      clearTimeout(escalation)
++    }
++  }
++
+   /**
+    * Human-readable stdout lines emitted before RPC NDJSON begins (e.g. Context/Skills/Extensions info).
+    * Themes are typically noisy/less useful for ACP, so callers can filter as needed.
+@@ -256,9 +277,10 @@ export class PiRpcProcess {
+     return lines
+   }
+ 
+-  async prompt(message: string, images: unknown[] = []): Promise<void> {
++  async prompt(message: string, images: unknown[] = []): Promise<{ disposition?: string } | undefined> {
+     const res = await this.request({ type: 'prompt', message, images })
+     if (!res.success) throw new Error(`pi prompt failed: ${res.error ?? JSON.stringify(res.data)}`)
++    return res.data as { disposition?: string } | undefined
+   }
+ 
+   async abort(): Promise<void> {
+@@ -349,6 +371,12 @@ export class PiRpcProcess {
+     if (!res.success) throw new Error(`pi switch_session failed: ${res.error ?? JSON.stringify(res.data)}`)
+   }
+ 
++  async getEntries(): Promise<unknown> {
++    const res = await this.request({ type: 'get_entries' })
++    if (!res.success) throw new Error(`pi get_entries failed: ${res.error ?? JSON.stringify(res.data)}`)
++    return res.data
++  }
++
+   async getMessages(): Promise<unknown> {
+     const res = await this.request({ type: 'get_messages' })
+     if (!res.success) throw new Error(`pi get_messages failed: ${res.error ?? JSON.stringify(res.data)}`)
+diff --git a/test/component/session-diff.test.ts b/test/component/session-diff.test.ts
+index 8f2b294..1dc02fc 100644
+--- a/test/component/session-diff.test.ts
++++ b/test/component/session-diff.test.ts
+@@ -1,4 +1,6 @@
+ import test from 'node:test'
++import { installMockSnapshotReader } from '../helpers/snapshot-reader.js'
++installMockSnapshotReader()
+ import assert from 'node:assert/strict'
+ import { mkdirSync, writeFileSync } from 'node:fs'
+ import { mkdtempSync } from 'node:fs'
+diff --git a/test/component/session-events.test.ts b/test/component/session-events.test.ts
+index c30373c..59c315b 100644
+--- a/test/component/session-events.test.ts
++++ b/test/component/session-events.test.ts
+@@ -1,4 +1,6 @@
+ import test from 'node:test'
++import { installMockSnapshotReader } from '../helpers/snapshot-reader.js'
++installMockSnapshotReader()
+ import assert from 'node:assert/strict'
+ import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs'
+ import { tmpdir } from 'node:os'
+diff --git a/src/acp/translate/todo.ts b/src/acp/translate/todo.ts
+new file mode 100644
+index 0000000..3282245
+--- /dev/null
++++ b/src/acp/translate/todo.ts
+@@ -0,0 +1,50 @@
++import type { SessionUpdate } from '@agentclientprotocol/sdk'
++
++type RecordValue = Record<string, unknown>
++function record(value: unknown): RecordValue | null {
++  return value !== null && typeof value === 'object' ? (value as RecordValue) : null
++}
++
++export function todoPlan(result: unknown, isError: unknown = false): SessionUpdate | null {
++  if (isError) return null
++  const tasks = record(record(result)?.details)?.tasks
++  if (!Array.isArray(tasks)) return null
++  const entries = []
++  for (const task of tasks) {
++    const item = record(task)
++    if (typeof item?.subject !== 'string' || !['pending', 'in_progress', 'completed'].includes(String(item.status)))
++      return null
++    entries.push({
++      content: item.subject,
++      status: item.status as 'pending' | 'in_progress' | 'completed',
++      priority: 'medium' as const
++    })
++  }
++  return { sessionUpdate: 'plan', entries }
++}
++
++// Walk the full active branch, not get_messages (which omits precompaction history).
++export function replayTodoPlan(data: unknown): SessionUpdate | null {
++  const state = record(data)
++  if (!Array.isArray(state?.entries) || typeof state.leafId !== 'string') return null
++  const entries = new Map(
++    state.entries.map(value => {
++      const entry = record(value)
++      return [entry?.id, entry] as const
++    })
++  )
++  const visited = new Set<string>()
++  let id: unknown = state.leafId
++  while (typeof id === 'string' && !visited.has(id)) {
++    visited.add(id)
++    const entry = entries.get(id)
++    if (!entry) break
++    const message = record(entry.message)
++    if (entry.type === 'message' && message?.role === 'toolResult' && message.toolName === 'todo') {
++      const plan = todoPlan(message, message.isError)
++      if (plan) return plan
++    }
++    id = entry.parentId
++  }
++  return null
++}
+diff --git a/src/acp/project-path.ts b/src/acp/project-path.ts
+new file mode 100644
+index 0000000..38f18a4
+--- /dev/null
++++ b/src/acp/project-path.ts
+@@ -0,0 +1,32 @@
++import { realpathSync } from 'node:fs'
++import { dirname, isAbsolute, relative, resolve, sep } from 'node:path'
++
++function canonicalPath(path: string): string {
++  try {
++    return realpathSync(path)
++  } catch (error) {
++    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
++    const parent = dirname(path)
++    if (parent === path) throw error
++    return resolve(canonicalPath(parent), relative(parent, path))
++  }
++}
++
++export function projectPath(cwd: string, path: string): string | null {
++  try {
++    const root = realpathSync(cwd)
++    const target = canonicalPath(resolve(cwd, path))
++    const rel = relative(root, target)
++    return rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel) ? null : target
++  } catch {
++    return null
++  }
++}
++
++export function sameProject(a: string, b: string): boolean {
++  try {
++    return realpathSync(a) === realpathSync(b)
++  } catch {
++    return resolve(a) === resolve(b)
++  }
++}
+diff --git a/src/acp/snapshot-read.ts b/src/acp/snapshot-read.ts
+new file mode 100644
+index 0000000..7371cdf
+--- /dev/null
++++ b/src/acp/snapshot-read.ts
+@@ -0,0 +1,13 @@
++import { spawnSync } from 'node:child_process'
++import { projectPath } from './project-path.js'
++
++export function readProjectSnapshot(cwd: string, path: string): string | null {
++  const command = process.env.PI_ACP_READ_COMMAND
++  if (!command || !projectPath(cwd, path))
++    throw new Error('Sandbox snapshot reader unavailable or path outside project')
++  const result = spawnSync(command, [path], { cwd, encoding: 'utf8', shell: false, timeout: 5_000 })
++  if (result.error) throw result.error
++  if (result.status === 44) return null
++  if (result.status !== 0) throw new Error('Sandbox snapshot read failed')
++  return result.stdout
++}
+diff --git a/test/helpers/snapshot-reader.ts b/test/helpers/snapshot-reader.ts
+new file mode 100644
+index 0000000..db5f535
+--- /dev/null
++++ b/test/helpers/snapshot-reader.ts
+@@ -0,0 +1,25 @@
++import { before, after } from 'node:test'
++import { mkdtempSync, writeFileSync, rmSync } from 'node:fs'
++import { tmpdir } from 'node:os'
++import { join } from 'node:path'
++
++// Test fixture only; production snapshots must use the project's sandbox launcher.
++export function installMockSnapshotReader(): void {
++  let dir: string
++  const previous = process.env.PI_ACP_READ_COMMAND
++  before(() => {
++    dir = mkdtempSync(join(tmpdir(), 'pi-acp-reader-'))
++    const command = join(dir, 'read.cjs')
++    writeFileSync(
++      command,
++      `#!${process.execPath}\nconst fs = require('node:fs'); const path = require('node:path');\ntry { const target = fs.realpathSync(path.resolve(process.cwd(), process.argv[2])); const relative = path.relative(fs.realpathSync(process.cwd()), target); if (relative === '..' || relative.startsWith('../') || path.isAbsolute(relative)) process.exit(1); process.stdout.write(fs.readFileSync(target)); } catch (e) { process.exit(e.code === 'ENOENT' ? 44 : 1); }\n`,
++      { mode: 0o755 }
++    )
++    process.env.PI_ACP_READ_COMMAND = command
++  })
++  after(() => {
++    if (previous === undefined) delete process.env.PI_ACP_READ_COMMAND
++    else process.env.PI_ACP_READ_COMMAND = previous
++    rmSync(dir, { recursive: true, force: true })
++  })
++}
+diff --git a/test/unit/native-forms-plans.test.ts b/test/unit/native-forms-plans.test.ts
+new file mode 100644
+index 0000000..f15f99a
+--- /dev/null
++++ b/test/unit/native-forms-plans.test.ts
+@@ -0,0 +1,200 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import type { AgentSideConnection, CreateElicitationResponse } from '@agentclientprotocol/sdk'
++import { PiAcpSession } from '../../src/acp/session.js'
++import type { PiRpcProcess } from '../../src/pi-rpc/process.js'
++import { FakeAgentSideConnection, FakePiRpcProcess } from '../helpers/fakes.js'
++import { todoPlan, replayTodoPlan } from '../../src/acp/translate/todo.js'
++
++const tick = () => new Promise(resolve => setImmediate(resolve))
++const schema = { type: 'object', properties: { answer: { type: 'boolean' } }, required: ['answer'] }
++function setup(supportsForms = true) {
++  const proc = new FakePiRpcProcess()
++  const conn = new FakeAgentSideConnection()
++  const requests: unknown[] = []
++  let respond = async (): Promise<CreateElicitationResponse> => ({ action: 'accept', content: { answer: true } })
++  let close!: () => void
++  const client = Object.assign(conn, {
++    closed: new Promise<void>(resolve => {
++      close = resolve
++    }),
++    unstable_createElicitation: async (params: unknown) => {
++      requests.push(params)
++      return respond()
++    }
++  })
++  const session = new PiAcpSession({
++    sessionId: 'session',
++    cwd: '/tmp',
++    mcpServers: [],
++    proc: proc as unknown as PiRpcProcess,
++    conn: client as unknown as AgentSideConnection,
++    supportsForms
++  })
++  const form = () =>
++    proc.emit({
++      type: 'extension_ui_request',
++      id: 'form',
++      method: 'editor',
++      title: '__pi_acp_form_v1__',
++      prefill: JSON.stringify({ message: 'Question', requestedSchema: schema })
++    })
++  return {
++    proc,
++    conn,
++    requests,
++    session,
++    form,
++    close,
++    setResponse: (fn: typeof respond) => {
++      respond = fn
++    }
++  }
++}
++
++test('semantic editor forms use session-scoped elicitation and return JSON', async () => {
++  const s = setup()
++  s.form()
++  await tick()
++  assert.deepEqual(s.requests, [{ mode: 'form', sessionId: 'session', message: 'Question', requestedSchema: schema }])
++  assert.deepEqual(s.proc.extensionUiResponses, [{ id: 'form', value: '{"answer":true}' }])
++})
++
++test('semantic choice annotations survive schema validation', async () => {
++  const s = setup()
++  const requestedSchema = {
++    type: 'object',
++    properties: { choice: { type: 'string', oneOf: [{ const: 'yes', title: 'Yes', description: 'Allow once' }] } }
++  }
++  s.proc.emit({
++    type: 'extension_ui_request',
++    id: 'choice',
++    method: 'editor',
++    title: '__pi_acp_form_v1__',
++    prefill: JSON.stringify({ message: 'Pick', requestedSchema })
++  })
++  await tick()
++  assert.deepEqual(s.requests, [{ sessionId: 'session', mode: 'form', message: 'Pick', requestedSchema }])
++})
++
++test('disposing a session cancels its form before disposing Pi', async () => {
++  const s = setup()
++  let disposed = false
++  Object.assign(s.proc, {
++    dispose: () => {
++      assert.equal(s.proc.extensionUiResponses.length, 1)
++      disposed = true
++    }
++  })
++  s.setResponse(() => new Promise(() => {}))
++  s.form()
++  await tick()
++  s.session.dispose()
++  await tick()
++  assert.ok(disposed)
++  assert.deepEqual(s.proc.extensionUiResponses, [{ id: 'form', cancelled: true }])
++})
++
++for (const action of ['decline', 'cancel'] as const)
++  test(`${action} cancels Pi dialog`, async () => {
++    const s = setup()
++    s.setResponse(async () => ({ action }))
++    s.form()
++    await tick()
++    assert.deepEqual(s.proc.extensionUiResponses, [{ id: 'form', cancelled: true }])
++  })
++
++test('unsupported, malformed and disconnected forms always cancel', async () => {
++  const unsupported = setup(false)
++  unsupported.form()
++  await tick()
++  assert.equal(unsupported.requests.length, 0)
++  assert.ok(unsupported.conn.updates.some(m => m.update.sessionUpdate === 'agent_message_chunk'))
++  assert.deepEqual(unsupported.proc.extensionUiResponses, [{ id: 'form', cancelled: true }])
++  const broken = setup()
++  broken.setResponse(async () => {
++    throw new Error('connection lost')
++  })
++  broken.form()
++  await tick()
++  assert.deepEqual(broken.proc.extensionUiResponses, [{ id: 'form', cancelled: true }])
++  const malformed = setup()
++  malformed.proc.emit({
++    type: 'extension_ui_request',
++    method: 'editor',
++    id: 'form',
++    title: '__pi_acp_form_v1__',
++    prefill: '{}'
++  })
++  await tick()
++  assert.deepEqual(malformed.proc.extensionUiResponses, [{ id: 'form', cancelled: true }])
++})
++
++for (const method of ['input', 'editor'])
++  test(`${method} bridges plain text`, async () => {
++    const s = setup()
++    s.setResponse(async () => ({ action: 'accept', content: { value: 'hello' } }))
++    s.proc.emit({ type: 'extension_ui_request', id: 'text', method, title: 'Text' })
++    await tick()
++    assert.deepEqual(s.proc.extensionUiResponses, [{ id: 'text', value: 'hello' }])
++  })
++
++for (const disconnect of [false, true])
++  test(`pending form cancellation (${disconnect ? 'disconnect' : 'ACP cancel'}) ignores late acceptance`, async () => {
++    const s = setup()
++    let resolve!: (response: CreateElicitationResponse) => void
++    s.setResponse(
++      () =>
++        new Promise(r => {
++          resolve = r
++        })
++    )
++    s.form()
++    await tick()
++    if (disconnect) s.close()
++    else await s.session.cancel()
++    await tick()
++    assert.deepEqual(s.proc.extensionUiResponses, [{ id: 'form', cancelled: true }])
++    resolve({ action: 'accept', content: { answer: true } })
++    await tick()
++    assert.equal(s.proc.extensionUiResponses.length, 1)
++  })
++
++const result = { details: { tasks: [{ subject: 'Do it', status: 'in_progress' }] } }
++test('live successful todo publishes a plan; failure preserves plan; empty clears it', async () => {
++  const s = setup()
++  for (const [id, data, isError] of [
++    ['ok', result, false],
++    ['bad', result, true],
++    ['clear', { details: { tasks: [] } }, false]
++  ] as const) {
++    s.proc.emit({ type: 'tool_execution_end', toolCallId: id, toolName: 'todo', result: data, isError })
++  }
++  await tick()
++  const plans = s.conn.updates.filter(m => m.update.sessionUpdate === 'plan').map(m => m.update)
++  assert.deepEqual(plans, [todoPlan(result), { sessionUpdate: 'plan', entries: [] }])
++})
++
++test('replay follows active ancestry through compaction, ignores failed and abandoned todo', () => {
++  const todo = (id: string, parentId: string | null, tasks = result, isError = false) => ({
++    id,
++    parentId,
++    type: 'message',
++    message: { role: 'toolResult', toolName: 'todo', ...tasks, isError }
++  })
++  const entries = [
++    todo('old', null),
++    todo('abandoned', 'old', { details: { tasks: [] } }),
++    { id: 'compaction', parentId: 'old', type: 'compaction' },
++    todo('failed', 'compaction', { details: { tasks: [] } }, true)
++  ]
++  assert.deepEqual(replayTodoPlan({ entries, leafId: 'failed' }), todoPlan(result))
++  assert.deepEqual(replayTodoPlan({ entries, leafId: 'abandoned' }), { sessionUpdate: 'plan', entries: [] })
++  assert.equal(replayTodoPlan({ entries, leafId: null }), null)
++})
++
++test('handled extension prompt settles without agent_settled', async () => {
++  const s = setup()
++  s.proc.prompt = async () => ({ disposition: 'handled' }) as never
++  assert.equal(await s.session.prompt('/answer'), 'end_turn')
++})
+diff --git a/test/unit/project-isolation.test.ts b/test/unit/project-isolation.test.ts
+new file mode 100644
+index 0000000..96c9d90
+--- /dev/null
++++ b/test/unit/project-isolation.test.ts
+@@ -0,0 +1,106 @@
++import test from 'node:test'
++import { installMockSnapshotReader } from '../helpers/snapshot-reader.js'
++installMockSnapshotReader()
++import assert from 'node:assert/strict'
++import { mkdtempSync, mkdirSync, writeFileSync, symlinkSync, rmSync } from 'node:fs'
++import { tmpdir } from 'node:os'
++import { join } from 'node:path'
++import { projectPath, sameProject } from '../../src/acp/project-path.js'
++import { PiAcpSession } from '../../src/acp/session.js'
++import { PiAcpAgent } from '../../src/acp/agent.js'
++import { PiRpcProcess } from '../../src/pi-rpc/process.js'
++import { FakeAgentSideConnection, FakePiRpcProcess, asAgentConn } from '../helpers/fakes.js'
++
++const tick = () => new Promise(resolve => setImmediate(resolve))
++test('canonical project boundary rejects outside paths and symlink parents, allows new project files', async () => {
++  const root = mkdtempSync(join(tmpdir(), 'pi-acp-isolation-'))
++  try {
++    const cwd = join(root, 'project')
++    mkdirSync(cwd)
++    const outside = join(root, 'outside')
++    mkdirSync(outside)
++    writeFileSync(join(outside, 'host-only'), 'host-only text')
++    symlinkSync(outside, join(cwd, 'escape'))
++    symlinkSync(cwd, join(root, 'alias'))
++    assert.equal(projectPath(cwd, '../outside/host-only'), null)
++    assert.equal(projectPath(cwd, 'escape/host-only'), null)
++    assert.equal(projectPath(cwd, 'escape/new/deep/file'), null)
++    assert.equal(projectPath(cwd, 'new/deep/file'), join(cwd, 'new/deep/file'))
++    assert.ok(sameProject(cwd, join(root, 'alias')))
++    assert.equal(sameProject(cwd, outside), false)
++    const proc = new FakePiRpcProcess()
++    const conn = new FakeAgentSideConnection()
++    new PiAcpSession({
++      sessionId: 's',
++      cwd,
++      mcpServers: [],
++      proc: proc as unknown as PiRpcProcess,
++      conn: asAgentConn(conn)
++    })
++    proc.emit({
++      type: 'tool_execution_start',
++      toolCallId: 'edit',
++      toolName: 'edit',
++      args: { path: 'escape/host-only' }
++    })
++    proc.emit({
++      type: 'tool_execution_end',
++      toolCallId: 'edit',
++      isError: false,
++      result: { content: [{ type: 'text', text: 'ok' }] }
++    })
++    await tick()
++    assert.ok(!JSON.stringify(conn.updates).includes('host-only text'))
++    assert.ok(!JSON.stringify(conn.updates).includes('"type":"diff"'))
++  } finally {
++    rmSync(root, { recursive: true, force: true })
++  }
++})
++
++test('load rejects cwd mismatch before closing an existing process', async () => {
++  const agent = new PiAcpAgent(asAgentConn(new FakeAgentSideConnection()))
++  const internals = agent as unknown as { store: unknown; sessions: unknown }
++  internals.store = { get: () => ({ cwd: '/tmp/project-a', sessionFile: '/tmp/a.jsonl' }) }
++  internals.sessions = {
++    close: () => {
++      throw new Error('must not close')
++    }
++  }
++  await assert.rejects(agent.loadSession({ sessionId: 'a', cwd: '/tmp/project-b', mcpServers: [] }), /invalid params/i)
++})
++
++test('new sessions pass negotiated form capability and do not close other sessions', async () => {
++  const conn = new FakeAgentSideConnection()
++  const agent = new PiAcpAgent(asAgentConn(conn))
++  const created: Array<{ cwd: string; supportsForms: boolean }> = []
++  const closures: string[] = []
++  const internals = agent as unknown as { sessions: unknown }
++  internals.sessions = {
++    create: async (params: { cwd: string; supportsForms: boolean }) => {
++      created.push(params)
++      return {
++        sessionId: `s${created.length}`,
++        cwd: params.cwd,
++        proc: {
++          getState: async () => ({ model: { provider: 'p', id: 'm' }, thinkingLevel: 'medium' }),
++          getAvailableModels: async () => ({ models: [{ provider: 'p', id: 'm' }] }),
++          getAvailableThinkingLevels: async () => ['medium'],
++          getCommands: async () => ({ commands: [] }),
++          consumePreludeLines: () => []
++        },
++        setStartupInfo: () => {},
++        sendStartupInfoIfPending: () => {},
++        publishContextUsage: async () => {}
++      }
++    },
++    closeAllExcept: (id: string) => closures.push(id)
++  }
++  await agent.initialize({ protocolVersion: 1, clientCapabilities: { elicitation: { form: {} } } })
++  await agent.newSession({ cwd: '/tmp', mcpServers: [] })
++  await agent.newSession({ cwd: '/tmp', mcpServers: [] })
++  assert.deepEqual(
++    created.map(p => p.supportsForms),
++    [true, true]
++  )
++  assert.deepEqual(closures, [])
++})
+diff --git a/test/unit/session-reload-lifecycle.test.ts b/test/unit/session-reload-lifecycle.test.ts
+new file mode 100644
+index 0000000..f01f573
+--- /dev/null
++++ b/test/unit/session-reload-lifecycle.test.ts
+@@ -0,0 +1,126 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import { PiAcpAgent } from '../../src/acp/agent.js'
++import { PiAcpSession, SessionManager } from '../../src/acp/session.js'
++import { PiRpcProcess } from '../../src/pi-rpc/process.js'
++import { mkdtempSync, writeFileSync, rmSync } from 'node:fs'
++import { tmpdir } from 'node:os'
++import { join } from 'node:path'
++import type { ChildProcess } from 'node:child_process'
++import type { AgentSideConnection } from '@agentclientprotocol/sdk'
++import { FakeAgentSideConnection, FakePiRpcProcess } from '../helpers/fakes.js'
++
++const tick = () => new Promise(resolve => setImmediate(resolve))
++function setup() {
++  const proc = new FakePiRpcProcess()
++  const conn = Object.assign(new FakeAgentSideConnection(), {
++    unstable_createElicitation: () => new Promise(() => {})
++  })
++  const session = new PiAcpSession({
++    sessionId: 's',
++    cwd: '/tmp',
++    mcpServers: [],
++    supportsForms: true,
++    proc: proc as unknown as PiRpcProcess,
++    conn: conn as unknown as AgentSideConnection
++  })
++  const sessions = new SessionManager()
++  ;(sessions as unknown as { sessions: Map<string, PiAcpSession> }).sessions.set('s', session)
++  const agent = new PiAcpAgent(conn as unknown as AgentSideConnection)
++  const internals = agent as unknown as {
++    sessions: SessionManager
++    store: unknown
++    restoreSession: (id: string) => Promise<PiAcpSession>
++  }
++  internals.sessions = sessions
++  internals.store = { get: () => ({ cwd: '/tmp', sessionFile: '/tmp/test-session.jsonl' }) }
++  return { proc, session, sessions, agent, internals }
++}
++
++test('reload with a pending form is rejected without closing or replacing the process', async () => {
++  const s = setup()
++  let disposed = false
++  let restored = false
++  Object.assign(s.proc, {
++    dispose: () => {
++      disposed = true
++    }
++  })
++  s.internals.restoreSession = async () => {
++    restored = true
++    throw new Error('unexpected restore')
++  }
++  s.proc.emit({
++    type: 'extension_ui_request',
++    id: 'form',
++    method: 'editor',
++    title: '__pi_acp_form_v1__',
++    prefill: JSON.stringify({ message: 'Question', requestedSchema: { type: 'object', properties: {} } })
++  })
++  await tick()
++  await assert.rejects(s.agent.loadSession({ sessionId: 's', cwd: '/tmp', mcpServers: [] }), /invalid params/i)
++  assert.equal(disposed, false)
++  assert.equal(restored, false)
++  assert.deepEqual(s.proc.extensionUiResponses, [])
++  await s.sessions.close('s')
++  assert.deepEqual(s.proc.extensionUiResponses, [{ id: 'form', cancelled: true }])
++})
++
++test('idle reload signals synchronously but does not restore until actual process exit', async () => {
++  const s = setup()
++  let signalled = false
++  let restored = false
++  let exit!: () => void
++  Object.assign(s.proc, {
++    dispose: () => {
++      signalled = true
++    },
++    disposeAndWait: () =>
++      new Promise<void>(resolve => {
++        exit = resolve
++      })
++  })
++  s.internals.restoreSession = async () => {
++    restored = true
++    throw new Error('restore reached')
++  }
++  const loading = s.agent.loadSession({ sessionId: 's', cwd: '/tmp', mcpServers: [] })
++  assert.equal(signalled, true)
++  await tick()
++  assert.equal(restored, false)
++  assert.equal(s.sessions.maybeGet('s'), s.session)
++  exit()
++  await assert.rejects(loading, /restore reached/)
++  assert.equal(restored, true)
++  assert.equal(s.sessions.maybeGet('s'), undefined)
++})
++
++test('disposeAndWait waits for child exit, not just successful delivery of SIGTERM', async () => {
++  const dir = mkdtempSync(join(tmpdir(), 'pi-acp-exit-'))
++  const command = join(dir, 'pi.cjs')
++  writeFileSync(
++    command,
++    `#!${process.execPath}\nprocess.on('SIGTERM', () => setTimeout(() => process.exit(0), 100));\nrequire('node:readline').createInterface({input:process.stdin}).on('line', line => { const req = JSON.parse(line); console.log(JSON.stringify({type:'response', id:req.id, command:req.type, success:true, data:{}})); });\n`,
++    { mode: 0o755 }
++  )
++  try {
++    const proc = await PiRpcProcess.spawn({ cwd: dir, piCommand: command })
++    const child = (proc as unknown as { child: ChildProcess }).child
++    const closing = proc.disposeAndWait()
++    assert.equal(child.killed, true)
++    assert.equal(child.exitCode, null)
++    await closing
++    assert.equal(child.exitCode, 0)
++  } finally {
++    rmSync(dir, { recursive: true, force: true })
++  }
++})
++
++test('close resolves both active and queued turns instead of leaving ACP requests pending', async () => {
++  const s = setup()
++  const active = s.session.prompt('first')
++  const queued = s.session.prompt('second')
++  assert.ok(s.session.isBusy())
++  await s.sessions.close('s')
++  assert.deepEqual(await Promise.all([active, queued]), ['cancelled', 'cancelled'])
++})
+diff --git a/test/unit/snapshot-read.test.ts b/test/unit/snapshot-read.test.ts
+new file mode 100644
+index 0000000..16fc5d3
+--- /dev/null
++++ b/test/unit/snapshot-read.test.ts
+@@ -0,0 +1,106 @@
++import test, { type TestContext } from 'node:test'
++import assert from 'node:assert/strict'
++import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync } from 'node:fs'
++import { tmpdir } from 'node:os'
++import { join } from 'node:path'
++import { readProjectSnapshot } from '../../src/acp/snapshot-read.js'
++import { PiAcpSession } from '../../src/acp/session.js'
++import type { PiRpcProcess } from '../../src/pi-rpc/process.js'
++import { FakeAgentSideConnection, FakePiRpcProcess, asAgentConn } from '../helpers/fakes.js'
++
++function fixture(t: TestContext, body: string) {
++  const root = mkdtempSync(join(tmpdir(), 'pi-acp-snapshot-'))
++  const cwd = join(root, 'project')
++  mkdirSync(cwd)
++  const previous = process.env.PI_ACP_READ_COMMAND
++  const command = join(root, 'reader with spaces.cjs')
++  writeFileSync(command, `#!${process.execPath}\n${body}\n`, { mode: 0o755 })
++  process.env.PI_ACP_READ_COMMAND = command
++  t.after(() => {
++    if (previous === undefined) delete process.env.PI_ACP_READ_COMMAND
++    else process.env.PI_ACP_READ_COMMAND = previous
++    rmSync(root, { recursive: true, force: true })
++  })
++  return { root, cwd, command }
++}
++
++test('reader invokes configured executable with exact cwd and single path argument, without shell', t => {
++  const f = fixture(t, `process.stdout.write(JSON.stringify({cwd: process.cwd(), args: process.argv.slice(2)}))`)
++  const path = 'a; $(echo should-not-run).txt'
++  writeFileSync(join(f.cwd, path), 'fixture')
++  assert.deepEqual(JSON.parse(readProjectSnapshot(f.cwd, path)!), { cwd: f.cwd, args: [path] })
++})
++
++test('status44 is missing, status0 preserves exact UTF8, all other failures throw', t => {
++  const f = fixture(
++    t,
++    `if (process.argv[2] === 'missing') process.exit(44); if (process.argv[2] === 'error') process.exit(45); process.stdout.write('héllo\\n\\n')`
++  )
++  assert.equal(readProjectSnapshot(f.cwd, 'missing'), null)
++  assert.equal(readProjectSnapshot(f.cwd, 'file'), 'héllo\n\n')
++  assert.throws(() => readProjectSnapshot(f.cwd, 'error'), /failed/)
++})
++
++test('outside-project symlink is rejected before helper execution', t => {
++  const f = fixture(t, `throw new Error('must not execute')`)
++  const outside = join(f.root, 'host-only')
++  writeFileSync(outside, 'host-only bytes')
++  symlinkSync(outside, join(f.cwd, 'escape'))
++  assert.throws(() => readProjectSnapshot(f.cwd, 'escape'), /outside project/)
++})
++
++test('unset reader disables snapshots and never falls back to host file contents', async t => {
++  const f = fixture(t, `throw new Error('must not run')`)
++  writeFileSync(join(f.cwd, 'file'), 'host-only bytes')
++  delete process.env.PI_ACP_READ_COMMAND
++  assert.throws(() => readProjectSnapshot(f.cwd, 'file'), /unavailable/)
++  const proc = new FakePiRpcProcess()
++  const conn = new FakeAgentSideConnection()
++  new PiAcpSession({
++    sessionId: 's',
++    cwd: f.cwd,
++    mcpServers: [],
++    proc: proc as unknown as PiRpcProcess,
++    conn: asAgentConn(conn)
++  })
++  proc.emit({ type: 'tool_execution_start', toolCallId: 'edit', toolName: 'edit', args: { path: 'file' } })
++  proc.emit({
++    type: 'tool_execution_end',
++    toolCallId: 'edit',
++    isError: false,
++    result: { content: [{ type: 'text', text: 'ok' }] }
++  })
++  await new Promise(resolve => setImmediate(resolve))
++  assert.ok(!JSON.stringify(conn.updates).includes('host-only bytes'))
++  assert.ok(!JSON.stringify(conn.updates).includes('"type":"diff"'))
++})
++
++test('ancestor swap after canonical check cannot trigger a host-read fallback', async t => {
++  const f = fixture(
++    t,
++    `const fs = require('node:fs'); const path = require('node:path'); fs.renameSync('dir', 'original-dir'); fs.symlinkSync(path.resolve('..', 'outside'), 'dir'); process.exit(1)`
++  )
++  mkdirSync(join(f.cwd, 'dir'))
++  writeFileSync(join(f.cwd, 'dir', 'file'), 'project bytes')
++  mkdirSync(join(f.root, 'outside'))
++  writeFileSync(join(f.root, 'outside', 'file'), 'host-only bytes')
++  const proc = new FakePiRpcProcess()
++  const conn = new FakeAgentSideConnection()
++  new PiAcpSession({
++    sessionId: 's',
++    cwd: f.cwd,
++    mcpServers: [],
++    proc: proc as unknown as PiRpcProcess,
++    conn: asAgentConn(conn)
++  })
++  proc.emit({ type: 'tool_execution_start', toolCallId: 'edit', toolName: 'edit', args: { path: 'dir/file' } })
++  proc.emit({
++    type: 'tool_execution_end',
++    toolCallId: 'edit',
++    isError: false,
++    result: { content: [{ type: 'text', text: 'ok' }] }
++  })
++  await new Promise(resolve => setImmediate(resolve))
++  assert.ok(!JSON.stringify(conn.updates).includes('host-only bytes'))
++  assert.ok(!JSON.stringify(conn.updates).includes('"type":"diff"'))
++})
