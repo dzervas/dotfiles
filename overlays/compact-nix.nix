@@ -5,16 +5,17 @@
   python3,
   writeShellApplication,
   writeText,
-}:
-let
+}: let
   # The formatter is a single python file in this repo
   compactNixPy = writeText "compact_nix.py" (builtins.readFile ./compact-nix.py);
-in
-writeShellApplication {
+in writeShellApplication {
   name = "compact-nix";
 
   # The script spawns nixfmt and nix-instantiate, so they must be on its PATH
-  runtimeInputs = [ nix nixfmt ];
+  runtimeInputs = [
+    nix
+    nixfmt
+  ];
 
   text = ''exec ${python3}/bin/python3 ${compactNixPy} "$@"'';
 

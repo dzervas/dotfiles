@@ -1,11 +1,4 @@
-{
-  config,
-  inputs,
-  lib,
-  pkgs,
-  ...
-}:
-{
+{ config, inputs, lib, pkgs, ... }: {
   imports = [
     ./1password.nix
     ./ai.nix
@@ -46,17 +39,17 @@
       # package = inputs.nixpkgs-master.legacyPackages.x86_64-linux.zed-editor;
     };
 
-  #   npm = {
-  #     enable = true;
-  #     settings = {
-  #       min-release-age = 7;
-  #       omit = [ "dev" "optional" "peer" ];
-  #       prefer-dedupe = true;
-  #       prefer-offline = true;
-  #       strict-peer-deps = true;
-  #       install-strategy = "linked";
-  #     };
-  #   };
+    #   npm = {
+    #     enable = true;
+    #     settings = {
+    #       min-release-age = 7;
+    #       omit = [ "dev" "optional" "peer" ];
+    #       prefer-dedupe = true;
+    #       prefer-offline = true;
+    #       strict-peer-deps = true;
+    #       install-strategy = "linked";
+    #     };
+    #   };
   };
 
   xdg.configFile = {
@@ -72,9 +65,7 @@
   gtk = {
     enable = true;
 
-    cursorTheme = {
-      inherit (config.stylix.cursor) package name;
-    };
+    cursorTheme = { inherit (config.stylix.cursor) package name; };
 
     gtk3.extraConfig.gtk-application-prefer-dark-theme = 1;
     gtk4.extraConfig = {
@@ -127,7 +118,10 @@
       zenity
     ];
 
-    sessionVariables.TERMINAL = config.setup.terminal;
+    sessionVariables = {
+      TERMINAL = config.setup.terminal;
+      GCX_KEYCHAIN = "off"; # bwrap breaks it
+    };
   };
 
   services = {

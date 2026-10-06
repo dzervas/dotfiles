@@ -108,7 +108,7 @@
         wraps = "bash";
       };
       pis = {
-        body = ''sand -lc 'pi --extension "$HOME/.pi/agent/sandbox.ts" $@' -- $argv'';
+        body = ''sand -lc 'pi --extension "$HOME/.pi/agent/sandbox.ts" "$@"' -- -- $argv'';
         description = "Run pi inside a bubblewrap sandbox";
         wraps = "pi";
       };

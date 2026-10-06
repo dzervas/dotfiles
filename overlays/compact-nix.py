@@ -195,15 +195,21 @@ def blocks_of(masked):
     return found
 
 
-def merge(lines, s, e, drop_param_comma=False):
+def merge(masked, lines, s, e, drop_param_comma=False):
     parts = [lines[s].rstrip()]
     for j in range(s + 1, e + 1):
-        t = lines[j].strip()
-        if t:
-            parts.append(t)
+        raw = lines[j].strip()
+        if not raw:
+            continue
+        # The lone `;` closing an expanded inherit joins without a space; a `;`
+        # inside a string must be left alone
+        if masked[j].strip() == ";":
+            parts[-1] += raw
+        else:
+            parts.append(raw)
     if drop_param_comma and len(parts) > 2 and parts[-2].endswith(","):
         parts[-2] = parts[-2][:-1]
-    return re.sub(r"\s+;", ";", " ".join(parts))
+    return " ".join(parts)
 
 
 # ------------------------------------------------------------------- passes
@@ -224,7 +230,7 @@ def collapse(lines, width):
                 # `x = { ... }` stays vertical, unless it is a single inherit
                 if prefix.endswith("=") and not is_inherit_only(masked, s, e):
                     continue
-            joined = merge(lines, s, e, drop_param_comma=param is True)
+            joined = merge(masked, lines, s, e, drop_param_comma=param is True)
             if len(joined) <= width:
                 lines[s : e + 1] = [joined]
                 changed = True

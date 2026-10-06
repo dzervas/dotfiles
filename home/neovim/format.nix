@@ -1,8 +1,6 @@
-{ inputs, pkgs, ... }:
-let
+{ inputs, pkgs, ... }: let
   inherit (inputs.nixvim.lib.nixvim) utils;
-in
-{
+in {
   # Zed-like formatting: conform runs the formatters on save, with the language
   # server as a fallback. Diagnostics and code actions stay in none-ls (lint.nix).
   programs.nixvim.plugins.conform-nvim = {
@@ -12,7 +10,9 @@ in
     # is defined in this repo (see overlays/compact-nix.nix).
     autoInstall = {
       enable = true;
-      overrides = { compact-nix = pkgs.compact-nix; };
+      overrides = {
+        compact-nix = pkgs.compact-nix;
+      };
     };
 
     settings = {
@@ -29,16 +29,28 @@ in
       };
 
       formatters_by_ft = {
-        bash = [ "shellharden" "shfmt" ];
+        bash = [
+          "shellharden"
+          "shfmt"
+        ];
         classnames = [ "rustywind" ]; # Tailwind classes
         fish = [ "fish_indent" ];
-        go = [ "goimports" "gofmt" ];
+        go = [
+          "goimports"
+          "gofmt"
+        ];
         hcl = [ "hcl" ];
         lua = [ "stylua" ];
         # nixfmt followed by the compact-style pass, so the repo's style survives
         nix = [ "compact-nix" ];
-        python = [ "isort" "black" ];
-        sh = [ "shellharden" "shfmt" ];
+        python = [
+          "isort"
+          "black"
+        ];
+        sh = [
+          "shellharden"
+          "shfmt"
+        ];
         terraform = [ "terraform_fmt" ];
       };
     };

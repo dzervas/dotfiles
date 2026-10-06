@@ -1,11 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  hostName,
-  ...
-}:
-let
+{ config, lib, pkgs, hostName, ... }: let
   zetaModel = "LeaderboardModel1/zeta-2.1-autoround-W4A16";
   hfCache = "/home/dzervas/CryptVMs/huggingface/";
   llamaSwapModelsDir = "${config.home.homeDirectory}/.local/share/llama-swap";
@@ -27,26 +20,27 @@ let
 
   # TODO: pkgs.writers.writeTOML
   atuinAiConfig = pkgs.writers.writeTOML "atuin-ai-config.toml" {
-    port = 11337;
     endpoint = "http://strata:8080/v1";
     api_key.cmd = {
       run = "bash";
       args = [
         "-c"
-        "grep -Eo 'sk-strata-\w+'/strata_config.json"
+        "grep -Eo 'sk-strata-\\w+' /strata_config.json"
       ];
     };
-    default_model = "ornith";
-    request.body.stream_options = { include_usage = true; };
+    default_model = "qwen";
+    request.body.stream_options.include_usage = true;
 
-    models = [{
-      name = "Qwen3.8 Flash Next";
-      description = "Local Qwen Flash Next through strata";
-      model = "qwen";
-    }];
+    models = [
+      {
+        name = "Qwen3.8 Flash Next";
+        description = "Local Qwen Flash Next through strata";
+        model = "qwen";
+        alias = "qwen";
+      }
+    ];
   };
-in
-{
+in {
   programs.atuin = {
     enable = true;
     # daemon.enable = true;
@@ -93,7 +87,7 @@ in
         description = "Self-hosted Atuin AI server";
         network = [ "local-ai.network" ];
         networkAlias = [ "atuin-ai" ];
-        ports = [ "11337:11337" ];
+        ports = [ "11337:8080" ];
         volumes = [
           "${atuinAiConfig}:/etc/atuin-ai/config.toml:ro"
           "/home/dzervas/CryptVMs/strata/config/strata-iq2_xs.json:/strata_config.json:ro"
