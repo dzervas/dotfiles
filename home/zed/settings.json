@@ -88,6 +88,12 @@
 			"tab_size": 2,
 			"hard_tabs": false,
 			"format_on_save": "on",
+			// nixfmt followed by the compact-style pass, so the repo's style survives
+			"formatter": {
+				"external": {
+					"command": "compact-nix",
+				},
+			},
 		},
 	},
 	"lsp": {

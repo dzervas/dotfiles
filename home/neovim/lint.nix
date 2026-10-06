@@ -51,30 +51,7 @@
             ];
           };
         };
-        formatting = {
-          # alejandra.enable = true; # Nix - nixfmt instead
-          # biome.enable = true; # HTML/CSS/JS/TS/JSON
-          black.enable = true; # Python
-          fish_indent.enable = true;
-          gofmt.enable = true;
-          goimports.enable = true;
-          goimports_reviser.enable = true; # Does it need goimports too?
-          hclfmt.enable = true;
-          isort.enable = true; # Python imports sorter
-          nixfmt = {
-            enable = true;
-            package = pkgs.nixfmt;
-          };
-          # opentofu_fmt.enable = true;
-          # prettier.enable = true; # HTML/CSS/JS/TS/JSON/Astro
-          rustywind.enable = true; # Tailwind classes
-          shellharden.enable = true;
-          shfmt.enable = true;
-          stylua.enable = true;
-          terraform_fmt.enable = true;
-          tidy.enable = true; # HTML & XML
-          # yamlfix.enable = true; # Broken
-        };
+        # Formatting lives in format.nix (conform.nvim)
       };
     };
   };

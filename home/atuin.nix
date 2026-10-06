@@ -113,8 +113,8 @@ in
         environment = {
           CONTEXT = "262144";
           MODEL = "IQ2_XS";
-          FAMILY = "swift";
-          VISION = "yes";
+          FAMILY = "qwen";
+          STRATA_NO_ARENA_THP = "1"; # Speeds up load time without huge pages
         };
       };
 

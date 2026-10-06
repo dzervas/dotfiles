@@ -24,6 +24,7 @@ in {
 
   imports = [
     ./completion.nix
+    ./format.nix
     ./lint.nix
     ./lsp.nix
     ./snacks.nix

@@ -79,6 +79,9 @@
     cargo-expand
     strace
 
+    # Nix
+    compact-nix # nixfmt | compact, see overlays/compact-nix.py
+
     # Cloud stuff
     gcx
     kubectl

@@ -9,6 +9,7 @@
 final: prev: {
   buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix { };
   claude-chrome = prev.callPackage ./claude-chrome.nix { };
+  compact-nix = prev.callPackage ./compact-nix.nix { };
   pi-durable = prev.callPackage ./pi-durable.nix {
     inherit (final) pi-coding-agent-latest;
   };

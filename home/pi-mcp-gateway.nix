@@ -20,7 +20,7 @@ let
       title = "Kagi";
       description = "Kagi web search, summarize, extract, quick answer and news";
       image = "git.vpn.dzerv.art/dzervas/homelab/kagi-mcp";
-      secrets = [ { name = "kagi.session_token"; env = "KAGI_SESSION"; } ];
+      secrets = [ { name = "kagi.session_token"; env = "KAGI_SESSION_TOKEN"; } ];
 
       # if ommitted, every tool is exposed to codemode
       tools = [ "kagi_search" "kagi_batch_search" "kagi_quick" "kagi_enrich_web" "kagi_summarize" ];

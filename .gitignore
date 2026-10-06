@@ -36,6 +36,7 @@
 !nixos/*.fish
 !nixos/vimrc
 !overlays
+!overlays/compact-nix.py
 !pi
 !pi/*.json
 !pi/extensions

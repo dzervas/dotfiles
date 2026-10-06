@@ -117,7 +117,6 @@ in {
       { key = "g<Down>"; action = utils.mkRaw "vim.diagnostic.goto_next"; options.desc = "Go to next diagnostic"; }
       { key = "<C-]>"; action = utils.mkRaw "vim.lsp.buf.definition"; options.desc = "Go to definition"; }
       { key = "<C-.>"; action = utils.mkRaw "vim.lsp.buf.code_action"; options.desc = "Code actions menu"; }
-      { key = "<leader>w"; action = utils.mkRaw "function () vim.lsp.buf.format({ async = false }) end"; options.desc = "Format the current file";  }
     ];
   };
 }
