@@ -1,5 +1,4 @@
 import { withHumanInput } from "./lib/human-input.ts";
-import { requestAcpForm, supportsAcpForms } from "./lib/acp-form.ts";
 import {
 	createBashToolDefinition,
 	createEditToolDefinition,
@@ -122,27 +121,6 @@ async function renderPermissionDialog(
 	];
 
 	const title = label ? `󱅞 Permission request — ${label}` : "󱅞 Permission request";
-
-	if (supportsAcpForms(ctx)) {
-		const result = await withHumanInput(pi, () => requestAcpForm(ctx, {
-			message: `${title}\n\n${body}\n\nReason: ${reason}`,
-			requestedSchema: {
-				type: "object",
-				properties: {
-					decision: {
-						type: "string", title: "Permission",
-						oneOf: options.map((option) => ({ const: option.value, title: option.label })),
-					},
-					message: { type: "string", title: "Optional message to agent" },
-				},
-				required: ["decision"],
-			},
-		}));
-		return result ? {
-			value: result.decision as PermissionAskAnswer["value"],
-			message: result.message?.trim() || undefined,
-		} : null;
-	}
 
 	const result = await withHumanInput(pi, () => ctx.ui.custom<DialogueResult | null>((tui, theme, _kb, done) =>
 		new ScrollableDialogue(

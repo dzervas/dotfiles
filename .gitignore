@@ -39,11 +39,6 @@
 !pi
 !pi/*.json
 !pi/extensions
-!pi/acp
-!pi/acp/*.fish
-!pi/acp/*.mjs
-!pi/acp/*.patch
-!pi/acp/*.py
 !pi/fleet
 !pi/fleet/*.lua
 !pi/fleet/*.fish

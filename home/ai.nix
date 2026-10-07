@@ -202,7 +202,6 @@ in
   home = {
     packages = with pkgs; [
       lmstudio
-      pi-acp
       pi-durable
       bubblewrap # for codex
       openspec

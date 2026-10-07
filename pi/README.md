@@ -167,10 +167,6 @@ extension registry: the normal Pi extensions, including our permission dialogs,
 are not loaded by this demo. Its command-line options currently support only
 `--continue` / `-c`; model selection happens in the TUI.
 
-## Zed native agent frontend
-
-The [ACP integration](acp/README.md) uses project-scoped sandboxed Pi processes, native questionnaire/permission forms, and todo plans. Its patched adapter is installed by Home Manager; Zed launches it through `pi/acp/run-acp.fish`. Terminal Pi keeps its existing UI.
-
 ## Neovim session manager
 
 `pifleet` opens the opt-in [Snacks session tree](fleet/README.md) using normal Neovim configuration. It launches sandboxed Pi terminals, searches saved messages, and stores snooze reminders. Before rebuilding, run `fish home/fish-functions/pifleet.fish` from the dotfiles repository.
