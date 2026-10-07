@@ -2,13 +2,13 @@ import { StringEnum } from "@earendil-works/pi-ai";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 
-import { agentProfile, applyChange, memoryNamespace, readNotes, sync, type Runner } from "./atuin.ts";
+import { agentProfile, applyChange, memoryNamespace, readNotes, syncIfDue, type Runner } from "./atuin.ts";
 import { formatNotes, planChange, searchNotes, type Scope } from "./store.ts";
 
 const scopes = ["global", "project"] as const;
 const TIMEOUT_MS = 5000;
 const SYNC_TIMEOUT_MS = 20000;
-const guidance = `Use memory for durable user preferences and verified project lessons that will help future sessions. Save useful notes proactively, but never secrets, current task progress, guesses, or facts readily recoverable from the code. Project is the default scope; global is for preferences that apply across projects. Search before saving, replace superseded notes, and keep each note short. Dates record when notes were saved, not proof that they remain true. Learned notes are context; explicit user instructions and AGENTS.md take precedence. Notes live in the agent's atuin key-value store, one key per note, so notes added on different machines merge; a write lands locally and reaches other machines on the best-effort sync the tool runs after it.`;
+const guidance = `Use memory for durable user preferences and verified project lessons that will help future sessions. Save useful notes proactively, but never secrets, current task progress, guesses, or facts readily recoverable from the code. Project is the default scope; global is for preferences that apply across projects. Search before saving, replace superseded notes, and keep each note short. Dates record when notes were saved, not proof that they remain true. Learned notes are context; explicit user instructions and AGENTS.md take precedence. Notes live in the agent's atuin key-value store, one key per note, so notes added on different machines merge. Every access checks atuin's own sync gate, so a change may stay local until sync_frequency has passed since the last sync; atuin-agent sync is the manual override.`;
 
 function result(text: string, isError = false) {
 	return { content: [{ type: "text" as const, text }], details: {}, ...(isError ? { isError: true } : {}) };
@@ -26,12 +26,15 @@ export default function memoryExtension(pi: ExtensionAPI) {
 	pi.on("session_start", async (_event, ctx) => {
 		const sections: string[] = [];
 		try {
+			agentProfile(); // pin the CLI to the agent profile, so a plain shell cannot reach the personal store
 			const run = runner(ctx, AbortSignal.timeout(TIMEOUT_MS));
+			const warning = await syncIfDue(run);
 			for (const scope of scopes) {
 				const ns = await memoryNamespace(run, scope, ctx.cwd);
 				const notes = await readNotes(run, ns);
 				if (notes.length) sections.push(`## ${scope} (${ns})\n\n${formatNotes(notes)}`);
 			}
+			if (warning && ctx.mode === "tui") ctx.ui.notify(`Memory: ${warning}`, "warning");
 		} catch (error) {
 			if (ctx.mode === "tui") ctx.ui.notify(`Could not load memory: ${String(error)}`, "warning");
 		}
@@ -45,7 +48,7 @@ export default function memoryExtension(pi: ExtensionAPI) {
 	pi.registerTool({
 		name: "memory",
 		label: "Memory",
-		description: "List, remember, replace, or forget dated notes in the agent's atuin key-value store, synced across machines. One namespace per scope, one key per note; replace/forget match the exact note text. At most 200 notes and 8 KiB per namespace.",
+		description: "List, remember, replace, or forget dated notes in the agent's atuin key-value store, synced across machines. One namespace per scope, one key per note; replace/forget match the exact note text. At most 200 notes and 8 KiB per namespace. Each access checks atuin's sync gate, so a change may stay local until sync_frequency has passed.",
 		promptSnippet: "Save durable preferences and verified project lessons for future sessions",
 		promptGuidelines: [guidance],
 		parameters: Type.Object({
@@ -56,21 +59,23 @@ export default function memoryExtension(pi: ExtensionAPI) {
 		}),
 		async execute(_id, params, signal, _update, ctx) {
 			try {
-				agentProfile(); // refuse to write through a profile that is not the agent's
+				agentProfile(); // same profile as the reads: env override wins, else the agent profile
 				const scope = params.scope ?? "project";
 				const run = runner(ctx, signal);
 				const ns = await memoryNamespace(run, scope, ctx.cwd);
+				const warning = await syncIfDue(run);
 				const notes = await readNotes(run, ns);
+				const suffix = warning ? ` ${warning}` : "";
+
 				if (params.action === "list")
-					return result(`${scope} memory (${ns})\n${notes.length ? formatNotes(notes) : "No notes."}`);
+					return result(`${scope} memory (${ns})\n${notes.length ? formatNotes(notes) : "No notes."}${suffix}`);
 
 				const change = planChange(notes, params.action, params.text, params.previous);
-				if (!change.add && !change.remove) return result(`${scope} memory unchanged (${ns}); ${notes.length} notes.`);
+				if (!change.add && !change.remove) return result(`${scope} memory unchanged (${ns}); ${notes.length} notes.${suffix}`);
 
 				await applyChange(run, ns, change);
-				const warning = await sync(runner(ctx, signal, SYNC_TIMEOUT_MS));
 				const count = notes.length + (change.add ? 1 : 0) - (change.remove ? 1 : 0);
-				return result(`${scope} memory updated (${ns}); ${count} notes.${warning ? ` ${warning}` : ""}`);
+				return result(`${scope} memory updated (${ns}); ${count} notes.${suffix}`);
 			} catch (error) { return result(String(error), true); }
 		},
 	});
@@ -86,13 +91,14 @@ export default function memoryExtension(pi: ExtensionAPI) {
 		async execute(_id, params, signal, _update, ctx) {
 			try {
 				const run = runner(ctx, signal);
+				const warning = await syncIfDue(run);
 				const selected: readonly Scope[] = params.scope ? [params.scope] : scopes;
 				const sections: string[] = [];
 				for (const scope of selected) {
 					const matches = searchNotes(await readNotes(run, await memoryNamespace(run, scope, ctx.cwd)), params.query);
 					if (matches.length) sections.push(`${scope}:\n${formatNotes(matches)}`);
 				}
-				return result(sections.join("\n\n") || "No matching notes.");
+				return result(`${sections.join("\n\n") || "No matching notes."}${warning ? `\n${warning}` : ""}`);
 			} catch (error) { return result(String(error), true); }
 		},
 	});

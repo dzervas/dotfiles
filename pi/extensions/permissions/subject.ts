@@ -3,13 +3,12 @@
 // Bash commands are analyzed later by the classifier pipeline (classify/).
 
 import { isToolCallEventType, type ToolCallEvent } from "@earendil-works/pi-coding-agent";
-import { memoryPaths } from "../memory/store.ts";
 import { mcpIdentity } from "./mcp";
 import { pushPath } from "./paths";
 import type { PermissionSubject, ToolKind } from "./types";
 
 // Extract any meaningful info from the event to create a subject
-export function normalize(event: ToolCallEvent, cwd = process.cwd()): PermissionSubject {
+export function normalize(event: ToolCallEvent): PermissionSubject {
 	const mcp = mcpIdentity(event.toolName, event.input);
 	let toolKind: ToolKind = "custom";
 
@@ -55,14 +54,7 @@ export function normalize(event: ToolCallEvent, cwd = process.cwd()): Permission
 	else if (isToolCallEventType("ls", event))
 		pushPath(subject.paths, typeof event.input.path === "string" ? event.input.path : ".", "list");
 
-	if (event.toolName === "memory" || event.toolName === "memory_search") {
-		const paths = memoryPaths(cwd);
-		const scope = event.input.scope;
-		const selected = scope === "global" || scope === "project"
-			? [paths[scope]] : event.toolName === "memory" ? [paths.project] : Object.values(paths);
-		const access = event.toolName === "memory" && event.input.action !== "list" ? "write" : "read";
-		for (const file of selected) pushPath(subject.paths, file, access);
-	}
+	// memory has no filesystem path any more: it is an atuin kv namespace, so it is guarded by tool name.
 
 	return subject;
 }
