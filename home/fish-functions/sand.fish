@@ -106,10 +106,11 @@ for name in $unshared_env_vars
 	set bwrap_env $bwrap_env --unsetenv $name
 end
 
-mkdir -p $sandbox_home/.pi/agent/extensions $sandbox_home/.config/{jj,git} $HOME/.pi/agent/memory
+mkdir -p $sandbox_home/.pi/agent/extensions $sandbox_home/.config/{jj,git} $HOME/.local/share/atuin-agent
 
 # Native MCP OAuth state stays writable in this persistent sandbox home.
-# Keep host keyrings and Docker sockets outside the sandbox.
+# Keep host keyrings and Docker sockets outside the sandbox, and give the agent only its own
+# atuin memory profile - never the shell-history store or its key.
 bwrap \
 	--unshare-all \
 	--share-net \
@@ -145,7 +146,8 @@ bwrap \
 	--ro-bind $HOME/.pi/agent/pi-cliproxyapi-provider $HOME/.pi/agent/pi-cliproxyapi-provider \
 	--ro-bind $HOME/.pi/agent/AGENTS.md $HOME/.pi/agent/AGENTS.md \
 	--bind $HOME/.pi/agent/sessions $HOME/.pi/agent/sessions \
-	--bind $HOME/.pi/agent/memory $HOME/.pi/agent/memory \
+	--ro-bind $HOME/.config/atuin-agent $HOME/.config/atuin-agent \
+	--bind $HOME/.local/share/atuin-agent $HOME/.local/share/atuin-agent \
 	--bind $HOME/.pi/agent/auth.json $HOME/.pi/agent/auth.json \
 	--bind $HOME/.pi/agent/mcp.json $HOME/.pi/agent/mcp.json \
 	--bind $HOME/.pi/agent/mcp-auth.json $HOME/.pi/agent/mcp-auth.json \
@@ -162,4 +164,6 @@ bwrap \
 	--chdir $project_dir \
 	--setenv HOME $HOME \
 	--setenv CI 1 \
+	--setenv ATUIN_CONFIG_DIR $HOME/.config/atuin-agent \
+	--setenv ATUIN_DATA_DIR $HOME/.local/share/atuin-agent \
 	-- bash $pi_args

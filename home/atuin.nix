@@ -66,6 +66,18 @@ in {
     };
   };
 
+  # Memory runs as its own atuin account. The agent's sandbox is pinned to this profile, so a
+  # sandboxed session can read and write notes without reaching the shell-history store, its key,
+  # or the main account.
+  xdg.configFile."atuin-agent/config.toml".text = ''
+    data_dir = "${config.home.homeDirectory}/.local/share/atuin-agent"
+    sync_address = "https://sh.vpn.dzerv.art"
+    sync_frequency = "5m"
+
+    [sync]
+    records = true
+  '';
+
   # Local AI containers share a bridge network with container-name DNS.
   services.podman = {
     enable = hostName == "desktop";

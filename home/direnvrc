@@ -129,19 +129,72 @@ eval "$(devenv direnvrc | sed 's/local devenv_cmd=("${DEVENV_BIN}")/local devenv
 # Preserve devenv's generated implementation so the wrapper can select a source.
 eval "$(declare -f use_devenv | sed '1s/use_devenv/_use_devenv/')"
 
+# direnv's approval digest covers only the .envrc itself, so after the first
+# `direnv allow` the devenv/flake config is evaluated without any re-approval.  Hash
+# the inputs the eval executes, keep the record as a comment in the .envrc, and
+# rewrite it on mismatch: the rewrite makes direnv's own digest check block the next
+# load, so nothing is executed until the inputs are explicitly allowed.
+function envrc_trusted() {
+	local dir="${1:-$PWD}"
+	local rc="$PWD/.envrc"
+	local inputs="default.nix devenv.nix devenv.yaml devenv.lock devenv.local.nix devenv.local.yaml flake.nix flake.lock"
+	local live="" trusted f
+
+	if test ! -f "$rc"; then
+		log_error "no .envrc to record the inputs in ($rc)"
+		return 1
+	fi
+
+	for f in $inputs; do
+		if test -f "$dir/$f"; then
+			live="$live$(sha256sum "$dir/$f")"
+		fi
+	done
+	if test -z "$live"; then
+		log_error "no local inputs to hash, refusing"
+		return 1
+	fi
+	live="$(printf '%s' "$live" | sha256sum | cut -d' ' -f1)"
+
+	trusted="$(sed -n 's/^# trusted: //p' "$rc")"
+	if test "$live" = "$trusted"; then
+		return 0
+	fi
+
+	if grep -q '^# trusted:' "$rc"; then
+		sed -i "s/^# trusted: .*/# trusted: $live/" "$rc"
+	else
+		printf '\n# trusted: %s\n' "$live" >> "$rc"
+	fi
+
+	log_error "inputs changed (${trusted:0:8} -> ${live:0:8}), refused. run: direnv allow"
+	return 1
+}
+
 function use_devenv() {
 	if test "$#" -gt 0 && test "${1#-}" = "$1" && test -e "$1"; then
 		local source="$1"
 		shift
 		watch_file "$source/default.nix" "$source/devenv.nix" "$source/devenv.lock" "$source/devenv.yaml" "$source/devenv.local.nix" "$source/devenv.local.yaml"
+		envrc_trusted "$source" || return 1
 		_use_devenv --from "path:$source" "$@"
 	elif test -f devenv.nix && test -f .nix/default.nix; then
 		log_error "both devenv.nix and .nix/default.nix exist; pass the desired directory to 'use devenv'"
 		return 1
 	elif test -f .nix/default.nix; then
 		watch_file .nix/default.nix .nix/devenv.lock .nix/devenv.yaml .nix/devenv.local.nix .nix/devenv.local.yaml
+		envrc_trusted .nix || return 1
 		_use_devenv --from path:.nix "$@"
 	else
+		envrc_trusted || return 1
 		_use_devenv "$@"
 	fi
+}
+
+# Preserve the stdlib implementation so the wrapper can gate the evaluation.
+eval "$(declare -f use_flake | sed '1s/use_flake/_use_flake/')"
+
+function use_flake() {
+	envrc_trusted || return 1
+	_use_flake "$@"
 }

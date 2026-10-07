@@ -58,6 +58,17 @@
     ];
 
     functions = {
+      atuin-agent = {
+        body = ''
+          ATUIN_CONFIG_DIR="$HOME/.config/atuin-agent" ATUIN_DATA_DIR="$HOME/.local/share/atuin-agent" atuin $argv
+        '';
+        description = "Run atuin against the agent's memory-only profile";
+        wraps = "atuin";
+      };
+      atuin-agent-mem = {
+        body = builtins.readFile ./fish-functions/atuin-agent-mem.fish;
+        description = "Dump the agent memory namespaces: global and the current repository";
+      };
       backup = {
         body = builtins.readFile ./fish-functions/backup.fish;
         description = "Backup a file or directory";

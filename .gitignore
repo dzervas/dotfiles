@@ -48,6 +48,7 @@
 !pi/benchmarks/memory/*.py
 !pi/skills
 !pi/extensions/lib
+!pi/extensions/memory
 !pi/extensions/permissions
 !pi/extensions/pi-subagents-workflows
 !pi/extensions/todo
