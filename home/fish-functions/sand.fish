@@ -1,94 +1,94 @@
 set -l unshared_env_vars \
-	VAULT_TOKEN \
-	AWS_ACCESS_KEY_ID \
-	AWS_SECRET_ACCESS_KEY \
-	AWS_SESSION_TOKEN \
-	AWS_PROFILE \
-	AZURE_CLIENT_ID \
-	AZURE_CLIENT_SECRET \
-	AZURE_TENANT_ID \
-	CLOUDFLARE_API_TOKEN \
-	DIGITALOCEAN_TOKEN \
-	DIGITALOCEAN_ACCESS_TOKEN \
-	GITHUB_TOKEN \
-	GH_TOKEN \
-	GITLAB_TOKEN \
-	GOOGLE_APPLICATION_CREDENTIALS \
-	OPENAI_API_KEY \
-	ANTHROPIC_API_KEY \
-	GEMINI_API_KEY \
-	SSH_AUTH_SOCK \
-	GPG_AGENT_INFO \
-	KRB5CCNAME
+    VAULT_TOKEN \
+    AWS_ACCESS_KEY_ID \
+    AWS_SECRET_ACCESS_KEY \
+    AWS_SESSION_TOKEN \
+    AWS_PROFILE \
+    AZURE_CLIENT_ID \
+    AZURE_CLIENT_SECRET \
+    AZURE_TENANT_ID \
+    CLOUDFLARE_API_TOKEN \
+    DIGITALOCEAN_TOKEN \
+    DIGITALOCEAN_ACCESS_TOKEN \
+    GITHUB_TOKEN \
+    GH_TOKEN \
+    GITLAB_TOKEN \
+    GOOGLE_APPLICATION_CREDENTIALS \
+    OPENAI_API_KEY \
+    ANTHROPIC_API_KEY \
+    GEMINI_API_KEY \
+    SSH_AUTH_SOCK \
+    GPG_AGENT_INFO \
+    KRB5CCNAME
 
 set -l bwrap_mounts
 set -l pi_args
 set -l index 1
 
 while test $index -le (count $argv)
-	set -l arg $argv[$index]
+    set -l arg $argv[$index]
 
-	switch $arg
-		case --bind --ro-bind
-			set -l flag $arg
-			set index (math $index + 1)
+    switch $arg
+        case --bind --ro-bind
+            set -l flag $arg
+            set index (math $index + 1)
 
-			if test $index -gt (count $argv)
-				echo (set_color red)"Error: $flag expects <host dir>:<target dir>"(set_color normal)
-				return 1
-			end
+            if test $index -gt (count $argv)
+                echo (set_color red)"Error: $flag expects <host dir>:<target dir>"(set_color normal)
+                return 1
+            end
 
-			set -l mount $argv[$index]
-			set -l parts (string split -m1 : -- $mount)
-			if test (count $parts) -ne 2; or test -z "$parts[1]"; or test -z "$parts[2]"
-				echo (set_color red)"Error: $flag expects <host dir>:<target dir>"(set_color normal)
-				return 1
-			end
+            set -l mount $argv[$index]
+            set -l parts (string split -m1 : -- $mount)
+            if test (count $parts) -ne 2; or test -z "$parts[1]"; or test -z "$parts[2]"
+                echo (set_color red)"Error: $flag expects <host dir>:<target dir>"(set_color normal)
+                return 1
+            end
 
-			set -l host_dir (string replace -r '^~(?=/|$)' $HOME -- $parts[1])
-			set -l target_dir $parts[2]
+            set -l host_dir (string replace -r '^~(?=/|$)' $HOME -- $parts[1])
+            set -l target_dir $parts[2]
 
-			if test $flag = --bind
-				set bwrap_mounts $bwrap_mounts --bind $host_dir $target_dir
-			else
-				set bwrap_mounts $bwrap_mounts --ro-bind $host_dir $target_dir
-			end
+            if test $flag = --bind
+                set bwrap_mounts $bwrap_mounts --bind $host_dir $target_dir
+            else
+                set bwrap_mounts $bwrap_mounts --ro-bind $host_dir $target_dir
+            end
 
-		case '--bind=*' '--ro-bind=*'
-			set -l split_arg (string split -m1 = -- $arg)
-			set -l flag $split_arg[1]
-			set -l mount $split_arg[2]
-			set -l parts (string split -m1 : -- $mount)
-			if test (count $parts) -ne 2; or test -z "$parts[1]"; or test -z "$parts[2]"
-				echo (set_color red)"Error: $flag expects <host dir>:<target dir>"(set_color normal)
-				return 1
-			end
+        case '--bind=*' '--ro-bind=*'
+            set -l split_arg (string split -m1 = -- $arg)
+            set -l flag $split_arg[1]
+            set -l mount $split_arg[2]
+            set -l parts (string split -m1 : -- $mount)
+            if test (count $parts) -ne 2; or test -z "$parts[1]"; or test -z "$parts[2]"
+                echo (set_color red)"Error: $flag expects <host dir>:<target dir>"(set_color normal)
+                return 1
+            end
 
-			set -l host_dir (string replace -r '^~(?=/|$)' $HOME -- $parts[1])
-			set -l target_dir $parts[2]
+            set -l host_dir (string replace -r '^~(?=/|$)' $HOME -- $parts[1])
+            set -l target_dir $parts[2]
 
-			if test $flag = --bind
-				set bwrap_mounts $bwrap_mounts --bind $host_dir $target_dir
-			else
-				set bwrap_mounts $bwrap_mounts --ro-bind $host_dir $target_dir
-			end
+            if test $flag = --bind
+                set bwrap_mounts $bwrap_mounts --bind $host_dir $target_dir
+            else
+                set bwrap_mounts $bwrap_mounts --ro-bind $host_dir $target_dir
+            end
 
-		case --
-			set index (math $index + 1)
-			set pi_args $pi_args $argv[$index..-1]
-			break
+        case --
+            set index (math $index + 1)
+            set pi_args $pi_args $argv[$index..-1]
+            break
 
-		case '*'
-			set pi_args $pi_args $arg
-	end
+        case '*'
+            set pi_args $pi_args $arg
+    end
 
-	set index (math $index + 1)
+    set index (math $index + 1)
 end
 
 set -l project_dir (pwd)
 set -l project_mount_dir $project_dir
 if string match -q "$HOME/Lab/work/*" -- $project_dir
-	set project_mount_dir "$HOME/Lab/work"
+    set project_mount_dir "$HOME/Lab/work"
 end
 set -l sandbox_id (printf '%s' $project_dir | sha256sum | cut -d' ' -f1)
 set -l sandbox_home "$HOME/.cache/pi/sandboxes/$sandbox_id/home"
@@ -97,13 +97,13 @@ set -l sandbox_extension "$dotfiles_extensions_dir/sandbox.ts"
 mkdir -p $sandbox_home
 
 if string match -q "$HOME/*" -- $project_dir
-	set -l project_parent_in_home (string replace "$HOME/" '' -- (dirname $project_mount_dir))
-	mkdir -p "$sandbox_home/$project_parent_in_home"
+    set -l project_parent_in_home (string replace "$HOME/" '' -- (dirname $project_mount_dir))
+    mkdir -p "$sandbox_home/$project_parent_in_home"
 end
 
 set -l bwrap_env
 for name in $unshared_env_vars
-	set bwrap_env $bwrap_env --unsetenv $name
+    set bwrap_env $bwrap_env --unsetenv $name
 end
 
 mkdir -p $sandbox_home/.pi/agent/extensions $sandbox_home/.config/{jj,git} $HOME/.local/share/atuin-agent
@@ -112,58 +112,58 @@ mkdir -p $sandbox_home/.pi/agent/extensions $sandbox_home/.config/{jj,git} $HOME
 # Keep host keyrings and Docker sockets outside the sandbox, and give the agent only its own
 # atuin memory profile - never the shell-history store or its key.
 bwrap \
-	--unshare-all \
-	--share-net \
-	--die-with-parent \
-	--proc /proc \
-	--dev /dev \
-	--tmpfs /tmp \
-	--ro-bind /nix/store /nix/store \
-	--ro-bind /run/binfmt /run/binfmt \
-	--ro-bind /bin /bin \
-	--ro-bind /usr/bin /usr/bin \
-	--ro-bind /etc/nix /etc/nix \
-	--ro-bind /etc/static /etc/static \
-	--ro-bind /etc/ssl /etc/ssl \
-	--ro-bind /etc/resolv.conf /etc/resolv.conf \
-	--ro-bind /etc/hosts /etc/hosts \
-	--ro-bind /etc/nsswitch.conf /etc/nsswitch.conf \
-	--ro-bind /etc/protocols /etc/protocols \
-	--ro-bind /etc/services /etc/services \
-	--ro-bind /etc/passwd /etc/passwd \
-	--ro-bind /etc/group /etc/group \
-	--ro-bind /run/current-system/sw /run/current-system/sw \
-	--ro-bind /etc/profiles/per-user/$USER/ /etc/profiles/per-user/$USER/ \
-	--bind $sandbox_home $HOME \
-	--ro-bind $HOME/.pi/agent/settings.json $HOME/.pi/agent/settings.json \
-	--ro-bind $HOME/.pi/agent/subagents.json $HOME/.pi/agent/subagents.json \
-	--ro-bind $HOME/.pi/agent/models.json $HOME/.pi/agent/models.json \
-	--ro-bind $HOME/.pi/agent/node_modules $HOME/.pi/agent/node_modules \
-	--ro-bind $HOME/.pi/agent/npm $HOME/.pi/agent/npm \
-	--ro-bind $HOME/.pi/agent/extensions $HOME/.pi/agent/extensions \
-	--ro-bind $HOME/.pi/agent/skills $HOME/.pi/agent/skills \
-	--ro-bind $HOME/Lab/dotfiles/pi/themes $HOME/.pi/agent/themes \
-	--ro-bind $HOME/.pi/agent/pi-cliproxyapi-provider $HOME/.pi/agent/pi-cliproxyapi-provider \
-	--ro-bind $HOME/.pi/agent/AGENTS.md $HOME/.pi/agent/AGENTS.md \
-	--bind $HOME/.pi/agent/sessions $HOME/.pi/agent/sessions \
-	--ro-bind $HOME/.config/atuin-agent $HOME/.config/atuin-agent \
-	--bind $HOME/.local/share/atuin-agent $HOME/.local/share/atuin-agent \
-	--bind $HOME/.pi/agent/auth.json $HOME/.pi/agent/auth.json \
-	--bind $HOME/.pi/agent/mcp.json $HOME/.pi/agent/mcp.json \
-	--bind $HOME/.pi/agent/mcp-auth.json $HOME/.pi/agent/mcp-auth.json \
-	--ro-bind-try $HOME/.cache/pi-mcp-gateway/authorization $HOME/.cache/pi-mcp-gateway/authorization \
-	--bind $HOME/.pi/agent/run-history.jsonl $HOME/.pi/agent/run-history.jsonl \
-	--ro-bind $HOME/Lab/dotfiles/pi/sandbox.ts $HOME/.pi/agent/sandbox.ts \
-	--bind $project_mount_dir $project_mount_dir \
-	--bind $HOME/.config/gcx $HOME/.config/gcx \
-	--ro-bind $HOME/.config/jj $HOME/.config/jj \
-	--ro-bind $HOME/.config/git $HOME/.config/git \
-	--ro-bind $HOME/.config/fish $HOME/.config/fish \
-	$bwrap_mounts \
-	$bwrap_env \
-	--chdir $project_dir \
-	--setenv HOME $HOME \
-	--setenv CI 1 \
-	--setenv ATUIN_CONFIG_DIR $HOME/.config/atuin-agent \
-	--setenv ATUIN_DATA_DIR $HOME/.local/share/atuin-agent \
-	-- bash $pi_args
+    --unshare-all \
+    --share-net \
+    --die-with-parent \
+    --proc /proc \
+    --dev /dev \
+    --tmpfs /tmp \
+    --ro-bind /nix/store /nix/store \
+    --ro-bind /run/binfmt /run/binfmt \
+    --ro-bind /bin /bin \
+    --ro-bind /usr/bin /usr/bin \
+    --ro-bind /etc/nix /etc/nix \
+    --ro-bind /etc/static /etc/static \
+    --ro-bind /etc/ssl /etc/ssl \
+    --ro-bind /etc/resolv.conf /etc/resolv.conf \
+    --ro-bind /etc/hosts /etc/hosts \
+    --ro-bind /etc/nsswitch.conf /etc/nsswitch.conf \
+    --ro-bind /etc/protocols /etc/protocols \
+    --ro-bind /etc/services /etc/services \
+    --ro-bind /etc/passwd /etc/passwd \
+    --ro-bind /etc/group /etc/group \
+    --ro-bind /run/current-system/sw /run/current-system/sw \
+    --ro-bind /etc/profiles/per-user/$USER/ /etc/profiles/per-user/$USER/ \
+    --bind $sandbox_home $HOME \
+    --ro-bind $HOME/.pi/agent/settings.json $HOME/.pi/agent/settings.json \
+    --ro-bind $HOME/.pi/agent/subagents.json $HOME/.pi/agent/subagents.json \
+    --ro-bind $HOME/.pi/agent/models.json $HOME/.pi/agent/models.json \
+    --ro-bind $HOME/.pi/agent/node_modules $HOME/.pi/agent/node_modules \
+    --ro-bind $HOME/.pi/agent/npm $HOME/.pi/agent/npm \
+    --ro-bind $HOME/.pi/agent/extensions $HOME/.pi/agent/extensions \
+    --ro-bind $HOME/.pi/agent/skills $HOME/.pi/agent/skills \
+    --ro-bind $HOME/.pi/agent/themes $HOME/.pi/agent/themes \
+    --ro-bind $HOME/.pi/agent/pi-cliproxyapi-provider $HOME/.pi/agent/pi-cliproxyapi-provider \
+    --ro-bind $HOME/.pi/agent/AGENTS.md $HOME/.pi/agent/AGENTS.md \
+    --bind $HOME/.pi/agent/sessions $HOME/.pi/agent/sessions \
+    --ro-bind $HOME/.config/atuin-agent $HOME/.config/atuin-agent \
+    --bind $HOME/.local/share/atuin-agent $HOME/.local/share/atuin-agent \
+    --bind $HOME/.pi/agent/auth.json $HOME/.pi/agent/auth.json \
+    --bind $HOME/.pi/agent/mcp.json $HOME/.pi/agent/mcp.json \
+    --bind $HOME/.pi/agent/mcp-auth.json $HOME/.pi/agent/mcp-auth.json \
+    --ro-bind-try $HOME/.cache/pi-mcp-gateway/authorization $HOME/.cache/pi-mcp-gateway/authorization \
+    --bind $HOME/.pi/agent/run-history.jsonl $HOME/.pi/agent/run-history.jsonl \
+    --ro-bind-try $HOME/.pi/agent/sandbox.ts $HOME/.pi/agent/sandbox.ts \
+    --bind $project_mount_dir $project_mount_dir \
+    --bind $HOME/.config/gcx $HOME/.config/gcx \
+    --ro-bind $HOME/.config/jj $HOME/.config/jj \
+    --ro-bind $HOME/.config/git $HOME/.config/git \
+    --ro-bind $HOME/.config/fish $HOME/.config/fish \
+    $bwrap_mounts \
+    $bwrap_env \
+    --chdir $project_dir \
+    --setenv HOME $HOME \
+    --setenv CI 1 \
+    --setenv ATUIN_CONFIG_DIR $HOME/.config/atuin-agent \
+    --setenv ATUIN_DATA_DIR $HOME/.local/share/atuin-agent \
+    -- bash $pi_args

@@ -217,6 +217,8 @@ in
     file = {
       ".pi/agent/AGENTS.md".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/global_agents.md";
+      ".pi/agent/sandbox.ts".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/sandbox.ts";
       ".pi/agent/extensions".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/extensions";
       ".pi/agent/skills".source =

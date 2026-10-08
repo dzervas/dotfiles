@@ -1,16 +1,21 @@
+import { mkdtemp, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { StringEnum } from "@earendil-works/pi-ai";
 import {
 	createBashToolDefinition,
+	formatSize,
 	type BashToolDetails,
 	type ExtensionAPI,
 	type ExtensionCommandContext,
 	type ExtensionContext,
 	SettingsManager,
+	truncateTail,
 } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
-import { ScrollableDialogue } from "./lib/scrollable-dialogue";
-import { ToolExecutionTiming } from "./lib/tool-execution-timing";
-import { terminalActivity } from "./lib/terminal-progress";
+import { ScrollableDialogue } from "./lib/scrollable-dialogue.ts";
+import { ToolExecutionTiming } from "./lib/tool-execution-timing.ts";
+import { terminalActivity } from "./lib/terminal-progress.ts";
 
 const REGISTRY_KEY = Symbol.for("dzervas.pi.background-jobs");
 
@@ -24,7 +29,6 @@ type Job = {
 	controller: AbortController;
 	output: string;
 	details?: BashToolDetails;
-	error?: string;
 	startedAt: number;
 	endedAt?: number;
 };
@@ -105,8 +109,25 @@ function inspectJob(job: Job): string {
 	];
 	if (job.details?.fullOutputPath) header.push(`Full output: ${job.details.fullOutputPath}`);
 	const body = job.output || "(no output yet)";
-	const error = job.error ? `\n\nError: ${job.error}` : "";
-	return `${header.join("\n")}\n\n${body}${error}`;
+	return `${header.join("\n")}\n\n${body}`;
+}
+
+async function reportResult(text: string) {
+	// The delegate bounds command output; bound the assembled report too (headers,
+	// job lists, and error messages can also exceed Pi's default limits).
+	const truncation = truncateTail(text);
+	if (!truncation.truncated) return { content: [{ type: "text" as const, text }], details: undefined };
+
+	const directory = await mkdtemp(join(tmpdir(), "pi-background-bash-"));
+	const fullOutputPath = join(directory, "output.log");
+	await writeFile(fullOutputPath, text, "utf8");
+	return {
+		content: [{
+			type: "text" as const,
+			text: `${truncation.content}\n\n[Showing last ${truncation.outputLines} of ${truncation.totalLines} lines (${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}). Full output: ${fullOutputPath}]`,
+		}],
+		details: { truncation, fullOutputPath },
+	};
 }
 
 function stopJob(job: Job): string {
@@ -250,14 +271,16 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 		}
 	};
 
-	const notifyJob = (job: Job) => {
+	const notifyJob = async (job: Job) => {
 		if (!uiCtx || waitingJobIds.has(job.id)) return;
+		const result = await reportResult(inspectJob(job));
+		if (!uiCtx) return;
 		pi.sendMessage(
 			{
 				customType: "background-bash",
-				content: inspectJob(job),
+				content: resultText(result.content),
 				display: true,
-				details: { id: job.id, status: job.status, command: job.command, cwd: job.cwd },
+				details: { id: job.id, status: job.status, command: job.command, cwd: job.cwd, ...result.details },
 			},
 			{ triggerTurn: true, deliverAs: "steer" },
 		);
@@ -326,13 +349,15 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 					job.status = "isError" in result && result.isError === true ? "failed" : "completed";
 				})
 				.catch((error: unknown) => {
-					job.error = error instanceof Error ? error.message : String(error);
+					// Pi's timeout/abort errors already contain the final truncated output.
+					// Replace the streaming snapshot rather than appending the error to it.
+					job.output = error instanceof Error ? error.message : String(error);
 					job.status = job.controller.signal.aborted ? "stopped" : "failed";
 				})
 				.finally(() => {
 					job.endedAt = Date.now();
 					refreshActivity();
-					notifyJob(job);
+					return notifyJob(job);
 				});
 
 			return {
@@ -378,7 +403,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 				}
 			}
 			refreshActivity();
-			return { content: [{ type: "text", text }], details: {} };
+			return reportResult(text);
 		},
 	});
 
