@@ -17,6 +17,7 @@
 !desktop/home/components/*.css
 !hardware
 !hardware/components
+!hardware/migrate-btrfs-raid.md
 !home
 !home/easyeffects
 !home/fish-functions

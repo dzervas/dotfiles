@@ -21,10 +21,16 @@ in {
     makeUsbBootable = true;
     prependToMenuLabel = "DZervas ";
     # includeSystemBuildDependencies = true;
-    contents = [{
-      source = inputs.self.sourceInfo.outPath;
-      target = "/dotfiles";
-    }];
+    contents = [
+      {
+        source = inputs.self.sourceInfo.outPath;
+        target = "/dotfiles";
+      }
+      {
+        source = ./migrate-btrfs-raid.md;
+        target = "/migrate-btrfs-raid.md";
+      }
+    ];
   };
 
   users.users.dzervas.password = "nixos";
@@ -34,6 +40,19 @@ in {
     # For some reason it needs nix-shell -p xorg.xhost --run xhost si:localuser:root
     gparted
     tmux
+
+    # Tools for the migration guide included on the ISO.
+    btrfs-progs
+    coreutils
+    cryptsetup
+    diffutils
+    dosfstools
+    e2fsprogs
+    gawk
+    parted
+    rsync
+    systemd
+    util-linux
   ];
 
   services.openssh = {

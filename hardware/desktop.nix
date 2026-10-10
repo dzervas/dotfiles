@@ -57,8 +57,8 @@ in {
     };
   };
 
-  environment.etc.crypttab.text = "cryptvms UUID=acf3064a-68a3-4b8a-897d-e1e717e56b12 /etc/cryptsetup_cryptvms luks,discard,nofail";
-  swapDevices = [{ device = "/home/dzervas/CryptVMs/swapfile"; }];
+  environment.etc.crypttab.text = "cryptvms UUID=8ab31481-5199-4790-b42c-6b4858038f4e /etc/cryptsetup_cryptvms luks,discard,nofail";
+  swapDevices = [ { device = "/home/dzervas/CryptVMs/swapfile"; } ];
 
   stylix.image = pkgs.fetchurl {
     # Photo by Wren Meinberg on Unsplash: https://unsplash.com/photos/forest-covered-with-fogs-Fs-bcmsV-hA
@@ -77,9 +77,12 @@ in {
         # Recommended accoding to the docs: https://github.com/Zygo/bees/blob/master/docs/config.md
         hashTableSizeMB = 128;
         extraOptions = [
-          "--thread-count" "8"
-          "--loadavg-target" "8" # Target system load - if above it throttle down
-          "--throttle-factor" "1.5" # Target btrfs queue processing speed vs the baseline (1.5 = 50% slowdown)
+          "--thread-count"
+          "8"
+          "--loadavg-target"
+          "8" # Target system load - if above it throttle down
+          "--throttle-factor"
+          "1.5" # Target btrfs queue processing speed vs the baseline (1.5 = 50% slowdown)
         ];
       };
     };
