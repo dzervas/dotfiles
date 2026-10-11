@@ -146,7 +146,7 @@
     # niri.url = "github:rebizzz/niri-flake/fix/libdisplay-info-dep";
     niri.url = "github:epireyn/niri-flake";
 
-    noctalia.url = "github:noctalia-dev/noctalia-shell/legacy-v4";
+    noctalia.url = "github:noctalia-dev/noctalia/v5.2.1";
     noctalia.inputs.nixpkgs.follows = "nixpkgs";
 
     # Lanzaboote fix:

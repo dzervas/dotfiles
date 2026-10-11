@@ -46,21 +46,9 @@ let
     "npm:@gotgenes/pi-subagents@21.8.1"
     "npm:pi-cliproxyapi-provider@0.15.52"
     {
-      source = "git:github.com/mattpocock/skills";
-      skills = [
-        "skills/engineering/grill-with-docs/SKILL.md"
-        "skills/engineering/wayfinder/SKILL.md"
-        "skills/engineering/domain-modeling/SKILL.md"
-        "skills/engineering/research/SKILL.md"
-        "skills/engineering/prototype/SKILL.md"
-        "skills/engineering/tdd/SKILL.md"
-        "skills/engineering/diagnosing-bugs/SKILL.md"
-        "skills/engineering/codebase-design/SKILL.md"
-        "skills/engineering/code-review/SKILL.md"
-        "skills/productivity/grill-me/SKILL.md"
-        "skills/productivity/grilling/SKILL.md"
-        "skills/productivity/writing-for-agents/SKILL.md"
-      ];
+      source = "git:github.com/mattpocock/skills@v1.3.1";
+      extensions = [];
+      skills = [ "skills/engineering/*" "skills/productivity/*" ];
     }
   ];
   piPackagesSources = map (p: p.source or p) piPackages;

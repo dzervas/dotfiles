@@ -1,36 +1,17 @@
-{ config, lib, inputs, pkgs, ... }: let
-  noctalia-shell-cal = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.override { calendarSupport = true; };
-  noctalia-shell = noctalia-shell-cal.overrideAttrs {
-    runtimeDeps = with pkgs; [
-      qt6.qtwebsockets.dev
-      valent
-    ];
-  };
-in {
+{ config, inputs, pkgs, ... }:
+{
   setup = {
-    runner = "noctalia-shell ipc call launcher toggle";
-    locker = "noctalia-shell ipc call lockScreen lock";
+    runner = "noctalia msg panel-toggle launcher";
+    locker = "noctalia msg session lock";
     lockerInstant = config.setup.locker;
   };
 
-  programs.noctalia-shell = {
+  programs.noctalia = {
     enable = true;
-    package = noctalia-shell;
-    settings = {};
-    plugins = {
-      version = 2;
-      sources = [{ enabled = true; name = "Noctila Plugins"; url = "https://github.com/noctalia-dev/noctalia-plugins"; }];
-      states = builtins.mapAttrs (_name: url: { enabled = true; sourceUrl = url; } ) {
-        kaomoji-provider = "https://github.com/noctalia-dev/noctalia-plugins";
-        polkit-agent = "https://github.com/noctalia-dev/noctalia-plugins";
-        pomodoro = "https://github.com/noctalia-dev/noctalia-plugins";
-        privacy-indicator = "https://github.com/noctalia-dev/noctalia-plugins";
-        zed-provider = "https://github.com/noctalia-dev/noctalia-plugins";
-      };
-    };
+    package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
   };
 
-  xdg.configFile."noctalia/settings.json".source = lib.mkForce (config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/noctalia.json");
+  xdg.configFile."noctalia/config.toml".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/noctalia.toml";
 
-  programs.niri.settings.spawn-at-startup = [{ sh = "noctalia-shell"; }];
+  programs.niri.settings.spawn-at-startup = [{ sh = "noctalia"; }];
 }

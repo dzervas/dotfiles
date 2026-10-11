@@ -33,9 +33,9 @@
 
       spawn-at-startup = [
         { argv = [ "brave" ]; }
-        { argv = [ "io.anytype.anytype" ]; }
-        { argv = [ "zeditor" ]; }
-        { argv = [ "steam" ]; }
+        # { argv = [ "io.anytype.anytype" ]; }
+        # { argv = [ "zeditor" ]; }
+        # { argv = [ "steam" ]; }
         { argv = [ config.setup.terminal ]; }
         { argv = [ "org.telegram.desktop" ]; }
         { argv = [ "dev.vencord.Vesktop" ]; }
@@ -66,7 +66,7 @@
         "Mod+Shift+R".action.spawn-sh = "niri msg action load-config-file";
         "Mod+T".action.set-column-width = "33%";
         "Mod+Shift+T".action.set-column-width = "66%";
-        "Mod+Z".action.spawn-sh = "noctalia-shell ipc call plugin:zed-provider toggle";
+        "Mod+Z".action.spawn-sh = "noctalia msg panel-toggle launcher /zed";
 
         "Mod+Left".action.focus-column-left-or-last = [ ];
         "Mod+Right".action.focus-column-right-or-first = [ ];
@@ -170,25 +170,14 @@
           focus-at-startup = true;
           variable-refresh-rate = "on-demand";
           scale = 1;
-          mode = {
-            width = 2560;
-            height = 1440;
-            refresh = 143.856;
-          };
-          position = {
-            x = 0;
-            y = 0;
-          };
+          mode = { width = 2560; height = 1440; refresh = 143.856; };
+          position = { x = 0; y = 0; };
         };
         "GIGA-BYTE TECHNOLOGY CO., LTD. M27Q 24290B002448" = {
           enable = true;
           variable-refresh-rate = "on-demand";
           scale = 1;
-          mode = {
-            width = 2560;
-            height = 1440;
-            refresh = 143.856;
-          };
+          mode = { width = 2560; height = 1440; refresh = 143.856; };
         };
         "BOE NE135A1M-NY1" = {
           # Laptop built-in display
@@ -196,10 +185,7 @@
           focus-at-startup = true;
           variable-refresh-rate = true;
           scale = 1.67;
-          position = {
-            x = 0;
-            y = 0;
-          };
+          position = { x = 0; y = 0; };
         };
       };
 
@@ -225,10 +211,7 @@
             { app-id = "Steam Settings"; }
             { app-id = "jadx-gui-JadxGUI"; }
             { app-id = "org.pulseaudio.pavucontrol"; }
-            {
-              app-id = "org.telegram.desktop";
-              title = "Telegram";
-            }
+            { app-id = "org.telegram.desktop"; title = "Telegram"; }
           ];
           open-floating = true;
           border.enable = false;
@@ -244,26 +227,15 @@
           open-maximized-to-edges = true;
         }
         {
-          matches = [
-            {
-              title = ".+";
-              app-id = "^(steam_app_.*|helldivers2.exe)";
-            }
-          ];
+          matches = [{ title = ".+"; app-id = "^(steam_app_.*|helldivers2.exe)"; }];
           open-fullscreen = true;
           open-on-workspace = "3-game";
           variable-refresh-rate = true;
         }
         {
           matches = [
-            {
-              app-id = "steam";
-              title = "^notificationtoasts_.*";
-            }
-            {
-              app-id = "^$";
-              title = "^$";
-            }
+            { app-id = "steam"; title = "^notificationtoasts_.*"; }
+            { app-id = "^$"; title = "^$"; }
           ];
 
           clip-to-geometry = true;
@@ -291,60 +263,33 @@
 
         # Startup apps
         {
-          matches = [
-            {
-              app-id = "brave-browser";
-              at-startup = true;
-            }
-          ];
+          matches = [{ app-id = "brave-browser"; at-startup = true; }];
           open-maximized-to-edges = true;
           open-on-workspace = "1-web";
           open-focused = true;
         }
         {
           matches = [
-            {
-              app-id = "anytype";
-              at-startup = true;
-            }
-            {
-              app-id = "dev.zed.Zed";
-              at-startup = true;
-            }
+            { app-id = "anytype"; at-startup = true; }
+            { app-id = "dev.zed.Zed"; at-startup = true; }
           ];
           open-on-workspace = "2-work";
           open-maximized-to-edges = true;
         }
         {
-          matches = [
-            {
-              app-id = "steam";
-              at-startup = true;
-            }
-          ];
+          matches = [{ app-id = "steam"; at-startup = true; }];
           open-on-workspace = "3-game";
           open-maximized-to-edges = true;
         }
         {
-          matches = [
-            {
-              app-id = "com.mitchellh.ghostty";
-              at-startup = true;
-            }
-          ];
+          matches = [{ app-id = "com.mitchellh.ghostty"; at-startup = true; }];
           open-on-workspace = "1-term";
           open-maximized-to-edges = true;
         }
         {
           matches = [
-            {
-              app-id = "org.telegram.desktop";
-              at-startup = true;
-            }
-            {
-              app-id = "vesktop";
-              at-startup = true;
-            }
+            { app-id = "org.telegram.desktop"; at-startup = true; }
+            { app-id = "vesktop"; at-startup = true; }
           ];
           open-on-workspace = "2-chat";
         }
@@ -359,7 +304,7 @@
       layer-rules = [
         {
           # Make the wallpaper stationary
-          matches = [ { namespace = "^wallpaper$"; } ];
+          matches = [ { namespace = "^noctalia-wallpaper"; } ];
           place-within-backdrop = true;
         }
       ];
