@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import test, { type TestContext } from "node:test";
-import { MAX_BYTES, decodeNote, encodeNote, namespace, noteKey, planChange, projectRoot, projectSlug, searchNotes, sortNotes } from "./store.ts";
+import { MAX_BYTES, decodeNote, encodeNote, namespace, noteKey, planChange, projectRoot, projectSlug, recordedSnapshot, searchNotes, SNAPSHOT_ENTRY, sortNotes } from "./store.ts";
 
 async function fixture(t: TestContext) {
 	const directory = await mkdtemp(join(process.cwd(), ".memory-test-"));
@@ -65,4 +65,12 @@ test("search matches all case-insensitive keywords, and notes read in date order
 	assert.deepEqual(searchNotes(notes, "Fish Nix"), []);
 	assert.throws(() => searchNotes(notes, " "), /search term/);
 	assert.deepEqual(sortNotes(notes), [notes[1], notes[0]]);
+});
+
+test("the recorded memory snapshot is read from the branch, ignoring other entries", () => {
+	const snapshot = (text: unknown) => ({ type: "custom", customType: SNAPSHOT_ENTRY, data: { text } });
+	assert.equal(recordedSnapshot([]), undefined);
+	assert.equal(recordedSnapshot([{ type: "custom", customType: "other", data: { text: "x" } }, snapshot(42)]), undefined);
+	assert.equal(recordedSnapshot([snapshot(""), { type: "message" }]), "");
+	assert.equal(recordedSnapshot([snapshot("old"), snapshot("new")]), "new");
 });

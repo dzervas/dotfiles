@@ -26,6 +26,14 @@ import {
 	TODO_CHANGED_EVENT,
 } from "./state.js";
 import { formatList, renderCall, renderResult, TodoWidget } from "./view.js";
+import {
+	BEADS_GUIDANCE,
+	fetchBeads,
+	GUIDANCE_ENTRY,
+	hasBeadsWorkspace,
+	recordedGuidance,
+	setBeadsSnapshot,
+} from "./beads.js";
 
 const TaskSchema = Type.Object({
 	subject: Type.String({ description: "Short imperative task line, e.g. 'Add the parser test'." }),
@@ -54,6 +62,36 @@ function ifLive<T>(fn: () => T): T | undefined {
 
 export default function todoExtension(pi: ExtensionAPI): void {
 	let widget: TodoWidget | undefined;
+
+	// Beads context is fetched only for the interactive session that owns the
+	// widget: at its start, after each agent run, and after bash calls running
+	// `bd`. `beadsCwd` is that session's directory, unset when there is none.
+	let beadsCwd: string | undefined;
+	let beadsRefresh = Promise.resolve();
+	const bdCalls = new Set<string>();
+	const refreshBeads = () => {
+		// Serialized so a slow earlier fetch cannot overwrite a newer one.
+		beadsRefresh = beadsRefresh.then(async () => {
+			const cwd = beadsCwd;
+			const snapshot =
+				cwd !== undefined && hasBeadsWorkspace(cwd)
+					? await fetchBeads((...args) => pi.exec(...args), cwd).catch(() => undefined)
+					: undefined;
+			if (cwd !== beadsCwd) return;
+			setBeadsSnapshot(snapshot);
+			widget?.update();
+		});
+	};
+	pi.on("tool_execution_start", async (event) => {
+		const command = String(event.args?.command ?? "");
+		if (beadsCwd !== undefined && event.toolName === "bash" && /\bbd\b/.test(command)) bdCalls.add(event.toolCallId);
+	});
+	pi.on("tool_execution_end", async (event) => {
+		if (bdCalls.delete(event.toolCallId)) refreshBeads();
+	});
+	pi.on("agent_end", async () => {
+		if (beadsCwd !== undefined) refreshBeads();
+	});
 
 	pi.registerTool({
 		name: "todo",
@@ -115,10 +153,25 @@ export default function todoExtension(pi: ExtensionAPI): void {
 		},
 	});
 
+	// The beads section is decided once, when a session first starts, and
+	// recorded in it: reload, resume, and fork reuse the record, so the system
+	// prompt (and its cache) stays fixed even if `bd init` runs mid-session.
+	const guidance = new Map<string, string>();
+	pi.on("before_agent_start", (event, ctx) => {
+		const text = ifLive(() => guidance.get(sid(ctx)));
+		return text ? { systemPrompt: `${event.systemPrompt}\n\n${text}` } : undefined;
+	});
+
 	pi.on("session_start", async (_event, ctx) => {
 		const session = ifLive(() => {
 			const id = sid(ctx);
 			setTasks(id, replay(ctx));
+			let text = recordedGuidance(ctx.sessionManager.getBranch());
+			if (text === undefined) {
+				text = hasBeadsWorkspace(ctx.cwd ?? process.cwd()) ? BEADS_GUIDANCE : "";
+				pi.appendEntry(GUIDANCE_ENTRY, { text });
+			}
+			guidance.set(id, text);
 			return id;
 		});
 		if (session === undefined || ctx.mode !== "tui") return;
@@ -130,6 +183,8 @@ export default function todoExtension(pi: ExtensionAPI): void {
 		pi.events.emit(TODO_CHANGED_EVENT, undefined);
 		widget.setUICtx(ctx.ui);
 		widget.update();
+		beadsCwd = ctx.cwd ?? process.cwd();
+		refreshBeads();
 	});
 
 	const refresh = (ctx: Parameters<typeof sid>[0] & Parameters<typeof replay>[0]) => {
@@ -151,9 +206,12 @@ export default function todoExtension(pi: ExtensionAPI): void {
 		// The closing session may already have an invalid context.
 		const session = ifLive(() => sid(ctx)) ?? "";
 		evictSession(session);
+		guidance.delete(session);
 		if (widget && (session === "" || session === getRenderSession())) {
 			widget?.dispose();
 			widget = undefined;
+			beadsCwd = undefined;
+			setBeadsSnapshot(undefined);
 			setRenderSession("");
 			pi.events.emit(TODO_CHANGED_EVENT, undefined);
 		}

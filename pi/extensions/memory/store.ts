@@ -16,6 +16,19 @@ export type Action = "list" | "remember" | "replace" | "forget";
 /** One kv change: a note to set, and the note text whose key to tombstone. */
 export type Change = { add?: Note; remove?: string };
 
+/** Session entry type recording the memory section frozen into the system prompt. */
+export const SNAPSHOT_ENTRY = "memory-snapshot";
+
+/** The memory section recorded on this session branch, if any. */
+export function recordedSnapshot(branch: Iterable<unknown>): string | undefined {
+	let text: string | undefined;
+	for (const entry of branch) {
+		const { type, customType, data } = entry as { type?: string; customType?: string; data?: { text?: unknown } };
+		if (type === "custom" && customType === SNAPSHOT_ENTRY && typeof data?.text === "string") text = data.text;
+	}
+	return text;
+}
+
 export function projectRoot(cwd: string, home = homedir()): string {
 	let root = resolve(cwd);
 	while (!existsSync(join(root, ".git")) && !existsSync(join(root, ".jj"))) {

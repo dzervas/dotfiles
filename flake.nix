@@ -146,6 +146,10 @@
     # niri.url = "github:rebizzz/niri-flake/fix/libdisplay-info-dep";
     niri.url = "github:epireyn/niri-flake";
 
+    # Mango 0.18 uses the IPC supported by Noctalia v5; nixpkgs has 0.17.4.
+    mango.url = "github:mangowm/mango/0.18.0";
+    mango.inputs.nixpkgs.follows = "nixpkgs";
+
     noctalia.url = "github:noctalia-dev/noctalia/v5.2.1";
     noctalia.inputs.nixpkgs.follows = "nixpkgs";
 

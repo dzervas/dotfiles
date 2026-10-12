@@ -29,5 +29,5 @@
     };
   };
 
-  programs.niri.settings.spawn-at-startup = [{ sh = "noctalia"; }];
+  programs.niri.settings.spawn-at-startup = lib.mkIf (config.setup.windowManager == "niri") [{ sh = "noctalia"; }];
 }

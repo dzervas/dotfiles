@@ -110,6 +110,8 @@
         ".pi"
         ".mcp.json"
         ".nix"
+        ".beads"
+        ".beads.gate.lock"
         "AGENTS.local.md"
       ];
     };

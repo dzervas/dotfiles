@@ -3,7 +3,7 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 import { Type } from "typebox";
 
 import { agentProfile, applyChange, memoryNamespace, readNotes, syncIfDue, type Runner } from "./atuin.ts";
-import { formatNotes, planChange, searchNotes, type Scope } from "./store.ts";
+import { formatNotes, planChange, recordedSnapshot, searchNotes, SNAPSHOT_ENTRY, type Scope } from "./store.ts";
 
 const scopes = ["global", "project"] as const;
 const TIMEOUT_MS = 5000;
@@ -22,9 +22,17 @@ export default function memoryExtension(pi: ExtensionAPI) {
 		return (command, args) => pi.exec(command, args, { cwd: ctx.cwd, timeout, signal });
 	}
 
-	// Freeze each session's startup context to preserve prompt caching.
+	// Freeze each session's startup context to preserve prompt caching. The
+	// snapshot is recorded in the session, so reload, resume, and fork reuse it
+	// instead of re-reading atuin; only a session without one reads the notes.
 	pi.on("session_start", async (_event, ctx) => {
+		const recorded = recordedSnapshot(ctx.sessionManager.getBranch());
+		if (recorded !== undefined) {
+			snapshots.set(sessionId(ctx), recorded);
+			return;
+		}
 		const sections: string[] = [];
+		let loaded = true;
 		try {
 			agentProfile(); // pin the CLI to the agent profile, so a plain shell cannot reach the personal store
 			const run = runner(ctx, AbortSignal.timeout(TIMEOUT_MS));
@@ -36,9 +44,13 @@ export default function memoryExtension(pi: ExtensionAPI) {
 			}
 			if (warning && ctx.mode === "tui") ctx.ui.notify(`Memory: ${warning}`, "warning");
 		} catch (error) {
+			loaded = false;
 			if (ctx.mode === "tui") ctx.ui.notify(`Could not load memory: ${String(error)}`, "warning");
 		}
-		snapshots.set(sessionId(ctx), sections.join("\n\n"));
+		const text = sections.join("\n\n");
+		snapshots.set(sessionId(ctx), text);
+		// A failed load is not recorded, so the next start of this session retries.
+		if (loaded) pi.appendEntry(SNAPSHOT_ENTRY, { text });
 	});
 	pi.on("session_shutdown", (_event, ctx) => { snapshots.delete(sessionId(ctx)); });
 	pi.on("before_agent_start", (event, ctx) => ({

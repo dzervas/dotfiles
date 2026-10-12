@@ -9,6 +9,14 @@
  *   ├ ◐ Write the extension
  *   └ ○ Verify replay after compaction
  *
+ * With a claimed bead (see beads.ts) the heading becomes a breadcrumb and a
+ * strip summarises the epic's children, one glyph each, plus the next ready one:
+ *
+ *   ● Beads status in todo widget › Fetch claimed bead  1/3
+ *     ✓◐⊘○⊘⊘ 1/6 · next ○ Document beads
+ *   ├ ✓ Study the widget API
+ *   └ ○ Verify replay after compaction
+ *
  * In fullscreen mode it collapses to the heading while the transcript is
  * scrolled back, and expands again once the transcript follows output.
  */
@@ -22,18 +30,63 @@ import {
 	type TodoDetails,
 	renderTasks,
 } from "./state.js";
+import { type BeadState, type BeadsSnapshot, beadsSnapshot } from "./beads.js";
 
 const WIDGET_KEY = "todo";
 
 /** Maximum visible rows, including the heading and overflow indicator. */
 const MAX_ROWS = 13;
 
-const GLYPH: Record<TaskStatus, string> = { pending: "○", in_progress: "◐", completed: "✓" };
+// Nerd Font icons: the Unicode ◐ sits below the baseline of its neighbours.
+const GLYPH: Record<TaskStatus, string> = { pending: "\uf10c", in_progress: "\uf192", completed: "\uf058" };
 const GLYPH_COLOR: Record<TaskStatus, "dim" | "warning" | "success"> = {
 	pending: "dim",
 	in_progress: "warning",
 	completed: "success",
 };
+
+const BEAD_GLYPH: Record<BeadState, string> = {
+	closed: GLYPH.completed,
+	in_progress: GLYPH.in_progress,
+	ready: GLYPH.pending,
+	blocked: "\uf05e",
+};
+const BEAD_COLOR: Record<BeadState, "dim" | "muted" | "warning" | "success"> = {
+	closed: "success",
+	in_progress: "warning",
+	ready: "muted",
+	blocked: "dim",
+};
+
+const beadGlyph = (state: BeadState, theme: Theme) => theme.fg(BEAD_COLOR[state], BEAD_GLYPH[state]);
+
+/**
+ * `● Todos  1/3`, or with a claimed bead `● epic › claimed  1/3`. The dot is
+ * lit while a todo is in progress, or while a bead is claimed with no todos.
+ */
+function headingLine(tasks: readonly Task[], beads: BeadsSnapshot | undefined, theme: Theme): string {
+	const { total, completed, inProgress } = counts(tasks);
+	const active = inProgress > 0 || (beads !== undefined && total === 0);
+	const color = active ? "accent" : "dim";
+	const counter = total > 0 ? `  ${theme.fg("dim", `${completed}/${total}`)}` : "";
+	if (!beads) return `${theme.fg(color, active ? "●" : "○")} ${theme.fg(color, "Todos")}${counter}`;
+	const { claimed, epic } = beads;
+	const crumb = epic && epic.id !== claimed.id ? `${theme.fg("muted", epic.title)} ${theme.fg("dim", "›")} ` : "";
+	return `${theme.fg(color, active ? "●" : "○")} ${crumb}${theme.bold(claimed.title)}${counter}`;
+}
+
+/** `  ✓◐⊘○ 1/4 · next ○ Title`; undefined without an epic. */
+function childStrip(beads: BeadsSnapshot | undefined, theme: Theme): string | undefined {
+	const children = beads?.children ?? [];
+	if (children.length === 0) return undefined;
+	const glyphs = children.map((child) => beadGlyph(child.state, theme)).join("");
+	const closed = children.filter((child) => child.state === "closed").length;
+	const next = children.find((child) => child.state === "ready");
+	const nextPart = next
+		? ` ${theme.fg("dim", "· next")} ${beadGlyph("ready", theme)} ${theme.fg("muted", next.title)}`
+		: "";
+	return `  ${glyphs} ${theme.fg("dim", `${closed}/${children.length}`)}${nextPart}`;
+}
 
 function subjectCell(task: Task, theme: Theme): string {
 	if (task.status === "completed") return theme.strikethrough(theme.fg("dim", task.subject));
@@ -53,12 +106,29 @@ function taskLine(task: Task, branch: "├" | "└" | "", theme: Theme): string 
 		.join(" ");
 }
 
-/** Keep the widget bounded: drop completed rows first, then the tail. */
-function pickRows(tasks: readonly Task[], budget: number): { rows: readonly Task[]; hidden: number } {
-	if (tasks.length <= budget) return { rows: tasks, hidden: 0 };
-	const active = tasks.filter((task) => task.status !== "completed");
-	const rows = active.slice(0, budget - 1);
-	return { rows, hidden: tasks.length - rows.length };
+/**
+ * Keep the widget short: completed tasks collapse to the most recent one, then
+ * the tail is dropped to fit `budget`, which includes the overflow row.
+ */
+function pickRows(tasks: readonly Task[], budget: number): { rows: readonly Task[]; hidden: readonly Task[] } {
+	const lastDone = tasks.findLastIndex((task) => task.status === "completed");
+	const visible = tasks.filter((task, index) => task.status !== "completed" || index === lastDone);
+	const overflow = visible.length < tasks.length ? 1 : 0;
+	const rows = visible.length + overflow <= budget ? visible : visible.slice(0, budget - 1);
+	return { rows, hidden: tasks.filter((task) => !rows.includes(task)) };
+}
+
+/** `+3 done +1 pending`: what the overflow row stands for, by status. */
+function hiddenSummary(hidden: readonly Task[]): string {
+	const { completed, inProgress, pending } = counts(hidden);
+	return ([
+		[completed, "done"],
+		[inProgress, "in progress"],
+		[pending, "pending"],
+	] as const)
+		.filter(([count]) => count > 0)
+		.map(([count, label]) => `+${count} ${label}`)
+		.join(" ");
 }
 
 /** The part of pi-tui's transcript ScrollView the widget reads and nudges. */
@@ -93,7 +163,7 @@ export class TodoWidget {
 
 	update(): void {
 		if (!this.uiCtx) return;
-		if (renderTasks().length === 0) {
+		if (renderTasks().length === 0 && !beadsSnapshot()) {
 			if (this.registered) {
 				this.uiCtx.setWidget(WIDGET_KEY, undefined);
 				this.registered = false;
@@ -130,15 +200,13 @@ export class TodoWidget {
 	}
 
 	private render(theme: Theme, width: number): string[] {
-		const allTasks = renderTasks();
-		if (allTasks.length === 0) return [];
-		const tasks = allTasks;
+		const tasks = renderTasks();
+		const beads = beadsSnapshot();
+		if (tasks.length === 0 && !beads) return [];
 
 		// The heading always describes the complete list; filtering only affects
 		// the rows below it.
-		const { total, completed, inProgress } = counts(allTasks);
-		const color = inProgress > 0 ? "accent" : "dim";
-		const heading = `${theme.fg(color, inProgress > 0 ? "●" : "○")} ${theme.fg(color, "Todos")}  ${theme.fg("dim", `${completed}/${total}`)}`;
+		const heading = truncateToWidth(headingLine(tasks, beads, theme), width, "…");
 
 		const transcript = transcriptOf(this.tui);
 		const collapse = transcript !== undefined && !transcript.isFollowingEnd;
@@ -155,13 +223,16 @@ export class TodoWidget {
 		}
 		this.collapsed = false;
 
-		const { rows, hidden } = pickRows(tasks, MAX_ROWS - 1);
 		const lines = [heading];
+		const strip = childStrip(beads, theme);
+		if (strip) lines.push(truncateToWidth(strip, width, "…"));
+		const { rows, hidden } = pickRows(tasks, MAX_ROWS - lines.length);
 		rows.forEach((task, index) => {
-			const branch = hidden === 0 && index === rows.length - 1 ? "└" : "├";
+			const branch = hidden.length === 0 && index === rows.length - 1 ? "└" : "├";
 			lines.push(truncateToWidth(taskLine(task, branch, theme), width, "…"));
 		});
-		if (hidden > 0) lines.push(theme.fg("dim", `└ +${hidden} more`));
+		// Underlined so the overflow count does not read as another todo.
+		if (hidden.length > 0) lines.push(`${theme.fg("dim", "└")} ${theme.underline(theme.fg("dim", hiddenSummary(hidden)))}`);
 		// Trailing spacer: pi puts no gap between the widget and the editor box.
 		lines.push("");
 		this.lastHeight = lines.length;
