@@ -3,6 +3,8 @@
   home-manager.sharedModules = [ ./home/niri.nix ];
 
   niri-flake.cache.enable = false;
+  # Noctalia provides the polkit agent.
+  systemd.user.services.niri-flake-polkit.enable = false;
 
   programs.niri = {
     enable = true;

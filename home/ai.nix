@@ -192,10 +192,13 @@ in
       lmstudio
       pi-durable
       bubblewrap # for codex
+
       openspec
       piExtensionBump
       snyk
       codegraph
+
+      beads
     ];
 
     sessionVariables = {

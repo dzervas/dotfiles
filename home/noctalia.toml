@@ -1,0 +1,453 @@
+# Noctalia v5.2.1; settings adopted from the GUI export.
+# config.toml is symlinked here. Host wallpaper is generated separately in host.toml.
+# GUI edits are stored separately in ~/.local/state/noctalia/settings.toml and win over both.
+
+[audio]
+enable_overdrive = false
+enable_sounds = false
+sound_volume = 0.5
+
+[backdrop]
+enabled = false
+
+# Preserve widget order. v4 frame geometry, density, outline, inset and hide delays
+# have no exact mappings; frameRadius/frameThickness are not v5 radius/thickness.
+# Network/Bluetooth/Volume use default labels: v5 has no hover-only label mode.
+[bar.main]
+auto_hide = false
+background_opacity = 0.79999998211860657
+capsule = false
+center = [ "active_window" ]
+compositor_blur = true
+contact_shadow = true
+end = [
+    "media",
+    "battery",
+    "tray",
+    "network",
+    "bluetooth",
+    "volume",
+    "keyboard_layout",
+    "clock",
+    "caffeine",
+    "notifications"
+]
+font_scale = 1.0
+margin_edge = 4
+margin_ends = 4
+padding = 12
+position = "top"
+reserve_space = true
+start = [ "launcher", "taskbar" ]
+widget_spacing = 4
+
+    [bar.main.dead_zone.actions]
+    middle = "panel-toggle launcher"
+    right = "panel-toggle control-center"
+
+# v4's critical threshold, sysmon thresholds/command and dGPU opt-in have no exact mapping.
+[battery]
+warning_threshold = 20
+
+[brightness]
+enable_ddcutil = true
+minimum_brightness = 0.01
+
+# Reconfigure calendar accounts in v5; v4 Monday-first/analog-clock controls are omitted.
+[calendar]
+enabled = true
+event_time_format = "%H:%M"
+
+[control_center]
+sidebar = "full"
+
+# v4 card order, disk-path card and layout controls use v5 defaults.
+# v5 allows six shortcuts: omit NoctaliaPerformance; caffeine remains in the bar.
+    [control_center.calendar]
+    show_events_card = true
+    show_week_numbers = false
+
+    [[control_center.shortcuts]]
+    type = "wifi"
+
+    [[control_center.shortcuts]]
+    type = "bluetooth"
+
+    [[control_center.shortcuts]]
+    type = "wallpaper"
+
+    [[control_center.shortcuts]]
+    type = "notification"
+
+    [[control_center.shortcuts]]
+    type = "power_profile"
+
+    [[control_center.shortcuts]]
+    type = "nightlight"
+
+[desktop_widgets]
+enabled = false
+
+[dock]
+enabled = false
+
+[hooks]
+session_locked = "1password --lock --silent"
+
+[idle]
+behavior_order = [ "lock", "screen-off", "lock-1password" ]
+pre_action_fade_seconds = 5.0
+
+    [idle.behavior.lock]
+    action = "lock"
+    enabled = true
+    timeout = 300
+
+    [idle.behavior.lock-1password]
+    action = "command"
+    command = "1password --lock --silent"
+    enabled = true
+    timeout = 300
+
+    [idle.behavior.screen-off]
+    action = "screen_off"
+    enabled = true
+    timeout = 600
+
+[keybinds]
+cancel = [ "escape" ]
+delete = [ "del" ]
+down = [ "down" ]
+left = [ "left" ]
+right = [ "right" ]
+up = [ "up" ]
+validate = [ "return", "kp_enter" ]
+
+[location]
+address = "Melivoia, Greece"
+auto_locate = false
+
+# v4 countdown/media/session-button/clock-style/compact/auth-start controls use v5 defaults.
+# Unlike v4, lock_before_suspend covers logind lid-close and external suspend.
+[lockscreen]
+blur_intensity = 0.0
+enabled = true
+lock_before_suspend = true
+tint_intensity = 0.0
+
+[lockscreen_widgets]
+enabled = false
+schema_version = 2
+widget_order = [ "lockscreen-login-box@DP-1", "lockscreen-login-box@DP-3" ]
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 1280.0
+    cy = 1258.0
+    output = "DP-1"
+    placement_height = 1440.0
+    placement_width = 2560.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-3"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 1280.0
+    cy = 1258.0
+    output = "DP-3"
+    placement_height = 1440.0
+    placement_width = 2560.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-3".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+[nightlight]
+enabled = false
+force = false
+temperature_day = 6500
+temperature_night = 4000
+
+# v4 urgency durations, expiry override, Markdown and toast-kind controls use v5 defaults.
+# Notification/OSD density and OSD overlay-layer controls have no equivalent.
+[notification]
+background_opacity = 1.0
+enable_daemon = true
+keep_dismissed_in_history = false
+layer = "top"
+position = "bottom_right"
+
+[osd]
+background_opacity = 1.0
+enabled = true
+hide_delay_ms = 2000
+position = "top_right"
+
+# v4 OSD types 0/1/2 map only to output volume, input volume and brightness.
+    [osd.kinds]
+    bluetooth = false
+    brightness = true
+    caffeine = false
+    dnd = false
+    keyboard_backlight = false
+    keyboard_layout = false
+    lock_keys = false
+    media = false
+    nightlight = false
+    power_profile = false
+    privacy = false
+    volume = true
+    volume_input = true
+    volume_output = true
+    wifi = false
+
+# ffplay is only needed when bypassing native sound globals; keep sounds disabled.
+# Headless config validation warns about these settings until the plugin is installed.
+[plugin_settings."thepunkoff/pomodoro"]
+bypass-noctalia-sound-globals = false
+enable-work-timer-sound = false
+use-bundled-alarm-sound = false
+
+# Zed was disabled in the GUI export; the /zed launcher query requires enabling it again.
+# Pomodoro requires API 22; v5.2.1 supports APIs 3–32.
+# Open Pomodoro with: noctalia msg panel-toggle thepunkoff/pomodoro:panel.
+# Native polkit replaces its old plugin; privacy is built in (no new bar widget).
+# No compatible Kaomoji replacement was found; old plugin-update notifications are omitted.
+[plugins]
+auto_update = "all"
+enabled = [ "thepunkoff/pomodoro" ]
+
+[shell]
+app_icon_colorize = false
+avatar_path = "/home/dzervas/.face"
+clipboard_auto_paste = "off"
+clipboard_enabled = false
+font_family = "DejaVu Sans"
+panel_anchor_bar = "main"
+password_style = "random"
+polkit_agent = true
+show_location = true
+telemetry_enabled = false
+
+    [shell.animation]
+    enabled = true
+    speed = 1.0
+
+# v5 uses its default launcher glyph; v4's automatic distro logo has no equivalent.
+# v4 settings-search and startup-changelog controls are not migrated.
+    [shell.launcher]
+    app_grid = false
+    auto_paste = "off"
+    categories = false
+    pinned = []
+    provider_prefix = "/"
+    sort_by_usage = true
+
+        [shell.launcher.providers.session]
+        global = true
+
+        [shell.launcher.providers.windows]
+        global = true
+
+    [shell.mpris]
+    blacklist = []
+
+# v4 panel opacity, radius ratios, blur, dimmer and shadow offsets have no exact v5 mapping.
+    [shell.panel]
+    borders = true
+    clipboard_placement = "attached"
+    control_center_placement = "attached"
+    floating_layer = "top"
+    launcher_placement = "attached"
+    launcher_position = "top_center"
+    open_near_click_control_center = true
+    session_placement = "floating"
+    session_position = "top_center"
+    shadow = true
+    transparency_mode = "glass"
+    wallpaper_placement = "attached"
+
+    [shell.screen_corners]
+    enabled = false
+
+    [shell.screenshot]
+    annotate = true
+    confirm_region = true
+    save_to_file = false
+
+# v5 has no hibernate/UEFI/userspace-reboot action equivalents.
+    [shell.session]
+    grid = false
+    show_shortcuts = true
+
+        [[shell.session.actions]]
+        action = "lock"
+        countdown_seconds = 10
+        enabled = true
+        shortcut = "1"
+
+        [[shell.session.actions]]
+        action = "logout"
+        countdown_seconds = 10
+        enabled = true
+        shortcut = "2"
+
+        [[shell.session.actions]]
+        action = "suspend"
+        countdown_seconds = 10
+        enabled = true
+        shortcut = "3"
+
+        [[shell.session.actions]]
+        action = "reboot"
+        countdown_seconds = 10
+        enabled = true
+        shortcut = "4"
+
+        [[shell.session.actions]]
+        action = "shutdown"
+        countdown_seconds = 10
+        enabled = true
+        shortcut = "5"
+
+    [shell.shadow]
+    direction = "down_right"
+
+[theme]
+builtin = "Nord"
+mode = "dark"
+source = "builtin"
+
+# v4 GSettings synchronization has no equivalent setting in v5.
+    [theme.templates]
+    enable_builtin_templates = false
+    enable_community_templates = false
+
+# v4 pixelate is unsupported; keep the other transitions.
+# Picker sorting/view/hidden-file and per-monitor apply controls use v5 defaults.
+[wallpaper]
+directory = "/home/dzervas/Pictures/Wallpapers"
+edge_smoothness = 0.050000000000000003
+enabled = true
+fill_color = "#000000"
+fill_mode = "crop"
+per_monitor_directories = false
+transition = [ "fade", "disc", "stripes", "wipe", "honeycomb" ]
+transition_duration = 1500
+transition_on_startup = true
+
+    [wallpaper.automation]
+    enabled = false
+    interval_seconds = 300
+    order = "random"
+
+
+# Runtime expects metric/imperial, despite example.toml documenting celsius/fahrenheit.
+# v4 timezone/mascot controls have no equivalent.
+[weather]
+effects = true
+enabled = true
+unit = "metric"
+
+[widget.active_window]
+display = "icon_and_text"
+max_length = 750.0
+show_empty_label = false
+title_scroll = "on_hover"
+
+[widget.battery]
+device = "auto"
+display_mode = "graphic"
+hide_when_full = false
+hide_when_plugged = false
+
+[widget.caffeine]
+icon_color = "error"
+
+[widget.clock]
+format = "{:%H:%M %a, %b %d}"
+tooltip_format = "{:%H:%M %a, %b %d}"
+vertical_format = "{:%H %M - %d %m}"
+
+# Runtime expects show_glyph, despite older documentation calling this show_icon.
+[widget.keyboard_layout]
+show_glyph = false
+
+# v4's inline visualizer/progress ring and fixed-width/hide modes have no exact mapping.
+[widget.media]
+album_art_only = false
+artist_first = false
+hide_album_art = false
+hide_when_no_media = false
+max_length = 250.0
+title_scroll = "on_hover"
+
+[widget.notifications]
+hide_when_no_unread = false
+
+[widget.taskbar]
+focused_output_only = true
+group_by_workspace = true
+show_workspace_label = false
+
+[widget.tray]
+drawer = false
+hidden = []
+hide_passive = false
+pinned = []
+
+[widget.volume.actions]
+middle = "exec pwvucontrol || pavucontrol"
+scroll_down = "volume-down 5%"
+scroll_up = "volume-up 5%"
+
+# v4 application lists/badges, icon/pill sizing and focused-screen controls are omitted.
+# v5's focused-app hint is not equivalent to the old application list.
+[widget.workspaces]
+capsule = true
+empty_color = "secondary"
+focused_color = "primary"
+focused_output_only = true
+font_weight = 700
+hide_when_empty = true
+labels_only_when_occupied = true
+max_label_chars = 2
+occupied_color = "secondary"
+show_labels = true

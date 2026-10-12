@@ -12,8 +12,7 @@
   ];
 
   home.packages = with pkgs; [
-    grim # For flameshot
-    wev
+    wev # xev, debugging
   ];
 
   gtk.enable = true;
@@ -86,7 +85,8 @@
         "Mod+Shift+Period".action.move-workspace-to-monitor-right = [ ];
         "Mod+Shift+Tab".action.move-window-to-monitor-previous = [ ];
 
-        "Print".action.spawn-sh = "flameshot gui";
+        "Print".action.spawn-sh = "noctalia msg screenshot-region";
+        "Shift+Print".action.spawn-sh = "noctalia msg annotate";
 
         "XF86AudioPlay".action.spawn-sh = "playerctl play-pause";
         "XF86AudioPause".action.spawn-sh = "playerctl play-pause";

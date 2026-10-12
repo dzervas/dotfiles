@@ -28,6 +28,7 @@
 !home/katerc
 !home/*.sh
 !home/*.json
+!home/noctalia.toml
 !home/*.jinja
 !home/*.yaml
 !home/*.mp3
