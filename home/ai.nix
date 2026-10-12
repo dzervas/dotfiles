@@ -48,7 +48,11 @@ let
     {
       source = "git:github.com/mattpocock/skills@v1.3.1";
       extensions = [];
-      skills = [ "skills/engineering/*" "skills/productivity/*" ];
+      skills = [
+        "skills/engineering/*"
+        "skills/productivity/*"
+        "!skills/productivity/grilling/**" # Local fork uses the questionnaire tool.
+      ];
     }
   ];
   piPackagesSources = map (p: p.source or p) piPackages;
