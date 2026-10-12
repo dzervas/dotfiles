@@ -41,6 +41,7 @@
 !overlays/compact-nix.py
 !pi
 !pi/*.json
+!pi/agents
 !pi/extensions
 !pi/fleet
 !pi/fleet/*.lua
@@ -50,6 +51,7 @@
 !pi/benchmarks/memory/*.py
 !pi/skills
 !pi/extensions/lib
+!pi/extensions/tests
 !pi/extensions/memory
 !pi/extensions/permissions
 !pi/extensions/pi-subagents-workflows

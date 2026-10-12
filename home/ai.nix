@@ -43,8 +43,8 @@ let
   };
 
   piPackages = [
-    "npm:@gotgenes/pi-subagents@21.8.1"
-    "npm:pi-cliproxyapi-provider@0.15.52"
+    "npm:@gotgenes/pi-subagents@23.4.0"
+    "npm:pi-cliproxyapi-provider@0.15.58"
     {
       source = "git:github.com/mattpocock/skills@v1.3.1";
       extensions = [];
@@ -95,18 +95,6 @@ let
       "claude-fable-5-1"
       "qwen-flash-next"
     ];
-
-    subagents = rec {
-      defaultModel = "claude-sonnet-5-5";
-      agentOverrides = {
-        scout.model = defaultModel; # Local file recon
-        researcher.model = defaultModel; # Web recon
-        delegate.model = "gpt-6.1-sol"; # Small worker
-
-        oracle.model = piSettings.defaultModel; # Plan reviewer
-        reviewer.model = "gpt-6-astra"; # Code reviewer
-      };
-    };
   };
 
   piExtensionBump = pkgs.writeShellApplication {
@@ -214,6 +202,9 @@ in
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/global_agents.md";
       ".pi/agent/sandbox.ts".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/sandbox.ts";
+      # Claude Code's subagents, overriding pi-subagents' built-ins by name.
+      ".pi/agent/agents".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/agents";
       ".pi/agent/extensions".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/extensions";
       ".pi/agent/skills".source =

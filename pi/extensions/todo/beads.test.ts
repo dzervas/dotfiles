@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { type Exec, fetchBeads, GUIDANCE_ENTRY, hasBeadsWorkspace, type RawIssue, recordedGuidance } from "./beads.ts";
+import { type Exec, fetchBeads, fetchUnclaimedParents, GUIDANCE_ENTRY, hasBeadsWorkspace, type RawIssue, recordedGuidance } from "./beads.ts";
 
 const issue = (id: string, status: string, extra: Partial<RawIssue> = {}): RawIssue => ({
 	id,
@@ -73,6 +73,22 @@ test("a claimed bead without a parent has no epic and makes no further calls", a
 	assert.equal(snapshot?.epic, undefined);
 	assert.deepEqual(snapshot?.children, []);
 	assert.equal(calls.length, 1);
+});
+
+test("idle parents use the unassigned top-level non-closed query without a limit", async () => {
+	const calls: string[][] = [];
+	const exec: Exec = async (_command, args, options) => {
+		calls.push(args);
+		assert.equal(options.cwd, "/repo");
+		return { code: 0, stdout: JSON.stringify([issue("p-1", "open", { issue_type: "epic" }), issue("p-2", "blocked")]) };
+	};
+	assert.deepEqual(await fetchUnclaimedParents(exec, "/repo"), [
+		{ id: "p-1", title: "Title p-1" },
+		{ id: "p-2", title: "Title p-2" },
+	]);
+	assert.deepEqual(calls, [["list", "--no-assignee", "--no-parent", "--brief", "-n", "0", "--json"]]);
+	assert.deepEqual(await fetchUnclaimedParents(fakeBd({ active: [] }).exec, "/repo"), []);
+	assert.deepEqual(await fetchUnclaimedParents(async () => ({ code: 1, stdout: "" }), "/repo"), []);
 });
 
 test("nothing claimed or a failing bd yields no snapshot", async () => {

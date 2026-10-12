@@ -88,6 +88,12 @@ export function buildSnapshot(
 	};
 }
 
+/** Unassigned, non-closed top-level beads, including blocked/deferred work. */
+export async function fetchUnclaimedParents(exec: Exec, cwd: string): Promise<Pick<Bead, "id" | "title">[]> {
+	const parents = await bdJson(exec, cwd, ["list", "--no-assignee", "--no-parent", "--brief", "-n", "0"]);
+	return (parents ?? []).map(({ id, title }) => ({ id, title }));
+}
+
 async function bdJson(exec: Exec, cwd: string, args: string[]): Promise<RawIssue[] | undefined> {
 	const result = await exec("bd", [...args, "--json"], { cwd, timeout: 5000 });
 	if (result.code !== 0) return undefined;
@@ -169,6 +175,15 @@ export function recordedGuidance(branch: Iterable<unknown>): string | undefined 
 
 // The foreground snapshot read by the ctx-less widget renderer.
 let current: BeadsSnapshot | undefined;
+let parents: Pick<Bead, "id" | "title">[] = [];
+
+export function unclaimedParents(): readonly Pick<Bead, "id" | "title">[] {
+	return parents;
+}
+
+export function setUnclaimedParents(value: Pick<Bead, "id" | "title">[]): void {
+	parents = value;
+}
 
 export function beadsSnapshot(): BeadsSnapshot | undefined {
 	return current;

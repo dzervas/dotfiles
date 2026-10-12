@@ -29,8 +29,8 @@ import {
 	type TaskStatus,
 	type TodoDetails,
 	renderTasks,
-} from "./state.js";
-import { type BeadState, type BeadsSnapshot, beadsSnapshot } from "./beads.js";
+} from "./state.ts";
+import { type BeadState, type BeadsSnapshot, beadsSnapshot, unclaimedParents } from "./beads.ts";
 
 const WIDGET_KEY = "todo";
 
@@ -163,7 +163,7 @@ export class TodoWidget {
 
 	update(): void {
 		if (!this.uiCtx) return;
-		if (renderTasks().length === 0 && !beadsSnapshot()) {
+		if (renderTasks().length === 0 && !beadsSnapshot() && unclaimedParents().length === 0) {
 			if (this.registered) {
 				this.uiCtx.setWidget(WIDGET_KEY, undefined);
 				this.registered = false;
@@ -202,11 +202,17 @@ export class TodoWidget {
 	private render(theme: Theme, width: number): string[] {
 		const tasks = renderTasks();
 		const beads = beadsSnapshot();
-		if (tasks.length === 0 && !beads) return [];
+		const idle = tasks.length === 0 && !beads;
+		const parents = unclaimedParents();
+		if (idle && parents.length === 0) return [];
 
-		// The heading always describes the complete list; filtering only affects
-		// the rows below it.
-		const heading = truncateToWidth(headingLine(tasks, beads, theme), width, "…");
+		// Idle repositories show unclaimed roots in the same slot as the heading.
+		// Otherwise the heading describes the complete list, before row filtering.
+		const heading = truncateToWidth(
+			idle ? theme.fg("dim", parents.map((parent) => parent.title).join(", ")) : headingLine(tasks, beads, theme),
+			width,
+			"…",
+		);
 
 		const transcript = transcriptOf(this.tui);
 		const collapse = transcript !== undefined && !transcript.isFollowingEnd;

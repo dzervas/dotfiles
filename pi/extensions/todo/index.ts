@@ -29,10 +29,12 @@ import { formatList, renderCall, renderResult, TodoWidget } from "./view.js";
 import {
 	BEADS_GUIDANCE,
 	fetchBeads,
+	fetchUnclaimedParents,
 	GUIDANCE_ENTRY,
 	hasBeadsWorkspace,
 	recordedGuidance,
 	setBeadsSnapshot,
+	setUnclaimedParents,
 } from "./beads.js";
 
 const TaskSchema = Type.Object({
@@ -77,8 +79,13 @@ export default function todoExtension(pi: ExtensionAPI): void {
 				cwd !== undefined && hasBeadsWorkspace(cwd)
 					? await fetchBeads((...args) => pi.exec(...args), cwd).catch(() => undefined)
 					: undefined;
+			const parents =
+				!snapshot && cwd !== undefined && hasBeadsWorkspace(cwd)
+					? await fetchUnclaimedParents((...args) => pi.exec(...args), cwd).catch(() => [])
+					: [];
 			if (cwd !== beadsCwd) return;
 			setBeadsSnapshot(snapshot);
+			setUnclaimedParents(parents);
 			widget?.update();
 		});
 	};
@@ -212,6 +219,7 @@ export default function todoExtension(pi: ExtensionAPI): void {
 			widget = undefined;
 			beadsCwd = undefined;
 			setBeadsSnapshot(undefined);
+			setUnclaimedParents([]);
 			setRenderSession("");
 			pi.events.emit(TODO_CHANGED_EVENT, undefined);
 		}
