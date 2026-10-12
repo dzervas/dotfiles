@@ -1,6 +1,9 @@
-// Read-only mode: restricts the active tool set and blocks anything that
-// writes (or can't be proven not to). Orthogonal to the rule engine — it runs
-// before it in the tool_call handler.
+// Read-only mode: blocks anything that writes (or can't be proven not to).
+// Orthogonal to the rule engine — it runs before it in the tool_call handler.
+//
+// The active tool set never changes: tools lead the cached prompt prefix, so
+// swapping them would re-bill the whole conversation. Each toggle appends a
+// message telling the model instead, which only extends the prefix.
 
 import type {
 	ExtensionAPI,
@@ -10,23 +13,18 @@ import type {
 import { askPermission } from "./ask";
 import { askReasons, type PermissionSubject } from "./types";
 
-const READ_MODE_TOOLS = ["read", "bash", "grep", "find", "ls", "questionnaire", "codemode", "tool_search", "memory", "memory_search"];
 const ALLOWED_CUSTOM_TOOLS = new Set(["questionnaire", "todo", "codemode", "tool_search", "memory", "memory_search"]);
+
+const ENTERED_MESSAGE =
+	"Read mode is on. Investigate and answer without changing anything: edit and write are blocked, and bash commands that write or cannot be classified as read-only need the user's approval.";
+const LEFT_MESSAGE = "Read mode is off. Changes are allowed again under the usual permission rules.";
 
 type ReadModeState = {
 	enabled: boolean;
-	previousTools?: string[];
 };
 
 export function createReadMode(pi: ExtensionAPI) {
 	let enabled = false;
-	let previousTools: string[] | undefined;
-
-	function applyToolFilter() {
-		pi.setActiveTools(
-			READ_MODE_TOOLS.filter((name) => pi.getAllTools().some((tool) => tool.name === name)),
-		);
-	}
 
 	function updateUi(ctx: ExtensionContext) {
 		// TODO: This should be a setFooter
@@ -37,10 +35,7 @@ export function createReadMode(pi: ExtensionAPI) {
 	}
 
 	function persist() {
-		pi.appendEntry<ReadModeState>("permissions-read-mode", {
-			enabled,
-			previousTools,
-		});
+		pi.appendEntry<ReadModeState>("permissions-read-mode", { enabled });
 	}
 
 	function restore(ctx: ExtensionContext) {
@@ -52,9 +47,6 @@ export function createReadMode(pi: ExtensionAPI) {
 		}
 
 		enabled = restored?.enabled ?? false;
-		previousTools = restored?.previousTools;
-
-		if (enabled) applyToolFilter();
 		updateUi(ctx);
 	}
 
@@ -65,25 +57,19 @@ export function createReadMode(pi: ExtensionAPI) {
 			return;
 		}
 
-		if (next) {
-			previousTools = pi.getActiveTools();
-			applyToolFilter();
-			enabled = true;
-			ctx.ui.notify("Read mode enabled. File mutations are blocked.", "info");
-		} else {
-			enabled = false;
-			if (previousTools && previousTools.length > 0) {
-				const available = new Set(pi.getAllTools().map((tool) => tool.name));
-				pi.setActiveTools(previousTools.filter((tool) => available.has(tool)));
-			}
-			ctx.ui.notify("Read mode disabled.", "info");
-		}
+		enabled = next;
+		// Steer reaches a running agent at its next step and is appended as-is when idle.
+		pi.sendMessage(
+			{ customType: "permissions-read-mode", content: next ? ENTERED_MESSAGE : LEFT_MESSAGE, display: true },
+			{ deliverAs: "steer" },
+		);
+		ctx.ui.notify(next ? "Read mode enabled. File mutations are blocked." : "Read mode disabled.", "info");
 
 		updateUi(ctx);
 		persist();
 	}
 
-	// Turn read mode off without restoring tools or notifying (sandbox override).
+	// Turn read mode off without telling the model or notifying (sandbox override).
 	function clear(ctx: ExtensionContext) {
 		enabled = false;
 		ctx.ui.setStatus("permissions-read-mode", undefined);
