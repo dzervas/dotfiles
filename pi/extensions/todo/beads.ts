@@ -41,7 +41,12 @@ export type Exec = (
 	command: string,
 	args: string[],
 	options: { cwd: string; timeout: number },
-) => Promise<{ code: number; stdout: string }>;
+) => Promise<{ code: number; stdout: string; stderr?: string }>;
+
+/** pi.exec has no env option; env sets envelope mode without changing Pi's process. */
+export function execBd(exec: Exec, cwd: string, args: string[]) {
+	return exec("env", ["BD_JSON_ENVELOPE=1", "bd", ...args], { cwd, timeout: 5000 });
+}
 
 /**
  * Whether `cwd` is inside a beads workspace. `~/.beads` holds bd's global state
@@ -95,9 +100,11 @@ export async function fetchUnclaimedParents(exec: Exec, cwd: string): Promise<Pi
 }
 
 async function bdJson(exec: Exec, cwd: string, args: string[]): Promise<RawIssue[] | undefined> {
-	const result = await exec("bd", [...args, "--json"], { cwd, timeout: 5000 });
+	const result = await execBd(exec, cwd, [...args, "--json"]);
 	if (result.code !== 0) return undefined;
-	return JSON.parse(result.stdout) as RawIssue[];
+	const envelope = JSON.parse(result.stdout) as { schema_version: number; data: RawIssue[] };
+	if (!Array.isArray(envelope.data)) throw new Error("bd JSON envelope must contain an issue array in data");
+	return envelope.data;
 }
 
 /** Undefined when nothing is claimed or `bd` fails. */

@@ -28,6 +28,7 @@ import {
 import { formatList, renderCall, renderResult, TodoWidget } from "./view.js";
 import {
 	BEADS_GUIDANCE,
+	execBd,
 	fetchBeads,
 	fetchUnclaimedParents,
 	GUIDANCE_ENTRY,
@@ -88,6 +89,7 @@ export default function todoExtension(pi: ExtensionAPI): void {
 			setUnclaimedParents(parents);
 			widget?.update();
 		});
+		return beadsRefresh;
 	};
 	pi.on("tool_execution_start", async (event) => {
 		const command = String(event.args?.command ?? "");
@@ -148,15 +150,26 @@ export default function todoExtension(pi: ExtensionAPI): void {
 	});
 
 	pi.registerCommand("todos", {
-		description: "Show the current todo list",
+		description: "Show current todos and fresh beads status; refresh the widget",
 		handler: async (_args, ctx) => {
+			await refreshBeads();
 			const tasks = getTasks(sid(ctx));
-			if (tasks.length === 0) {
-				ctx.ui.notify("No todos yet.", "info");
-				return;
-			}
 			const { total, completed } = counts(tasks);
-			ctx.ui.notify(`${completed}/${total} completed\n${formatList(tasks)}`, "info");
+			const sections = [total === 0 ? "No todos yet." : `${completed}/${total} completed\n${formatList(tasks)}`];
+			const cwd = ctx.cwd ?? process.cwd();
+			if (hasBeadsWorkspace(cwd)) {
+				try {
+					const result = await execBd((...args) => pi.exec(...args), cwd, ["list"]);
+					if (result.code !== 0) {
+						ctx.ui.notify(`bd list failed: ${result.stderr || result.stdout || `exit ${result.code}`}`, "error");
+					} else {
+						sections.push(result.stdout.trimEnd());
+					}
+				} catch (error) {
+					ctx.ui.notify(`bd list failed: ${String(error)}`, "error");
+				}
+			}
+			ctx.ui.notify(sections.join("\n\n"), "info");
 		},
 	});
 

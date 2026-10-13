@@ -16,7 +16,10 @@ const issue = (id: string, status: string, extra: Partial<RawIssue> = {}): RawIs
 /** A fake `bd` answering by subcommand and `--parent`, recording every call. */
 function fakeBd(rows: { active: RawIssue[]; epic?: RawIssue; children?: RawIssue[]; ready?: RawIssue[] }) {
 	const calls: string[][] = [];
-	const exec: Exec = async (_command, args) => {
+	const exec: Exec = async (command, envArgs) => {
+		assert.equal(command, "env");
+		assert.deepEqual(envArgs.slice(0, 2), ["BD_JSON_ENVELOPE=1", "bd"]);
+		const args = envArgs.slice(2);
 		calls.push(args);
 		const [sub] = args;
 		const out =
@@ -24,7 +27,7 @@ function fakeBd(rows: { active: RawIssue[]; epic?: RawIssue; children?: RawIssue
 			: sub === "ready" ? rows.ready ?? []
 			: args.includes("--parent") ? rows.children ?? []
 			: rows.active;
-		return { code: 0, stdout: JSON.stringify(out) };
+		return { code: 0, stdout: JSON.stringify({ schema_version: 1, data: out }) };
 	};
 	return { exec, calls };
 }
@@ -77,10 +80,13 @@ test("a claimed bead without a parent has no epic and makes no further calls", a
 
 test("idle parents use the unassigned top-level non-closed query without a limit", async () => {
 	const calls: string[][] = [];
-	const exec: Exec = async (_command, args, options) => {
-		calls.push(args);
+	const exec: Exec = async (command, args, options) => {
+		assert.equal(command, "env");
+		assert.deepEqual(args.slice(0, 2), ["BD_JSON_ENVELOPE=1", "bd"]);
+		calls.push(args.slice(2));
 		assert.equal(options.cwd, "/repo");
-		return { code: 0, stdout: JSON.stringify([issue("p-1", "open", { issue_type: "epic" }), issue("p-2", "blocked")]) };
+		assert.equal(options.timeout, 5000);
+		return { code: 0, stdout: JSON.stringify({ schema_version: 1, data: [issue("p-1", "open", { issue_type: "epic" }), issue("p-2", "blocked")] }) };
 	};
 	assert.deepEqual(await fetchUnclaimedParents(exec, "/repo"), [
 		{ id: "p-1", title: "Title p-1" },
@@ -94,6 +100,21 @@ test("idle parents use the unassigned top-level non-closed query without a limit
 test("nothing claimed or a failing bd yields no snapshot", async () => {
 	assert.equal(await fetchBeads(fakeBd({ active: [] }).exec, "/repo"), undefined);
 	assert.equal(await fetchBeads(async () => ({ code: 1, stdout: "" }), "/repo"), undefined);
+});
+
+test("a stderr migration note does not affect envelope parsing", async () => {
+	const snapshot = await fetchBeads(async () => ({
+		code: 0,
+		stdout: JSON.stringify({ schema_version: 1, data: [issue("p-9", "in_progress")], pagination: { returned: 1 } }),
+		stderr: "NOTE: bd --json output format will change in v2.0.",
+	}), "/repo");
+	assert.equal(snapshot?.claimed.id, "p-9");
+});
+
+test("invalid envelope payloads are rejected rather than treated as an empty list", async () => {
+	for (const payload of [[], { schema_version: 1, data: {} }]) {
+		await assert.rejects(fetchBeads(async () => ({ code: 0, stdout: JSON.stringify(payload) }), "/repo"), /issue array/);
+	}
 });
 
 test("only a workspace with metadata counts, found from any subdirectory", () => {
