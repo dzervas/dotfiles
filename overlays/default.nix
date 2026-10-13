@@ -7,62 +7,61 @@
 # To remove the build output of a nix store path:
 # nix-store --delete /nix/store/hash
 final: prev: {
-  buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix { };
-  claude-chrome = prev.callPackage ./claude-chrome.nix { };
-  compact-nix = prev.callPackage ./compact-nix.nix { };
-  pi-durable = prev.callPackage ./pi-durable.nix {
-    inherit (final) pi-coding-agent-latest;
-  };
+  buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
+  claude-chrome = prev.callPackage ./claude-chrome.nix {};
+  compact-nix = prev.callPackage ./compact-nix.nix {};
   # nix-update:cursortab-nvim --subpackage server
-  cursortab-nvim = prev.callPackage ./cursortab-nvim.nix { };
+  cursortab-nvim = prev.callPackage ./cursortab-nvim.nix {};
   # nix-update:codex-latest --custom-dep platformSrc
-  codex-latest = prev.callPackage ./codex.nix { };
+  codex-latest = prev.callPackage ./codex.nix {};
   # nix-update:anytype-cli
-  anytype-cli = prev.callPackage ./anytype-cli.nix { };
+  anytype-cli = prev.callPackage ./anytype-cli.nix {};
   # nix-update :n8n-cli --version-regex 'n8n@(2\.\d+\.\d+)'
-  n8n-cli = prev.callPackage ./n8n-cli.nix { };
+  n8n-cli = prev.callPackage ./n8n-cli.nix {};
   # nix-update:docker-mcp
-  docker-mcp = prev.callPackage ./docker-mcp.nix { };
+  docker-mcp = prev.callPackage ./docker-mcp.nix {};
   # nix-update:docker-secrets-engine
-  docker-secrets-engine = prev.callPackage ./docker-secrets-engine.nix { };
+  docker-secrets-engine = prev.callPackage ./docker-secrets-engine.nix {};
 
   # nix-update:brave
   # TODO: This uses the nightly releases
   # https://github.com/Mic92/nix-update/issues/639
-  brave = prev.brave.overrideAttrs (finalAttrs: _oldAttrs: {
-    version = "1.99.9";
-    src = final.fetchurl {
-      url = "https://github.com/brave/brave-browser/releases/download/v${finalAttrs.version}/brave-browser_${finalAttrs.version}_amd64.deb";
-      sha256 = "21d7ac36b64a408dc598bb6ec3db84b07b2cbca854d26b28055a2fb5b94a2e77";
-    };
-  });
+  brave = prev.brave.overrideAttrs (
+    finalAttrs: _oldAttrs: {
+      version = "1.99.39";
+      src = final.fetchurl {
+        url = "https://github.com/brave/brave-browser/releases/download/v${finalAttrs.version}/brave-browser_${finalAttrs.version}_amd64.deb";
+        sha256 = "21d7ac36b64a408dc598bb6ec3db84b07b2cbca854d26b28055a2fb5b94a2e77";
+      };
+    }
+  );
 
   _1password-gui = prev._1password-gui.overrideAttrs (oldAttrs: {
-     postInstall = (oldAttrs.postInstall or "") + ''
-       patchelf --set-interpreter \
-         "$(patchelf --print-interpreter "$out/share/1password/op-ssh-sign")" \
-         "$out/share/1password/1password-mcp"
-       patchelf --set-rpath \
-         "$(patchelf --print-rpath "$out/share/1password/op-ssh-sign")" \
-         "$out/share/1password/1password-mcp"
+    postInstall = (oldAttrs.postInstall or "") + ''
+      patchelf --set-interpreter \
+        "$(patchelf --print-interpreter "$out/share/1password/op-ssh-sign")" \
+        "$out/share/1password/1password-mcp"
+      patchelf --set-rpath \
+        "$(patchelf --print-rpath "$out/share/1password/op-ssh-sign")" \
+        "$out/share/1password/1password-mcp"
 
-       ln -s "$out/share/1password/1password-mcp" "$out/bin/1password-mcp"
-     '';
-   });
+      ln -s "$out/share/1password/1password-mcp" "$out/bin/1password-mcp"
+    '';
+  });
 
   # nix-update:pi-coding-agent-latest --custom-dep modelData
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
     finalAttrs: _prevAttrs: {
-      version = "1.0.0";
+      version = "1.2.0";
 
       src = final.fetchFromGitHub {
         owner = "earendil-works";
         repo = "pi";
         tag = "v${finalAttrs.version}";
-        hash = "sha256-CGznIVHXG6gr2F8vzHcR/v4P9xJgZHeMTt/CJ/kB78o=";
+        hash = "sha256-IjNJvVxjzRur2foQDWPA5iM9sa3ThBoZU1/LT5pU6jc=";
       };
 
-      npmDepsHash = "sha256-ndEvWdB6sa5nNNtabk2OMZKUFG9x3op185deZHxFnXk=";
+      npmDepsHash = "sha256-P/KWhkvLjtpWRiwLCHu2iUVyI8nragSnQGWUQNsRhw8=";
 
       npmDeps = final.fetchNpmDeps {
         inherit (finalAttrs) src;
@@ -72,7 +71,7 @@ final: prev: {
 
       modelData = final.fetchurl {
         url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${finalAttrs.version}.tgz";
-        hash = "sha256-85uZwpuFmPF1sQhA5dKoGYPnwM5crk19+DoQB0R9LCs=";
+        hash = "sha256-w+aUI7yrlxLzGn5bbTRIrjVq+EQ57GvHAfYm9uoWRTU=";
       };
 
       # Use upstream's offline build order and TypeScript compiler.
@@ -90,12 +89,36 @@ final: prev: {
       # postInstall = ''
       #   local nm="$out/lib/node_modules/pi-monorepo/node_modules"
       #   for ws in @earendil-works/pi-codemode:packages/codemode \
-      #             @earendil-works/pi-mcp:packages/mcp; do
+      #             @earendil-works/pi-codemode:packages/codemode/declarations \
+      #             @earendil-works/pi-codemode:packages/codemode/portable; do
       #     IFS=: read -r pkg src <<< "$ws"
       #     rm "$nm/$pkg"
       #     cp -r "$src" "$nm/$pkg"
       #   done
-      # '' + _prevAttrs.postInstall;
+      # ''
+      # + _prevAttrs.postInstall;
+
+      # Required when upstream drops a workspace that nixpkgs' postInstall still copies:
+      # 1.2.0 removed packages/client and packages/protocol, and the inherited loop
+      # fails on `rm` of their missing symlinks. Drop once nixpkgs packages >= 1.2.0.
+      postInstall = ''
+        local nm="$out/lib/node_modules/pi-monorepo/node_modules"
+
+        for ws in @earendil-works/chord:packages/chord \
+                  @earendil-works/pi-ai:packages/ai \
+                  @earendil-works/pi-agent-core:packages/agent \
+                  @earendil-works/pi-codemode:packages/codemode \
+                  @earendil-works/pi-mcp:packages/mcp \
+                  @earendil-works/pi-telemetry:packages/telemetry \
+                  @earendil-works/pi-tui:packages/tui; do
+          IFS=: read -r pkg src <<< "$ws"
+          rm "$nm/$pkg"
+          cp -r "$src" "$nm/$pkg"
+        done
+
+        find "$nm" -type l -lname '*/packages/*' -delete
+        find "$nm/.bin" -xtype l -delete
+      '';
     }
   );
 }

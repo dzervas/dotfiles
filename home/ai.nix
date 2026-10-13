@@ -182,7 +182,6 @@ in
   home = {
     packages = with pkgs; [
       lmstudio
-      pi-durable
       bubblewrap # for codex
 
       openspec

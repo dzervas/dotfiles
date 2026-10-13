@@ -66,7 +66,7 @@ export default function memoryExtension(pi: ExtensionAPI) {
 		parameters: Type.Object({
 			action: StringEnum(["list", "remember", "replace", "forget"] as const),
 			scope: Type.Optional(StringEnum(scopes)),
-			text: Type.Optional(Type.String({ description: "New note, or exact existing note for forget." })),
+			text: Type.Optional(Type.String({ description: "New note, or exact existing note for forget (don't add a date)." })),
 			previous: Type.Optional(Type.String({ description: "Exact existing note text to replace." })),
 		}),
 		async execute(_id, params, signal, _update, ctx) {

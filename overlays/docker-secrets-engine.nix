@@ -5,11 +5,11 @@
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "docker-secrets-engine";
-  version = "0.10.0";
+  version = "0.11.0";
 
   src = fetchurl {
     url = "https://github.com/docker/secrets-engine/releases/download/v${version}/secrets-engine-linux_amd64.tar.gz";
-    hash = "sha256-cKnAROC0t+6PZojMrtfHKRtZ2kNiXfKDZ/eVD5L2ft0=";
+    hash = "sha256-jMltiFAjs3JptkZOrXdX9QB3hVcL0QwKU/bBOShneRI=";
   };
 
   sourceRoot = ".";
