@@ -8,336 +8,227 @@ Usage:
 `nixfmt` canonicalizes indentation, `if` parentheses and comment placement.
 This pass then restores the human style nixfmt destroys, all width-checked:
 
-  - join `{ a, b, c }` parameter patterns and single-`inherit` sets when they fit
+  - join `{ a, b, c }` parameter patterns and single-line binding sets when they fit
   - attach `let` to the header line and `in` to the term after it
   - glue `}:` to the lambda body, `X =` to its block, `(` to `if`
-  - de-indent a lambda body whose header was joined
+  - de-indent a body whose header was joined
   - `{ }` -> `{}`, `[ ]` -> `[]`
 
-The result is verified with `nix-instantiate --parse`; anything that does not
-parse falls back to the plain nixfmt output, and a file nixfmt cannot read is
-returned untouched.
+Structure comes from tree-sitter-nix; the edits themselves are line joins on
+nixfmt's output. The result is verified with `nix-instantiate --parse`;
+anything that does not parse falls back to the plain nixfmt output, and a file
+nixfmt cannot read is returned untouched.
 """
 
 import argparse
+import bisect
 import os
-import re
 import subprocess
 import sys
 import tempfile
 
+import tree_sitter_nix
+from tree_sitter import Language, Parser, Query, QueryCursor
+
 WIDTH = 100
 
+NIX = Language(tree_sitter_nix.language())
+PARSER = Parser(NIX)
+SETS = Query(NIX, "[(attrset_expression) (rec_attrset_expression) (formals)] @n")
+HEADERS = Query(NIX, "[(binding) (function_expression) (let_expression) (parenthesized_expression)] @n")
+STRINGS = Query(NIX, "[(string_expression) (indented_string_expression)] @n")
+EMPTIES = Query(NIX, "[(attrset_expression) (rec_attrset_expression) (formals) (list_expression)] @n")
+COMMENTS = Query(NIX, "(comment) @n")
 
-# ---------------------------------------------------------------- tokenizer
-def mask(lines):
-    """Structural view of each line: string/comment content blanked.
 
-    Returns (masked, comments, in_string) where:
-      comments[i]  - line i has a comment
-      in_string[i] - line i starts inside an indented `''` string
-    """
-    masked = []
-    comments = []
-    in_string = []
-    state = "code"  # code | string | blockcomment
-    stack = []  # 'interp' | 'brace'
-    for line in lines:
-        out = []
-        has_comment = False
-        in_string.append(state == "string")
-        i, n = 0, len(line)
-        while i < n:
-            if state == "blockcomment":
-                if line.startswith("*/", i):
-                    state = "code"
-                    out.append("  ")
-                    i += 2
-                else:
-                    out.append(" ")
-                    i += 1
-                continue
-            if state == "string":
-                if line.startswith("''", i):
-                    state = "code"
-                    out.append("  ")
-                    i += 2
-                elif line.startswith("${", i):
-                    state = "code"
-                    stack.append("interp")
-                    out.append("  ")
-                    i += 2
-                else:
-                    out.append(" ")
-                    i += 1
-                continue
-            # code
-            if line.startswith("#", i):
-                out.append(" " * (n - i))
-                has_comment = True
-                break
-            if line.startswith("/*", i):
-                state = "blockcomment"
-                out.append("  ")
-                i += 2
-                continue
-            if line.startswith("''", i):
-                state = "string"
-                out.append("  ")
-                i += 2
-                continue
-            if line[i] == '"':
-                j = i + 1
-                while j < n:
-                    if line[j] == "\\":
-                        j += 2
-                        continue
-                    if line[j] == '"':
-                        break
-                    j += 1
-                end = j if j < n else n - 1
-                out.append(" " * (end - i + 1))
-                i = end + 1
-                continue
-            c = line[i]
-            if c == "{":
-                stack.append("brace")
-                out.append(c)
-            elif c == "}":
-                if stack and stack[-1] == "interp":
-                    stack.pop()
-                    state = "string"
-                    out.append(" ")
-                elif stack:
-                    stack.pop()
-                    out.append(c)
-                else:
-                    out.append(c)
-            else:
-                out.append(c)
-            i += 1
-        masked.append("".join(out))
-        comments.append(has_comment)
-    return masked, comments, in_string
+# ------------------------------------------------------------------ syntax
+def parse(lines):
+    return PARSER.parse("\n".join(lines).encode()).root_node
+
+
+def find(root, query):
+    """Nodes captured by `query`, in document order."""
+    return sorted((n for ns in QueryCursor(query).captures(root).values() for n in ns), key=lambda n: n.start_byte)
+
+
+def token(node, kind):
+    return next((c for c in node.children if c.type == kind), None)
+
+
+def after(node):
+    """The syntax node (or comment) that follows `node`."""
+    while node.next_sibling is None:
+        node = node.parent
+        if node is None:
+            return None
+    return node.next_sibling
+
+
+def before(node):
+    """The syntax node (or comment) that precedes `node`."""
+    while node.prev_sibling is None:
+        node = node.parent
+        if node is None:
+            return None
+    return node.prev_sibling
+
+
+def verbatim_rows(root):
+    """Rows that start inside string content, where whitespace is meaningful."""
+    rows = set()
+    for s in find(root, STRINGS):
+        own = set(range(s.start_point.row + 1, s.end_point.row + 1))
+        for c in s.named_children:
+            if c.type == "interpolation":
+                own -= set(range(c.start_point.row + 1, c.end_point.row + 1))
+        rows |= own
+    return rows
 
 
 def indent(line):
     return len(line) - len(line.lstrip())
 
 
-# ------------------------------------------------------------- block analysis
-def has_comment(comments, s, e):
-    return any(comments[j] for j in range(s + 1, e))
+def dedent(lines, rows, verbatim):
+    """Shift `rows` left one level, leaving string content alone."""
+    for r in rows:
+        if lines[r].strip() and r not in verbatim:
+            lines[r] = lines[r][2:]
 
 
-def is_param_block(masked, comments, s, e):
-    """Content lines are `name,` / `name ? v,` / `...`.
-
-    Returns True when the pattern should collapse, False when it stays vertical.
-    """
-    if has_comment(comments, s, e):
-        return None
-    names, ellipsis = 0, False
-    for j in range(s + 1, e):
-        t = masked[j].strip()
-        if t == "...":
-            ellipsis = True
-        elif t.endswith(","):
-            names += 1
-        else:
-            return None
-    if names == 0:
-        return None
-    # Keep a long, explicit destructuring vertical; collapse the short ones
-    return names <= (4 if ellipsis else 3)
-
-
-def is_literal_block(masked, comments, s, e):
-    """Content lines are single bindings / inherits, one per line."""
-    if has_comment(comments, s, e):
+# ----------------------------------------------------------------- collapse
+def compact_formals(node):
+    """Short `{ a, b ? v, ... }` patterns collapse, long ones stay vertical."""
+    formals = [c for c in node.named_children if c.type == "formal"]
+    if any(f.start_point.row != f.end_point.row for f in formals):
         return False
-    for j in range(s + 1, e):
-        t = masked[j].strip()
-        if not t:
-            continue
-        if t.startswith("inherit") or t == "inherit":
-            continue
-        if t.endswith(";") and "=" in t:
-            continue
-        if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_\-]*", t):
-            continue
-        if t == ";":
-            continue
+    ellipsis = any(c.type == "ellipses" for c in node.named_children)
+    return 0 < len(formals) <= (4 if ellipsis else 3)
+
+
+def compact_set(node):
+    """A set of one-line bindings / inherits; `x = {` only when it starts with an inherit."""
+    body = token(node, "binding_set")
+    if body is None:
         return False
-    return True
-
-
-def is_inherit_only(masked, s, e):
-    """The block is one `inherit` statement (possibly expanded)."""
-    toks = [masked[j].strip() for j in range(s + 1, e) if masked[j].strip()]
-    if not toks or not toks[0].startswith("inherit"):
+    bindings = body.named_children
+    if any(b.type == "binding" and b.start_point.row != b.end_point.row for b in bindings):
         return False
-    return toks[-1].endswith(";")
+    prev = before(node)
+    return prev is None or prev.type != "=" or bindings[0].type in ("inherit", "inherit_from")
 
 
-def blocks_of(masked):
-    """Every `{` block spanning more than one line: (start, end, column)."""
-    stack, found = [], []
-    for i, line in enumerate(masked):
-        for col, ch in enumerate(line):
-            if ch == "{":
-                stack.append((i, col))
-            elif ch == "}":
-                if stack:
-                    s, col = stack.pop()
-                    if s < i:
-                        found.append((s, i, col))
-    return found
-
-
-def merge(masked, lines, s, e, drop_param_comma=False):
-    parts = [lines[s].rstrip()]
-    for j in range(s + 1, e + 1):
-        raw = lines[j].strip()
+def merge(lines, drop_comma):
+    parts = [lines[0].rstrip()]
+    for raw in (line.strip() for line in lines[1:]):
         if not raw:
             continue
-        # The lone `;` closing an expanded inherit joins without a space; a `;`
-        # inside a string must be left alone
-        if masked[j].strip() == ";":
+        # The lone `;` closing an expanded inherit joins without a space
+        if raw == ";":
             parts[-1] += raw
         else:
             parts.append(raw)
-    if drop_param_comma and len(parts) > 2 and parts[-2].endswith(","):
+    if drop_comma and len(parts) > 2 and parts[-2].endswith(","):
         parts[-2] = parts[-2][:-1]
     return " ".join(parts)
 
 
-# ------------------------------------------------------------------- passes
 def collapse(lines, width):
-    """Join blocks that fit, innermost first."""
-    changed = True
-    while changed:
-        changed = False
-        masked, comments, _ = mask(lines)
-        for s, e, col in sorted(blocks_of(masked), key=lambda b: b[1] - b[0]):
-            prefix = masked[s][:col].strip()
-            param = is_param_block(masked, comments, s, e)
-            if param is False:
+    """Join sets that fit, innermost first."""
+    while True:
+        root = parse(lines)
+        comments = [c.start_byte for c in find(root, COMMENTS)]
+        sets = [n for n in find(root, SETS) if n.start_point.row < n.end_point.row]
+        for node in sorted(sets, key=lambda n: n.end_point.row - n.start_point.row):
+            k = bisect.bisect(comments, node.start_byte)
+            if k < len(comments) and comments[k] < node.end_byte:
                 continue
-            if param is None:
-                if not is_literal_block(masked, comments, s, e):
-                    continue
-                # `x = { ... }` stays vertical, unless it is a single inherit
-                if prefix.endswith("=") and not is_inherit_only(masked, s, e):
-                    continue
-            joined = merge(masked, lines, s, e, drop_param_comma=param is True)
+            formals = node.type == "formals"
+            if not (compact_formals(node) if formals else compact_set(node)):
+                continue
+            s, e = node.start_point.row, node.end_point.row
+            joined = merge(lines[s : e + 1], drop_comma=formals)
             if len(joined) <= width:
                 lines[s : e + 1] = [joined]
-                changed = True
                 break
-    return lines
+        else:
+            return lines
 
 
-def deindent(lines, start, base):
-    """Shift a lambda body left by one level, skipping indented strings."""
-    _, _, in_string = mask(lines)
-    i = start
-    while i < len(lines):
-        if lines[i].strip() and indent(lines[i]) <= base:
-            break
-        if lines[i].strip() and not in_string[i]:
-            lines[i] = lines[i][2:]
-        i += 1
+# -------------------------------------------------------------------- joins
+def glue(lines, node, verbatim, width):
+    """Try one join anchored at `node`; True when `lines` changed."""
+    if node.type == "parenthesized_expression":
+        # `(\n  if ...\n)` -> `(if ...)`, the inside shifted left
+        row, inner, close = node.start_point.row, node.named_children[0], token(node, ")")
+        if lines[row].strip() != "(" or inner.type != "if_expression" or inner.start_point.row != row + 1:
+            return False
+        end = close.start_point.row
+        if inner.end_point.row >= end:
+            return False
+        dedent(lines, range(row + 2, end), verbatim)
+        lines[end - 1] += lines[end].strip()
+        del lines[end]
+        lines[row : row + 2] = [lines[row].rstrip() + lines[row + 1].strip()]
+        return True
 
+    if node.type == "let_expression":
+        # `in\nbody` -> `in body`
+        tok = token(node, "in")
+        row = tok.start_point.row
+        body = after(tok)
+        if lines[row].strip() != "in" or body.type == "comment" or body.start_point.row != row + 1:
+            return False
+        joined = lines[row].rstrip() + " " + lines[row + 1].strip()
+        if len(joined) > width:
+            return False
+        lines[row : row + 2] = [joined]
+        return True
 
-def paren_end(lines, start):
-    """Line index of the `)` matching the `(` on line `start`."""
-    masked, _, _ = mask(lines)
-    depth, end = 0, None
-    for k in range(start, len(lines)):
-        for ch in masked[k]:
-            if ch == "(":
-                depth += 1
-            elif ch == ")":
-                depth -= 1
-                if depth == 0:
-                    return k
-    return end
+    # `X =\n  body` and `args:\n  body`: body joins the header line
+    tok = token(node, "=" if node.type == "binding" else ":")
+    row = tok.start_point.row
+    body = after(tok)
+    if body.type == "comment" or body.start_point.row != row + 1:
+        return False
+    deeper = indent(lines[row + 1]) > indent(lines[row])
+    # `{ ... }:` and `let` bodies sit at the header's level; other lambda bodies must be deeper
+    same_ok = node.type == "function_expression" and (
+        body.type == "let_expression" or token(node, "formals") is not None
+    )
+    if not (deeper or same_ok):
+        return False
+    joined = lines[row].rstrip() + " " + lines[row + 1].strip()
+    if len(joined) > width:
+        return False
+    if deeper:
+        dedent(lines, range(row + 2, node.end_point.row + 1), verbatim)
+    lines[row : row + 2] = [joined]
+    return True
 
 
 def joins(lines, width):
     """Attach header fragments to what follows (let/in, `}:`, `X =`, `(`)."""
     changed = True
     while changed:
-        changed = False
-        i = 0
-        while i < len(lines):
-            masked, _, in_string = mask(lines)
-            t = masked[i].strip()
-            nxt_ok = i + 1 < len(lines) and masked[i + 1].strip() and not in_string[i + 1]
-
-            if t == "let" and i > 0 and (masked[i - 1].strip().endswith(":") or masked[i - 1].strip().endswith("=")):
-                prev = lines[i - 1].rstrip()
-                if len(prev) + 4 <= width:
-                    lines[i - 1] = prev + " let"
-                    del lines[i]
-                    changed = True
-                    continue
-            elif t == "in" and nxt_ok:
-                pad = lines[i][: len(lines[i]) - len(lines[i].lstrip())]
-                if len(pad + "in " + lines[i + 1].strip()) <= width:
-                    lines[i:i + 2] = [pad + "in " + lines[i + 1].strip()]
-                    changed = True
-                    continue
-            elif t.endswith("}:") and nxt_ok:
-                joined = lines[i].rstrip() + " " + lines[i + 1].strip()
-                if len(joined) <= width:
-                    lines[i : i + 2] = [joined]
-                    changed = True
-                    continue
-            elif t == "(" and nxt_ok and masked[i + 1].strip().startswith("if"):
-                end = paren_end(lines, i)
-                if end is None:
-                    i += 1
-                    continue
-                lines[i : i + 2] = [lines[i].rstrip() + lines[i + 1].strip()]
-                end -= 1
-                for k in range(i + 1, end + 1):
-                    if lines[k].strip():
-                        lines[k] = lines[k][2:]
-                lines[end - 1] = lines[end - 1].rstrip() + ")"
-                del lines[end]
-                changed = True
-                continue
-            elif (t.endswith(":") or t.endswith("=")) and nxt_ok:
-                if t.endswith("=") and masked[i + 1].strip() == "let":
-                    i += 1
-                    continue
-                if indent(lines[i + 1]) <= indent(lines[i]):
-                    i += 1
-                    continue
-                joined = lines[i].rstrip() + " " + lines[i + 1].strip()
-                if len(joined) <= width:
-                    base = indent(lines[i])
-                    lines[i : i + 2] = [joined]
-                    deindent(lines, i + 1, base)
-                    changed = True
-                    continue
-            i += 1
+        root = parse(lines)
+        verbatim = verbatim_rows(root)
+        # Every join edits the lines, so re-parse after the first one
+        changed = any(glue(lines, n, verbatim, width) for n in find(root, HEADERS))
     return lines
 
 
 def spaces(lines):
-    """`{ }` -> `{}` and `[ ]` -> `[]` outside strings."""
-    masked, _, _ = mask(lines)
-    for i, line in enumerate(lines):
-        out = list(line)
-        mm = masked[i]
-        for j in range(len(mm) - 2):
-            if mm[j : j + 3] in ("{ }", "[ ]"):
-                out[j + 1] = ""
-        lines[i] = "".join(out)
-    return lines
+    """`{ }` -> `{}` and `[ ]` -> `[]`."""
+    text = "\n".join(lines).encode()
+    drop = [
+        n.end_byte - 2
+        for n in find(PARSER.parse(text).root_node, EMPTIES)
+        if not n.named_children and n.text.endswith((b"{ }", b"[ ]"))
+    ]
+    for i in reversed(drop):
+        text = text[:i] + text[i + 1 :]
+    return text.decode().split("\n")
 
 
 # ------------------------------------------------------------------- driver

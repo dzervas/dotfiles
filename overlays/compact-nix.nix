@@ -8,6 +8,10 @@
 }: let
   # The formatter is a single python file in this repo
   compactNixPy = writeText "compact_nix.py" (builtins.readFile ./compact-nix.py);
+  python = python3.withPackages (ps: [
+    ps.tree-sitter
+    ps.tree-sitter-grammars.tree-sitter-nix
+  ]);
 in writeShellApplication {
   name = "compact-nix";
 
@@ -17,7 +21,7 @@ in writeShellApplication {
     nixfmt
   ];
 
-  text = ''exec ${python3}/bin/python3 ${compactNixPy} "$@"'';
+  text = ''exec ${python}/bin/python3 ${compactNixPy} "$@"'';
 
   meta = with lib; {
     description = "Nix formatter: nixfmt followed by a compact-style pass";

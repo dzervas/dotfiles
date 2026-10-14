@@ -43,7 +43,7 @@
 in {
   programs.atuin = {
     enable = true;
-    # daemon.enable = true;
+    daemon.enable = true;
     flags = [ "--disable-up-arrow" ];
 
     # enableFishIntegration = false; # To use pty-proxy
@@ -57,6 +57,11 @@ in {
       ai = {
         enabled = true;
         endpoint = "http://127.0.0.1:11337";
+        capture_sessions = true;
+        sessions = {
+          filter_mode = "directory";
+          # resume.pi = "pis --session {id}";
+        };
       };
 
       history_filter = [
