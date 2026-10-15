@@ -28,32 +28,22 @@
       complete -c watchf -f -a "(__fish_complete_subcommand)"
 
       # ${pkgs.devenv}/bin/devenv hook fish | source
+
+      if not set -q __FISH_KEYRING_INITIALIZED
+        set -gx __FISH_KEYRING_INITIALIZED 1
+        exec ${pkgs.keyutils}/bin/keyctl session - ${pkgs.runtimeShell} -c '
+          ${pkgs.keyutils}/bin/keyctl setperm @s 0x3f000000 || exit 1
+          exec "$SHELL"
+        '
+      end
     '';
     plugins = [
-      {
-        name = "autopair";
-        inherit (pkgs.fishPlugins.autopair) src;
-      }
-      {
-        name = "fzf-fish";
-        inherit (pkgs.fishPlugins.fzf-fish) src;
-      }
-      {
-        name = "puffer";
-        inherit (pkgs.fishPlugins.puffer) src;
-      }
-      {
-        name = "fifc";
-        inherit (pkgs.fishPlugins.fifc) src;
-      }
-      {
-        name = "bass";
-        inherit (pkgs.fishPlugins.bass) src;
-      }
-      {
-        name = "colored-man-pages";
-        inherit (pkgs.fishPlugins.colored-man-pages) src;
-      }
+      { name = "autopair"; inherit (pkgs.fishPlugins.autopair) src; }
+      { name = "fzf-fish"; inherit (pkgs.fishPlugins.fzf-fish) src; }
+      { name = "puffer"; inherit (pkgs.fishPlugins.puffer) src; }
+      { name = "fifc"; inherit (pkgs.fishPlugins.fifc) src; }
+      { name = "bass"; inherit (pkgs.fishPlugins.bass) src; }
+      { name = "colored-man-pages"; inherit (pkgs.fishPlugins.colored-man-pages) src; }
       # { name = "sudope"; inherit (pkgs.fishPlugins.plugin-sudope) src; } # alt-esc for sudo
     ];
 
@@ -74,35 +64,9 @@
         description = "Backup a file or directory";
         wraps = "cp";
       };
-      cop = {
-        body = ''
-          set -l args (echo $argv | sed -E 's/\s*$//')
-          if test -z "$args"
-            gh copilot suggest -t shell
-          else
-            gh copilot explain "$argv"
-          end
-        '';
-        description = "Bring up GitHub CoPilot";
-        wraps = "gh copilot explain";
-      };
-      committer = {
-        body = builtins.readFile ./fish-functions/committer.fish;
-        description = "Prompt-based commit helper";
-        wraps = "git commit";
-      };
-      crest = {
-        body = builtins.readFile ./fish-functions/crest.fish;
-        description = "A curl wrapper with enhanced features tailored for REST APIs";
-        wraps = "curl";
-      };
       direnv-sync = {
         body = builtins.readFile ./fish-functions/direnv-sync.fish;
         description = ".envrc manager";
-      };
-      kubelog = {
-        body = builtins.readFile ./fish-functions/kubelog.fish;
-        description = "KubeCTL log for human beings";
       };
       mc = {
         body = "mkdir -p $argv[1] && cd $argv[1]";
@@ -191,7 +155,6 @@
       homelab = "nix run /home/dzervas/Lab/homelab/nixos";
       dd-img = "sudo dd bs=4M status=progress conv=fsync oflag=direct";
 
-      kl = "kubelog";
       v = "nvim";
       w = "watchf";
     };

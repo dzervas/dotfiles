@@ -68,6 +68,7 @@
         requests
         pyserial
         frida-python
+        pyyaml
 
         # pip magic # BinaryNinja needs these
         # mcp # AI

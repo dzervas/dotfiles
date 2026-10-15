@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   environment = {
     systemPackages = with pkgs; [
       bat
@@ -20,6 +19,7 @@
       ijq
       jq
       killall
+      keyutils
       libnotify # For notify-send
       lsd
       ngrok
@@ -115,13 +115,18 @@
     };
 
     etc."codex/requirements.toml".source = pkgs.writers.writeTOML "requirements.toml" {
-      allowed_approval_policies = [ "never" "on-request" ];
+      allowed_approval_policies = [
+        "never"
+        "on-request"
+      ];
       default_permissions = "sandboxed";
       # allowed_permission_profiles = { sandboxed = true; ":danger-full-access" = true; };
-      allowed_permission_profiles = { sandboxed = true; };
+      allowed_permission_profiles = {
+        sandboxed = true;
+      };
 
       allow_managed_hooks_only = true;
-      allowed_approvals_reviewers = ["user"];
+      allowed_approvals_reviewers = [ "user" ];
       browser_use.allow_history_access = false;
       check_for_update_on_startup = false;
       features.computer_use = false;
