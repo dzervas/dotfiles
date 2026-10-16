@@ -114,6 +114,7 @@ in {
       strata = {
         image = "homemanager/strata:local";
         description = "Qwen 3.8 Flash Next engine";
+        autoStart = false; # Start manually: systemctl --user start podman-strata
         network = [ "local-ai.network" ];
         networkAlias = [ "strata" ];
         ports = [ "1337:8080" ];

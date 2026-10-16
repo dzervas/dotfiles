@@ -1,10 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-let
+{ config, lib, pkgs, ... }: let
   # ------------------------------------------------------------------ servers
   # The single source of truth. Everything below is generated from this list:
   # the gateway catalog, the tool allowlist, and pi's mcp.json.
@@ -16,19 +10,12 @@ let
   # environment variable instead.
   servers = [
     {
-      name = "kagi";
-      title = "Kagi";
-      description = "Kagi web search, summarize, extract, quick answer and news";
-      image = "git.vpn.dzerv.art/dzervas/homelab/kagi-mcp";
-      secrets = [ { name = "kagi.session_token"; env = "KAGI_SESSION_TOKEN"; } ];
-
-      # if ommitted, every tool is exposed to codemode
-      tools = [ "kagi_search" "kagi_batch_search" "kagi_quick" "kagi_enrich_web" "kagi_summarize" ];
-      direct = [ "kagi_search" "kagi_batch_search" "kagi_quick" ];
-
-      # `command` is appended to the image's ENTRYPOINT, so it is args, not an
-      # executable: this image's entrypoint is already `npx -y ...server-filesystem`.
-      # command = [ "/data" ];
+      name = "vresto";
+      title = "VresTo";
+      description = "Web search, fetch, research and crawler";
+      pi = true;
+      exposure = "direct";
+      url = "http://127.0.0.1:27777/mcp";
     }
 
     {
@@ -54,60 +41,70 @@ let
   piServers = lib.filter (s: s.pi or false) servers;
 
   # A pi mcp.json entry. `command` is one executable and `args` its arguments.
-  piEntry = s: {
-    inherit (s) description;
-    exposure = s.exposure or "codemode";
-  }
+  piEntry = s:
+  { inherit (s) description; exposure = s.exposure or "codemode"; }
   // lib.optionalAttrs (s.url or null != null) { inherit (s) url; }
   // lib.optionalAttrs (s.headers or null != null) { inherit (s) headers; }
-  // lib.optionalAttrs (s.command or null != null) { inherit (s) command; args = s.args or [ ]; }
+  // lib.optionalAttrs (s.command or null != null) { inherit (s) command; args = s.args or []; }
   // lib.optionalAttrs (s.env or null != null) { inherit (s) env; }
   // lib.optionalAttrs (s.toolExposure or null != null) { inherit (s) toolExposure; };
 
-  yaml = pkgs.formats.yaml { };
-  json = pkgs.formats.json { };
+  yaml = pkgs.formats.yaml {};
+  json = pkgs.formats.json {};
   mcpDir = "${config.home.homeDirectory}/.docker/mcp";
 
   # A catalog file is a `registry:` map of server entries (pkg/catalog/types.go
   # `topLevel`), not a bare server definition.
-  entry = s: {
-    inherit (s) name title description;
-    type = s.type or "server";
-  }
+  entry = s:
+  { inherit (s) name title description; type = s.type or "server"; }
   // lib.optionalAttrs (s.image or null != null) { inherit (s) image; }
   // lib.optionalAttrs (s.remote or null != null) { inherit (s) remote; }
   // lib.optionalAttrs (s.command or null != null) { inherit (s) command; }
   // lib.optionalAttrs (s.volumes or null != null) { inherit (s) volumes; }
   // lib.optionalAttrs (s.secrets or null != null) { inherit (s) secrets; }
+  // lib.optionalAttrs (s.env or {} != {}) {
+    env = lib.mapAttrsToList (name: value: { inherit name value; }) s.env;
+  }
   // lib.optionalAttrs (s.allowHosts or null != null) { inherit (s) allowHosts; };
 
   catalog = yaml.generate "pi.yaml" {
-    registry = lib.listToAttrs (map (s: { inherit (s) name; value = entry s; }) gatewayServers);
+    registry = lib.listToAttrs (
+      map (s: { inherit (s) name; value = entry s; }) gatewayServers
+    );
   };
 
   # tools.yaml is a flat per-server allowlist (ServerTools map[string][]string,
   # yaml:",inline"). A server with no entry keeps all of its tools, so only
   # servers that name a tool list appear here.
   tools = yaml.generate "pi-tools.yaml" (
-    lib.listToAttrs (map (s: { inherit (s) name; value = s.tools; }) (lib.filter (s: s.tools or null != null) gatewayServers))
+    lib.listToAttrs (
+      map (s: {
+        inherit (s) name;
+        value = s.tools;
+      }) (lib.filter (s: s.tools or null != null) gatewayServers)
+    )
   );
 
   # The gateway appears as one server, so its description lists every gateway
   # server. Servers with `pi = true` are separate entries in the same file.
   mcpJson = json.generate "mcp.json" {
-    mcpServers =
-      {
-        mcp-gateway = {
-          url = "http://127.0.0.1:8811/mcp";
-          headers.Authorization = "!cat ~/.cache/pi-mcp-gateway/authorization";
-          description = lib.concatMapStringsSep ", " (s: s.description) gatewayServers;
-          exposure = "codemode";
-          toolExposure = lib.listToAttrs (
-            lib.concatMap (s: map (t: { name = t; value = "direct"; }) (s.direct or [ ])) gatewayServers
-          );
-        };
-      }
-      // lib.listToAttrs (map (s: { inherit (s) name; value = piEntry s; }) piServers);
+    mcpServers = {
+      mcp-gateway = {
+        url = "http://127.0.0.1:8811/mcp";
+        headers.Authorization = "!cat ~/.cache/pi-mcp-gateway/authorization";
+        description = lib.concatMapStringsSep ", " (s: s.description) gatewayServers;
+        exposure = "codemode";
+        toolExposure = lib.listToAttrs (
+          lib.concatMap (
+            s:
+            map (t: { name = t; value = "direct"; }) (s.direct or [])
+          ) gatewayServers
+        );
+      };
+    }
+    // lib.listToAttrs (
+      map (s: { inherit (s) name; value = piEntry s; }) piServers
+    );
   };
 
   gatewayDir = "${config.home.homeDirectory}/.cache/pi-mcp-gateway";
@@ -143,8 +140,7 @@ let
         authorization.write_text(f"Bearer {token}\n")
     PY
   '';
-in
-{
+in {
   # Catalog paths must resolve under ~/.docker/mcp/catalogs/, tools paths under
   # ~/.docker/mcp/, so materialize them instead of symlinking to /nix/store.
   home.activation.installPiMcpFiles = lib.hm.dag.entryAfter [ "writeBoundary" ] ''

@@ -239,6 +239,14 @@
         remotes.origin.auto-track-bookmarks = "glob:*";
         snapshot.max-new-file-size=4096000;
 
+        # sand sets CI=1 and deliberately excludes the 1Password signing agent.
+        "--scope" = [
+          {
+            "--when".environments = [ "CI=1" ];
+            signing.behavior = "drop";
+          }
+        ];
+
         # Sign all commits owned by us
         signing = {
           behavior = "own";

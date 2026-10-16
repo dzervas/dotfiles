@@ -1,10 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-{
+{ config, lib, pkgs, ... }: {
   setup.windowManager = "niri";
   imports = [
     ./components/noctalia-shell.nix
@@ -40,10 +34,7 @@
         { argv = [ "dev.vencord.Vesktop" ]; }
       ];
 
-      cursor = {
-        inherit (config.stylix.cursor) size;
-        theme = config.stylix.cursor.name;
-      };
+      cursor = { inherit (config.stylix.cursor) size; theme = config.stylix.cursor.name; };
 
       xwayland-satellite = {
         enable = true;
@@ -53,37 +44,37 @@
       binds = {
         "Mod+Return".action.spawn-sh = config.setup.terminal;
 
-        "Mod+C".action.close-window = [ ];
-        "Mod+F".action.fullscreen-window = [ ];
-        "Mod+Shift+F".action.toggle-window-floating = [ ];
+        "Mod+C".action.close-window = [];
+        "Mod+F".action.fullscreen-window = [];
+        "Mod+Shift+F".action.toggle-window-floating = [];
         "Mod+H".action.set-column-width = "50%";
-        "Mod+M".action.maximize-column = [ ];
-        "Mod+Shift+M".action.maximize-window-to-edges = [ ];
+        "Mod+M".action.maximize-column = [];
+        "Mod+Shift+M".action.maximize-window-to-edges = [];
         "Mod+L".action.spawn-sh = config.setup.lockerInstant;
         "Mod+P".action.spawn-sh = "1password --quick-access";
         "Mod+R".action.spawn-sh = config.setup.runner;
         "Mod+Shift+R".action.spawn-sh = "niri msg action load-config-file";
-        "Mod+T".action.set-column-width = "33%";
+        "Mod+T".action.spawn-sh = "voxtype record toggle";
         "Mod+Shift+T".action.set-column-width = "66%";
         "Mod+Z".action.spawn-sh = "noctalia msg panel-toggle launcher /zed";
 
-        "Mod+Left".action.focus-column-left-or-last = [ ];
-        "Mod+Right".action.focus-column-right-or-first = [ ];
-        "Mod+Up".action.focus-window-or-workspace-up = [ ];
-        "Mod+Down".action.focus-window-or-workspace-down = [ ];
-        "Mod+Alt+Up".action.move-workspace-up = [ ];
-        "Mod+Alt+Down".action.move-workspace-down = [ ];
-        "Mod+Shift+Left".action.move-column-left = [ ];
-        "Mod+Shift+Right".action.move-column-right = [ ];
-        "Mod+Shift+Up".action.move-window-to-workspace-up = [ ];
-        "Mod+Shift+Down".action.move-window-to-workspace-down = [ ];
+        "Mod+Left".action.focus-column-left-or-last = [];
+        "Mod+Right".action.focus-column-right-or-first = [];
+        "Mod+Up".action.focus-window-or-workspace-up = [];
+        "Mod+Down".action.focus-window-or-workspace-down = [];
+        "Mod+Alt+Up".action.move-workspace-up = [];
+        "Mod+Alt+Down".action.move-workspace-down = [];
+        "Mod+Shift+Left".action.move-column-left = [];
+        "Mod+Shift+Right".action.move-column-right = [];
+        "Mod+Shift+Up".action.move-window-to-workspace-up = [];
+        "Mod+Shift+Down".action.move-window-to-workspace-down = [];
 
-        "Mod+Comma".action.focus-monitor-left = [ ];
-        "Mod+Period".action.focus-monitor-right = [ ];
-        "Mod+Tab".action.focus-monitor-previous = [ ];
-        "Mod+Shift+Comma".action.move-workspace-to-monitor-left = [ ];
-        "Mod+Shift+Period".action.move-workspace-to-monitor-right = [ ];
-        "Mod+Shift+Tab".action.move-window-to-monitor-previous = [ ];
+        "Mod+Comma".action.focus-monitor-left = [];
+        "Mod+Period".action.focus-monitor-right = [];
+        "Mod+Tab".action.focus-monitor-previous = [];
+        "Mod+Shift+Comma".action.move-workspace-to-monitor-left = [];
+        "Mod+Shift+Period".action.move-workspace-to-monitor-right = [];
+        "Mod+Shift+Tab".action.move-window-to-monitor-previous = [];
 
         "Print".action.spawn-sh = "noctalia msg screenshot-region";
         "Shift+Print".action.spawn-sh = "noctalia msg annotate";
@@ -170,14 +161,25 @@
           focus-at-startup = true;
           variable-refresh-rate = "on-demand";
           scale = 1;
-          mode = { width = 2560; height = 1440; refresh = 143.856; };
-          position = { x = 0; y = 0; };
+          mode = {
+            width = 2560;
+            height = 1440;
+            refresh = 143.856;
+          };
+          position = {
+            x = 0;
+            y = 0;
+          };
         };
         "GIGA-BYTE TECHNOLOGY CO., LTD. M27Q 24290B002448" = {
           enable = true;
           variable-refresh-rate = "on-demand";
           scale = 1;
-          mode = { width = 2560; height = 1440; refresh = 143.856; };
+          mode = {
+            width = 2560;
+            height = 1440;
+            refresh = 143.856;
+          };
         };
         "BOE NE135A1M-NY1" = {
           # Laptop built-in display
@@ -185,24 +187,21 @@
           focus-at-startup = true;
           variable-refresh-rate = true;
           scale = 1.67;
-          position = { x = 0; y = 0; };
+          position = {
+            x = 0;
+            y = 0;
+          };
         };
       };
 
-      debug.honor-xdg-activation-with-invalid-serial = { };
+      debug.honor-xdg-activation-with-invalid-serial = {};
       window-rules = [
         {
           # Noctila provided
-          geometry-corner-radius =
-            let
-              radius = 20.0;
-            in
-            {
-              top-left = radius;
-              top-right = radius;
-              bottom-left = radius;
-              bottom-right = radius;
-            };
+          geometry-corner-radius = let
+            radius = 20.0;
+          in
+          { top-left = radius; top-right = radius; bottom-left = radius; bottom-right = radius; };
           # Clip window contents to the rounded corners
           clip-to-geometry = true;
         }
@@ -227,7 +226,9 @@
           open-maximized-to-edges = true;
         }
         {
-          matches = [{ title = ".+"; app-id = "^(steam_app_.*|helldivers2.exe)"; }];
+          matches = [
+            { title = ".+"; app-id = "^(steam_app_.*|helldivers2.exe)"; }
+          ];
           open-fullscreen = true;
           open-on-workspace = "3-game";
           variable-refresh-rate = true;
@@ -263,7 +264,9 @@
 
         # Startup apps
         {
-          matches = [{ app-id = "brave-browser"; at-startup = true; }];
+          matches = [
+            { app-id = "brave-browser"; at-startup = true; }
+          ];
           open-maximized-to-edges = true;
           open-on-workspace = "1-web";
           open-focused = true;
@@ -277,12 +280,16 @@
           open-maximized-to-edges = true;
         }
         {
-          matches = [{ app-id = "steam"; at-startup = true; }];
+          matches = [
+            { app-id = "steam"; at-startup = true; }
+          ];
           open-on-workspace = "3-game";
           open-maximized-to-edges = true;
         }
         {
-          matches = [{ app-id = "com.mitchellh.ghostty"; at-startup = true; }];
+          matches = [
+            { app-id = "com.mitchellh.ghostty"; at-startup = true; }
+          ];
           open-on-workspace = "1-term";
           open-maximized-to-edges = true;
         }
@@ -293,11 +300,7 @@
           ];
           open-on-workspace = "2-chat";
         }
-        {
-          matches = [{ title = "flameshot"; }];
-          open-floating = true;
-          open-fullscreen = false;
-        }
+        { matches = [ { title = "flameshot"; } ]; open-floating = true; open-fullscreen = false; }
       ];
 
       overview.workspace-shadow.enable = false;

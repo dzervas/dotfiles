@@ -1,10 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-let
+{ config, lib, pkgs, ... }: let
   nodejs = pkgs.nodejs_22; # tree-sitter does not work with nodejs_24
   pi-coding-agent-package = pkgs.pi-coding-agent-latest;
   piImportNpmLock = pkgs.callPackage (pkgs.path + "/pkgs/build-support/node/import-npm-lock") {
@@ -22,7 +16,7 @@ let
       '';
     };
   };
-  piCodingAgentNodeModules = pkgs.runCommand "pi-coding-agent-node-modules" { } ''
+  piCodingAgentNodeModules = pkgs.runCommand "pi-coding-agent-node-modules" {} ''
     mkdir -p $out/node_modules/@earendil-works
     ln -s ${pi-coding-agent-package}/lib/node_modules/pi-monorepo \
       $out/node_modules/@earendil-works/pi-coding-agent
@@ -77,7 +71,11 @@ let
     packages = piPackages;
     defaultTools = [ "+codemode" ]; # "+tool_search" results in busted cache when tools change
     # native-tools.ts loads the same factories in CLI and SDK child sessions.
-    extensions = [ "-builtin:mcp" "-builtin:codemode" "-builtin:tool-search" ];
+    extensions = [
+      "-builtin:mcp"
+      "-builtin:codemode"
+      "-builtin:tool-search"
+    ];
     npmCommand = [ "${nodejs}/bin/npm" ];
 
     pi-cliproxyapi-provider = {
@@ -177,8 +175,7 @@ let
       PY
     '';
   };
-in
-{
+in {
   home = {
     packages = with pkgs; [
       lmstudio
@@ -243,8 +240,46 @@ in
       settings = piSettings;
     };
   };
-}
 
+  services.voxtype = rec {
+    enable = true;
+    package = pkgs.voxtype-onnx;
+    loadModels = [ settings.parakeet.model ];
+    settings = {
+      engine = "parakeet";
+      osd.frontend = "quickshell";
+
+      hotkey = {
+        enabled = false;
+        mode = "toggle";
+      };
+
+      parakeet = {
+        model = "parakeet-unified-en-0.6b";
+        # model = "parakeet-tdt-0.6b-v3";
+        # on_demand_loading = true;
+
+        streaming = true;
+        streaming_chunk_secs = 0.56;
+        streaming_left_context_secs = 5.6;
+        streaming_right_context_secs = 0.56;
+      };
+
+      # audio.duck_media = true;
+      # audio.feedback.theme = "subtle";
+    };
+
+    # needs quickshell
+    environment.PATH = lib.makeBinPath [
+      pkgs.coreutils
+      pkgs.which
+      pkgs.quickshell
+      pkgs.voxtype-onnx
+    ];
+  };
+
+  xdg.dataFile."voxtype/quickshell".source = "${pkgs.voxtype-onnx.src}/quickshell";
+}
 # `qwen3` is a local Qwen3.8 27B model. It is always free and fast, so prefer it liberally for simple
 # delegated work such as reconnaissance, searching, summaries, mechanical inspection, and other low-risk tasks.
 # Escalate when the task requires stronger reasoning or when its output is insufficient.

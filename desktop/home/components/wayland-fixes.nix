@@ -19,22 +19,25 @@
     file = {
       # From: https://wiki.archlinux.org/title/Chromium#Vulkan
       "${config.xdg.configHome}/chromium-flags.conf".text = ''
---enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE
---enable-features=WaylandWindowDecorations
---ozone-platform=wayland
-'';
+        --enable-features=WaylandWindowDecorations
+        --ozone-platform=wayland
+      '';
       # From: https://wiki.archlinux.org/title/Wayland#Electron
       "${config.xdg.configHome}/electron-flags.conf".text = ''
---enable-features=WebRTCPipeWireCapturer
---enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE
---enable-features=WaylandWindowDecorations
---ozone-platform=wayland
-'';
+        --enable-features=WebRTCPipeWireCapturer
+        --enable-features=WaylandWindowDecorations
+        --ozone-platform=wayland
+      '';
+      # For both: --enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE is not supported under wayland
     };
   };
 
   services.flatpak.overrides.global = {
-    Context.sockets = ["wayland" "!x11" "!fallback-x11"];
+    Context.sockets = [
+      "wayland"
+      "!x11"
+      "!fallback-x11"
+    ];
     Environment.GDK_BACKEND = "wayland";
   };
 }

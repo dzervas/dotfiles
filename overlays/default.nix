@@ -36,30 +36,6 @@ final: prev: {
     }
   );
 
-  # nix-update:atuin --version unstable
-  atuin = prev.atuin.overrideAttrs (
-    finalAttrs: prevAttrs: {
-      version = "18.24.0-beta.2";
-
-      src = final.fetchFromGitHub {
-        owner = "atuinsh";
-        repo = "atuin";
-        tag = "v${finalAttrs.version}";
-        hash = "sha256-ALwNDjb4OBwYmIcq2K3VjkQicigkxmBpmAZD/LUsa00=";
-      };
-
-      cargoHash = "sha256-YOGTnBulpKaQd0nVz7DLIVgz6YuZU/41r+GFB8q91xg=";
-
-      cargoDeps = final.rustPlatform.fetchCargoVendor {
-        inherit (finalAttrs) pname version src;
-        hash = finalAttrs.cargoHash;
-      };
-
-      # 18.24 adds `octavo` to upstream's default features; nixpkgs lists the defaults by hand.
-      buildFeatures = prevAttrs.buildFeatures ++ [ "octavo" ];
-    }
-  );
-
   _1password-gui = prev._1password-gui.overrideAttrs (oldAttrs: {
     postInstall = (oldAttrs.postInstall or "") + ''
       patchelf --set-interpreter \
