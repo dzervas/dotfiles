@@ -36,6 +36,18 @@
     '';
   };
 
+  # Contain the server as well as its agents and terminals; wrapping only `pi`
+  # would leave dashboard file operations and terminals on the host.
+  # Run without `start` (foreground): daemonizing or in-app restarts end sand's
+  # lifetime and tear down its PID namespace, including the agent processes.
+  piDashboard = pkgs.writeScriptBin "pi-dashboard" ''
+    #!${pkgs.fish}/bin/fish --no-config
+    function sand
+      ${builtins.readFile ./fish-functions/sand.fish}
+    end
+    sand -c 'exec "$@"' -- -- ${lib.getExe pkgs.pi-dashboard} $argv
+  '';
+
   piPackages = [
     "npm:@gotgenes/pi-subagents@23.4.0"
     "npm:pi-cliproxyapi-provider@0.15.58"
@@ -183,6 +195,7 @@ in {
 
       openspec
       piExtensionBump
+      # piDashboard
       snyk
       codegraph
 

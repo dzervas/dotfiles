@@ -30,56 +30,54 @@
     # The end result though is neat! `nix run .#<app>` and you're ready to go!
     apps = eachDefaultSystemPassThrough (system: {
       ${system} = let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in rec {
-          # Nixvim is a bit esoteric as to how to generate a package and then use it as an app
-          # It has a built-in function that accepts the config and spits out a package
-          # that we then pass to mkApp - but with the correct binary name
-          nvim = let
-              # Import the config file - just like home-manager expects it
-              nixvimConfigFile = import ./home/neovim { inherit pkgs; };
-              # Pull out only the nixvim config (not home.* or whatever)
-              nixvimConfigFull = nixvimConfigFile.programs.nixvim;
-              # The "standalone" mode nixvim doesn't have some keys so we filter them out
-              nixvimConfig = removeAttrs nixvimConfigFull [
-                "enable"
-                "defaultEditor"
-                "viAlias"
-                "vimAlias"
-                "vimdiffAlias"
-              ];
-              # Use the `makeNixvim` function with the extracted config to make a custom package
-              drv = nixvim.legacyPackages.${system}.makeNixvim nixvimConfig;
-            in mkApp { inherit drv; exePath = "/bin/nvim"; };
+        pkgs = nixpkgs.legacyPackages.${system};
+      in rec {
+        # Nixvim is a bit esoteric as to how to generate a package and then use it as an app
+        # It has a built-in function that accepts the config and spits out a package
+        # that we then pass to mkApp - but with the correct binary name
+        nvim = let
+          # Import the config file - just like home-manager expects it
+          nixvimConfigFile = import ./home/neovim { inherit pkgs; };
+          # Pull out only the nixvim config (not home.* or whatever)
+          nixvimConfigFull = nixvimConfigFile.programs.nixvim;
+          # The "standalone" mode nixvim doesn't have some keys so we filter them out
+          nixvimConfig = removeAttrs nixvimConfigFull [
+            "enable"
+            "defaultEditor"
+            "viAlias"
+            "vimAlias"
+            "vimdiffAlias"
+          ];
+          # Use the `makeNixvim` function with the extracted config to make a custom package
+          drv = nixvim.legacyPackages.${system}.makeNixvim nixvimConfig;
+        in mkApp { inherit drv; exePath = "/bin/nvim"; };
 
-          # TODO: Get rid of the update-shim
-          update = mkShellApp pkgs (builtins.readFile ./.github/scripts/flake-update.sh);
+        # TODO: Get rid of the update-shim
+        update = mkShellApp pkgs (builtins.readFile ./.github/scripts/flake-update.sh);
 
-          # script to authenticate
-          iso-auth = mkShellApp pkgs ''
+        # script to authenticate
+        iso-auth = mkShellApp pkgs ''
               echo "Authenticating to github from oras"
               set -x
               ${pkgs.gh}/bin/gh auth token | ${pkgs.oras}/bin/oras login ghcr.io --password-stdin -u github
             '';
 
-          # script to download the iso
-          iso-get = mkShellApp pkgs ''
+        # script to download the iso
+        iso-get = mkShellApp pkgs ''
               echo "Downloading iso from github - assuming you've authenticated with the iso-auth script"
               set -x
               ${pkgs.oras}/bin/oras pull ghcr.io/dzervas/dotfiles/nixos-iso:latest
             '';
 
-          default = nvim;
-        };
+        default = nvim;
+      };
+    });
 
-      # TODO: Expose the overlays as packages
-      # packages = eachDefaultSystemPassThrough (system: {
-      #   ${system} = let
-      #     pkgs = nixpkgs.legacyPackages.${system};
-      #     overlay = import ./overlays;
-      #     overlayPackages = overlay pkgs pkgs;
-      #   in overlayPackages;
-      # });
+    packages = eachDefaultSystemPassThrough (system: {
+      ${system} = let
+        pkgs = nixpkgs.legacyPackages.${system};
+        overlay = import ./overlays;
+      in overlay (pkgs.extend overlay) pkgs;
     });
   };
 

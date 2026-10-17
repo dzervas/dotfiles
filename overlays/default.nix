@@ -10,6 +10,8 @@ final: prev: {
   buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
   claude-chrome = prev.callPackage ./claude-chrome.nix {};
   compact-nix = prev.callPackage ./compact-nix.nix {};
+  # Version updates also require regenerating overlays/pi-dashboard/package-lock.json.
+  pi-dashboard = prev.callPackage ./pi-dashboard.nix {};
   # nix-update:cursortab-nvim --subpackage server
   cursortab-nvim = prev.callPackage ./cursortab-nvim.nix {};
   # nix-update:codex-latest --custom-dep platformSrc
@@ -36,6 +38,30 @@ final: prev: {
     }
   );
 
+  # nix-update:atuin
+  atuin = prev.atuin.overrideAttrs (
+    finalAttrs: oldAttrs: {
+      version = "18.24.1";
+
+      src = final.fetchFromGitHub {
+        owner = "atuinsh";
+        repo = "atuin";
+        tag = "v${finalAttrs.version}";
+        hash = "sha256-p4Vjk4XZDYVaIEp13fz0AfhvtZ9to0H0OJMpdNH34I0=";
+      };
+
+      cargoHash = "sha256-tZqIfdcOth0pBIfIvqfeSEtKqsmRPcwtuHWsjoPdt1c=";
+
+      cargoDeps = final.rustPlatform.fetchCargoVendor {
+        inherit (finalAttrs) pname version src;
+        hash = finalAttrs.cargoHash;
+      };
+
+      # This integration test requires a running PostgreSQL server.
+      checkFlags = oldAttrs.checkFlags ++ [ "--skip=postgres_authenticates_with_the_password_file" ];
+    }
+  );
+
   _1password-gui = prev._1password-gui.overrideAttrs (oldAttrs: {
     postInstall = (oldAttrs.postInstall or "") + ''
       patchelf --set-interpreter \
@@ -52,16 +78,16 @@ final: prev: {
   # nix-update:pi-coding-agent-latest --custom-dep modelData
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
     finalAttrs: _prevAttrs: {
-      version = "1.2.0";
+      version = "1.3.0";
 
       src = final.fetchFromGitHub {
         owner = "earendil-works";
         repo = "pi";
         tag = "v${finalAttrs.version}";
-        hash = "sha256-IjNJvVxjzRur2foQDWPA5iM9sa3ThBoZU1/LT5pU6jc=";
+        hash = "sha256-AsutbwnjiwwLkB5tqLW+1GdGZyLmXsU0W+SNdNhJu7U=";
       };
 
-      npmDepsHash = "sha256-P/KWhkvLjtpWRiwLCHu2iUVyI8nragSnQGWUQNsRhw8=";
+      npmDepsHash = "sha256-+gFyvrhkCsF99oNvs0gBmLXnDW0hWnZI/wFId7UbI6Q=";
 
       npmDeps = final.fetchNpmDeps {
         inherit (finalAttrs) src;
@@ -71,7 +97,7 @@ final: prev: {
 
       modelData = final.fetchurl {
         url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${finalAttrs.version}.tgz";
-        hash = "sha256-w+aUI7yrlxLzGn5bbTRIrjVq+EQ57GvHAfYm9uoWRTU=";
+        hash = "sha256-U0PhY5vzQ73DNE3zrWwxwFpQtoutB6xrzhCJDUtrimE=";
       };
 
       # Use upstream's offline build order and TypeScript compiler.

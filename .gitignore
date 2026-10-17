@@ -39,6 +39,8 @@
 !nixos/vimrc
 !overlays
 !overlays/compact-nix.py
+!overlays/pi-dashboard
+!overlays/pi-dashboard/*.json
 !pi
 !pi/*.json
 !pi/agents

@@ -151,6 +151,7 @@ bwrap \
     --bind $HOME/.pi/agent/auth.json $HOME/.pi/agent/auth.json \
     --bind $HOME/.pi/agent/mcp.json $HOME/.pi/agent/mcp.json \
     --bind $HOME/.pi/agent/mcp-auth.json $HOME/.pi/agent/mcp-auth.json \
+    --bind-try $HOME/.pi/dashboard $HOME/.pi/dashboard \
     --ro-bind-try $HOME/.cache/pi-mcp-gateway/authorization $HOME/.cache/pi-mcp-gateway/authorization \
     --bind $HOME/.pi/agent/run-history.jsonl $HOME/.pi/agent/run-history.jsonl \
     --ro-bind-try $HOME/.pi/agent/sandbox.ts $HOME/.pi/agent/sandbox.ts \
@@ -158,12 +159,14 @@ bwrap \
     --bind $HOME/.config/gcx $HOME/.config/gcx \
     --ro-bind $HOME/.config/jj $HOME/.config/jj \
     --ro-bind $HOME/.config/git $HOME/.config/git \
+    --ro-bind $HOME/.config/gh-agent $HOME/.config/gh-agent \
     --ro-bind $HOME/.config/fish $HOME/.config/fish \
     $bwrap_mounts \
     $bwrap_env \
     --chdir $project_dir \
     --setenv HOME $HOME \
     --setenv CI 1 \
+    --setenv GH_CONFIG_DIR $HOME/.config/gh-agent \
     --setenv ATUIN_CONFIG_DIR $HOME/.config/atuin-agent \
     --setenv ATUIN_DATA_DIR $HOME/.local/share/atuin-agent \
     -- bash $pi_args
