@@ -239,12 +239,6 @@ in {
 
         packages = piPackages;
         defaultTools = [ "+codemode" ]; # "+tool_search" results in busted cache when tools change
-        # native-tools.ts loads the same factories in CLI and SDK child sessions.
-        extensions = [
-          "-builtin:mcp"
-          "-builtin:codemode"
-          "-builtin:tool-search"
-        ];
         npmCommand = [ "${nodejs}/bin/npm" ];
 
         pi-cliproxyapi-provider = {
@@ -322,7 +316,7 @@ in {
             };
           # Foreground children do not load ambient extensions. Use the same tool
           # providers and fail-closed permission hooks in both execution modes.
-          # MCP/codemode come from the child's SDK; loading native-tools duplicates them.
+          # The child's SDK loads native MCP and Code Mode itself.
           defaultExtensions =
             (map (name: "${config.home.homeDirectory}/.pi/agent/extensions/${name}") [
               "permissions.ts"

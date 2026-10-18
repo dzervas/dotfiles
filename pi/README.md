@@ -1,7 +1,8 @@
 # Pi configuration
 
-The Pi CLI uses `native-tools.ts` to load Pi's public MCP, Code Mode, and
-tool-search factories; their automatic CLI entries are disabled to avoid duplicates.
+The Pi CLI loads its built-in MCP, Code Mode and tool-search extensions directly.
+Keep their native identities: `pi-subagents` detects native MCP by the `builtin:mcp`
+command source and otherwise falls back to the legacy adapter integration.
 Nico's `pi-subagents` uses the child SDK's MCP/Code Mode support and an explicit
 extension list in `home/ai.nix` for local tools and permission hooks. Its runtime
 settings live in `extensions/subagent/config.json`; agent/model overrides live in
@@ -72,9 +73,14 @@ Refreshes no longer require host keyring access. Real provider refresh behavior
 still needs verification after the rebuild; no credentials were inspected or
 copied during this migration.
 
-Permissions stay enabled inside bwrap. `/yolo` explicitly disables the gate in a
-sandboxed session; read-only mode and nested Code Mode checks work with the gate
-enabled. Bwrap does not constrain remote MCP actions.
+Loading `sandbox.ts` requires that same extension in native child sessions,
+including detached and nested children and agent extension-list overrides. Each
+child publishes sandbox state locally; there is no additional environment flag.
+Contained sessions skip local permission/protected-path gates and mandatory child
+permission hooks. Ordinary launches never load or propagate `sandbox.ts`.
+Unsandboxed headless asks still fail closed when no parent UI broker is available:
+cross-process approval forwarding remains unimplemented. Bwrap does not constrain
+remote MCP actions.
 
 ## Extension review
 

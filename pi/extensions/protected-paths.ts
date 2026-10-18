@@ -7,11 +7,14 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { isSandboxed } from "./lib/sandbox-state.ts";
 
 export default function (pi: ExtensionAPI) {
+	if (isSandboxed()) return;
 	const protectedPaths = [".env", ".envrc", ".jj/", ".git/", "node_modules/"];
 
 	pi.on("tool_call", async (event, ctx) => {
+		if (isSandboxed()) return;
 		if (event.toolName !== "write" && event.toolName !== "edit") {
 			return undefined;
 		}

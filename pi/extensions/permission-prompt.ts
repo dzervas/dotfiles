@@ -1,4 +1,5 @@
 import { withHumanInput } from "./lib/human-input.ts";
+import { isSandboxed } from "./lib/sandbox-state.ts";
 import {
 	createBashToolDefinition,
 	createEditToolDefinition,
@@ -183,10 +184,11 @@ const broker: PermissionAskBroker = async (subject, reason) => {
 };
 
 export default function permissionPromptExtension(pi: ExtensionAPI) {
+	if (isSandboxed()) return;
 	let registeredBroker = false;
 
 	const registerBrokerIfUI = (ctx: ExtensionContext) => {
-		if (!ctx.hasUI) return;
+		if (!ctx.hasUI || isSandboxed()) return;
 		uiCtx = ctx;
 		uiPi = pi;
 		(globalThis as Record<PropertyKey, unknown>)[PERMISSIONS_ASK_BROKER_KEY] = broker;

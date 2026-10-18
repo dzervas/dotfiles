@@ -5,8 +5,9 @@ import { createContext, SourceTextModule, SyntheticModule } from "node:vm";
 import test from "node:test";
 
 // Exercise the real extension wiring with the rule engine stubbed: no config/auth reads.
-async function harness(initiallySandboxed = false) {
-	const context = createContext({ __DZERVAS_PI_SANDBOX__: { enabled: initiallySandboxed } });
+async function harness(initiallySandboxed = false, env: Record<string, string> = {}) {
+	const context = createContext({ __DZERVAS_PI_SANDBOX__: { enabled: initiallySandboxed }, process: { env } });
+	const sandboxState = new SourceTextModule(stripTypeScriptTypes(readFileSync(new URL("../lib/sandbox-state.ts", import.meta.url), "utf8")), { context });
 	const source = stripTypeScriptTypes(readFileSync(new URL("./extension.ts", import.meta.url), "utf8"));
 	const dependencies: Record<string, Record<string, unknown>> = {
 		"./ask": { askPermission: () => ({ block: true }) },
@@ -19,6 +20,7 @@ async function harness(initiallySandboxed = false) {
 	};
 	const module = new SourceTextModule(source, { context });
 	await module.link((name) => {
+		if (name === "../lib/sandbox-state.ts") return sandboxState;
 		const exports = dependencies[name];
 		assert.ok(exports, `Unexpected dependency: ${name}`);
 		return new SyntheticModule(Object.keys(exports), function () {
@@ -55,6 +57,13 @@ test("sandbox detected before permissions loading defaults to YOLO and registers
 	h.emit(true); h.emit(true);
 	await h.start();
 	assert.equal((await h.tool()).block, true, "repeated sandbox events must preserve explicit YOLO off");
+});
+
+test("environment values alone never bypass permissions without the sandbox extension", async () => {
+	for (const marker of ["", "0", "1", "true", "bubblewrap"]) {
+		const ordinary = await harness(false, { DZERVAS_PI_SANDBOX: marker, CI: "1" });
+		assert.equal((await ordinary.tool()).block, true);
+	}
 });
 
 test("late sandbox detection enables YOLO once; ordinary sessions keep permissions", async () => {

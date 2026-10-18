@@ -7,6 +7,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import permissionsExtension from "./permissions/extension";
+import { isSandboxed } from "./lib/sandbox-state.ts";
 
 export {
 	PERMISSIONS_ASK_BROKER_KEY,
@@ -18,10 +19,15 @@ export {
 export type { PermissionSubject } from "./permissions/types";
 
 export default function permissions(pi: ExtensionAPI) {
+	if (isSandboxed()) return;
 	permissionsExtension(pi);
 	let registration: { dispose(): void } | undefined;
 	pi.on("session_start", (_event, ctx) => {
 		registration?.dispose();
+		registration = undefined;
+		// The CLI sandbox extension may load after this factory. By startup its
+		// state is published; don't force permission hooks into contained children.
+		if (isSandboxed()) return;
 		// Resolve the public API from Pi's managed npm installation, not from
 		// the symlinked dotfiles directory's unrelated dependency closure.
 		const agentDir = path.join(os.homedir(), ".pi", "agent");

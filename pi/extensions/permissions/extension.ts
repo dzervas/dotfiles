@@ -4,6 +4,7 @@
 //   (read-mode.ts) → decide (decide.ts) → ask (ask.ts) when needed.
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { isSandboxed, PI_SANDBOX_STATE_EVENT } from "../lib/sandbox-state.ts";
 import { askPermission } from "./ask";
 import { classify } from "./classify";
 import { loadConfig } from "./config";
@@ -12,21 +13,7 @@ import { createReadMode } from "./read-mode";
 import { runSelfTest } from "./self-test";
 import { normalize } from "./subject";
 
-const PI_SANDBOX_STATE_KEY = Symbol.for("dzervas.pi.sandbox");
-const PI_SANDBOX_STATE_EVENT = "sandbox:state";
-
 type SandboxState = { enabled?: boolean };
-
-function isSandboxed() {
-	const globalWithSandbox = globalThis as typeof globalThis & {
-		__DZERVAS_PI_SANDBOX__?: SandboxState;
-		[PI_SANDBOX_STATE_KEY]?: SandboxState;
-	};
-	return Boolean(
-		globalWithSandbox.__DZERVAS_PI_SANDBOX__?.enabled ||
-		globalWithSandbox[PI_SANDBOX_STATE_KEY]?.enabled,
-	);
-}
 
 export default function permissionsExtension(pi: ExtensionAPI) {
 	const readMode = createReadMode(pi);
