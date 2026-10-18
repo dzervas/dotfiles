@@ -32,6 +32,10 @@ export class TerminalActivity {
 		}
 	}
 
+	isActive(): boolean {
+		return this.activeSources.size > 0;
+	}
+
 	refresh(): void {
 		if (this.interval) this.write(ACTIVE_SEQUENCE);
 	}

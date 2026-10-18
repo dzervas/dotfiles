@@ -68,10 +68,10 @@ export function createMemoryMonitor(
 			}, 30_000);
 			timer.unref?.();
 		},
-		observe(id: string, data: MemoryData) {
+		observe(id: string, data: MemoryData, notify = true) {
 			if (!owner || sessionId !== id) return;
 			revision++;
-			update(data, true);
+			update(data, notify);
 		},
 		stop,
 	};

@@ -159,14 +159,34 @@ test("/mem shares persistence, immediately notifies only the parent, and polling
 
 	h.setIdle(false);
 	await h.invoke("forget", "external");
-	assert.equal(h.messages.length, 3);
-	assert.equal(h.messages[2].options.triggerTurn, false);
+	assert.equal(h.messages.length, 2, "model writes must not notify their own session");
 	assert.equal(prompt(), originalPrompt);
 	await h.handlers.get("session_shutdown")({}, h.ctx);
 	const afterStop = h.calls.length;
 	t.mock.timers.tick(60_000);
 	await setImmediate();
 	assert.equal(h.calls.length, afterStop);
+});
+
+test("model writes silently advance the baseline while external changes still notify", async (t) => {
+	t.mock.timers.enable({ apis: ["setInterval"] });
+	const h = await fixture(t, "tui");
+	await h.handlers.get("session_start")({}, h.ctx);
+	for (const [action, text, previous] of [
+		["remember", "own note"],
+		["replace", "updated note", "own note"],
+		["forget", "updated note"],
+	]) {
+		assert.notEqual((await h.invoke(action, text, previous)).isError, true);
+		t.mock.timers.tick(30_000);
+		await setImmediate();
+		assert.equal(h.messages.length, 0, `${action} must not echo immediately or on the next poll`);
+	}
+	h.records.set(h.ns + "\0" + noteKey("external"), encodeNote({ date: "2026-10-19", text: "external" }));
+	t.mock.timers.tick(30_000);
+	await setImmediate();
+	assert.equal(h.messages.length, 1);
+	assert.match(h.messages[0].message.content, /\+ 2026-10-19: external/);
 });
 
 test("partial replacement failure retains both notes and immediately reports the actual persisted diff", async (t) => {

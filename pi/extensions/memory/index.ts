@@ -49,7 +49,7 @@ export default function memoryExtension(pi: ExtensionAPI) {
 
 	const monitor = createMemoryMonitor(pi, async (ctx, signal) => (await serial(() => load(ctx, scopes, signal))).data);
 
-	function mutate(ctx: ExtensionContext, scope: Scope, action: Exclude<Action, "list">, text: string | undefined, previous?: string, signal?: AbortSignal) {
+	function mutate(ctx: ExtensionContext, scope: Scope, action: Exclude<Action, "list">, text: string | undefined, previous?: string, signal?: AbortSignal, notify = true) {
 		return serial(async () => {
 			const { data, warning } = await load(ctx, [scope], signal);
 			const { namespace, notes } = data.get(scope)!;
@@ -64,7 +64,7 @@ export default function memoryExtension(pi: ExtensionAPI) {
 					const actual = await readNotes(runner(ctx, signal), namespace).catch(() => undefined);
 					if (actual !== undefined) {
 						data.set(scope, { namespace, notes: actual });
-						monitor.observe(sessionId(ctx), data);
+						monitor.observe(sessionId(ctx), data, notify);
 					}
 					throw error;
 				}
@@ -80,7 +80,7 @@ export default function memoryExtension(pi: ExtensionAPI) {
 					refreshWarning = "Memory saved, but refreshing the store failed; the next poll will retry.";
 				}
 			}
-			monitor.observe(sessionId(ctx), data);
+			monitor.observe(sessionId(ctx), data, notify);
 			const updated = data.get(scope)!.notes;
 			return { namespace, notes: updated, changed, warning: [warning, refreshWarning].filter(Boolean).join("\n") || undefined, indexError: indexLimitError(updated) };
 		});
@@ -165,7 +165,9 @@ export default function memoryExtension(pi: ExtensionAPI) {
 					const { namespace, notes } = data.get(scope)!;
 					return result(`${scope} memory (${namespace})\n${notes.length ? formatNotes(notes) : "No notes."}${warning ? ` ${warning}` : ""}`);
 				}
-				const saved = await mutate(ctx, scope, params.action, params.text, params.previous, signal);
+				// The tool result already acknowledges this session's own write.
+				// Advance the polling baseline without echoing it as a live change.
+				const saved = await mutate(ctx, scope, params.action, params.text, params.previous, signal, false);
 				const message = `${scope} memory ${saved.changed ? "saved" : "unchanged"} (${saved.namespace}); ${saved.notes.length} notes.${saved.warning ? ` ${saved.warning}` : ""}`;
 				return result(`${message}${saved.indexError ? `\n${saved.changed ? "Write succeeded. " : ""}${saved.indexError}` : ""}`, Boolean(saved.indexError));
 			} catch (error) { return result(String(error), true); }

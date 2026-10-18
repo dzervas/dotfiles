@@ -20,10 +20,13 @@ test("keeps progress active until every extension is idle", () => {
 	const writes: string[] = [];
 	const progress = new TerminalActivity((data) => writes.push(data));
 
+	assert.equal(progress.isActive(), false);
 	progress.setActive("subagent", true);
 	progress.setActive("background-bash", true);
 	progress.setActive("subagent", false);
+	assert.equal(progress.isActive(), true);
 	progress.setActive("background-bash", false);
+	assert.equal(progress.isActive(), false);
 
 	assert.deepEqual(writes, [activeSequence, clearSequence]);
 });
@@ -35,6 +38,7 @@ test("does not clear progress while Pi is still active", () => {
 	progress.setActive("subagent", true);
 	progress.setActive("subagent", false, false);
 
+	assert.equal(progress.isActive(), false, "a deferred terminal clear is not live work");
 	assert.deepEqual(writes, [activeSequence]);
 });
 

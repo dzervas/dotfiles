@@ -4,6 +4,7 @@ import test from "node:test";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import titlebar from "../titlebar-spinner.ts";
 import { withHumanInput } from "./human-input.ts";
+import { terminalActivity } from "./terminal-progress.ts";
 import { evictSession, setRenderSession, setTasks, TODO_CHANGED_EVENT } from "../todo/state.ts";
 
 function harness(mode = "tui") {
@@ -106,6 +107,36 @@ test("failure and shutdown clear waiting without restarting an old title timer",
 	await waiting;
 	t.mock.timers.tick(5000);
 	assert.equal(ui.titles.length, rendered);
+});
+
+test("background bash keeps an idle parent's title spinning until all jobs finish", async (t) => {
+	t.mock.timers.enable({ apis: ["setInterval"] });
+	const ui = harness();
+	t.after(() => {
+		terminalActivity.setActive("background-bash", false);
+		ui.fire("session_shutdown");
+	});
+	terminalActivity.setActive("background-bash", true);
+	ui.fire("agent_settled");
+	assert.ok(ui.last().startsWith("⠋ "));
+	t.mock.timers.tick(80);
+	assert.ok(ui.last().startsWith("⠙ "));
+	// Polling must also detect jobs recovered after extension reload.
+	terminalActivity.setActive("background-bash", false);
+	t.mock.timers.tick(250);
+	assert.ok(ui.last().startsWith("π - "));
+	terminalActivity.setActive("background-bash", true);
+	t.mock.timers.tick(250);
+	assert.match(ui.last(), /^[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] /);
+	const dialog = pending();
+	const waiting = withHumanInput(ui.pi, () => dialog.promise);
+	assert.ok(ui.last().startsWith(" "), "human input takes precedence over background work");
+	dialog.resolve();
+	await waiting;
+	assert.ok(ui.last().startsWith("⠋ "));
+	terminalActivity.setActive("background-bash", false);
+	t.mock.timers.tick(250);
+	assert.ok(ui.last().startsWith("π - "));
 });
 
 test("headless sessions do not change terminal titles", async (t) => {

@@ -12,6 +12,7 @@
 import path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { HUMAN_INPUT_EVENT, type HumanInputEvent } from "./lib/human-input.ts";
+import { terminalActivity } from "./lib/terminal-progress.ts";
 import { installSubagentLivenessHost, titleAnimation } from "./lib/subagent-liveness.ts";
 import { activeTaskSuffix, renderTasks, TODO_CHANGED_EVENT } from "./todo/state.ts";
 
@@ -45,7 +46,7 @@ export default function (pi: ExtensionAPI) {
 
 	function updateAnimation() {
 		if (!uiCtx) return;
-		const next = titleAnimation(waiting.size > 0, !uiCtx.isIdle(), childState(uiCtx.sessionManager.getSessionId()));
+		const next = titleAnimation(waiting.size > 0, !uiCtx.isIdle() || terminalActivity.isActive(), childState(uiCtx.sessionManager.getSessionId()));
 		if (next !== animation) {
 			if (timer) clearInterval(timer);
 			timer = undefined;
@@ -88,6 +89,7 @@ export default function (pi: ExtensionAPI) {
 		];
 		// The versioned host callback is designed to be sampled, not event-based.
 		// It includes quiet detached/nested work even after agent_settled.
+		// Sample shared terminal activity too, including background Bash jobs.
 		childTimer = setInterval(updateAnimation, 250);
 		childTimer.unref?.();
 		updateAnimation();
