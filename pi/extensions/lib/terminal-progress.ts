@@ -41,4 +41,9 @@ export class TerminalActivity {
 	}
 }
 
-export const terminalActivity = new TerminalActivity();
+// Pi loads each extension with its own module cache. Keep the coordinator on
+// the process global so background Bash and the title spinner see the same
+// activity, including across extension reloads.
+const REGISTRY_KEY = Symbol.for("dzervas.pi.terminal-activity");
+const globals = globalThis as typeof globalThis & { [REGISTRY_KEY]?: TerminalActivity };
+export const terminalActivity = globals[REGISTRY_KEY] ??= new TerminalActivity();

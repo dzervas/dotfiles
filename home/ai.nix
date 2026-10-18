@@ -277,8 +277,8 @@ in {
                 ];
               };
               worker = {
-                model = "cpa/gpt-6.1-sol";
-                thinking = "high";
+                model = "cpa/claude-opus-5-5";
+                thinking = "medium";
               };
               reviewer = {
                 model = "cpa/claude-opus-5-5";
