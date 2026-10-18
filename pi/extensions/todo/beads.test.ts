@@ -5,8 +5,11 @@ import path from "node:path";
 import test from "node:test";
 import { type Exec, fetchBeads, fetchUnclaimedParents, GUIDANCE_ENTRY, hasBeadsWorkspace, type RawIssue, recordedGuidance } from "./beads.ts";
 
+const actor = "pi:parent-test";
+
 const issue = (id: string, status: string, extra: Partial<RawIssue> = {}): RawIssue => ({
 	id,
+	assignee: actor,
 	title: `Title ${id}`,
 	status,
 	issue_type: "task",
@@ -44,7 +47,7 @@ test("a claimed child shows its epic and the children's states in id order", asy
 		],
 		ready: [issue("p-1.3", "open")],
 	});
-	const snapshot = await fetchBeads(exec, "/repo");
+	const snapshot = await fetchBeads(exec, "/repo", actor);
 	assert.deepEqual(snapshot?.claimed, { id: "p-1.2", title: "Title p-1.2", state: "in_progress" });
 	assert.deepEqual(snapshot?.epic, { id: "p-1", title: "Title p-1" });
 	assert.deepEqual(
@@ -56,10 +59,41 @@ test("a claimed child shows its epic and the children's states in id order", asy
 test("a claimed epic is its own epic and is not looked up again", async () => {
 	const epic = issue("p-1", "in_progress", { issue_type: "epic" });
 	const { exec, calls } = fakeBd({ active: [epic], children: [issue("p-1.1", "open")], ready: [] });
-	const snapshot = await fetchBeads(exec, "/repo");
+	const snapshot = await fetchBeads(exec, "/repo", actor);
 	assert.equal(snapshot?.epic?.id, "p-1");
 	assert.equal(snapshot?.claimed.id, "p-1");
 	assert.ok(!calls.some(([sub]) => sub === "show"));
+});
+
+test("the active query is scoped to the parent actor without a limit", async () => {
+	const { exec, calls } = fakeBd({ active: [] });
+	assert.equal(await fetchBeads(exec, "/repo", actor), undefined);
+	assert.deepEqual(calls, [["list", "--status", "in_progress", "--assignee", actor, "--brief", "-n", "0", "--json"]]);
+});
+
+test("a foreign claimed leaf cannot displace the parent's claimed epic", async () => {
+	const { exec, calls } = fakeBd({
+		active: [
+			issue("foreign-1", "in_progress", { assignee: "pi:other-parent" }),
+			issue("p-1", "in_progress", { issue_type: "epic" }),
+		],
+	});
+	assert.equal((await fetchBeads(exec, "/repo", actor))?.claimed.id, "p-1");
+	assert.ok(!calls.some(([sub]) => sub === "show"));
+});
+
+test("foreign or unassigned active beads yield no snapshot and no further queries", async () => {
+	for (const assignee of ["pi:other-parent", undefined, ""]) {
+		const { exec, calls } = fakeBd({ active: [issue("foreign-1", "in_progress", { assignee })] });
+		assert.equal(await fetchBeads(exec, "/repo", actor), undefined);
+		assert.equal(calls.length, 1);
+	}
+});
+
+test("an empty actor never queries globally active beads", async () => {
+	const { exec, calls } = fakeBd({ active: [issue("p-9", "in_progress")] });
+	assert.equal(await fetchBeads(exec, "/repo", ""), undefined);
+	assert.deepEqual(calls, []);
 });
 
 test("a claimed leaf wins over a claimed epic", async () => {
@@ -67,12 +101,12 @@ test("a claimed leaf wins over a claimed epic", async () => {
 		active: [issue("p-1", "in_progress", { issue_type: "epic" }), issue("p-1.1", "in_progress", { parent: "p-1" })],
 		epic: issue("p-1", "in_progress", { issue_type: "epic" }),
 	});
-	assert.equal((await fetchBeads(exec, "/repo"))?.claimed.id, "p-1.1");
+	assert.equal((await fetchBeads(exec, "/repo", actor))?.claimed.id, "p-1.1");
 });
 
 test("a claimed bead without a parent has no epic and makes no further calls", async () => {
 	const { exec, calls } = fakeBd({ active: [issue("p-9", "in_progress", { issue_type: "bug" })] });
-	const snapshot = await fetchBeads(exec, "/repo");
+	const snapshot = await fetchBeads(exec, "/repo", actor);
 	assert.equal(snapshot?.epic, undefined);
 	assert.deepEqual(snapshot?.children, []);
 	assert.equal(calls.length, 1);
@@ -98,8 +132,8 @@ test("idle parents use the unassigned top-level non-closed query without a limit
 });
 
 test("nothing claimed or a failing bd yields no snapshot", async () => {
-	assert.equal(await fetchBeads(fakeBd({ active: [] }).exec, "/repo"), undefined);
-	assert.equal(await fetchBeads(async () => ({ code: 1, stdout: "" }), "/repo"), undefined);
+	assert.equal(await fetchBeads(fakeBd({ active: [] }).exec, "/repo", actor), undefined);
+	assert.equal(await fetchBeads(async () => ({ code: 1, stdout: "" }), "/repo", actor), undefined);
 });
 
 test("a stderr migration note does not affect envelope parsing", async () => {
@@ -107,13 +141,13 @@ test("a stderr migration note does not affect envelope parsing", async () => {
 		code: 0,
 		stdout: JSON.stringify({ schema_version: 1, data: [issue("p-9", "in_progress")], pagination: { returned: 1 } }),
 		stderr: "NOTE: bd --json output format will change in v2.0.",
-	}), "/repo");
+	}), "/repo", actor);
 	assert.equal(snapshot?.claimed.id, "p-9");
 });
 
 test("invalid envelope payloads are rejected rather than treated as an empty list", async () => {
 	for (const payload of [[], { schema_version: 1, data: {} }]) {
-		await assert.rejects(fetchBeads(async () => ({ code: 0, stdout: JSON.stringify(payload) }), "/repo"), /issue array/);
+		await assert.rejects(fetchBeads(async () => ({ code: 0, stdout: JSON.stringify(payload) }), "/repo", actor), /issue array/);
 	}
 });
 

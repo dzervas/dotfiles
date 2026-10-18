@@ -43,7 +43,6 @@
 !overlays/pi-dashboard/*.json
 !pi
 !pi/*.json
-!pi/agents
 !pi/extensions
 !pi/fleet
 !pi/fleet/*.lua
@@ -58,6 +57,8 @@
 !pi/extensions/permissions
 !pi/extensions/pi-subagents-workflows
 !pi/extensions/todo
+!pi/extensions/subagent
+!pi/extensions/subagent/config.json
 !pi/**/*.md
 !pi/**/*.ts
 !pi/**/*.ts.b

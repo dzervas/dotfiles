@@ -16,6 +16,7 @@ import { Type } from "typebox";
 import { ScrollableDialogue } from "./lib/scrollable-dialogue.ts";
 import { ToolExecutionTiming } from "./lib/tool-execution-timing.ts";
 import { terminalActivity } from "./lib/terminal-progress.ts";
+import { getPrompt } from "./lib/prompts.ts";
 
 const REGISTRY_KEY = Symbol.for("dzervas.pi.background-jobs");
 
@@ -291,16 +292,16 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 	const parameters = Type.Object({
 		...builtin.parameters.properties,
 		background: Type.Optional(
-			Type.Boolean({ description: "Run in the background and return a job ID immediately" }),
+			Type.Boolean({ description: getPrompt("background-bash", "background-description") }),
 		),
 	});
 
 	pi.registerTool({
 		...builtin,
-		description: `${builtin.description} Set background=true to return immediately with a manageable job ID; completion is delivered automatically.`,
+		description: `${builtin.description} ${getPrompt("background-bash", "tool-description-suffix")}`,
 		promptGuidelines: [
 			...(builtin.promptGuidelines ?? []),
-			"Use bash with background=true for long-running commands. Completion is delivered automatically, so do not poll. Use background_jobs to inspect output, stop a job, or wait only when the task explicitly requires synchronous completion.",
+			getPrompt("background-bash", "tool-guideline"),
 		],
 		parameters,
 		renderCall(args, theme, context) {
@@ -364,7 +365,7 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 				content: [
 					{
 						type: "text",
-						text: `Started background job #${job.id}. Completion will be delivered automatically; use background_jobs to inspect, wait for, or stop it.`,
+						text: getPrompt("background-bash", "job-started", { id: job.id }),
 					},
 				],
 				details: undefined,
@@ -375,12 +376,12 @@ export default function backgroundBashExtension(pi: ExtensionAPI): void {
 	pi.registerTool({
 		name: "background_jobs",
 		label: "Background Jobs",
-		description: "List, inspect, wait for, or stop background bash jobs started by bash with background=true.",
-		promptSnippet: "Manage background bash jobs",
+		description: getPrompt("background-bash", "jobs-description"),
+		promptSnippet: getPrompt("background-bash", "jobs-snippet"),
 		parameters: Type.Object({
 			action: StringEnum(["list", "inspect", "wait", "stop"] as const),
-			id: Type.Optional(Type.Integer({ description: "Job ID required for inspect, wait, and stop" })),
-			timeout: Type.Optional(Type.Number({ minimum: 0, description: "Maximum seconds to wait" })),
+			id: Type.Optional(Type.Integer({ description: getPrompt("background-bash", "job-id-description") })),
+			timeout: Type.Optional(Type.Number({ minimum: 0, description: getPrompt("background-bash", "timeout-description") })),
 		}),
 		async execute(_toolCallId, params, signal, _onUpdate, ctx) {
 			const registry = currentRegistry(ctx);

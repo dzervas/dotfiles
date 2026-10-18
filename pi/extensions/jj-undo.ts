@@ -4,16 +4,11 @@ import type {
 	ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
 
+import { installSubagentLivenessHost, restoreBlockReason } from "./lib/subagent-liveness.ts";
+
 const CUSTOM_TYPE = "jj-undo";
 const JJ_CONFIG_ARGS = ["--config", "signing.backend=none"];
 const JJ_TIMEOUT_MS = 30_000;
-
-function hasRunningSubagents(): boolean {
-	const service = (globalThis as Record<symbol, unknown>)[Symbol.for("@gotgenes/pi-subagents:service")] as
-		| { hasRunning(): boolean }
-		| undefined;
-	return service?.hasRunning() ?? false;
-}
 
 type CheckpointData = {
 	version: 1;
@@ -143,6 +138,12 @@ async function restoreOperation(pi: ExtensionAPI, cwd: string, operationId: stri
 }
 
 export default function jjUndo(pi: ExtensionAPI) {
+	const childState = installSubagentLivenessHost();
+	function childrenBlockRestore(ctx: ExtensionContext): boolean {
+		const reason = restoreBlockReason(childState(ctx.sessionManager.getSessionId()));
+		if (reason) notify(ctx, `jj undo: ${reason}`, "warning");
+		return reason !== undefined;
+	}
 	let jjQueue: Promise<void> = Promise.resolve();
 
 	function withJjLock<T>(task: () => Promise<T>): Promise<T> {
@@ -193,10 +194,7 @@ export default function jjUndo(pi: ExtensionAPI) {
 		await ctx.waitForIdle();
 
 		await withJjLock(async () => {
-			if (hasRunningSubagents()) {
-				notify(ctx, "jj undo: stop running subagents before restoring repository state", "warning");
-				return;
-			}
+			if (childrenBlockRestore(ctx)) return;
 			const cwd = ctx.cwd;
 			if (!(await isJjRepo(pi, cwd))) {
 				notify(ctx, "jj undo: not a jj repo", "error");
@@ -224,6 +222,9 @@ export default function jjUndo(pi: ExtensionAPI) {
 				return;
 			}
 
+			// Snapshotting yields to other extensions. Recheck immediately before
+			// restore so a newly scheduled child cannot slip past the initial gate.
+			if (childrenBlockRestore(ctx)) return;
 			try {
 				await restoreOperation(pi, cwd, checkpoint.operationId);
 			} catch (error) {

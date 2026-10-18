@@ -1,5 +1,6 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
+import { getPrompt } from "./lib/prompts.ts";
 
 export default function (pi: ExtensionAPI) {
 	let pendingPrompt: string | undefined;
@@ -40,9 +41,9 @@ export default function (pi: ExtensionAPI) {
 	pi.registerTool({
 		name: "clear",
 		label: "Clear",
-		description: "End this session and start a fresh one, optionally sending a prompt to the new session. Use when the current conversation context should be discarded.",
+		description: getPrompt("clean-alias", "tool-description"),
 		parameters: Type.Object({
-			prompt: Type.Optional(Type.String({ description: "Prompt to send in the fresh session" })),
+			prompt: Type.Optional(Type.String({ description: getPrompt("clean-alias", "prompt-description") })),
 		}),
 		async execute(_toolCallId, { prompt }) {
 			if (pendingPrompt !== undefined) throw new Error("A session clear is already pending");

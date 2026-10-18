@@ -10,6 +10,7 @@ function harness(mode = "tui") {
 	const handlers = new Map<string, (event: unknown, ctx: ExtensionContext) => unknown>();
 	const events = new EventEmitter();
 	const titles: string[] = [];
+	let idle = true;
 	const pi = {
 		getSessionName: () => undefined,
 		on: (name: string, handler: (event: unknown, ctx: ExtensionContext) => unknown) => handlers.set(name, handler),
@@ -21,9 +22,18 @@ function harness(mode = "tui") {
 			emit: (name: string, value: unknown) => events.emit(name, value),
 		},
 	} as unknown as ExtensionAPI;
-	const ctx = { mode, ui: { setTitle: (title: string) => titles.push(title) } } as unknown as ExtensionContext;
+	const ctx = {
+		mode,
+		isIdle: () => idle,
+		sessionManager: { getSessionId: () => "title-test" },
+		ui: { setTitle: (title: string) => titles.push(title) },
+	} as unknown as ExtensionContext;
 	titlebar(pi);
-	const fire = (name: string) => handlers.get(name)?.({}, ctx);
+	const fire = (name: string) => {
+		if (name === "agent_start") idle = false;
+		if (name === "agent_settled") idle = true;
+		return handlers.get(name)?.({}, ctx);
+	};
 	fire("session_start");
 	return { pi, titles, fire, last: () => titles.at(-1)! };
 }
@@ -46,7 +56,7 @@ test("human input alternates every second, preserves progress, then restores wor
 	ui.fire("agent_start");
 	const dialog = pending();
 	const waiting = withHumanInput(ui.pi, () => dialog.promise);
-	assert.ok(ui.last().startsWith(" π - "));
+	assert.match(ui.last(), /^\s+π - /);
 	assert.ok(ui.last().endsWith(" 3/3"));
 	t.mock.timers.tick(999);
 	assert.ok(ui.last().startsWith(" "));

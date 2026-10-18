@@ -21,6 +21,7 @@ import {
 	wrapTextWithAnsi,
 } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
+import { getPrompt } from "./lib/prompts.ts";
 
 // Types
 interface QuestionOption {
@@ -55,30 +56,29 @@ interface QuestionnaireResult {
 
 // Schema
 const QuestionOptionSchema = Type.Object({
-	value: Type.String({ description: "The value returned when selected" }),
-	label: Type.String({ description: "Display label for the option" }),
+	value: Type.String({ description: getPrompt("questionnaire", "option-value-description") }),
+	label: Type.String({ description: getPrompt("questionnaire", "option-label-description") }),
 	description: Type.Optional(
-		Type.String({ description: "Optional description shown below label" }),
+		Type.String({ description: getPrompt("questionnaire", "option-description-description") }),
 	),
 });
 
 const QuestionSchema = Type.Object({
-	id: Type.String({ description: "Unique identifier for this question" }),
+	id: Type.String({ description: getPrompt("questionnaire", "question-id-description") }),
 	label: Type.Optional(
 		Type.String({
-			description:
-				"Short contextual label for tab bar, e.g. 'Scope', 'Priority' (defaults to Q1, Q2)",
+			description: getPrompt("questionnaire", "question-label-description"),
 		}),
 	),
-	prompt: Type.String({ description: "The full question text to display" }),
-	options: Type.Array(QuestionOptionSchema, { description: "Available options to choose from" }),
+	prompt: Type.String({ description: getPrompt("questionnaire", "question-prompt-description") }),
+	options: Type.Array(QuestionOptionSchema, { description: getPrompt("questionnaire", "question-options-description") }),
 	allowOther: Type.Optional(
-		Type.Boolean({ description: "Allow 'Type something' option (default: true)" }),
+		Type.Boolean({ description: getPrompt("questionnaire", "question-allow-other-description") }),
 	),
 });
 
 const QuestionnaireParams = Type.Object({
-	questions: Type.Array(QuestionSchema, { description: "Questions to ask the user" }),
+	questions: Type.Array(QuestionSchema, { description: getPrompt("questionnaire", "questions-description") }),
 });
 
 function errorResult(
@@ -391,8 +391,7 @@ export default function questionnaire(pi: ExtensionAPI) {
 	pi.registerTool({
 		name: "questionnaire",
 		label: "Questionnaire",
-		description:
-			"Ask the user one or more questions. Use for clarifying requirements, getting preferences, or confirming decisions. For single questions, shows a simple option list. For multiple questions, shows a tab-based interface.",
+		description: getPrompt("questionnaire", "tool-description"),
 		parameters: QuestionnaireParams,
 
 		async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
@@ -476,37 +475,7 @@ interface ExtractionResult {
 	questions: ExtractedQuestion[];
 }
 
-const SYSTEM_PROMPT = `You are a question extractor. Given text from a conversation, extract any questions that need answering.
-
-Output a JSON object with this structure:
-{
-  "questions": [
-    {
-      "question": "The question text",
-      "context": "Optional context that helps answer the question"
-    }
-  ]
-}
-
-Rules:
-- Extract all questions that require user input
-- Keep questions in the order they appeared
-- Be concise with question text
-- Include context only when it provides essential information for answering
-- If no questions are found, return {"questions": []}
-
-Example output:
-{
-  "questions": [
-    {
-      "question": "What is your preferred database?",
-      "context": "We can only configure MySQL and PostgreSQL because of what is implemented."
-    },
-    {
-      "question": "Should we use TypeScript or JavaScript?"
-    }
-  ]
-}`;
+const SYSTEM_PROMPT = getPrompt("questionnaire", "extraction-system");
 
 const CODEX_MODEL_ID = "gpt-5.3-codex-spark";
 const HAIKU_MODEL_ID = "claude-haiku-4-5";
@@ -690,7 +659,7 @@ function registerAnswerCommand(pi: ExtensionAPI) {
 		pi.sendMessage(
 			{
 				customType: "answers",
-				content: "I answered your questions in the following way:\n\n" + answersResult.answers.map((answer) => {
+				content: getPrompt("questionnaire", "answers-preamble") + "\n\n" + answersResult.answers.map((answer) => {
 					const question = questions.find((question) => question.id === answer.id)!;
 					return `Q: ${question.prompt}\nA: ${answer.label}`;
 				}).join("\n\n"),

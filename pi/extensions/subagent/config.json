@@ -1,0 +1,14 @@
+{
+  "toolActivation": "eager",
+  "pinToolDeclarations": true,
+  "fleetView": true,
+  "inlineToolDisplay": "summary",
+  "asyncWidget": false,
+  "globalConcurrencyLimit": 14,
+  "parallel": {
+    "maxTasks": 14,
+    "concurrency": 14
+  },
+  "maxActiveAsyncRunsPerSession": 14,
+  "maxSubagentDepth": 2
+}

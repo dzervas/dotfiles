@@ -1,8 +1,11 @@
 # Pi configuration
 
-Normal Pi CLI and in-process subagents use the same local extensions. `native-tools.ts`
-loads Pi's public MCP, Code Mode, and tool-search factories. Their automatic CLI
-entries are disabled to avoid registering them twice. This requires Pi 1.0.0.
+The Pi CLI uses `native-tools.ts` to load Pi's public MCP, Code Mode, and
+tool-search factories; their automatic CLI entries are disabled to avoid duplicates.
+Nico's `pi-subagents` uses the child SDK's MCP/Code Mode support and an explicit
+extension list in `home/ai.nix` for local tools and permission hooks. Its runtime
+settings live in `extensions/subagent/config.json`; agent/model overrides live in
+`home/ai.nix`. This requires Pi 1.0.0.
 
 ## Docker MCP boundary
 
@@ -79,10 +82,18 @@ enabled. Bwrap does not constrain remote MCP actions.
   the integration layer. General web search is no longer a built-in local capability;
   add a configured Docker MCP service if needed.
 - Removed the JavaScript workflow engine and its local dependencies. Its terminal
-  activity helper remains shared by background Bash. Gotgenes subagents stay installed.
+  activity helper remains shared by background Bash. Nico's `pi-subagents` replaces
+  Gotgenes; the bundled `delegate` permits bounded nested delegation. Tool grants
+  extend bundled roles through settings rather than copied agent definitions.
 - Merged `/answer` and `ctrl+.` extraction into questionnaire's existing dialog.
 - Removed the empty runtime patcher and moved the no-redundant-directory-change
   instruction into `global_agents.md`. Whimsical messages remain.
+- Beads ownership uses `BEADS_ACTOR=pi:<parent-session-id>`, set when the parent
+  starts and inherited unchanged by its subagents. The widget and `/todos` filter
+  claims to that team; Fleet identifies individual contributors. Helpers reuse
+  the team's claim unless explicitly assigned another ticket. Existing claims
+  under an older assignee are not automatically reassigned. Start a fresh session
+  for the updated claiming guidance; recorded guidance stays frozen on resume.
 - Todo uses complete snapshots of subjects and explicit statuses, with no IDs,
   active-form labels, confidence scoring, or collapse controls. The title suffix
   shows the active task's one-based position, such as `3/5`, and disappears when
@@ -96,7 +107,9 @@ enabled. Bwrap does not constrain remote MCP actions.
   are running. Undo still restores repository-wide state and should be used deliberately.
 - Long usage-limit waits are a parent-TUI convenience; headless children surface
   failures instead of retrying indefinitely. Background Bash records failed results.
-- Permission dialogs serialize child requests on the parent UI. Native MCP
+- Permission dialogs serialize in-process child requests on the parent UI.
+  Detached children cannot use that process-local broker: approval-required calls
+  fail closed and must be escalated to the interactive parent. Native MCP
   names/resources are recognized by the permission policy. The Bash card starts
   timing at actual execution, after approval; denied calls never start a timer.
 - Kept the focused bookmark, clear/model-selection, context loading, llama-swap,
@@ -109,7 +122,18 @@ than an OS security boundary. No generic Docker API proxy was introduced.
 ## Learned memory
 
 The local `memory/` extension lets the active agent save durable preferences and
-verified project lessons. It exposes two tools:
+verified project lessons. `/mem` opens a settings-style Project/Global browser:
+Tab or left/right switches scope, Enter opens Edit/Forget, and the first/default
+row adds a memory. Edit opens a prefilled editor; Esc cancels or closes the panel.
+
+Panel edits notify only the parent immediately with a diff. The interactive parent
+also polls the agent-only Atuin profile every 30 seconds for changes made elsewhere;
+polls do not overlap and stop on shutdown/reload. Changes append at the next safe
+boundary and never start another model turn, even during compaction. Existing startup
+snapshots stay frozen. Remote synchronization still follows Atuin's sync-frequency
+gate. `atuin-agent` remains available; `/mem` replaces `atuin-agent-mem`.
+
+The extension exposes two tools:
 
 - `memory`: `list`, `remember`, `replace`, or `forget`, with `project` (default)
   or `global` scope. Replace supplies `previous` as the exact existing note text;
@@ -117,31 +141,27 @@ verified project lessons. It exposes two tools:
 - `memory_search`: case-insensitive keyword search of both scopes, or one selected
   scope. All query terms must match.
 
-Global notes live in `~/.pi/agent/memory/MEMORY.md`; project notes live in
-`<repository root>/.pi/MEMORY.md` (current directory outside a repository).
+Notes live in the dedicated Atuin agent KV profile: `pi/global` and a namespace
+for each project's remote slug (repository directory name when no remote exists).
 Repository discovery recognizes `.git` directories/files and `.jj` directories.
-Each file is capped at 200 dated, single-line notes and 8 KiB, including formatting.
-Files are created on the first successful write. Example:
+Each note is a dated, single-line value keyed by its text hash.
 
-```text
-# Memory
+The startup index is limited to 200 notes and 25 KiB per namespace, including
+formatting and any overflow notice. Storage is not capped by those limits:
+remember/replace/forget persist first, then return a tool error asking the agent
+to shorten or merge notes if the resulting index is still too large. The response
+explicitly says the write succeeded; retrying is not needed. Nothing is silently
+evicted or summarized. Malformed note input is still rejected before writing.
 
-- 2026-10-02: Prefer Fish for scripts.
-```
+New sessions load a bounded prefix of complete notes with an explicit overflow
+notice; list/search can retrieve all stored notes, including omitted ones.
+Startup context is frozen and recorded to preserve prompt caching, so reload,
+resume and fork reuse the existing snapshot. Later edits are visible through
+list/search immediately and in startup context on the next fresh session.
+Atuin synchronization follows its configured sync-frequency gate.
 
-Notes load once per session to keep the system prompt stable; searches and lists
-read the latest files. Writes use an exclusive directory lock and atomic rename,
-so concurrent parent/child sessions cannot silently overwrite each other.
 Read mode requests approval for mutations; configured denied paths still apply.
-`sand` shares only the global memory directory with the host. This requires the
-updated Fish function to be activated; other sandboxes keep isolated notes until
-then.
-
-The extension rejects overflow instead of dropping or summarizing notes. It also
-refuses malformed or manually oversized files; repair those manually. After a
-writer crashes while holding its lock, remove the adjacent `MEMORY.md.lock`
-directory once that writer has stopped. Dates indicate when a note was saved,
-not when its truth was independently checked.
+Dates indicate when a note was saved, not when its truth was independently checked.
 
 There are no background reviews or local-model calls. The main agent chooses
 what deserves a note, with guidance to avoid secrets, transient progress, guesses,

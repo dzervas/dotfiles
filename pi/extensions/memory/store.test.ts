@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import test, { type TestContext } from "node:test";
-import { MAX_BYTES, decodeNote, encodeNote, namespace, noteKey, planChange, projectRoot, projectSlug, recordedSnapshot, searchNotes, SNAPSHOT_ENTRY, sortNotes } from "./store.ts";
+import { MAX_BYTES, MAX_ENTRIES, decodeNote, encodeNote, formatNotes, formatStartupNotes, indexLimitError, namespace, noteKey, planChange, projectRoot, projectSlug, recordedSnapshot, searchNotes, SNAPSHOT_ENTRY, sortNotes, type Note } from "./store.ts";
 
 async function fixture(t: TestContext) {
 	const directory = await mkdtemp(join(process.cwd(), ".memory-test-"));
@@ -45,11 +45,90 @@ test("remember deduplicates, replace refreshes date, forget matches exact text",
 	assert.throws(() => planChange([], "remember", "a\nb"), /single-line/);
 });
 
-test("limits reject rather than silently evict, including multibyte notes", () => {
-	const notes = Array.from({ length: 200 }, (_, i) => ({ date: "2026-10-02", text: `${i}` }));
-	assert.throws(() => planChange(notes, "remember", "201"), /Memory is full/);
-	assert.throws(() => planChange([], "remember", "π".repeat(MAX_BYTES / 2)), /Memory is full/);
-	assert.equal(notes.length, 200);
+test("note-count overflow warns but remembering and replacing still plan complete changes", () => {
+	assert.equal(MAX_ENTRIES, 200);
+	const notes = Array.from({ length: MAX_ENTRIES }, (_, i) => ({ date: "2026-10-02", text: `${i}` }));
+	const original = structuredClone(notes);
+	assert.equal(indexLimitError(notes), undefined);
+	const added = { date: "2026-10-03", text: "201" };
+	assert.deepEqual(planChange(notes, "remember", added.text, undefined, added.date), { add: added });
+	const overflowing = [...notes, added];
+	assert.match(indexLimitError(overflowing)!, /200/);
+	assert.deepEqual(planChange(overflowing, "replace", "updated", "0", added.date), {
+		remove: "0", add: { date: added.date, text: "updated" },
+	});
+	assert.deepEqual(planChange(overflowing, "remember", added.text), {});
+	assert.deepEqual(notes, original);
+});
+
+test("25 KiB is inclusive, and a one-byte overflow warns without rejecting the write", () => {
+	assert.equal(MAX_BYTES, 25 * 1024);
+	const date = "2026-10-18";
+	const overhead = Buffer.byteLength(formatNotes([{ date, text: "" }]), "utf8");
+	const text = "x".repeat(MAX_BYTES - overhead);
+	assert.equal(indexLimitError([{ date, text }]), undefined);
+	assert.equal(formatStartupNotes([{ date, text }]), formatNotes([{ date, text }]));
+	assert.deepEqual(planChange([], "remember", text, undefined, date), { add: { date, text } });
+	assert.deepEqual(planChange([], "remember", text + "x", undefined, date), { add: { date, text: text + "x" } });
+	assert.equal(Buffer.byteLength(formatNotes([{ date, text: text + "x" }])), MAX_BYTES + 1);
+	assert.match(indexLimitError([{ date, text: text + "x" }])!, /bytes/);
+});
+
+test("byte limits count UTF-8 bytes rather than multibyte characters", () => {
+	const date = "2026-10-18";
+	const available = MAX_BYTES - Buffer.byteLength(formatNotes([{ date, text: "" }]));
+	const text = "π".repeat(Math.floor(available / 2)) + "x".repeat(available % 2);
+	assert.equal(Buffer.byteLength(formatNotes([{ date, text }])), MAX_BYTES);
+	assert.equal(indexLimitError([{ date, text }]), undefined);
+	assert.ok(indexLimitError([{ date, text: text + "π" }]));
+	assert.deepEqual(planChange([], "remember", text + "π", undefined, date), { add: { date, text: text + "π" } });
+});
+
+/** Overflow may hide notes from startup, but never split or skip a note in its prefix. */
+function assertStartupPrefix(notes: Note[]) {
+	const original = structuredClone(notes);
+	const rendered = formatStartupNotes(notes);
+	assert.ok(Buffer.byteLength(rendered, "utf8") <= MAX_BYTES);
+	assert.equal(Buffer.from(rendered).toString("utf8"), rendered);
+	assert.ok(!rendered.includes("\uFFFD"));
+	const lines = rendered.split("\n").filter((line) => line.startsWith("- "));
+	assert.ok(lines.length <= MAX_ENTRIES);
+	assert.deepEqual(lines, notes.slice(0, lines.length).map(({ date, text }) => `- ${date}: ${text}`));
+	assert.match(rendered, /prefix|truncat|omitt/i);
+	assert.match(rendered, /list/);
+	assert.match(rendered, /search/);
+	assert.deepEqual(notes, original);
+	return lines;
+}
+
+test("startup includes ordinary notes unchanged and bounds note-count overflow to 200 complete entries", () => {
+	assert.equal(formatStartupNotes([]), formatNotes([]));
+	const notes = Array.from({ length: MAX_ENTRIES + 3 }, (_, i) => ({ date: "2026-10-18", text: `note ${i}` }));
+	assert.equal(formatStartupNotes(notes.slice(0, MAX_ENTRIES)), formatNotes(notes.slice(0, MAX_ENTRIES)));
+	assert.equal(assertStartupPrefix(notes).length, MAX_ENTRIES);
+	assert.equal(searchNotes(notes, "note").length, MAX_ENTRIES + 3);
+	assert.ok(formatNotes(notes).includes("note 202"));
+});
+
+test("startup reserves notice space and never splits multibyte notes to fill the byte budget", () => {
+	const notes = Array.from({ length: 40 }, (_, i) => ({ date: "2026-10-18", text: `${i}: ${"🦊π".repeat(200)}` }));
+	const lines = assertStartupPrefix(notes);
+	assert.ok(lines.length > 0 && lines.length < notes.length);
+	assert.equal(searchNotes(notes, "🦊").length, notes.length);
+});
+
+test("an oversized first note yields only a notice, not a partial note or later entries", () => {
+	const notes = [{ date: "2026-10-18", text: "🦊".repeat(MAX_BYTES) }, { date: "2026-10-18", text: "later small note" }];
+	assert.equal(assertStartupPrefix(notes).length, 0);
+	assert.ok(formatNotes(notes).includes(notes[0].text));
+});
+
+test("soft limits do not permit malformed notes", () => {
+	const notes = [{ date: "2026-10-18", text: "x".repeat(MAX_BYTES) }];
+	for (const text of ["", "   ", "a\nb", "a\rb", "a\tb", "a\0b"]) {
+		assert.throws(() => planChange(notes, "remember", text), /single-line/);
+		assert.throws(() => planChange(notes, "replace", text, notes[0].text), /single-line/);
+	}
 });
 
 test("values round-trip through the date-tab-text encoding", () => {

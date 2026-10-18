@@ -2,12 +2,13 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
+import { getPrompt } from "../lib/prompts.ts";
 
-export const MAX_BYTES = 8192;
+export const MAX_BYTES = 25 * 1024;
 export const MAX_ENTRIES = 200;
 export const NAMESPACE_PREFIX = "pi";
 export const KEY_LENGTH = 12;
-const HEADER = "# Memory\n\n";
+const HEADER = `${getPrompt("memory", "notes-heading")}\n\n`;
 const SEPARATOR = "\t";
 
 export type Note = { date: string; text: string };
@@ -69,14 +70,33 @@ export function formatNotes(notes: Note[]): string {
 	return HEADER + notes.map(({ date, text }) => `- ${date}: ${text}\n`).join("");
 }
 
-function validate(notes: Note[]) {
-	if (notes.length > MAX_ENTRIES || Buffer.byteLength(formatNotes(notes), "utf8") > MAX_BYTES)
-		throw new Error(`Memory is full (${MAX_ENTRIES} notes / ${MAX_BYTES} bytes). Replace or forget outdated notes first; nothing was discarded.`);
+/** Storage is not capped: these limits apply only to the startup index. */
+export function indexLimitError(notes: Note[]): string | undefined {
+	const bytes = Buffer.byteLength(formatNotes(notes), "utf8");
+	if (notes.length <= MAX_ENTRIES && bytes <= MAX_BYTES) return undefined;
+	return getPrompt("memory", "index-limit", { count: notes.length, maxEntries: MAX_ENTRIES, bytes, maxBytes: MAX_BYTES });
+}
+
+/** Load a complete-note prefix, reserving room for the overflow notice. */
+export function formatStartupNotes(notes: Note[]): string {
+	const warning = indexLimitError(notes);
+	if (!warning) return formatNotes(notes);
+	const notice = `\n${getPrompt("memory", "startup-overflow", { warning })}\n`;
+	let text = HEADER;
+	let bytes = Buffer.byteLength(text + notice, "utf8");
+	for (const note of notes.slice(0, MAX_ENTRIES)) {
+		const line = formatNotes([note]).slice(HEADER.length);
+		const size = Buffer.byteLength(line, "utf8");
+		if (bytes + size > MAX_BYTES) break;
+		text += line;
+		bytes += size;
+	}
+	return text + notice;
 }
 
 export function noteText(text: string | undefined): string {
 	const value = text?.trim();
-	if (!value || /[\r\n\x00-\x1f\x7f]/.test(value)) throw new Error("Supply a nonempty, single-line note without control characters.");
+	if (!value || /[\r\n\x00-\x1f\x7f]/.test(value)) throw new Error(getPrompt("memory", "invalid-note"));
 	return value;
 }
 
@@ -86,30 +106,38 @@ export function planChange(notes: Note[], action: Exclude<Action, "list">, text?
 	if (action === "remember") {
 		if (notes.some((note) => note.text === value)) return {};
 		const note = { date, text: value };
-		validate([...notes, note]);
 		return { add: note };
 	}
 
 	const target = action === "replace" ? noteText(previous) : value;
 	const matches = notes.flatMap((note, i) => note.text === target ? [i] : []);
-	if (matches.length !== 1) throw new Error("The exact note must match once. List or search current notes first.");
+	if (matches.length !== 1) throw new Error(getPrompt("memory", "missing-note"));
 
 	if (action === "forget") return { remove: target };
 
-	if (notes.some((note, i) => i !== matches[0] && note.text === value)) throw new Error("Replacement duplicates another note; forget the obsolete note instead.");
+	if (notes.some((note, i) => i !== matches[0] && note.text === value)) throw new Error(getPrompt("memory", "duplicate-note"));
 	const note = { date, text: value };
-	const next = notes.map((existing, i) => i === matches[0] ? note : existing);
-	validate(next);
 	return { remove: target, add: note };
 }
 
 export function searchNotes(notes: Note[], query: string): Note[] {
 	const terms = query.toLocaleLowerCase().split(/\s+/).filter(Boolean);
-	if (!terms.length) throw new Error("Supply at least one search term.");
+	if (!terms.length) throw new Error(getPrompt("memory", "missing-search-term"));
 	return notes.filter((note) => terms.every((term) => note.text.toLocaleLowerCase().includes(term)));
 }
 
 /** Keys are hashes, so read order comes from the date in the value. */
 export function sortNotes(notes: Note[]): Note[] {
 	return [...notes].sort((a, b) => a.date.localeCompare(b.date) || noteKey(a.text).localeCompare(noteKey(b.text)));
+}
+
+/** Stable, duplicate-free set diff; both date and text identify a stored note. */
+export function diffNotes(before: Note[], after: Note[]): string {
+	const lines = (notes: Note[]) => new Set(notes.map(({ date, text }) => `${date}: ${text}`));
+	const old = lines(before);
+	const next = lines(after);
+	return [
+		...[...old].filter((line) => !next.has(line)).sort().map((line) => `- ${line}`),
+		...[...next].filter((line) => !old.has(line)).sort().map((line) => `+ ${line}`),
+	].join("\n");
 }

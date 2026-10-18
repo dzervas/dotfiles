@@ -12,6 +12,7 @@
 import path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { HUMAN_INPUT_EVENT, type HumanInputEvent } from "./lib/human-input.ts";
+import { installSubagentLivenessHost, titleAnimation } from "./lib/subagent-liveness.ts";
 import { activeTaskSuffix, renderTasks, TODO_CHANGED_EVENT } from "./todo/state.ts";
 
 const INPUT_FRAMES = [" ", " "];
@@ -26,10 +27,12 @@ export function getBaseTitle(pi: Pick<ExtensionAPI, "getSessionName">): string {
 }
 
 export default function (pi: ExtensionAPI) {
+	const childState = installSubagentLivenessHost();
+	let childTimer: ReturnType<typeof setInterval> | undefined;
+	let subscriptions: Array<() => void> = [];
 	let timer: ReturnType<typeof setInterval> | undefined;
 	let frameIndex = 0;
 	let uiCtx: ExtensionContext | undefined;
-	let working = false;
 	let animation: "idle" | "working" | "waiting" = "idle";
 	const waiting = new Set<symbol>();
 
@@ -42,7 +45,7 @@ export default function (pi: ExtensionAPI) {
 
 	function updateAnimation() {
 		if (!uiCtx) return;
-		const next = waiting.size ? "waiting" : working ? "working" : "idle";
+		const next = titleAnimation(waiting.size > 0, !uiCtx.isIdle(), childState(uiCtx.sessionManager.getSessionId()));
 		if (next !== animation) {
 			if (timer) clearInterval(timer);
 			timer = undefined;
@@ -58,40 +61,52 @@ export default function (pi: ExtensionAPI) {
 		renderTitle();
 	}
 
-	pi.events.on(TODO_CHANGED_EVENT, renderTitle);
-	pi.events.on(HUMAN_INPUT_EVENT, (value) => {
-		const event = value as HumanInputEvent;
-		if (event.waiting) waiting.add(event.id);
-		else waiting.delete(event.id);
-		updateAnimation();
-	});
+	function resetActivity() {
+		if (childTimer) clearInterval(childTimer);
+		childTimer = undefined;
+		for (const unsubscribe of subscriptions) unsubscribe();
+		subscriptions = [];
+		if (timer) clearInterval(timer);
+		timer = undefined;
+		animation = "idle";
+		frameIndex = 0;
+		waiting.clear();
+	}
 
 	pi.on("session_start", (_event, ctx) => {
 		if (ctx.mode !== "tui") return;
+		resetActivity();
 		uiCtx = ctx;
+		subscriptions = [
+			pi.events.on(TODO_CHANGED_EVENT, renderTitle),
+			pi.events.on(HUMAN_INPUT_EVENT, (value) => {
+				const event = value as HumanInputEvent;
+				if (event.waiting) waiting.add(event.id);
+				else waiting.delete(event.id);
+				updateAnimation();
+			}),
+		];
+		// The versioned host callback is designed to be sampled, not event-based.
+		// It includes quiet detached/nested work even after agent_settled.
+		childTimer = setInterval(updateAnimation, 250);
+		childTimer.unref?.();
 		updateAnimation();
 	});
 
 	pi.on("agent_start", (_event, ctx) => {
 		if (ctx.mode !== "tui") return;
 		uiCtx = ctx;
-		working = true;
 		updateAnimation();
 	});
 
 	pi.on("agent_settled", (_event, ctx) => {
 		if (ctx.mode !== "tui") return;
-		working = false;
 		updateAnimation();
 	});
 
 	pi.on("session_shutdown", (_event, ctx) => {
 		if (ctx.mode !== "tui") return;
-		if (timer) clearInterval(timer);
-		timer = undefined;
-		animation = "idle";
-		working = false;
-		waiting.clear();
+		resetActivity();
 		renderTitle();
 		uiCtx = undefined;
 	});

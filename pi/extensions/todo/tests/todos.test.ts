@@ -29,7 +29,7 @@ type Handler = (event: unknown, ctx: ExtensionContext) => unknown;
 type Result = { code: number; stdout: string; stderr?: string };
 type Call = { command: string; args: string[]; options: { cwd: string; timeout: number } };
 const envelope = (data: unknown[]): Result => ({ code: 0, stdout: JSON.stringify({ schema_version: 1, data }) });
-const claimed = (title: string) => ({ id: "test-1", title, status: "in_progress", issue_type: "task" });
+const claimed = (title: string, assignee: string) => ({ id: "test-1", title, status: "in_progress", issue_type: "task", assignee });
 
 function deferred<T>() {
 	let resolve!: (value: T) => void;
@@ -47,7 +47,11 @@ function harness(t: test.TestContext, workspace = true) {
 	}
 	// A user's explicit workspace override must not affect temporary fixtures.
 	const beadsDir = process.env.BEADS_DIR;
+	const previousActor = process.env.BEADS_ACTOR;
+	const previousChild = process.env.PI_SUBAGENT_CHILD;
+	const actor = `pi:${root}`;
 	delete process.env.BEADS_DIR;
+	delete process.env.PI_SUBAGENT_CHILD;
 	const commands = new Map<string, Command>();
 	const tools = new Map<string, Tool>();
 	const handlers = new Map<string, Handler[]>();
@@ -55,7 +59,7 @@ function harness(t: test.TestContext, workspace = true) {
 	const calls: Call[] = [];
 	let human = "  ○ test-2  Raw human list\n    nested detail\n";
 	let humanFailure: Result | Error | undefined;
-	let active = claimed("Initial claim");
+	let active = claimed("Initial claim", actor);
 	let query = async (): Promise<Result> => envelope([active]);
 	const ctx = {
 		cwd,
@@ -82,7 +86,7 @@ function harness(t: test.TestContext, workspace = true) {
 			assert.deepEqual(args.slice(0, 2), ["BD_JSON_ENVELOPE=1", "bd"]);
 			assert.deepEqual(options, { cwd, timeout: 5000 });
 			if (args.includes("--json")) return query();
-			assert.deepEqual(args, ["BD_JSON_ENVELOPE=1", "bd", "list"]);
+			assert.deepEqual(args, ["BD_JSON_ENVELOPE=1", "bd", "list", "--assignee", actor]);
 			if (humanFailure instanceof Error) throw humanFailure;
 			return humanFailure ?? { code: 0, stdout: human };
 		},
@@ -96,9 +100,13 @@ function harness(t: test.TestContext, workspace = true) {
 		fs.rmSync(root, { recursive: true, force: true });
 		if (beadsDir === undefined) delete process.env.BEADS_DIR;
 		else process.env.BEADS_DIR = beadsDir;
+		if (previousActor === undefined) delete process.env.BEADS_ACTOR;
+		else process.env.BEADS_ACTOR = previousActor;
+		if (previousChild === undefined) delete process.env.PI_SUBAGENT_CHILD;
+		else process.env.PI_SUBAGENT_CHILD = previousChild;
 	});
 	return {
-		calls, notices, cwd,
+		calls, notices, cwd, actor,
 		get human() { return human; },
 		set human(value: string) { human = value; },
 		set humanFailure(value: Result | Error) { humanFailure = value; },
@@ -116,6 +124,7 @@ const humanCalls = (calls: Call[]) => calls.filter(({ args }) => !args.includes(
 test("/todos awaits a forced fresh refresh before running human bd list", async (t) => {
 	const h = harness(t);
 	await h.start();
+	assert.equal(process.env.BEADS_ACTOR, h.actor);
 	assert.equal(beadsSnapshot()?.claimed.title, "Initial claim");
 	const initialQueries = h.calls.length;
 	const refresh = deferred<Result>();
@@ -131,12 +140,13 @@ test("/todos awaits a forced fresh refresh before running human bd list", async 
 		assert.equal(humanCalls(h.calls).length, 0, "human list must wait for refresh");
 		assert.deepEqual(h.notices, []);
 	} finally {
-		refresh.resolve(envelope([claimed("Fresh claim")]));
+		refresh.resolve(envelope([claimed("Fresh claim", h.actor)]));
 		await command;
 	}
 	assert.equal(beadsSnapshot()?.claimed.title, "Fresh claim", "refresh must parse the envelope data");
 	assert.equal(humanCalls(h.calls).length, 1);
 	assert.ok(h.notices.at(-1)?.text.includes(h.human.trimEnd()));
+	assert.ok(h.notices.at(-1)?.text.includes(`Beads owned by ${h.actor}`));
 });
 
 test("/todos shows raw human stdout alongside populated session todos", async (t) => {

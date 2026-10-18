@@ -10,14 +10,14 @@ import type {
 	ExtensionContext,
 	ToolCallEventResult,
 } from "@earendil-works/pi-coding-agent";
+import { getPrompt } from "../lib/prompts.ts";
 import { askPermission } from "./ask";
 import { askReasons, type PermissionSubject } from "./types";
 
 const ALLOWED_CUSTOM_TOOLS = new Set(["questionnaire", "todo", "codemode", "tool_search", "memory", "memory_search"]);
 
-const ENTERED_MESSAGE =
-	"Read mode is on. Investigate and answer without changing anything: edit and write are blocked, and bash commands that write or cannot be classified as read-only need the user's approval.";
-const LEFT_MESSAGE = "Read mode is off. Changes are allowed again under the usual permission rules.";
+const ENTERED_MESSAGE = getPrompt("permissions", "read-mode-entered");
+const LEFT_MESSAGE = getPrompt("permissions", "read-mode-left");
 
 type ReadModeState = {
 	enabled: boolean;

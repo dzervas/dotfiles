@@ -9,6 +9,7 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { getPrompt } from "./prompts.ts";
 
 /** customType marker for the (invisible) turn-trigger message. */
 export const RESUME_CUSTOM_TYPE = "continue-resume";
@@ -67,7 +68,7 @@ export function triggerResume(pi: ExtensionAPI, isIdle: boolean, hasPendingMessa
 	pi.sendMessage(
 		{
 			customType: RESUME_CUSTOM_TYPE,
-			content: "Continue.",
+			content: getPrompt("continue", "resume"),
 			display: false,
 		},
 		{ triggerTurn: true },

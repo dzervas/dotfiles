@@ -10,6 +10,7 @@ import {
 	STATE_TYPE,
 	stripToolLog,
 	stubFor,
+	suggestionThreshold,
 } from "../lib/context-squash.ts";
 
 const base = (id: string) => ({ id, parentId: null, timestamp: "2026-10-14T00:00:00.000Z" });
@@ -41,6 +42,18 @@ function result(id: string, text: string, extra: Record<string, unknown> = {}): 
 }
 
 const big = "line\n".repeat(400);
+
+for (const [window, threshold] of [
+	[128_000, 108_800],
+	[256_000, 217_600],
+	[870_000, 805_000],
+	[1_000_000, 935_000],
+	[1_050_000, 985_000],
+]) {
+	test(`suggestion threshold for ${window} tokens is ${threshold}`, () => {
+		assert.equal(suggestionThreshold(window), threshold);
+	});
+}
 
 test("squashes outputs but keeps short errors, unseen and already edited results", () => {
 	const branch = [

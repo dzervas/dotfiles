@@ -1,13 +1,20 @@
 // Pure logic for context-squash.ts. No runtime imports from pi so node tests can load it;
 // the token estimator is injected (the extension passes pi's own estimateTokens).
 import type { SessionBoundaryDraft, SessionEntry } from "@earendil-works/pi-coding-agent";
+import { getPrompt } from "./prompts.ts";
 
 type AgentMessage = Extract<SessionEntry, { type: "message" }>["message"];
 
 export const STATE_TYPE = "context-squash";
 export const NUDGE_TYPE = "context-squash-nudge";
-export const SUGGEST_RATIO = 0.85;
+const SUGGEST_RATIO = 0.85;
+const MAX_REMAINING_TOKENS = 65_000;
 export const TARGET_RATIO = 0.5;
+
+/** Trigger with at most 15% of the window or 65k tokens left, whichever is smaller. */
+export function suggestionThreshold(contextWindow: number): number {
+	return Math.max(contextWindow * SUGGEST_RATIO, contextWindow - MAX_REMAINING_TOKENS);
+}
 export const KEEP_ERROR_CHARS = 2000;
 export const ARG_CHARS = 80;
 const LOG_OPEN = "<tool-call-log>";
@@ -73,7 +80,7 @@ function nestedLines(result: ToolResult | undefined): string[] {
 }
 
 export function stubFor(result: ToolResult): string {
-	return [`[${result.toolName} output squashed: ${outcome(result)}; re-run the tool if you need it]`, ...nestedLines(result)].join(
+	return [getPrompt("context-squash", "output-stub", { toolName: result.toolName, outcome: outcome(result) }), ...nestedLines(result)].join(
 		"\n",
 	);
 }
@@ -163,7 +170,7 @@ export function formatToolLog(branch: SessionEntry[], firstKeptEntryId: string, 
 			lines.push([`- ${block.name}(${truncateArgs(block.arguments)}) → ${outcome(result)}`, ...nestedLines(result)].join("\n"));
 		}
 	}
-	const header = "Tool calls made before this point (arguments truncated, outputs not kept):";
+	const header = getPrompt("context-squash", "tool-log-header");
 	const tokens = (text: string) => Math.ceil(text.length / 4);
 	// Fixed overhead plus room for the "… N earlier calls omitted" line.
 	let used = tokens(`${LOG_OPEN}\n${header}\n${LOG_CLOSE}`) + 10;

@@ -49,7 +49,7 @@
   '';
 
   piPackages = [
-    "npm:@gotgenes/pi-subagents@23.4.0"
+    "npm:pi-subagents@0.79.1"
     "npm:pi-cliproxyapi-provider@0.15.58"
     {
       source = "git:github.com/mattpocock/skills@v1.3.1";
@@ -62,50 +62,29 @@
     }
   ];
   piPackagesSources = map (p: p.source or p) piPackages;
-
-  piSettings = rec {
-    quietStartup = true;
-    collapseChangelog = true;
-    enableInstallTelemetry = false;
-    showHardwareCursor = true;
-    showCacheMissNotices = true;
-    transport = "auto";
-    tuiMode = "regular";
-    outputPad = 0;
-    cacheWarming = "idle";
-    theme = "dark-classic"; # pre-v1 dark palette, see pi/themes/
-    terminal = {
-      showTerminalProgress = true;
-      clearOnShrink = true;
-    };
-    warnings.anthropicExtraUsage = false;
-
-    packages = piPackages;
-    defaultTools = [ "+codemode" ]; # "+tool_search" results in busted cache when tools change
-    # native-tools.ts loads the same factories in CLI and SDK child sessions.
-    extensions = [
-      "-builtin:mcp"
-      "-builtin:codemode"
-      "-builtin:tool-search"
-    ];
-    npmCommand = [ "${nodejs}/bin/npm" ];
-
-    pi-cliproxyapi-provider = {
-      gpt56ContextWindow = "full"; # 1M context for GPT 5.6/6
-      modelOverrides."gpt-6.1-sol".contextWindow = 1050000; # Not updated yet?
-    };
-
-    defaultModel = builtins.elemAt enabledModels 0;
-    defaultProvider = "cpa";
-    defaultThinkingLevel = "medium";
-    enabledModels = [
-      "claude-opus-5-5"
-      "gpt-6.1-sol"
-      "gpt-6-astra"
-      "claude-fable-5-1"
-      "qwen-flash-next"
-    ];
-  };
+  # Nix settings share the same catalogue as the TypeScript extensions.
+  piExtensionPrompt = extension: marker: let
+    sections = lib.splitString "=== ext:${extension} ${marker} ===\n" (
+      builtins.readFile ../pi/extensions/prompts.md
+    );
+  in assert builtins.length sections == 2;
+  lib.trim (builtins.head (lib.splitString "\n=== ext:" (builtins.elemAt sections 1)));
+  # Extend bundled roles without maintaining copies of their prompts.
+  piSubagentReadTools = [
+    "read"
+    "grep"
+    "find"
+    "ls"
+    "bash"
+    "contact_supervisor"
+    "background_jobs"
+    "codemode"
+    "mcp:vresto"
+    "mcp:context7"
+    "mcp:mcp-gateway"
+    "todo"
+    "memory_search"
+  ];
 
   piExtensionBump = pkgs.writeShellApplication {
     name = "pi-extension-bump";
@@ -211,9 +190,6 @@ in {
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/global_agents.md";
       ".pi/agent/sandbox.ts".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/sandbox.ts";
-      # Claude Code's subagents, overriding pi-subagents' built-ins by name.
-      ".pi/agent/agents".source =
-        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/agents";
       ".pi/agent/extensions".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/extensions";
       ".pi/agent/skills".source =
@@ -221,12 +197,6 @@ in {
       ".pi/agent/themes".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/themes";
       ".pi/agent/node_modules".source = piExtensionNodeModules + "/node_modules";
-      ".pi/agent/subagents.json".text = builtins.toJSON {
-        maxConcurrent = 16;
-        consumedSessionRetentionMinutes = 4 * 60;
-        unconsumedSessionRetentionMinutes = 24 * 60;
-        abortAllOnInterrupt = false;
-      };
       ".codex/AGENTS.md".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/pi/global_agents.md";
       ".codex/skills/global".source =
@@ -250,7 +220,135 @@ in {
         typescript
       ];
 
-      settings = piSettings;
+      settings = rec {
+        quietStartup = true;
+        collapseChangelog = true;
+        enableInstallTelemetry = false;
+        showHardwareCursor = true;
+        showCacheMissNotices = true;
+        transport = "auto";
+        tuiMode = "regular";
+        outputPad = 0;
+        cacheWarming = "idle";
+        theme = "dark-classic"; # pre-v1 dark palette, see pi/themes/
+        terminal = {
+          showTerminalProgress = true;
+          clearOnShrink = true;
+        };
+        warnings.anthropicExtraUsage = false;
+
+        packages = piPackages;
+        defaultTools = [ "+codemode" ]; # "+tool_search" results in busted cache when tools change
+        # native-tools.ts loads the same factories in CLI and SDK child sessions.
+        extensions = [
+          "-builtin:mcp"
+          "-builtin:codemode"
+          "-builtin:tool-search"
+        ];
+        npmCommand = [ "${nodejs}/bin/npm" ];
+
+        pi-cliproxyapi-provider = {
+          gpt56ContextWindow = "full"; # 1M context for GPT 5.6/6
+          modelOverrides."gpt-6.1-sol".contextWindow = 1050000; # Not updated yet?
+        };
+
+        subagents = {
+          defaultProvider = "cpa";
+          defaultModel = "cpa/gpt-6.1-sol";
+          defaultThinking = "medium";
+          # Sol handles parallel execution; Opus is the independent planning/review
+          # tier. These are workload defaults, not locks: per-run overrides still win.
+          agentOverrides = lib.mapAttrs
+            (
+              _: role:
+              { inheritProjectContext = true; inheritGlobalContext = true; inheritSkills = true; }
+              // role
+            )
+            {
+              scout = {
+                model = "cpa/gpt-6.1-sol";
+                thinking = "low";
+                # Upstream scout writes context files; retain that alongside our tools.
+                tools = piSubagentReadTools ++ [ "write" ];
+              };
+              delegate = {
+                model = "cpa/gpt-6.1-sol";
+                thinking = "medium";
+                # Grant bounded nested delegation without copying the bundled prompt.
+                allowNestedSubagents = true;
+                tools = piSubagentReadTools ++ [
+                  "edit"
+                  "write"
+                  "memory"
+                ];
+              };
+              worker = {
+                model = "cpa/gpt-6.1-sol";
+                thinking = "high";
+              };
+              reviewer = {
+                model = "cpa/claude-opus-5-5";
+                thinking = "high";
+              };
+              oracle = {
+                model = "cpa/claude-opus-5-5";
+                thinking = "high";
+                tools = piSubagentReadTools;
+              };
+              # Bundled research prompts require pi-web-access. Use our existing
+              # Vresto MCP instead, without installing a second search provider.
+              researcher = {
+                model = "cpa/gpt-6.1-sol";
+                thinking = "medium";
+                tools = [
+                  "read"
+                  "codemode"
+                  "mcp:vresto"
+                  "contact_supervisor"
+                ];
+                systemPrompt = piExtensionPrompt "subagents" "researcher" + "\n";
+              };
+              evidence-auditor = {
+                model = "cpa/claude-opus-5-5";
+                thinking = "high";
+                tools = [
+                  "read"
+                  "codemode"
+                  "mcp:vresto"
+                  "contact_supervisor"
+                ];
+                systemPrompt = piExtensionPrompt "subagents" "evidence-auditor" + "\n";
+              };
+            };
+          # Foreground children do not load ambient extensions. Use the same tool
+          # providers and fail-closed permission hooks in both execution modes.
+          # MCP/codemode come from the child's SDK; loading native-tools duplicates them.
+          defaultExtensions =
+            (map (name: "${config.home.homeDirectory}/.pi/agent/extensions/${name}") [
+              "permissions.ts"
+              "permission-prompt.ts"
+              "protected-paths.ts"
+              "background-bash.ts"
+              "todo/index.ts"
+              "memory/index.ts"
+              "local-context.ts"
+            ])
+            ++ [
+              "${config.home.homeDirectory}/.pi/agent/npm/node_modules/pi-cliproxyapi-provider/extensions/index.ts"
+            ];
+        };
+
+        defaultModel = builtins.elemAt enabledModels 0;
+        defaultProvider = "cpa";
+        defaultThinkingLevel = "medium";
+        enabledModels = [
+          "claude-opus-5-5"
+          "openai-codex/gpt-6.1-sol"
+          "openai-codex/gpt-6-astra"
+          "claude-fable-5-1"
+          "qwen-flash-next"
+        ];
+      };
     };
   };
 
@@ -261,6 +359,8 @@ in {
     settings = {
       engine = "parakeet";
       osd.frontend = "quickshell";
+      text.spoken_punctuation = true;
+      audio.max_duration_secs = 600;
 
       hotkey = {
         enabled = false;

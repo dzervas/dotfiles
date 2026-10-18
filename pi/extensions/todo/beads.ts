@@ -4,12 +4,13 @@
  * the extension never writes to beads. Also the agent guidance injected into
  * sessions started in a beads workspace.
  *
- * The snapshot is repository state, not session state, so it lives outside the
- * replayed per-session todo store and is never persisted in tool results.
+ * The foreground snapshot is filtered to the parent team's BEADS_ACTOR;
+ * it lives outside the replayed todo store and is never persisted in tool results.
  */
 
 import fs from "node:fs";
 import path from "node:path";
+import { getPrompt } from "../lib/prompts.ts";
 
 export type BeadState = "closed" | "in_progress" | "ready" | "blocked";
 
@@ -34,6 +35,7 @@ export interface RawIssue {
 	status: string;
 	issue_type: string;
 	parent?: string;
+	assignee?: string;
 }
 
 /** The subset of `pi.exec` used, so tests can substitute a fake `bd`. */
@@ -42,6 +44,23 @@ export type Exec = (
 	args: string[],
 	options: { cwd: string; timeout: number },
 ) => Promise<{ code: number; stdout: string; stderr?: string }>;
+
+/** One actor per parent; print-mode SDK and detached children keep its environment. */
+export function setParentBeadsActor(
+	sessionId: string,
+	mode: string,
+	parentSession?: string,
+	env: NodeJS.ProcessEnv = process.env,
+): string | undefined {
+	const interactiveParent = mode === "tui" || mode === "rpc";
+	// Native SDK children run in print mode without PI_SUBAGENT_CHILD. Their
+	// header normally names the parent; an inherited pi: actor also covers
+	// children of an unpersisted parent. Detached runners set the child marker.
+	const child = env.PI_SUBAGENT_CHILD === "1" ||
+		(!interactiveParent && (Boolean(parentSession) || env.BEADS_ACTOR?.startsWith("pi:")));
+	if (!child) env.BEADS_ACTOR = `pi:${sessionId}`;
+	return env.BEADS_ACTOR;
+}
 
 /** pi.exec has no env option; env sets envelope mode without changing Pi's process. */
 export function execBd(exec: Exec, cwd: string, args: string[]) {
@@ -108,9 +127,10 @@ async function bdJson(exec: Exec, cwd: string, args: string[]): Promise<RawIssue
 }
 
 /** Undefined when nothing is claimed or `bd` fails. */
-export async function fetchBeads(exec: Exec, cwd: string): Promise<BeadsSnapshot | undefined> {
-	const active = await bdJson(exec, cwd, ["list", "--status", "in_progress", "--brief", "-n", "0"]);
-	const claimed = active && pickClaimed(active);
+export async function fetchBeads(exec: Exec, cwd: string, actor: string): Promise<BeadsSnapshot | undefined> {
+	if (!actor) return undefined;
+	const active = await bdJson(exec, cwd, ["list", "--status", "in_progress", "--assignee", actor, "--brief", "-n", "0"]);
+	const claimed = active && pickClaimed(active.filter((issue) => issue.assignee === actor));
 	if (!claimed) return undefined;
 	const epicId = claimed.issue_type === "epic" ? claimed.id : claimed.parent;
 	if (!epicId) return buildSnapshot(claimed, undefined, [], []);
@@ -128,44 +148,7 @@ export async function fetchBeads(exec: Exec, cwd: string): Promise<BeadsSnapshot
  * the instruction files `bd init` would write, which assume other agents and
  * conflict with the todo and memory tools.
  */
-export const BEADS_GUIDANCE = `# Beads
-
-This repository tracks durable work in beads (\`bd\`), a dependency-aware issue tracker. Add \`--json\` when parsing its output.
-
-- Take work from \`bd ready --exclude-type epic --exclude-label human\` with \`bd update <id> --claim\`; the claimed bead is the unit of work, and the todo tool tracks the steps inside it. Keep the two separate: beads never become todos, todos never become beads.
-- File work discovered outside the claimed bead's scope as \`needs-triage\` (see Triage roles) and leave it for the user.
-- Durable facts go to the memory tool; bd's \`remember\` and \`prime\` duplicate it and stay unused.
-- Sync (\`bd dolt push\`/\`pull\`) and beads configuration change only when the user asks.
-
-## Issue tracker for engineering skills
-
-This section is the repository's issue-tracker and triage-label configuration for skills such as to-spec, to-tickets, triage, implement-spec, wayfinder, and code-review. It replaces \`docs/agents/issue-tracker.md\` and \`docs/agents/triage-labels.md\`, which are intentionally absent: treat the tracker as configured and skip \`/setup-matt-pocock-skills\`.
-
-- Publish: \`bd create "Title" -t task|feature|bug|epic --stdin\` with the body on stdin. A spec is an epic; its tickets take \`--parent <spec-id>\`. Children inherit the parent's labels unless created with \`--no-inherit-labels\`.
-- Fetch: \`bd show <id> --json --include-comments\`. List: \`bd list --json [-l <label>] [-s <status>]\`.
-- Comment: \`bd comments add <id> "..."\`. Labels: \`bd update <id> --add-label X --remove-label Y\`.
-- Blocking: \`--deps <blocker-id>\` on create, or \`bd dep add\`. A bead is ready once every blocker is closed.
-- Close: \`bd close <id> -r "<reason>"\`. Work lands on the branch without PRs, and PRs are not a request surface.
-
-Triage roles map to beads as follows:
-
-| Role | Beads |
-| --- | --- |
-| \`ready-for-agent\` | status \`open\`, no role label |
-| \`ready-for-human\` | status \`open\`, label \`human\` |
-| \`needs-triage\` | status \`blocked\`, label \`needs-triage\` (\`bd create ... -s blocked -l needs-triage\`) |
-| \`needs-info\` | status \`blocked\`, label \`needs-info\` |
-| \`wontfix\` | closed with label \`wontfix\` |
-
-Leaving triage: swap the role label and set \`-s open\` (or close it for \`wontfix\`).
-
-Wayfinding operations:
-
-- Map: an epic labelled \`wayfinder:map\`; find it with \`bd list -t epic -l wayfinder:map\`. Its notes hold Decisions-so-far.
-- Child ticket: \`bd create ... --parent <map> --no-inherit-labels -l wayfinder:<type>\` (\`research\`, \`prototype\`, \`grilling\`, or \`task\`).
-- Blocking: \`--deps <blocker-id>\`. Frontier: \`bd ready --parent <map>\`, first listed wins.
-- Claim: \`bd update <id> --claim\` before any work.
-- Resolve: \`bd comments add <id> "<answer>"\`, \`bd close <id> -r resolved\`, then \`bd update <map> --append-notes "<gist> (<id>)"\`.`;
+export const BEADS_GUIDANCE = getPrompt("todo", "beads-guidance");
 
 /** Session entry recording the beads section frozen into the system prompt ("" for none). */
 export const GUIDANCE_ENTRY = "todo-beads-guidance";

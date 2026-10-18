@@ -4,7 +4,7 @@ import { basename, join } from "node:path";
 import test, { type TestContext } from "node:test";
 import { DatabaseSync } from "node:sqlite";
 import { agentProfile, applyChange, DEFAULT_FREQUENCY_MS, gate, memoryNamespace, parseFrequencyMs, readNotes, shouldSync, sync, syncIfDue, type Runner } from "./atuin.ts";
-import { noteKey, planChange } from "./store.ts";
+import { MAX_BYTES, MAX_ENTRIES, encodeNote, formatNotes, formatStartupNotes, indexLimitError, noteKey, planChange, searchNotes, sortNotes } from "./store.ts";
 
 async function fixture(t: TestContext) {
 	const directory = await mkdtemp(join(process.cwd(), ".memory-test-"));
@@ -23,7 +23,7 @@ function fakeRunner(entries: Map<string, string>, remote?: string, syncOk = fals
 		const [action, , ns, ...positional] = rest; // kv <action> -n <namespace> [-k] <key> [value]
 		const keyFlag = positional.indexOf("-k");
 		const key = keyFlag >= 0 ? positional[keyFlag + 1] : positional[0];
-		const value = keyFlag >= 0 ? positional[keyFlag + 1] : positional[1];
+		const value = keyFlag >= 0 ? positional[keyFlag + 2] : positional[1];
 		const id = `${ns}\0${key}`;
 		if (action === "list") return { stdout: [...entries.keys()].filter((entry) => entry.startsWith(`${ns}\0`)).map((entry) => entry.slice(ns.length + 1)).join("\n"), code: 0 };
 		if (action === "get") return entries.has(id) ? { stdout: `${entries.get(id)}\n`, code: 0 } : { stdout: "", code: 0 };
@@ -53,10 +53,67 @@ test("reads decode values and a change issues exactly the kv ops it implies", as
 
 	await applyChange(runner, ns, planChange(notes, "replace", "Prefer Fish scripts", "Prefer Fish", "2026-10-03"));
 	assert.deepEqual(calls.slice(3), [
-		["atuin", "kv", "delete", "-n", ns, noteKey("Prefer Fish")],
 		["atuin", "kv", "set", "-n", ns, "-k", noteKey("Prefer Fish scripts"), "2026-10-03\tPrefer Fish scripts"],
+		["atuin", "kv", "delete", "-n", ns, noteKey("Prefer Fish")],
 	]);
 	assert.ok(!entries.has(`${ns}\0${noteKey("Prefer Fish")}`));
+});
+
+test("failed replacement writes leave the original intact, and same-text edits retain the key", async () => {
+	const ns = "pi/global";
+	const original = { date: "2026-10-18", text: "original" };
+	const { runner, entries } = fakeRunner(new Map([[`${ns}\0${noteKey(original.text)}`, encodeNote(original)]]));
+	const failed: Runner = (command, args) => args[1] === "set"
+		? Promise.resolve({ code: 1, stdout: "", stderr: "disk full" }) : runner(command, args);
+	await assert.rejects(applyChange(failed, ns, planChange([original], "replace", "edited", original.text)), /set failed/);
+	assert.deepEqual(await readNotes(runner, ns), [original]);
+	await applyChange(runner, ns, planChange([original], "replace", original.text, original.text, "2026-10-19"));
+	assert.equal(entries.size, 1);
+	assert.deepEqual(await readNotes(runner, ns), [{ ...original, date: "2026-10-19" }]);
+});
+
+test("count overflow is persisted in full, and deleting back to the limit clears the warning", async () => {
+	const ns = "pi/global";
+	const initial = Array.from({ length: MAX_ENTRIES }, (_, i) => ({ date: "2026-10-01", text: `stored note ${i}` }));
+	const { runner, entries } = fakeRunner(new Map(initial.map((note) => [`${ns}\0${noteKey(note.text)}`, encodeNote(note)])));
+	const added = { date: "2026-10-02", text: "overflow note" };
+	await applyChange(runner, ns, planChange(await readNotes(runner, ns), "remember", added.text, undefined, added.date));
+	const overflowing = await readNotes(runner, ns);
+	assert.deepEqual(overflowing, sortNotes([...initial, added]));
+	assert.equal(entries.size, MAX_ENTRIES + 1);
+	assert.ok(indexLimitError(overflowing));
+	assert.deepEqual(searchNotes(overflowing, "overflow"), [added]);
+	formatStartupNotes(overflowing);
+	assert.deepEqual(await readNotes(runner, ns), overflowing); // rendering never evicts stored entries
+
+	await applyChange(runner, ns, planChange(overflowing, "forget", added.text));
+	const recovered = await readNotes(runner, ns);
+	assert.deepEqual(recovered, sortNotes(initial));
+	assert.equal(indexLimitError(recovered), undefined);
+	assert.equal(formatStartupNotes(recovered), formatNotes(recovered));
+});
+
+test("oversized multibyte notes survive writes and reads, and shortening clears the warning", async () => {
+	const ns = "pi/global";
+	const { runner, entries } = fakeRunner(new Map());
+	const date = "2026-10-02";
+	const text = "🦊π".repeat(MAX_BYTES);
+	await applyChange(runner, ns, planChange([], "remember", text, undefined, date));
+	const overflowing = await readNotes(runner, ns);
+	assert.deepEqual(overflowing, [{ date, text }]);
+	assert.equal(entries.get(`${ns}\0${noteKey(text)}`), encodeNote({ date, text }));
+	assert.ok(indexLimitError(overflowing));
+	assert.deepEqual(searchNotes(overflowing, "🦊π"), overflowing);
+	assert.ok(Buffer.byteLength(formatStartupNotes(overflowing)) <= MAX_BYTES);
+	assert.deepEqual(await readNotes(runner, ns), overflowing);
+
+	await applyChange(runner, ns, planChange(overflowing, "replace", "short note", text, "2026-10-03"));
+	const recovered = await readNotes(runner, ns);
+	assert.deepEqual(recovered, [{ date: "2026-10-03", text: "short note" }]);
+	assert.equal(entries.size, 1);
+	assert.ok(!entries.has(`${ns}\0${noteKey(text)}`));
+	assert.equal(indexLimitError(recovered), undefined);
+	assert.equal(formatStartupNotes(recovered), formatNotes(recovered));
 });
 
 test("sync failure is a warning, not a lost write", async () => {
@@ -90,6 +147,14 @@ test("the sync gate mirrors atuin's own: auto_sync, logged in, and frequency ela
 	assert.equal(parseFrequencyMs("30s"), 30000);
 	assert.equal(parseFrequencyMs("0"), 0);
 	assert.equal(parseFrequencyMs("garbage"), DEFAULT_FREQUENCY_MS);
+});
+
+test("the gate honors a quoted non-default sync frequency", async (t) => {
+	const directory = await fixture(t);
+	await writeFile(join(directory, "config.toml"), 'sync_frequency = "30s"\nauto_sync = false\n');
+	const configured = gate({ ATUIN_CONFIG_DIR: directory, ATUIN_DATA_DIR: directory });
+	assert.equal(configured.frequencyMs, 30_000);
+	assert.equal(configured.autoSync, false);
 });
 
 test("syncIfDue reads the gate from the profile, not the network", async (t) => {

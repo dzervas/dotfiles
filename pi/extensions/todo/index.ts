@@ -10,6 +10,7 @@
 import { StringEnum } from "@earendil-works/pi-ai";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
+import { getPrompt } from "../lib/prompts.ts";
 import {
 	applyWrite,
 	counts,
@@ -34,18 +35,19 @@ import {
 	GUIDANCE_ENTRY,
 	hasBeadsWorkspace,
 	recordedGuidance,
+	setParentBeadsActor,
 	setBeadsSnapshot,
 	setUnclaimedParents,
 } from "./beads.js";
 
 const TaskSchema = Type.Object({
-	subject: Type.String({ description: "Short imperative task line, e.g. 'Add the parser test'." }),
+	subject: Type.String({ description: getPrompt("todo", "parameter-subject") }),
 	status: StringEnum(["pending", "in_progress", "completed"] as const),
 });
 
 const ParamsSchema = Type.Object({
 	tasks: Type.Array(TaskSchema, {
-		description: "The complete task list. It replaces the stored one, so omitted tasks are dropped.",
+		description: getPrompt("todo", "parameter-tasks"),
 	}),
 });
 
@@ -70,21 +72,23 @@ export default function todoExtension(pi: ExtensionAPI): void {
 	// widget: at its start, after each agent run, and after bash calls running
 	// `bd`. `beadsCwd` is that session's directory, unset when there is none.
 	let beadsCwd: string | undefined;
+	let beadsActor: string | undefined;
 	let beadsRefresh = Promise.resolve();
 	const bdCalls = new Set<string>();
 	const refreshBeads = () => {
 		// Serialized so a slow earlier fetch cannot overwrite a newer one.
 		beadsRefresh = beadsRefresh.then(async () => {
 			const cwd = beadsCwd;
+			const actor = beadsActor;
 			const snapshot =
-				cwd !== undefined && hasBeadsWorkspace(cwd)
-					? await fetchBeads((...args) => pi.exec(...args), cwd).catch(() => undefined)
+				cwd !== undefined && actor && hasBeadsWorkspace(cwd)
+					? await fetchBeads((...args) => pi.exec(...args), cwd, actor).catch(() => undefined)
 					: undefined;
 			const parents =
 				!snapshot && cwd !== undefined && hasBeadsWorkspace(cwd)
 					? await fetchUnclaimedParents((...args) => pi.exec(...args), cwd).catch(() => [])
 					: [];
-			if (cwd !== beadsCwd) return;
+			if (cwd !== beadsCwd || actor !== beadsActor) return;
 			setBeadsSnapshot(snapshot);
 			setUnclaimedParents(parents);
 			widget?.update();
@@ -105,13 +109,12 @@ export default function todoExtension(pi: ExtensionAPI): void {
 	pi.registerTool({
 		name: "todo",
 		label: "Todo",
-		description:
-			"Track multi-step work as a task list. Send the complete list every time: it replaces the stored one, and omitted tasks are dropped. One call can create, reorder, update, and drop tasks at once.",
-		promptSnippet: "Track multi-step work as a task list",
+		description: getPrompt("todo", "description"),
+		promptSnippet: getPrompt("todo", "snippet"),
 		promptGuidelines: [
-			"Use todo for work with 3+ steps or when the user hands you a list of tasks; skip it for trivial single-step and conversational requests.",
-			"Every todo call replaces the whole list: resend every task you still want and omit a task only when you mean to drop it.",
-			"Keep at most one task in_progress; set each status explicitly, including completed when its work is done.",
+			getPrompt("todo", "guideline-when"),
+			getPrompt("todo", "guideline-replace"),
+			getPrompt("todo", "guideline-status"),
 		],
 		parameters: ParamsSchema,
 
@@ -150,7 +153,7 @@ export default function todoExtension(pi: ExtensionAPI): void {
 	});
 
 	pi.registerCommand("todos", {
-		description: "Show current todos and fresh beads status; refresh the widget",
+		description: "Show current todos and this parent team's beads; refresh the widget",
 		handler: async (_args, ctx) => {
 			await refreshBeads();
 			const tasks = getTasks(sid(ctx));
@@ -159,11 +162,12 @@ export default function todoExtension(pi: ExtensionAPI): void {
 			const cwd = ctx.cwd ?? process.cwd();
 			if (hasBeadsWorkspace(cwd)) {
 				try {
-					const result = await execBd((...args) => pi.exec(...args), cwd, ["list"]);
+					if (!beadsActor) throw new Error("parent Beads actor is unavailable");
+					const result = await execBd((...args) => pi.exec(...args), cwd, ["list", "--assignee", beadsActor]);
 					if (result.code !== 0) {
 						ctx.ui.notify(`bd list failed: ${result.stderr || result.stdout || `exit ${result.code}`}`, "error");
 					} else {
-						sections.push(result.stdout.trimEnd());
+						sections.push(`Beads owned by ${beadsActor}\n${result.stdout.trimEnd()}`);
 					}
 				} catch (error) {
 					ctx.ui.notify(`bd list failed: ${String(error)}`, "error");
@@ -185,6 +189,7 @@ export default function todoExtension(pi: ExtensionAPI): void {
 	pi.on("session_start", async (_event, ctx) => {
 		const session = ifLive(() => {
 			const id = sid(ctx);
+			beadsActor = setParentBeadsActor(id, ctx.mode, ctx.sessionManager.getHeader?.()?.parentSession);
 			setTasks(id, replay(ctx));
 			let text = recordedGuidance(ctx.sessionManager.getBranch());
 			if (text === undefined) {
@@ -200,6 +205,8 @@ export default function todoExtension(pi: ExtensionAPI): void {
 			widget = new TodoWidget();
 		}
 		setRenderSession(session);
+		setBeadsSnapshot(undefined);
+		setUnclaimedParents([]);
 		pi.events.emit(TODO_CHANGED_EVENT, undefined);
 		widget.setUICtx(ctx.ui);
 		widget.update();
@@ -231,6 +238,7 @@ export default function todoExtension(pi: ExtensionAPI): void {
 			widget?.dispose();
 			widget = undefined;
 			beadsCwd = undefined;
+			beadsActor = undefined;
 			setBeadsSnapshot(undefined);
 			setUnclaimedParents([]);
 			setRenderSession("");

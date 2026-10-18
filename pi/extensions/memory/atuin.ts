@@ -84,13 +84,14 @@ export async function readNotes(runner: Runner, ns: string): Promise<Note[]> {
 }
 
 export async function applyChange(runner: Runner, ns: string, change: Change): Promise<void> {
-	if (change.remove) {
-		const result = await runner("atuin", ["kv", "delete", "-n", ns, noteKey(change.remove)]);
-		if (result.code !== 0) throw new Error(`atuin kv delete failed: ${result.stderr ?? `exit ${result.code}`}`);
-	}
+	// Save the replacement first so a failed edit cannot delete the original.
 	if (change.add) {
 		const result = await runner("atuin", ["kv", "set", "-n", ns, "-k", noteKey(change.add.text), encodeNote(change.add)]);
 		if (result.code !== 0) throw new Error(`atuin kv set failed: ${result.stderr ?? `exit ${result.code}`}`);
+	}
+	if (change.remove && change.remove !== change.add?.text) {
+		const result = await runner("atuin", ["kv", "delete", "-n", ns, noteKey(change.remove)]);
+		if (result.code !== 0) throw new Error(`atuin kv delete failed: ${result.stderr ?? `exit ${result.code}`}`);
 	}
 }
 
@@ -100,7 +101,7 @@ export async function sync(runner: Runner): Promise<string | undefined> {
 	return result.code === 0 ? undefined : result.stderr?.trim() || `sync failed (exit ${result.code})`;
 }
 
-export function memoryNamespace(runner: Runner, scope: Scope, cwd: string, home = homedir()): Promise<string> {
+export async function memoryNamespace(runner: Runner, scope: Scope, cwd: string, home = homedir()): Promise<string> {
 	const root = projectRoot(cwd, home);
 	if (scope === "global") return namespace(scope, root);
 	return remoteUrl(runner, root).then((remote) => namespace(scope, root, remote));
@@ -110,7 +111,7 @@ function readConfig(configDir: string): { autoSync: boolean; syncFrequency?: str
 	let text = "";
 	try { text = readFileSync(join(configDir, "config.toml"), "utf8"); } catch { return { autoSync: true }; }
 	const value = (key: string) => new RegExp(`^${key}\\s*=\\s*(.+)$`, "m").exec(text)?.[1]?.trim();
-	return { autoSync: value("auto_sync") !== "false", syncFrequency: value("sync_frequency")?.replace(/^"|"$/g) };
+	return { autoSync: value("auto_sync") !== "false", syncFrequency: value("sync_frequency")?.replace(/^"|"$/g, "") };
 }
 
 function metaValues(dataDir: string, keys: string[]): Record<string, string> {

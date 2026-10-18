@@ -85,7 +85,7 @@ Prefer dedicated read/search/edit tools over shell equivalents when available. P
 
 ### CodeGraph
 
-On large codebases, use CodeGraph when relationships between code elements matter, such as:
+On large codebases, use the CodeGraph cli (`codegraph node <symbol>`, `codegraph explore`, etc.) when relationships between code elements matter, such as:
 
 * callers and callees,
 * symbol relationships,
