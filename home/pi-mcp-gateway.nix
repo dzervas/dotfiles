@@ -15,7 +15,7 @@
       description = "Web search, fetch, research and crawler";
       pi = true;
       exposure = "direct";
-      url = "http://127.0.0.1:27777/mcp";
+      url = "https://mcp.vpn.dzerv.art/vresto";
     }
 
     {

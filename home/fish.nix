@@ -29,6 +29,8 @@
 
       # ${pkgs.devenv}/bin/devenv hook fish | source
 
+      test -f ~/.config/op/plugins.sh && source ~/.config/op/plugins.sh
+
       if not set -q __FISH_KEYRING_INITIALIZED
         set -gx __FISH_KEYRING_INITIALIZED 1
         exec ${pkgs.keyutils}/bin/keyctl session - ${pkgs.runtimeShell} -c '

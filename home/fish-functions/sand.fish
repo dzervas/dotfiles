@@ -142,23 +142,23 @@ bwrap \
     --ro-bind $HOME/.pi/agent/extensions $HOME/.pi/agent/extensions \
     --ro-bind $HOME/.pi/agent/skills $HOME/.pi/agent/skills \
     --ro-bind-try $HOME/.pi/agent/themes $HOME/.pi/agent/themes \
-    --ro-bind $HOME/.pi/agent/pi-cliproxyapi-provider $HOME/.pi/agent/pi-cliproxyapi-provider \
+    --ro-bind-try $HOME/.pi/agent/pi-cliproxyapi-provider $HOME/.pi/agent/pi-cliproxyapi-provider \
     --ro-bind $HOME/.pi/agent/AGENTS.md $HOME/.pi/agent/AGENTS.md \
     --bind $HOME/.pi/agent/sessions $HOME/.pi/agent/sessions \
     --ro-bind $HOME/.config/atuin-agent $HOME/.config/atuin-agent \
     --bind $HOME/.local/share/atuin-agent $HOME/.local/share/atuin-agent \
     --bind $HOME/.pi/agent/auth.json $HOME/.pi/agent/auth.json \
     --bind $HOME/.pi/agent/mcp.json $HOME/.pi/agent/mcp.json \
-    --bind $HOME/.pi/agent/mcp-auth.json $HOME/.pi/agent/mcp-auth.json \
+    --bind-try $HOME/.pi/agent/mcp-auth.json $HOME/.pi/agent/mcp-auth.json \
     --bind-try $HOME/.pi/dashboard $HOME/.pi/dashboard \
     --ro-bind-try $HOME/.cache/pi-mcp-gateway/authorization $HOME/.cache/pi-mcp-gateway/authorization \
     --bind $HOME/.pi/agent/run-history.jsonl $HOME/.pi/agent/run-history.jsonl \
     --ro-bind-try $HOME/.pi/agent/sandbox.ts $HOME/.pi/agent/sandbox.ts \
     --bind $project_mount_dir $project_mount_dir \
-    --bind $HOME/.config/gcx $HOME/.config/gcx \
+    --bind-try $HOME/.config/gcx $HOME/.config/gcx \
     --ro-bind $HOME/.config/jj $HOME/.config/jj \
     --ro-bind $HOME/.config/git $HOME/.config/git \
-    --ro-bind $HOME/.config/gh-agent $HOME/.config/gh-agent \
+    --ro-bind-try $HOME/.config/gh-agent $HOME/.config/gh-agent \
     --ro-bind $HOME/.config/fish $HOME/.config/fish \
     $bwrap_mounts \
     $bwrap_env \
