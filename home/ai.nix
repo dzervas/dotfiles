@@ -184,6 +184,7 @@ in {
     sessionVariables = {
       OPENSPEC_TELEMETRY = 0;
       PI_SKIP_VERSION_CHECK = 1;
+      BEADS_DOLT_SERVER_TLS = 1;
     };
     file = {
       ".pi/agent/AGENTS.md".source =
@@ -383,6 +384,18 @@ in {
       pkgs.quickshell
       pkgs.voxtype-onnx
     ];
+  };
+
+  xdg.configFile."bd/config.yaml".source = (pkgs.formats.yaml {}).generate "bd-config.yaml" {
+    metrics.disabled = true;
+    no-git-ops = true;
+    dolt = {
+      mode = "server";
+      host = "dolt.vpn.dzerv.art";
+      port = 3306;
+      user = "beads";
+      # shared-server = true;
+    };
   };
 
   xdg.dataFile."voxtype/quickshell".source = "${pkgs.voxtype-onnx.src}/quickshell";

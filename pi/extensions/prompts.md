@@ -225,44 +225,57 @@ distinguish verified facts from inference, and report contradictions and gaps.
 === ext:todo beads-guidance ===
 # Beads
 
-This repository tracks durable work in beads (`bd`), a dependency-aware issue tracker. Add `--json` when parsing its output.
+Track durable work in beads (`bd`); use todos for steps inside the claimed ticket. Add `--json` when parsing output.
 
-- `BEADS_ACTOR` identifies this parent session and all its subagents as one team. Keep that inherited identity unchanged; use normal `bd` commands without overriding actor or assignee.
-- Take authorized work from `bd ready --exclude-type epic --exclude-label human` with `bd update <id> --claim`; the claimed bead is the unit of work, and the todo tool tracks the steps inside it. Keep the two separate: beads never become todos, todos never become beads.
-- Before claiming, inspect the bead's assignee/status. If it is already in progress for `$BEADS_ACTOR`, continue under that team claim rather than claiming again. Helpers contribute to the parent's claimed work; claim a separate ticket only when the delegated task explicitly assigns it. Another actor's live claim is not yours to take.
-- File work discovered outside the claimed bead's scope as `needs-triage` (see Triage roles) and leave it for the user.
-- Durable facts go to the memory tool; bd's `remember` and `prime` duplicate it and stay unused.
-- Sync (`bd dolt push`/`pull`) and beads configuration change only when the user asks.
+## Ownership
 
-## Issue tracker for engineering skills
+- `BEADS_ACTOR` identifies this session and its subagents as one team. Preserve that identity.
+- Inspect assignee/status before claiming with `bd update <id> --claim`. Continue existing team claims; never take another actor's live claim. Helpers retain the parent's claim unless explicitly assigned a separate ticket.
+- Record out-of-scope discoveries as separate tickets, checking for duplicates first. Create them implementation-ready when understood, otherwise with `needs-context`. Discovery does not authorize expanding the current task.
+- Durable facts go to memory; bd's `remember` and `prime` stay unused.
+- Sync (`bd dolt push`/`pull`) and beads configuration changes require a user request.
 
-This section is the repository's issue-tracker and triage-label configuration for skills such as to-spec, to-tickets, triage, implement-spec, wayfinder, and code-review. It replaces `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md`, which are intentionally absent: treat the tracker as configured and skip `/setup-matt-pocock-skills`.
+## Readiness
 
-- Publish: `bd create "Title" -t task|feature|bug|epic --stdin` with the body on stdin. A spec is an epic; its tickets take `--parent <spec-id>`. Children inherit the parent's labels unless created with `--no-inherit-labels`.
-- Fetch: `bd show <id> --json --include-comments`. List: `bd list --json [-l <label>] [-s <status>]`.
-- Comment: `bd comments add <id> "..."`. Labels: `bd update <id> --add-label X --remove-label Y`.
-- Blocking: `--deps <blocker-id>` on create, or `bd dep add`. A bead is ready once every blocker is closed.
-- Close: `bd close <id> -r "<reason>"`. Work lands on the branch without PRs, and PRs are not a request surface.
-
-Triage roles map to beads as follows:
-
-| Role | Beads |
+| Status / label | Meaning |
 | --- | --- |
-| `ready-for-agent` | status `open`, no role label |
-| `ready-for-human` | status `open`, label `human` |
-| `needs-triage` | status `blocked`, label `needs-triage` (`bd create ... -s blocked -l needs-triage`) |
-| `needs-info` | status `blocked`, label `needs-info` |
-| `wontfix` | closed with label `wontfix` |
+| `open`, no routing label | Ready for implementation, subject to dependencies |
+| `open` + `needs-context` | Ready for an agent to flesh out |
+| `blocked` + `needs-info` | Needs essential information or a decision unavailable to the agent |
+| `open` + `human` | Requires human execution |
+| `in_progress` | Claimed for contextualization or implementation |
+| `closed` + `wontfix` | Deliberately declined |
 
-Leaving triage: swap the role label and set `-s open` (or close it for `wontfix`).
+A title-only capture is valid with `needs-context`. This means insufficient description, scope, or understanding—not mandatory internet research or human approval. Routine implementation exploration needs no special label.
 
-Wayfinding operations:
+Select authorized work from `bd ready --exclude-type epic --exclude-label human`. General work may include either queue; implementation-only selection adds `--exclude-label needs-context`, while contextualization selects tickets
+bearing that label.
 
-- Map: an epic labelled `wayfinder:map`; find it with `bd list -t epic -l wayfinder:map`. Its notes hold Decisions-so-far.
-- Child ticket: `bd create ... --parent <map> --no-inherit-labels -l wayfinder:<type>` (`research`, `prototype`, `grilling`, or `task`).
-- Blocking: `--deps <blocker-id>`. Frontier: `bd ready --parent <map>`, first listed wins.
-- Claim: `bd update <id> --claim` for authorized work not already claimed by this team; helpers retain the parent's claim.
-- Resolve: `bd comments add <id> "<answer>"`, `bd close <id> -r resolved`, then `bd update <map> --append-notes "<gist> (<id>)"`.
+For `needs-context`, claim the ticket and inspect relevant code, docs, and evidence. Record the problem or intended outcome, scope, acceptance criteria, and useful implementation pointers. Distinguish facts from hypotheses; ask
+the user only for essential missing intent or information.
+
+When ready, remove `needs-context`. Continue authorized implementation under the claim, or return to `open` and clear your own assignee for handoff. If essential input is unavailable, replace the label with `needs-info`, set
+`blocked`, and record the exact question. Restore readiness when answered. Preserve genuine dependency blockers. Preparing a ticket does not complete it.
+
+Include legacy `needs-triage` tickets when scanning for contextualization work, even if blocked. When taking one up, replace the label with `needs-context` and clear only triage-related blocking; preserve genuine blockers and
+others' claims.
+
+## Engineering skills
+
+This is the tracker configuration for engineering skills; it replaces the intentionally absent `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md`. Skip `/setup-matt-pocock-skills`.
+
+Map skill roles: `ready-for-agent` → implementation-ready; `ready-for-human` → `human`; `needs-triage` → `needs-context`.
+
+- Specs are epics; children use `--parent <spec-id>`. Labels inherit unless `--no-inherit-labels`; ensure readiness labels fit each child.
+- Fetch context with `bd show <id> --json --include-comments`.
+- Record blockers with dependencies (`--deps` or `bd dep add`).
+- Close completed work with `bd close <id> -r "<reason>"`. Work lands on the branch without PRs.
+
+## Wayfinding
+
+Find maps with `bd list -t epic -l wayfinder:map`; map notes hold Decisions-so-far. Children use `--parent <map> --no-inherit-labels -l wayfinder:<type>` (`research`, `prototype`, `grilling`, `task`).
+
+Select the first ticket from `bd ready --parent <map>`, applying readiness rules before implementation. On resolution, comment the answer, close the child, and append the gist and child ID to the map's notes.
 
 === ext:todo description ===
 Track multi-step work as a task list. Send the complete list every time: it replaces the stored one, and omitted tasks are dropped. One call can create, reorder, update, and drop tasks at once.
