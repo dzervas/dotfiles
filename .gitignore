@@ -51,6 +51,7 @@
 !pi/benchmarks/memory
 !pi/benchmarks/memory/*.py
 !pi/skills
+!pi/themes
 !pi/extensions/lib
 !pi/extensions/tests
 !pi/extensions/memory
