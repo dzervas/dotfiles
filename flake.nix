@@ -76,7 +76,7 @@
     packages = eachDefaultSystemPassThrough (system: {
       ${system} = let
         pkgs = nixpkgs.legacyPackages.${system};
-        overlay = import ./overlays;
+        overlay = lib.composeExtensions (import ./overlays) (import ./overlays/opencode-desktop inputs.opencode);
       in overlay (pkgs.extend overlay) pkgs;
     });
   };
@@ -101,6 +101,10 @@
       nixpkgs.follows = "nixpkgs";
       rust-overlay.follows = "rust-overlay";
     };
+
+    # The official v2 flake owns Desktop/CLI packaging and dependency hashes.
+    opencode.url = "github:anomalyco/opencode/v2.1.1"; # flake-update:^v2\.\d+\.\d+$
+    opencode.inputs.nixpkgs.follows = "nixpkgs";
 
     # Home stuff
     stylix.url = "github:danth/stylix";

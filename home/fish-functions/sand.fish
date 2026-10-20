@@ -92,6 +92,11 @@ if string match -q "$HOME/Lab/work/*" -- $project_dir
 end
 set -l sandbox_id (printf '%s' $project_dir | sha256sum | cut -d' ' -f1)
 set -l sandbox_home "$HOME/.cache/pi/sandboxes/$sandbox_id/home"
+set -l opencode_cache "$HOME/.cache"
+set -q XDG_CACHE_HOME; and test -n "$XDG_CACHE_HOME"; and set opencode_cache "$XDG_CACHE_HOME"
+set -l opencode_home "$opencode_cache/opencode-sandboxes/$sandbox_id/home"
+set -l opencode_config "$HOME/.config/opencode"
+set -q XDG_CONFIG_HOME; and test -n "$XDG_CONFIG_HOME"; and set opencode_config "$XDG_CONFIG_HOME/opencode"
 set -l dotfiles_extensions_dir "$HOME/Lab/dotfiles/pi/extensions"
 set -l sandbox_extension "$dotfiles_extensions_dir/sandbox.ts"
 mkdir -p $sandbox_home
@@ -107,6 +112,7 @@ for name in $unshared_env_vars
 end
 
 mkdir -p $sandbox_home/.pi/agent/extensions $sandbox_home/.config/{jj,git} $HOME/.local/share/atuin-agent
+mkdir -p $opencode_home/{.config/opencode,.local/share/opencode,.local/state/opencode,.cache/opencode}; or return 1
 
 # Native MCP OAuth state stays writable in this persistent sandbox home.
 # Keep host keyrings and Docker sockets outside the sandbox, and give the agent only its own
@@ -119,42 +125,47 @@ bwrap \
     --dev /dev \
     --tmpfs /tmp \
     --ro-bind /nix/store /nix/store \
-    --ro-bind /run/binfmt /run/binfmt \
+    --ro-bind-try /run/binfmt /run/binfmt \
     --ro-bind /bin /bin \
     --ro-bind /usr/bin /usr/bin \
     --ro-bind /etc/nix /etc/nix \
     --ro-bind /etc/static /etc/static \
     --ro-bind /etc/ssl /etc/ssl \
-    --ro-bind /etc/resolv.conf /etc/resolv.conf \
     --ro-bind /etc/hosts /etc/hosts \
     --ro-bind /etc/nsswitch.conf /etc/nsswitch.conf \
     --ro-bind /etc/protocols /etc/protocols \
     --ro-bind /etc/services /etc/services \
-    --ro-bind /etc/passwd /etc/passwd \
-    --ro-bind /etc/group /etc/group \
+    --ro-bind-data 3 /etc/resolv.conf \
+    --ro-bind-data 4 /etc/passwd \
+    --ro-bind-data 5 /etc/group \
     --ro-bind /run/current-system/sw /run/current-system/sw \
-    --ro-bind /etc/profiles/per-user/$USER/ /etc/profiles/per-user/$USER/ \
+    --ro-bind-try /etc/profiles/per-user/$USER /etc/profiles/per-user/$USER \
     --bind $sandbox_home $HOME \
+    --bind $project_mount_dir $project_mount_dir \
+    --ro-bind $HOME/.config/atuin-agent $HOME/.config/atuin-agent \
+    --bind $HOME/.local/share/atuin-agent $HOME/.local/share/atuin-agent \
+    --ro-bind-try $HOME/.cache/pi-mcp-gateway/authorization $HOME/.cache/pi-mcp-gateway/authorization \
     --ro-bind $HOME/.pi/agent/settings.json $HOME/.pi/agent/settings.json \
     --ro-bind $HOME/.pi/agent/models.json $HOME/.pi/agent/models.json \
     --ro-bind $HOME/.pi/agent/node_modules $HOME/.pi/agent/node_modules \
     --ro-bind $HOME/.pi/agent/npm $HOME/.pi/agent/npm \
     --ro-bind $HOME/.pi/agent/extensions $HOME/.pi/agent/extensions \
     --ro-bind $HOME/.pi/agent/skills $HOME/.pi/agent/skills \
+    --ro-bind $HOME/.pi/agent/AGENTS.md $HOME/.pi/agent/AGENTS.md \
     --ro-bind-try $HOME/.pi/agent/themes $HOME/.pi/agent/themes \
     --ro-bind-try $HOME/.pi/agent/pi-cliproxyapi-provider $HOME/.pi/agent/pi-cliproxyapi-provider \
-    --ro-bind $HOME/.pi/agent/AGENTS.md $HOME/.pi/agent/AGENTS.md \
     --bind $HOME/.pi/agent/sessions $HOME/.pi/agent/sessions \
-    --ro-bind $HOME/.config/atuin-agent $HOME/.config/atuin-agent \
-    --bind $HOME/.local/share/atuin-agent $HOME/.local/share/atuin-agent \
     --bind $HOME/.pi/agent/auth.json $HOME/.pi/agent/auth.json \
     --bind $HOME/.pi/agent/mcp.json $HOME/.pi/agent/mcp.json \
     --bind-try $HOME/.pi/agent/mcp-auth.json $HOME/.pi/agent/mcp-auth.json \
     --bind-try $HOME/.pi/dashboard $HOME/.pi/dashboard \
-    --ro-bind-try $HOME/.cache/pi-mcp-gateway/authorization $HOME/.cache/pi-mcp-gateway/authorization \
     --bind $HOME/.pi/agent/run-history.jsonl $HOME/.pi/agent/run-history.jsonl \
     --ro-bind-try $HOME/.pi/agent/sandbox.ts $HOME/.pi/agent/sandbox.ts \
-    --bind $project_mount_dir $project_mount_dir \
+    --bind $opencode_home/.config/opencode $HOME/.config/opencode \
+    --ro-bind-try $opencode_config $HOME/.config/opencode \
+    --bind $opencode_home/.local/share/opencode $HOME/.local/share/opencode \
+    --bind $opencode_home/.local/state/opencode $HOME/.local/state/opencode \
+    --bind $opencode_home/.cache/opencode $HOME/.cache/opencode \
     --bind-try $HOME/.config/gcx $HOME/.config/gcx \
     --ro-bind $HOME/.config/jj $HOME/.config/jj \
     --ro-bind $HOME/.config/git $HOME/.config/git \
@@ -168,4 +179,4 @@ bwrap \
     --setenv GH_CONFIG_DIR $HOME/.config/gh-agent \
     --setenv ATUIN_CONFIG_DIR $HOME/.config/atuin-agent \
     --setenv ATUIN_DATA_DIR $HOME/.local/share/atuin-agent \
-    -- bash $pi_args
+    -- bash $pi_args 3</etc/resolv.conf 4</etc/passwd 5</etc/group

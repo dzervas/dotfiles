@@ -41,6 +41,14 @@
 !overlays/compact-nix.py
 !overlays/pi-dashboard
 !overlays/pi-dashboard/*.json
+!overlays/opencode-desktop
+!overlays/opencode-desktop/extension
+!overlays/opencode-desktop/tests
+!overlays/opencode-desktop/memory
+!overlays/opencode-desktop/**/*.ts
+!overlays/opencode-desktop/**/*.js
+!overlays/opencode-desktop/**/*.jsx
+!overlays/opencode-desktop/*.fish
 !pi
 !pi/*.json
 !pi/extensions

@@ -1,4 +1,4 @@
-{ config, inputs, lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   imports = [
     ./1password.nix
     ./ai.nix
@@ -17,6 +17,7 @@
     ./ghostty.nix
     ./neovim
     ./options.nix
+    ./pi.nix
     ./recording-sign.nix
     ./starship.nix
     ./ssh.nix
@@ -29,15 +30,12 @@
 
   programs = {
     home-manager.enable = true;
-    # mpv.enable = true;
     mullvad-vpn.enable = true;
     nix-index.enable = true;
     satty.enable = true;
     zoxide.enable = true;
-    zed-editor = {
-      enable = true;
-      # package = inputs.nixpkgs-master.legacyPackages.x86_64-linux.zed-editor;
-    };
+    zed-editor.enable = true;
+    # mpv.enable = true;
 
     #   npm = {
     #     enable = true;
@@ -52,10 +50,7 @@
     #   };
   };
 
-  xdg.configFile = {
-    "nixpkgs/config.nix".text = "{ allowUnfree = true; }";
-    katerc.source = ./katerc;
-  };
+  xdg.configFile."nixpkgs/config.nix".text = "{ allowUnfree = true; }";
 
   systemd.user.tmpfiles.rules = [
     "L ${config.xdg.configHome}/zed/settings.json - - - - ${config.home.homeDirectory}/Lab/dotfiles/home/zed/settings.json"
@@ -104,30 +99,18 @@
       # (tree-sitter.withPlugins (p: builtins.attrValues p))
 
       (lib.mkIf config.setup.isLaptop powertop)
-      (lib.mkIf (!config.setup.isLaptop) plasticity)
 
       cameractrls-gtk4
-      # voxtype
-      # n8n-cli
-      # playwright-cli
-
       anytype-cli
-
-      # ladybird # broken
-      # warp-terminal
       zenity
     ];
 
-    sessionVariables = {
-      TERMINAL = config.setup.terminal;
-      GCX_KEYCHAIN = "off"; # bwrap breaks it
-    };
+    sessionVariables.TERMINAL = config.setup.terminal;
   };
 
   services = {
     kdeconnect.enable = true;
     keybase.enable = true;
-    # flameshot.enable = true;
 
     # Disable gnome-keyring's ssh component to avoid conflicts with ssh-agent
     gnome-keyring.components = [ "secrets" ];
@@ -152,8 +135,3 @@
   # Enable the mid-click paste to gsettings-based apps (e.g. ghostty)
   dconf.settings."org/gnome/desktop/interface".gtk-enable-primary-paste = true;
 }
-
-# ZMK building
-# p run -it --rm -v $(pwd):/config --workdir /config zmkfirmware/zmk-build-arm:stable
-# west init -l config
-# west update --fetch-opt=--filter=tree:0
