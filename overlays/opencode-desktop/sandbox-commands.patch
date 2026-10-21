@@ -41,3 +41,15 @@ index 416c0d0806..ee0dad3258 100644
  export const node = makeLocationNode({
    service: Service,
    layer,
+
+diff --git a/packages/cli/src/services/service-config.ts b/packages/cli/src/services/service-config.ts
+--- a/packages/cli/src/services/service-config.ts
++++ b/packages/cli/src/services/service-config.ts
+@@ -138,6 +138,7 @@
+     version: input.checkVersion ? OPENCODE_VERSION : undefined,
+     env: (yield* read()).env,
+     command: [
++      "@server@",
+       ...selfCommand(),
+       "serve",
+       "--service",

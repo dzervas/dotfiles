@@ -79,6 +79,7 @@
         plugins = map (name: "${config.home.homeDirectory}/Lab/dotfiles/opencode/plugins/${name}") [
           "memory"
           "beads"
+          "jj"
           "bad"
           "cache-watch"
         ];

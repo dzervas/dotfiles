@@ -20,6 +20,9 @@ export function agentProfile(env: NodeJS.ProcessEnv = process.env, home = homedi
 	if (env === process.env) {
 		env.ATUIN_CONFIG_DIR ??= profile.config;
 		env.ATUIN_DATA_DIR ??= profile.data;
+		// atuin sync migrates legacy history with current_context(), which requires
+		// ATUIN_SESSION; harness processes have no hooked shell.
+		env.ATUIN_SESSION ??= "agent-memory";
 	}
 	return profile;
 }

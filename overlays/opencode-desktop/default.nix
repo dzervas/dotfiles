@@ -10,8 +10,9 @@ opencode: final: _prev: let
     sand $argv
   '';
 
-  # Desktop's background service hosts every project, so it gets all of ~/Lab
-  # plus OpenCode's real state: Desktop discovers it through service.json.
+  # The background service hosts every project, so it gets all of ~/Lab plus
+  # OpenCode's real state. Whichever client starts it discovers it through
+  # service.json.
   server = final.writeScript "opencode-server" ''
     #!${lib.getExe final.fish} --no-config
     mkdir -p $HOME/.local/share/opencode $HOME/.local/state/opencode
@@ -28,7 +29,10 @@ opencode: final: _prev: let
   # Electron maps it to "prod" itself, so the native app identity stays the same.
   cli = upstream.opencode.overrideAttrs (oldAttrs: {
     env = oldAttrs.env // { OPENCODE_CHANNEL = "latest"; };
-    patches = (oldAttrs.patches or []) ++ [ (final.replaceVars ./sandbox-commands.patch { inherit sand; }) ];
+    # ensure() starts the service with the wrapper, so a CLI-started service is
+    # confined too. Wrapping the CLI instead would put the service inside the
+    # spawning CLI's sandbox, which dies with it.
+    patches = (oldAttrs.patches or []) ++ [ (final.replaceVars ./sandbox-commands.patch { inherit sand server; }) ];
   });
 in {
   opencode = cli;

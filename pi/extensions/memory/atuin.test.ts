@@ -135,6 +135,14 @@ test("no env means the agent profile, pinned so the CLI resolves to the same sto
 	assert.deepEqual(agentProfile({ ATUIN_CONFIG_DIR: "/c", ATUIN_DATA_DIR: "/d" }, "/home/u"), { config: "/c", data: "/d" });
 });
 
+test("pins a session so atuin sync can migrate history outside a hooked shell", () => {
+	const before = process.env.ATUIN_SESSION;
+	delete process.env.ATUIN_SESSION;
+	agentProfile(process.env, "/home/u");
+	assert.equal(process.env.ATUIN_SESSION, "agent-memory");
+	if (before === undefined) delete process.env.ATUIN_SESSION; else process.env.ATUIN_SESSION = before;
+});
+
 test("the sync gate mirrors atuin's own: auto_sync, logged in, and frequency elapsed", () => {
 	const gate = { autoSync: true, logged: true, lastSyncMs: 1000, frequencyMs: 300000 };
 	assert.equal(shouldSync(gate, 1000 + 300000), true);
