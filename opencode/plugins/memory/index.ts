@@ -2,9 +2,9 @@
 import { execFile } from "node:child_process";
 import { Plugin } from "@opencode/plugin";
 import { Schema } from "effect";
-import { getPrompt } from "../../pi/extensions/lib/prompts.ts";
-import { agentProfile, applyChange, memoryNamespace, readNotes, syncIfDue, type Runner } from "../../pi/extensions/memory/atuin.ts";
-import { formatNotes, formatStartupNotes, indexLimitError, planChange, searchNotes, type Scope } from "../../pi/extensions/memory/store.ts";
+import { getPrompt } from "../../../pi/extensions/lib/prompts.ts";
+import { agentProfile, applyChange, memoryNamespace, readNotes, syncIfDue, type Runner } from "../../../pi/extensions/memory/atuin.ts";
+import { formatNotes, formatStartupNotes, indexLimitError, planChange, searchNotes, type Scope } from "../../../pi/extensions/memory/store.ts";
 
 const scopes = ["global", "project"] as const;
 const ScopeInput = Schema.Literals(scopes);

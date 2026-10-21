@@ -45,7 +45,8 @@
 !overlays/opencode-desktop/*.patch
 !opencode
 !opencode/plugins
-!opencode/plugins/*.ts
+!opencode/plugins/*
+!opencode/plugins/*/*.ts
 !opencode/skills
 !opencode/skills/*
 !opencode/skills/**/*.md

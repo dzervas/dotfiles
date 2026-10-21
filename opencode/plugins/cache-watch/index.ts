@@ -3,7 +3,7 @@
 // misses go to the server log and the session's `cacheMisses` metadata.
 import { Plugin } from "@opencode/plugin/effect";
 import { Effect, Stream } from "effect";
-import { type Fingerprint, fingerprint, prefixChange } from "../../pi/extensions/lib/cache-prefix.ts";
+import { type Fingerprint, fingerprint, prefixChange } from "../../../pi/extensions/lib/cache-prefix.ts";
 
 // Anthropic's default cache lifetime: a longer idle gap explains a miss.
 const TTL_MS = 5 * 60_000;

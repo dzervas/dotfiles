@@ -76,8 +76,9 @@
           "AGENTS.local.md"
         ];
         # Loaded from the repo so their relative imports reach Pi's extension code.
-        plugins = map (name: "${config.home.homeDirectory}/Lab/dotfiles/opencode/plugins/${name}.ts") [
+        plugins = map (name: "${config.home.homeDirectory}/Lab/dotfiles/opencode/plugins/${name}") [
           "memory"
+          "beads"
           "bad"
           "cache-watch"
         ];
