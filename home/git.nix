@@ -14,7 +14,7 @@
       enableJujutsuIntegration = true;
       enableGitIntegration = true;
       options = {
-        side-by-side = true;
+        # side-by-side = true;
 
         true-color = "always";
         syntax-theme = "Monokai Extended";
@@ -165,70 +165,100 @@
           "stash()" = ''bookmarks(glob:"stash/*") | tags(glob:"stash/*") | description(glob:"Stash: *")'';
         };
 
-        aliases =
-        let
+        aliases = let
           # fish has no $0, so a trailing "" would become $argv[1] and shift
           # every user arg one slot right (unlike bash, where it becomes $0).
-          command = cmd: ["util" "exec" "--" "fish" "-c" cmd];
-        in
-        {
-          d = ["diff" "all() ~ glob:\"**/*.lock\""]; # Exclude *.lock files
-          s = ["status"];
-          ll = ["log" "-r" "::"];
-          tug = [ "bookmark" "advance" "--to" "latest_non_empty()" ];
-          init = ["git" "init" "--colocate"];
-          sync = ["git" "fetch" "--all-remotes"];
+          command = cmd: [
+            "util"
+            "exec"
+            "--"
+            "fish"
+            "-c"
+            cmd
+          ];
+        in {
+          d = [
+            "diff"
+            "all() ~ glob:\"**/*.lock\""
+          ]; # Exclude *.lock files
+          s = [ "status" ];
+          ll = [
+            "log"
+            "-r"
+            "::"
+          ];
+          tug = [
+            "bookmark"
+            "advance"
+            "--to"
+            "latest_non_empty()"
+          ];
+          init = [
+            "git"
+            "init"
+            "--colocate"
+          ];
+          sync = [
+            "git"
+            "fetch"
+            "--all-remotes"
+          ];
 
           # Default command
           statuslog = command "jj status && echo && jj log --limit 5";
 
           # Committing and pushing
           acp = command ''
-            if test (count $argv) -eq "0"
-              echo "Please provide a commit description"
-              exit 1
-            end
+              if test (count $argv) -eq "0"
+                echo "Please provide a commit description"
+                exit 1
+              end
 
-            jj commit -m "$(string trim "$argv")"
-            jj push
-          '';
+              jj commit -m "$(string trim "$argv")"
+              jj push
+            '';
           oops = command "echo 'Going to squash on immutable and push. You sure?' && read && jj squash --ignore-immutable && jj push";
           pull = command ''
-            set -l previous_bookmark (jj log -r 'latest_non_empty()' -T 'self.bookmarks()' --no-graph --color=never)
-            jj sync
+              set -l previous_bookmark (jj log -r 'latest_non_empty()' -T 'self.bookmarks()' --no-graph --color=never)
+              jj sync
 
-            if test "$(jj log -r @ -T empty --no-graph --color never)" = "false"
-              echo "Dirty working copy - new manually"
-            else
-              jj new "$previous_bookmark"
-            end
-          '';
+              if test "$(jj log -r @ -T empty --no-graph --color never)" = "false"
+                echo "Dirty working copy - new manually"
+              else
+                jj new "$previous_bookmark"
+              end
+            '';
           push = command "jj tug && jj git push";
 
           get-ignore = command ''echo $argv - $argv[1] && curl -fsL "https://www.toptal.com/developers/gitignore/api/$argv[1]" >> .gitignore && echo "Appended to .gitignore" || echo "No gitignore found - check out https://gitignore.io";'';
           hub = command ''echo -n "$argv[1]" | grep -q / && jj git clone --colocate "git@github.com:$argv[1]" $argv[2] || jj git clone --colocate "git@github.com:dzervas/$argv[1]" $argv[2]'';
           repo = command "gh repo view --web";
           pr = [
-            "util" "exec" "--" "bash" "-c"
+            "util"
+            "exec"
+            "--"
+            "bash"
+            "-c"
             ''
-              export REVSET=''${1:-'@-'}
-              export HEAD_NAME=$(jj log -r "closest_bookmark($REVSET)" -T bookmarks --no-graph --color never)
-              [[ $HEAD_NAME == "main" || -z "$HEAD_NAME" ]] && { echo "Cannot create PR for main or unnamed branch"; exit 1; }
-              export PR_URL=$(gh pr list -H "$HEAD_NAME" --json url | jq -r 'first.url')
+                export REVSET=''${1:-'@-'}
+                export HEAD_NAME=$(jj log -r "closest_bookmark($REVSET)" -T bookmarks --no-graph --color never)
+                [[ $HEAD_NAME == "main" || -z "$HEAD_NAME" ]] && { echo "Cannot create PR for main or unnamed branch"; exit 1; }
+                export PR_URL=$(gh pr list -H "$HEAD_NAME" --json url | jq -r 'first.url')
 
-              if [[ "$PR_URL" == "null" ]]; then
-                echo "No PR found for $HEAD_NAME, createing..."
-                gh pr create --head "$HEAD_NAME" --web
-              else
-                if [ -t 1 ]; then
-                  echo "Opening existing PR for $HEAD_NAME:"
-                  echo "$PR_URL"
-                  xdg-open "$PR_URL"
+                if [[ "$PR_URL" == "null" ]]; then
+                  echo "No PR found for $HEAD_NAME, createing..."
+                  gh pr create --head "$HEAD_NAME" --web
                 else
-                  echo "$PR_URL"
+                  if [ -t 1 ]; then
+                    echo "Opening existing PR for $HEAD_NAME:"
+                    echo "$PR_URL"
+                    xdg-open "$PR_URL"
+                  else
+                    echo "$PR_URL"
+                  fi
                 fi
-              fi
-            '' ""
+              ''
+            ""
           ];
 
           grep = command ''jj log -r "diff_lines(regex:$argv[1])" $argv[2..]'';
@@ -237,14 +267,11 @@
 
         git.sign-on-push = true;
         remotes.origin.auto-track-bookmarks = "glob:*";
-        snapshot.max-new-file-size=4096000;
+        snapshot.max-new-file-size = 4096000;
 
         # sand sets CI=1 and deliberately excludes the 1Password signing agent.
         "--scope" = [
-          {
-            "--when".environments = [ "CI=1" ];
-            signing.behavior = "drop";
-          }
+          { "--when".environments = [ "CI=1" ]; signing.behavior = "drop"; }
         ];
 
         # Sign all commits owned by us
@@ -262,7 +289,8 @@
   };
 
   home.file = {
-    "${config.programs.git.settings.gpg.ssh.allowedSignersFile}".text = "dzervas@dzervas.gr ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj Dimitris Zervas";
+    "${config.programs.git.settings.gpg.ssh.allowedSignersFile}".text =
+      "dzervas@dzervas.gr ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMUrtMAAGoiU1XOUnw2toDLMKCrhWXPuH8VY9X79IRj Dimitris Zervas";
     ".config/forgejo-cli/client_ids".text = "git.vpn.dzerv.art 2da718ae-cb43-4d0c-88a0-9462abea3642";
   };
 }

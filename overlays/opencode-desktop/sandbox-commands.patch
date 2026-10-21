@@ -1,0 +1,43 @@
+diff --git a/packages/core/src/environment/environment.ts b/packages/core/src/environment/environment.ts
+index 416c0d0806..ee0dad3258 100644
+--- a/packages/core/src/environment/environment.ts
++++ b/packages/core/src/environment/environment.ts
+@@ -1,7 +1,8 @@
+ import { CrossSpawnSpawner } from "@opencode/util/cross-spawn-spawner"
+ import { makeLocationNode } from "@opencode/util/effect/app-node"
+ import { Context, Effect, Layer } from "effect"
+-import { ChildProcessSpawner } from "effect/process/ChildProcessSpawner"
++import { ChildProcess } from "effect/process"
++import { ChildProcessSpawner, make } from "effect/process/ChildProcessSpawner"
+ import type { Files } from "./files.js"
+ import { makeFiles } from "./index.js"
+ import { makeLocalDriver } from "./local.js"
+@@ -29,11 +30,27 @@ const layer = Layer.effect(
+           ),
+           Effect.orDie,
+         )
+-      : makeLocalDriver(spawner)
++      : makeLocalDriver(sandboxed(spawner, location.project.directory))
+     return Service.of({ files: makeFiles(driver), spawner: driver.spawner })
+   }),
+ )
+ 
++// The server can see every project, so each command it spawns is confined to
++// its own project with sand, which mounts its working directory. They share
++// the server's /tmp, where tools exchange files with it.
++const sandboxed = (spawner: ChildProcessSpawner["Service"], project: string) =>
++  make((command) => {
++    if (command._tag !== "StandardCommand") return Effect.die(new Error("Piped commands are not sandboxed"))
++    const cwd = command.options.cwd ?? project
++    return spawner.spawn(
++      ChildProcess.make(
++        "@sand@",
++        ["--bind", "/tmp:/tmp", "-c", 'cd "$1" && shift && exec "$@"', "--", "--", cwd, command.command, ...command.args],
++        { ...command.options, cwd: project },
++      ),
++    )
++  })
++
+ export const node = makeLocationNode({
+   service: Service,
+   layer,

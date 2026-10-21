@@ -367,6 +367,23 @@
         "type": "github"
       }
     },
+    "mattpocock-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791118085,
+        "narHash": "sha256-/mAmj7QFdyOWhLmy3Rt2/Hfsh5qwirTRax7hmQffFdo=",
+        "owner": "mattpocock",
+        "repo": "skills",
+        "rev": "24fe0ef7737efae15c87225755e9f6f5965e4888",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mattpocock",
+        "ref": "v1.3.1",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
     "niri": {
       "inputs": {
         "niri-stable": "niri-stable",
@@ -724,6 +741,7 @@
         "home-manager": "home-manager",
         "lanzaboote": "lanzaboote",
         "mango": "mango",
+        "mattpocock-skills": "mattpocock-skills",
         "niri": "niri",
         "nix-private": "nix-private",
         "nixos-hardware": "nixos-hardware",

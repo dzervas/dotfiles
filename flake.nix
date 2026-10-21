@@ -105,6 +105,8 @@
     # The official v2 flake owns Desktop/CLI packaging and dependency hashes.
     opencode.url = "github:anomalyco/opencode/v2.1.1"; # flake-update:^v2\.\d+\.\d+$
     opencode.inputs.nixpkgs.follows = "nixpkgs";
+    mattpocock-skills.url = "github:mattpocock/skills/v1.3.1"; # flake-update:^v\d+\.\d+\.\d+$
+    mattpocock-skills.flake = false;
 
     # Home stuff
     stylix.url = "github:danth/stylix";

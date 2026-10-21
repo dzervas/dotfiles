@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }: {
+{ config, inputs, lib, pkgs, ... }: {
   home = {
     packages = with pkgs; [
       lmstudio
@@ -28,7 +28,8 @@
         context7.url = "https://mcp.context7.com/mcp/oauth";
         mcp-gateway = {
           url = "http://127.0.0.1:8811/mcp";
-          headers.Authorization = "!cat ~/.cache/pi-mcp-gateway/authorization";
+          # OpenCode's config substitution; pi reads its own mcp.json
+          headers.Authorization = "{file:~/.cache/pi-mcp-gateway/authorization}";
         };
       };
     };
@@ -47,12 +48,25 @@
       enableMcpIntegration = true;
       context = ../pi/global_agents.md;
       skills = {
-        matt = "https://www.aihero.dev/skills.md";
-        pi = ../pi/skills;
+        # The same selection as Pi's git:github.com/mattpocock/skills@v1.3.1 package
+        matt = pkgs.runCommandLocal "mattpocock-skills" {} ''
+          mkdir $out
+          for skill in ${inputs.mattpocock-skills}/skills/{engineering,productivity}/*/; do
+            # grilling is replaced by the local forks
+            [[ $(basename $skill) == grilling ]] || cp -r $skill $out/
+          done
+        '';
+        # OpenCode's grilling fork asks with the question tool; Pi's uses questionnaire.
+        opencode = ../opencode/skills;
+        pi = builtins.path {
+          name = "pi-skills";
+          path = ../pi/skills;
+          filter = path: _: baseNameOf path != "grilling";
+        };
       };
 
       settings = {
-        model = "cliproxyapi/claude-opus-5.5";
+        model = "cliproxyapi-anthropic/claude-opus-5-5";
         snapshots = false;
         warming = true; # Keep cache warm for 30', https://opencode.ai/v2/docs/warming/
         worktree.directory = ".pi/worktrees";
@@ -60,6 +74,16 @@
         instructions = [
           "CONTRIBUTING.md"
           "AGENTS.local.md"
+        ];
+        # Loaded from the repo so their relative imports reach Pi's extension code.
+        plugins = map (name: "${config.home.homeDirectory}/Lab/dotfiles/opencode/plugins/${name}.ts") [
+          "memory"
+          "bad"
+          "cache-watch"
+        ];
+        # Applies to the read tool only; shell commands can still read .envrc.
+        policies = [
+          { action = "tool.use"; resource = "read:*.envrc"; effect = "deny"; }
         ];
 
         formatter.compact-nix = {
@@ -75,13 +99,21 @@
           subagent_depth = 2;
         };
 
-        providers.cliproxyapi = {
-          package = "@opencode/ai/providers/openai-compatible";
-          name = "CLIProxyAPI";
-          settings.baseURL = "https://ai.vpn.dzerv.art/v1";
-          models = {
-            "claude-opus-5.5".name = "Opus 5.5";
-            "claude-fable-5.1".name = "Fable 5.1";
+        # One CLIProxyAPI provider per family: `canonical` makes each model inherit
+        # its models.dev definition (limits, reasoning, modalities) and native SDK,
+        # so Claude uses Anthropic Messages and GPT the Responses API, as in Pi.
+        # Model keys must match the models.dev IDs.
+        providers = let
+          cliproxyapi = name: canonical: models: {
+            inherit name canonical models;
+            settings.baseURL = "https://ai.vpn.dzerv.art/v1";
+          };
+        in {
+          cliproxyapi-anthropic = cliproxyapi "CLIProxyAPI Anthropic" "anthropic" {
+            "claude-opus-5-5".name = "Opus 5.5";
+            "claude-fable-5-1".name = "Fable 5.1";
+          };
+          cliproxyapi-openai = cliproxyapi "CLIProxyAPI OpenAI" "openai" {
             "gpt-6.1-sol".name = "Sol 6.1";
             "gpt-6-astra".name = "Astra 6";
           };
