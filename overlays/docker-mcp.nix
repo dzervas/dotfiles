@@ -5,11 +5,11 @@
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "docker-mcp";
-  version = "0.44.1";
+  version = "0.44.2";
 
   src = fetchurl {
     url = "https://github.com/docker/mcp-gateway/releases/download/v${version}/docker-mcp-linux-amd64.tar.gz";
-    hash = "sha256-jN0SG4fhr+EeZt+onvO9BUM8A4nPJzmd5w/T7wxkNOk=";
+    hash = "sha256-xPuJjhXwz05kcOuRMRCBfvNG+rv4HWkvk6YrBNw9Uqg=";
   };
 
   sourceRoot = ".";

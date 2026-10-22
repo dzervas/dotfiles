@@ -1,88 +1,71 @@
-FROM nvidia/cuda:12.9.1-devel-ubuntu24.04 AS base
+FROM nvidia/cuda:13.0.3-devel-ubuntu24.04 AS base
 
 RUN apt-get update \
- && apt-get install -y --no-install-recommends build-essential cmake git wget curl \
- && rm -rf /var/lib/apt/lists/*
+      && apt-get install -y --no-install-recommends build-essential cmake git wget curl \
+      && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /src
 
-FROM base AS turboquant-build
+FROM base AS flint-build
 
-ARG TURBOQUANT_COMMIT=c26cbdffcf6fc9b7430cd6b117757e9a3f70b7ea
+ARG LLAMA_CPP_REV=0693dbfb915f33233818373b5f6969396658d02c
+ARG BUILD_JOBS=8
 
-RUN mkdir -p /src/turboquant
-WORKDIR /src/turboquant
+RUN mkdir -p /src/flint
+WORKDIR /src/flint
 
 RUN  git init \
- && git remote add origin https://github.com/TheTom/llama-cpp-turboquant.git \
- && git fetch --depth=1 origin "${TURBOQUANT_COMMIT}" \
- && git checkout FETCH_HEAD
+      && git remote add origin https://github.com/ggml-org/llama.cpp.git \
+      && git fetch --depth 1 origin "${LLAMA_CPP_REV}" \
+      && git checkout FETCH_HEAD
 
+# CI's CPU may differ from the host that runs this image.
 RUN cmake -B build \
       -DGGML_CUDA=ON \
+      -DGGML_NATIVE=OFF \
       -DBUILD_SHARED_LIBS=OFF \
       -DLLAMA_BUILD_TESTS=OFF \
       -DLLAMA_BUILD_UI=OFF \
       -DLLAMA_USE_PREBUILT_UI=OFF \
       -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_CUDA_ARCHITECTURES=120
+      -DCMAKE_CUDA_ARCHITECTURES=120a-real
 
-RUN cmake --build build --config Release -j"$(nproc)" --target llama-server
+RUN cmake --build build --config Release -j"${BUILD_JOBS}" --target llama-server
 
-FROM base AS latest-build
-
-RUN mkdir -p /src/latest
-WORKDIR /src/latest
-RUN  git init \
- && git remote add origin https://github.com/ggml-org/llama.cpp \
- && git fetch --depth=1 origin "4df29be4f4c3673f428170fda944a5b19f743bb8" \
- && git checkout FETCH_HEAD \
- && wget -O HauhauCS-FastMTP-llama.cpp.patch \
-  https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF/resolve/main/HauhauCS-FastMTP-llama.cpp.patch \
-&& git apply HauhauCS-FastMTP-llama.cpp.patch
-
-WORKDIR /src/latest
-
-RUN cmake -B build \
-      -DGGML_CUDA=ON \
-      -DBUILD_SHARED_LIBS=OFF \
-      -DLLAMA_BUILD_TESTS=OFF \
-      -DLLAMA_BUILD_UI=OFF \
-      -DLLAMA_USE_PREBUILT_UI=OFF \
-      -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_CUDA_ARCHITECTURES=120
-
-RUN cmake --build build --config Release -j"$(nproc)" --target llama-server
-
+# unified-cuda13 currently ships CUDA 13.3.1. Keep the CUDA 12.9 upstream
+# binaries and install CUDA 13.0 alongside them for Flint/vLLM, rather than
+# implicitly upgrading every backend to a newer CUDA minor version.
 FROM ghcr.io/mostlygeek/llama-swap:unified-cuda
 
-COPY --from=turboquant-build /src/turboquant/build/bin/llama-server /usr/local/bin/turboquant-server
-COPY --from=latest-build /src/latest/build/bin/llama-server /usr/local/bin/latest-server
+COPY --from=flint-build /src/flint/build/bin/llama-server /usr/local/bin/flint-server
 
 RUN apt-get update \
- && apt-get install -y --no-install-recommends \
+      && apt-get install -y --no-install-recommends \
       build-essential \
       python3-dev \
-      cuda-nvcc-12-9 \
-      libcurand-dev-12-9 \
- && rm -rf /var/lib/apt/lists/*
+      cuda-nvcc-13-0 \
+      libcublas-13-0 \
+      libcurand-dev-13-0 \
+      && rm -rf /var/lib/apt/lists/*
 
 ENV CC=/usr/bin/gcc
 ENV CXX=/usr/bin/g++
 
-# vllm 0.26 uses cuda 12.9
-# TODO: Auto-find the correct vllm based on the cuda version
-ARG VLLM_VERSION=0.26.0
+# vLLM 0.32.0 defaults to CUDA 13.0; match Flint's build and the JIT toolkit.
+# https://github.com/vllm-project/vllm/releases/tag/v0.32.0
+ARG VLLM_VERSION=0.32.0
 ENV UV_LINK_MODE=copy
 
 # https://github.com/vllm-project/vllm/releases
 RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
-  uv venv /opt/vllm --python /usr/bin/python3 && \
-  uv pip install \
-    --python /opt/vllm/bin/python \
-    --torch-backend=cu129 \
-    "https://github.com/vllm-project/vllm/releases/download/v${VLLM_VERSION}/vllm-${VLLM_VERSION}+cu129-cp38-abi3-manylinux_2_28_x86_64.whl"
+      uv venv /opt/vllm --python /usr/bin/python3 && \
+      uv pip install \
+      --python /opt/vllm/bin/python \
+      --torch-backend=cu130 \
+      "vllm==${VLLM_VERSION}"
 
-ENV PATH="/opt/vllm/bin:/usr/local/cuda/bin:${PATH}"
-ENV CUDA_HOME=/usr/local/cuda
+# Do not use /usr/local/cuda: the upstream image also has a CUDA 12 runtime.
+ENV PATH="/opt/vllm/bin:/usr/local/cuda-13.0/bin:${PATH}"
+ENV CUDA_HOME=/usr/local/cuda-13.0
+ENV LD_LIBRARY_PATH="/usr/local/cuda-13.0/lib64:${LD_LIBRARY_PATH}"
 ENV LLAMA_SWAP_WATCH_CONFIG='true'

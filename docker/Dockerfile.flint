@@ -1,0 +1,70 @@
+# Flint CUDA experiment for an RTX 5080 (16 GiB). This is NOT the Mac-only rec engine.
+# Official NVFP4 weights are 22.9 GB: llama.cpp auto-fit keeps some experts on CPU.
+# Stop other inference servers first; system RAM is required for offloaded weights.
+#
+# Build from the repo root:
+#   docker build -f docker/Dockerfile.flint -t flint-5080 docker
+# Download flint-nvfp4.gguf from RecursiveSI/flint-nvfp4-gguf into a model directory.
+# Run with that directory mounted read-only at /models:
+#   docker run --rm --name flint --gpus all -p 127.0.0.1:8080:8080 \
+#     -v /absolute/path/to/models:/models:ro flint-5080
+# Change context with -e LLAMA_ARG_CTX_SIZE=65536 before the image name.
+
+FROM nvidia/cuda:13.0.3-devel-ubuntu24.04 AS build
+
+# Verified to contain Flint architecture and NVFP4 CPU/CUDA support.
+ARG LLAMA_CPP_REV=0693dbfb915f33233818373b5f6969396658d02c
+ARG BUILD_JOBS=8
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates git cmake ninja-build g++ libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src
+RUN git init . \
+    && git remote add origin https://github.com/ggml-org/llama.cpp.git \
+    && git fetch --depth 1 origin "${LLAMA_CPP_REV}" \
+    && git checkout --detach FETCH_HEAD
+
+# Explicit Blackwell target: Docker builds do not need access to the host GPU.
+RUN cmake -S . -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CUDA_ARCHITECTURES=120a-real \
+    -DGGML_CUDA=ON -DGGML_NATIVE=OFF \
+    -DGGML_BACKEND_DL=ON -DGGML_CPU_ALL_VARIANTS=ON \
+    -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_UI=OFF \
+    && cmake --build build --target llama-server -j "${BUILD_JOBS}"
+
+FROM nvidia/cuda:13.0.3-runtime-ubuntu24.04
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl libgomp1 libssl3t64 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /src/build/bin/ /app/
+ENV LD_LIBRARY_PATH=/app:/usr/local/cuda/lib64 \
+    LLAMA_ARG_MODEL=/models/flint-nvfp4.gguf \
+    LLAMA_ARG_HOST=0.0.0.0 \
+    LLAMA_ARG_PORT=8080 \
+    LLAMA_ARG_CTX_SIZE=32768 \
+    LLAMA_ARG_N_PARALLEL=1
+
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5m \
+    CMD curl -fsS http://127.0.0.1:8080/health || exit 1
+
+ENV LLAMA_ARG_CTX_SIZE=262144
+ENTRYPOINT ["/app/llama-server"]
+# Leave GPU-layer and CPU-MoE counts unset so --fit can choose their placement.
+# Reserve 4 GiB free VRAM for display/driver use. Do not enable --swa-full.
+CMD [ "--alias", "flint", \
+    "--jinja", \
+    "--ui-mcp-proxy", \
+    "--ctx-size", "262144", \
+    "--fit", "on", "--fit-target", "4096", \
+    "--flash-attn", "on", \
+    "--cache-type-k", "q8_0", \
+    "--cache-type-v", "q8_0", \
+    "--threads", "10", \
+    "--temp", "1", "--top-p", "0.95", "--top-k", "20", "--min-p", "0"\
+    ]

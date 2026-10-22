@@ -5,7 +5,7 @@
     ./bluetooth.nix
     ./camera.nix
     ./cli.nix
-    ./ddc-ci.nix
+    # ./ddc-ci.nix
     ./display.nix
     ./network.nix
     ./nix.nix
@@ -54,7 +54,6 @@
       dates = [ "weekly" ];
     };
   };
-
 
   services = {
     dbus.enable = true;

@@ -36,7 +36,13 @@
         "bluetooth.autoswitch-to-headset-profile" = false;
       };
       "monitor.bluez.properties" = {
-        "bluez5.roles" = [ "a2dp_sink" "a2dp_source" "bap_duplex" "bap_source" "bap_sink" ];
+        "bluez5.roles" = [
+          "a2dp_sink"
+          "a2dp_source"
+          "bap_duplex"
+          "bap_source"
+          "bap_sink"
+        ];
       };
     };
   };

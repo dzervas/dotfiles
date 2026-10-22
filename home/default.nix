@@ -10,7 +10,7 @@
     ./docker-secrets-engine.nix
     ./easyeffects
     # ./firefox.nix
-    ./firmware.nix
+    # ./firmware.nix # Broken
     ./fish.nix
     ./flatpak.nix
     ./git.nix

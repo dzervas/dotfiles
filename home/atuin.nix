@@ -130,27 +130,27 @@ in {
         };
       };
 
-      # llama-swap = {
-      #   image = "homemanager/llama-swap-vllm";
-      #   description = "Local LLM model swapper";
-      #   network = [ "local-ai.network" ];
-      #   networkAlias = [ "llama-swap" ];
-      #   ports = [ "1337:1337" ];
-      #   devices = [ "nvidia.com/gpu=all" ];
-      #   exec = "-config /etc/llama-swap/config/config.yaml -listen 0.0.0.0:1337 -watch-config";
-      #   volumes = [
-      #     # Mounted straight from the repository, not the store: the container
-      #     # runs with -watch-config, so edits reload without a rebuild.
-      #     "/home/dzervas/Lab/dotfiles/home/llama-swap.yaml:/etc/llama-swap/config/config.yaml:ro"
-      #     "${llamaSwapModelsDir}/models:/models:ro"
-      #     "/home/dzervas/CryptVMs/vllm:/root/.cache/vllm"
-      #     "${hfCache}:/root/.cache/huggingface"
-      #     "${qwenFixedChatTemplate}:/qwen-fixed-chat-template.jinja:ro"
-      #     "${vllmZetaConfig}:/vllm-zeta.yaml:ro"
-      #     "/home/dzervas/.local/share/llama-swap:/data"
-      #   ];
-      #   extraConfig.Container.GroupAdd = "keep-groups";
-      # };
+      llama-swap = {
+        image = "homemanager/llama-swap-vllm";
+        description = "Local LLM model swapper";
+        network = [ "local-ai.network" ];
+        networkAlias = [ "llama-swap" ];
+        ports = [ "1337:1337" ];
+        devices = [ "nvidia.com/gpu=all" ];
+        exec = "-config /etc/llama-swap/config/config.yaml -listen 0.0.0.0:1337 -watch-config";
+        volumes = [
+          # Mounted straight from the repository, not the store: the container
+          # runs with -watch-config, so edits reload without a rebuild.
+          "/home/dzervas/Lab/dotfiles/home/llama-swap.yaml:/etc/llama-swap/config/config.yaml:ro"
+          "${llamaSwapModelsDir}/models:/models:ro"
+          "/home/dzervas/CryptVMs/vllm:/root/.cache/vllm"
+          "${hfCache}:/root/.cache/huggingface"
+          "${qwenFixedChatTemplate}:/qwen-fixed-chat-template.jinja:ro"
+          "${vllmZetaConfig}:/vllm-zeta.yaml:ro"
+          "/home/dzervas/.local/share/llama-swap:/data"
+        ];
+        extraConfig.Container.GroupAdd = "keep-groups";
+      };
       #
       # openwebui = {
       #   image = "ghcr.io/open-webui/open-webui";
