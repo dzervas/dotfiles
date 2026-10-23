@@ -9,6 +9,27 @@ Sections use `=== ext:<extension> <marker> ===`; surrounding blank lines are tri
 Use `getPrompt("extension", "marker", { name: value })` from `lib/prompts.ts`.
 Restart Pi after editing; previously recorded session snapshots remain unchanged.
 
+=== ext:anytype issue_list ===
+Search the current project's issues by text, kind, state, tags, parent or assignee. Returns compact pages (25 by default, max 100). ready=true selects open, unassigned, non-epic issues without the human tag or unresolved blockers. Readiness filters each search page; follow next_offset even when a page is empty.
+
+=== ext:anytype issue_get ===
+Read an issue's fields, description and revision, with the latest 25 comments by default. Pass comments=false to skip discussion, or before plus limit to read older comments. Descriptions are the description property, not document blocks.
+
+=== ext:anytype issue_create ===
+Create an open issue in the current project (task by default; bug and epic also supported). Optional tags, parent epic and blocker IDs. Returns its ID and revision. Existing property definitions are required; new select/tag option names may be created.
+
+=== ext:anytype issue_update ===
+Edit issue fields, claim/release, append a comment, or close an issue. Field edits require the revision from issue_get; claim and comment alone do not. claim=true atomically assigns the current team and starts work; claim=false releases only its own claim. Closing requires state=closed plus a comment explaining why. Tags/blockers use add/remove; parent=null clears the parent. Returns a small receipt. Metadata and comments are separate writes: a comment_failed result reports whether fields changed. Inspect comments before retrying an unknown write outcome.
+
+=== ext:anytype guidance ===
+Issue tools automatically use the current Git repository's project, falling back to the working directory outside Git. First use may create that Project object; its description holds the canonical full path. Lists and new issues are project-scoped, and reads/updates refuse issue IDs outside that project. Use issue tools for work explicitly assigned to this Anytype tracker. Check for duplicates before creating issues. Claim before implementation and respect other actors' claims. On revision conflicts, re-read and reconcile rather than blindly retry. Out-of-scope discoveries become separate issues, not extra implementation. Keep memory in the existing memory store.
+
+=== ext:anytype assignee ===
+Session/team actor; an empty string selects unassigned issues
+
+=== ext:anytype claim ===
+true claims for the current team; false releases its own claim back to open
+
 === ext:background-bash background-description ===
 Run in the background and return a job ID immediately
 

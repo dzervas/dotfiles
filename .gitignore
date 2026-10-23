@@ -64,6 +64,8 @@
 !pi/extensions/lib
 !pi/extensions/tests
 !pi/extensions/memory
+!pi/extensions/anytype
+!pi/extensions/anytype/tests
 !pi/extensions/permissions
 !pi/extensions/pi-subagents-workflows
 !pi/extensions/todo

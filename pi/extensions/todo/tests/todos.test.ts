@@ -45,13 +45,12 @@ function harness(t: test.TestContext, workspace = true) {
 		fs.mkdirSync(path.join(root, ".beads"));
 		fs.writeFileSync(path.join(root, ".beads/metadata.json"), "{}");
 	}
-	// A user's explicit workspace override must not affect temporary fixtures.
-	const beadsDir = process.env.BEADS_DIR;
-	const previousActor = process.env.BEADS_ACTOR;
-	const previousChild = process.env.PI_SUBAGENT_CHILD;
+	// Isolate both trackers from the user's home, workspace overrides and keys.
+	const environment = process.env;
+	const home = environment.HOME;
+	environment.HOME = root;
+	process.env = {};
 	const actor = `pi:${root}`;
-	delete process.env.BEADS_DIR;
-	delete process.env.PI_SUBAGENT_CHILD;
 	const commands = new Map<string, Command>();
 	const tools = new Map<string, Tool>();
 	const handlers = new Map<string, Handler[]>();
@@ -82,6 +81,11 @@ function harness(t: test.TestContext, workspace = true) {
 		events: { emit: () => {} },
 		exec: async (command: string, args: string[], options: Call["options"]) => {
 			calls.push({ command, args, options });
+			if (command === "git") return { code: 128, stdout: "" };
+			if (command === "op") {
+				assert.deepEqual(args, ["read", "op://Private/AnyType Local Key/api"]);
+				return { code: 0, stdout: "dummy-key" };
+			}
 			assert.equal(command, "env");
 			assert.deepEqual(args.slice(0, 2), ["BD_JSON_ENVELOPE=1", "bd"]);
 			assert.deepEqual(options, { cwd, timeout: 5000 });
@@ -98,15 +102,20 @@ function harness(t: test.TestContext, workspace = true) {
 	t.after(async () => {
 		await emit("session_shutdown");
 		fs.rmSync(root, { recursive: true, force: true });
-		if (beadsDir === undefined) delete process.env.BEADS_DIR;
-		else process.env.BEADS_DIR = beadsDir;
-		if (previousActor === undefined) delete process.env.BEADS_ACTOR;
-		else process.env.BEADS_ACTOR = previousActor;
-		if (previousChild === undefined) delete process.env.PI_SUBAGENT_CHILD;
-		else process.env.PI_SUBAGENT_CHILD = previousChild;
+		process.env = environment;
+		if (home === undefined) delete process.env.HOME;
+		else process.env.HOME = home;
 	});
 	return {
 		calls, notices, cwd, actor,
+		configureAnytype() {
+			fs.mkdirSync(path.join(root, ".pi", "agent"), { recursive: true });
+			fs.writeFileSync(path.join(root, ".pi", "agent", "anytype.json"), JSON.stringify({
+				space: "space.full", type: "issue", properties: {
+					kind: "kind", state: "status", tags: "tag", parent: "parent", blockers: "blockers", assignee: "worker",
+				},
+			}));
+		},
 		get human() { return human; },
 		set human(value: string) { human = value; },
 		set humanFailure(value: Result | Error) { humanFailure = value; },
@@ -119,7 +128,7 @@ function harness(t: test.TestContext, workspace = true) {
 	};
 }
 
-const humanCalls = (calls: Call[]) => calls.filter(({ args }) => !args.includes("--json"));
+const humanCalls = (calls: Call[]) => calls.filter(({ command, args }) => command === "env" && !args.includes("--json"));
 
 test("/todos awaits a forced fresh refresh before running human bd list", async (t) => {
 	const h = harness(t);
@@ -189,6 +198,54 @@ test("/todos outside a beads workspace preserves empty and populated session lis
 	assert.match(h.notices.at(-1)!.text, /0\/1 completed/);
 	assert.match(h.notices.at(-1)!.text, /Local session step/);
 	assert.deepEqual(h.calls, []);
+});
+
+test("/todos includes current Anytype issues, their context and document links alongside todos and Beads", async (t) => {
+	const h = harness(t);
+	h.configureAnytype();
+	await h.start();
+	await h.write([{ subject: "Local step", status: "pending" }]);
+	const requests: { path: string; body: any }[] = [];
+	const object = (id: string, title: string, fields: Record<string, unknown> = {}) => ({
+		id, type: "issue", etag: "r1", properties: {
+			name: title, kind: ["task"], status: ["open"], worker: "", tag: [], parent: [], blockers: [], project: ["project-one"], ...fields,
+		},
+	});
+	const current = object("active", "Current issue", { status: ["in_progress"], worker: h.actor, parent: ["epic"] });
+	t.mock.method(globalThis, "fetch", async (url: string, init: RequestInit) => {
+		assert.equal(new Headers(init.headers).get("Authorization"), "Bearer dummy-key");
+		const path = new URL(String(url)).pathname;
+		const body = init.body ? JSON.parse(String(init.body)) : undefined;
+		requests.push({ path, body });
+		const data = body?.type === "project" ? { data: [{ id: "project-one", name: "repo", properties: { description: h.cwd } }] }
+			: path.endsWith("/objects/epic") ? object("epic", "Parent epic", { kind: ["epic"] })
+			: { data: body.filters.some((filter: any) => filter.property === "worker") ? [current]
+				: [current, object("sibling", "Related issue", { parent: ["epic"], status: ["closed"] })], has_more: false };
+		return new Response(JSON.stringify(data));
+	});
+	await h.todos();
+	const notice = h.notices.at(-1)!;
+	assert.equal(notice.level, "info");
+	assert.match(notice.text, /Local step/);
+	assert.ok(notice.text.includes(h.human.trimEnd()));
+	assert.match(notice.text, /Current issue \(claimed\)/);
+	assert.match(notice.text, /Parent epic \(epic\)/);
+	assert.match(notice.text, /Related issue \(sibling\)/);
+	assert.match(notice.text, /anytype:\/\/object\?objectId=active&spaceId=space.full/);
+	assert.equal(h.calls.filter((call) => call.command === "op").length, 1);
+	assert.equal(requests.length, 4);
+});
+
+test("/todos reports Anytype failures without losing local todos", async (t) => {
+	const h = harness(t, false);
+	h.configureAnytype();
+	await h.start();
+	await h.write([{ subject: "Keep my steps", status: "pending" }]);
+	t.mock.method(globalThis, "fetch", async () => { throw new Error("offline"); });
+	await h.todos();
+	assert.equal(h.notices[0].level, "error");
+	assert.match(h.notices[0].text, /Anytype issues failed/);
+	assert.match(h.notices.at(-1)!.text, /Keep my steps/);
 });
 
 for (const failure of [

@@ -89,18 +89,18 @@
   # server. Servers with `pi = true` are separate entries in the same file.
   mcpJson = json.generate "mcp.json" {
     mcpServers = {
-      mcp-gateway = {
-        url = "http://127.0.0.1:8811/mcp";
-        headers.Authorization = "!cat ~/.cache/pi-mcp-gateway/authorization";
-        description = lib.concatMapStringsSep ", " (s: s.description) gatewayServers;
-        exposure = "codemode";
-        toolExposure = lib.listToAttrs (
-          lib.concatMap (
-            s:
-            map (t: { name = t; value = "direct"; }) (s.direct or [])
-          ) gatewayServers
-        );
-      };
+      # mcp-gateway = {
+      #   url = "http://127.0.0.1:8811/mcp";
+      #   headers.Authorization = "!cat ~/.cache/pi-mcp-gateway/authorization";
+      #   description = lib.concatMapStringsSep ", " (s: s.description) gatewayServers;
+      #   exposure = "codemode";
+      #   toolExposure = lib.listToAttrs (
+      #     lib.concatMap (
+      #       s:
+      #       map (t: { name = t; value = "direct"; }) (s.direct or [])
+      #     ) gatewayServers
+      #   );
+      # };
     }
     // lib.listToAttrs (
       map (s: { inherit (s) name; value = piEntry s; }) piServers

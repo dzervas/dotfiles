@@ -8,6 +8,9 @@
  */
 
 import { StringEnum } from "@earendil-works/pi-ai";
+import { hyperlink } from "@earendil-works/pi-tui";
+import { anytypeStore, loadAnytypeConfig } from "../anytype/client.ts";
+import { relatedIssues } from "../anytype/related.ts";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 import { getPrompt } from "../lib/prompts.ts";
@@ -153,7 +156,7 @@ export default function todoExtension(pi: ExtensionAPI): void {
 	});
 
 	pi.registerCommand("todos", {
-		description: "Show current todos and this parent team's beads; refresh the widget",
+		description: "Show current todos and this team's Beads/Anytype issues; refresh the widget",
 		handler: async (_args, ctx) => {
 			await refreshBeads();
 			const tasks = getTasks(sid(ctx));
@@ -172,6 +175,17 @@ export default function todoExtension(pi: ExtensionAPI): void {
 				} catch (error) {
 					ctx.ui.notify(`bd list failed: ${String(error)}`, "error");
 				}
+			}
+			try {
+				const config = loadAnytypeConfig();
+				if (config) {
+					const issues = await relatedIssues(anytypeStore(pi, config, ctx, ctx.signal), beadsActor ?? "", config.space, ctx.signal);
+					const lines = issues.map(({ issue, relations, url }) =>
+						`[${issue.state}] ${issue.title} (${relations.join(", ")})\n  ${hyperlink(url, url)}`);
+					sections.push(`Anytype issues for ${beadsActor}\n${lines.join("\n") || "No current claims."}`);
+				}
+			} catch (error) {
+				ctx.ui.notify(`Anytype issues failed: ${String(error)}`, "error");
 			}
 			ctx.ui.notify(sections.join("\n\n"), "info");
 		},

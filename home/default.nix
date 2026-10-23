@@ -101,7 +101,6 @@
       (lib.mkIf config.setup.isLaptop powertop)
 
       cameractrls-gtk4
-      anytype-cli
       zenity
     ];
 

@@ -28,10 +28,10 @@ models:
       out: [text]
       thinking: true
     cmd: |
-      llama-server --host 127.0.0.1 --port ${PORT}
+      flint-server --host 127.0.0.1 --port ${PORT}
       --ctx-size ${flint_ctx}
       --fit-ctx ${flint_ctx}
-      --model /root/.cache/huggingface/hub/models--ISTA-DASLab--Qwen3.8-27B-GSQ-RCO-GGUF/snapshots/d562806dbafae37109975e970aae91b43e73b440/Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf
+      --model /root/.cache/huggingface/hub/models--unsloth--flint-GGUF/snapshots/20468edfc38ab43d6914cc88b08cbecb05d0fc62/flint-UD-Q4_K_XL.gguf
 
       --parallel 4
 

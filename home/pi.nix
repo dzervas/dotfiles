@@ -69,7 +69,7 @@
     "codemode"
     "mcp:vresto"
     "mcp:context7"
-    "mcp:mcp-gateway"
+    # "mcp:mcp-gateway"
     "todo"
     "memory_search"
   ];
@@ -166,7 +166,7 @@ in {
               thinking = "medium";
             };
             reviewer = {
-              model = "cpa/claude-opus-5-5";
+              model = "cpa/gpt-6.1-sol";
               thinking = "high";
             };
             oracle = {
@@ -183,6 +183,7 @@ in {
                 "read"
                 "codemode"
                 "mcp:vresto"
+                "mcp:context7"
                 "contact_supervisor"
               ];
               systemPrompt = piExtensionPrompt "subagents" "researcher" + "\n";
@@ -194,6 +195,7 @@ in {
                 "read"
                 "codemode"
                 "mcp:vresto"
+                "mcp:context7"
                 "contact_supervisor"
               ];
               systemPrompt = piExtensionPrompt "subagents" "evidence-auditor" + "\n";
@@ -222,10 +224,10 @@ in {
       defaultThinkingLevel = "medium";
       enabledModels = [
         "claude-opus-5-5"
-        "openai-codex/gpt-6.1-sol"
-        "openai-codex/gpt-6-astra"
+        "cpa/gpt-6.1-sol"
+        "cpa/gpt-6-astra"
         "claude-fable-5-1"
-        "qwen-flash-next"
+        "flint"
       ];
     };
   };

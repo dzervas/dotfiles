@@ -16,8 +16,6 @@ final: prev: {
   cursortab-nvim = prev.callPackage ./cursortab-nvim.nix {};
   # nix-update:codex-latest --custom-dep platformSrc
   codex-latest = prev.callPackage ./codex.nix {};
-  # nix-update:anytype-cli
-  anytype-cli = prev.callPackage ./anytype-cli.nix {};
   # nix-update :n8n-cli --version-regex 'n8n@(2\.\d+\.\d+)'
   n8n-cli = prev.callPackage ./n8n-cli.nix {};
   # nix-update:docker-mcp

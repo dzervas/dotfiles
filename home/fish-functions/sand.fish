@@ -106,6 +106,13 @@ for name in $unshared_env_vars
     set bwrap_env $bwrap_env --unsetenv $name
 end
 
+# GPU access for e.g. Playwright Chromium (WebGL/WebGPU). Render nodes only: card* also
+# exposes modesetting and legacy GEM flink global buffer names.
+set -l gpu_mounts
+for node in /dev/dri/renderD* /dev/nvidiactl (ls /dev/nvidia* | grep '/dev/nvidia[0-9]') /dev/nvidia-uvm /dev/nvidia-modeset
+    set gpu_mounts $gpu_mounts --dev-bind-try $node $node
+end
+
 mkdir -p $sandbox_home/.pi/agent/extensions $sandbox_home/.config/{jj,git} $HOME/.local/share/atuin-agent
 
 # Native MCP OAuth state stays writable in this persistent sandbox home.
@@ -135,6 +142,10 @@ bwrap \
     --ro-bind-data 4 /etc/passwd \
     --ro-bind-data 5 /etc/group \
     --ro-bind /run/current-system/sw /run/current-system/sw \
+    $gpu_mounts \
+    --ro-bind-try /run/opengl-driver /run/opengl-driver \
+    --ro-bind-try /sys/dev/char /sys/dev/char \
+    --ro-bind-try /sys/devices /sys/devices \
     --ro-bind /etc/profiles/per-user/$USER/ /etc/profiles/per-user/$USER/ \
     --bind $sandbox_home $HOME \
     --ro-bind $HOME/.pi/agent/settings.json $HOME/.pi/agent/settings.json \

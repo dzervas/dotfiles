@@ -2,7 +2,6 @@
   zetaModel = "LeaderboardModel1/zeta-2.1-autoround-W4A16";
   hfCache = "/home/dzervas/CryptVMs/huggingface/";
   llamaSwapModelsDir = "${config.home.homeDirectory}/.local/share/llama-swap";
-  qwenFixedChatTemplate = ./qwen-fixed-chat-template.jinja;
 
   vllmZetaConfig = pkgs.writers.writeYAML "config.yaml" {
     model = zetaModel;
@@ -93,11 +92,6 @@ in {
       driver = "bridge";
     };
 
-    # builds.llama-swap-vllm = {
-    #   file = "/home/dzervas/Lab/dotfiles/docker/Dockerfile.llama-swap-vllm";
-    #   tags = ["latest"];
-    # };
-
     containers = {
       atuin-ai = {
         image = "ghcr.io/atuinsh/atuin-ai-server:latest";
@@ -131,7 +125,7 @@ in {
       };
 
       llama-swap = {
-        image = "homemanager/llama-swap-vllm";
+        image = "ghcr.io/dzervas/dotfiles/llama-swap-vllm";
         description = "Local LLM model swapper";
         network = [ "local-ai.network" ];
         networkAlias = [ "llama-swap" ];
@@ -145,7 +139,6 @@ in {
           "${llamaSwapModelsDir}/models:/models:ro"
           "/home/dzervas/CryptVMs/vllm:/root/.cache/vllm"
           "${hfCache}:/root/.cache/huggingface"
-          "${qwenFixedChatTemplate}:/qwen-fixed-chat-template.jinja:ro"
           "${vllmZetaConfig}:/vllm-zeta.yaml:ro"
           "/home/dzervas/.local/share/llama-swap:/data"
         ];
