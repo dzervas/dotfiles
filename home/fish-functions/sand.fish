@@ -131,6 +131,8 @@ bwrap \
     --ro-bind /run/binfmt /run/binfmt \
     --ro-bind /bin /bin \
     --ro-bind /usr/bin /usr/bin \
+    --ro-bind /lib /lib \
+    --ro-bind /lib64 /lib64 \
     --ro-bind /etc/nix /etc/nix \
     --ro-bind /etc/static /etc/static \
     --ro-bind /etc/ssl /etc/ssl \

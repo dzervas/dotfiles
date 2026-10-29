@@ -24,6 +24,7 @@ in {
     commandLineArgs = [
       "--ozone-platform=wayland"
       "--enable-features=WebRTCPipeWireCapturer"
+      "--enable-features=WaylandWindowDecorations" # Fixes native notifications
       "--enable-logging=stderr"
       "--ignore-gpu-blocklist"
 

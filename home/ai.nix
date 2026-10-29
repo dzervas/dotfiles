@@ -10,7 +10,7 @@
 
       beads
 
-      opencode-desktop
+      # opencode-desktop
     ];
 
     sessionVariables = {
@@ -43,7 +43,7 @@
     };
 
     opencode = {
-      enable = true;
+      # enable = true;
       package = pkgs.opencode;
       enableMcpIntegration = true;
       context = ../pi/global_agents.md;
@@ -166,13 +166,13 @@
   xdg.configFile."bd/config.yaml".source = (pkgs.formats.yaml {}).generate "bd-config.yaml" {
     metrics.disabled = true;
     no-git-ops = true;
-    dolt = {
-      mode = "server";
-      host = "dolt.vpn.dzerv.art";
-      port = 3306;
-      user = "beads";
-      # shared-server = true;
-    };
+    # dolt = {
+    #   mode = "server";
+    #   host = "dolt.vpn.dzerv.art";
+    #   port = 3306;
+    #   user = "beads";
+    #   # shared-server = true;
+    # };
   };
 
   xdg.dataFile."voxtype/quickshell".source = "${pkgs.voxtype-onnx.src}/quickshell";

@@ -1,5 +1,4 @@
-{ lib, pkgs, ... }:
-{
+{ lib, pkgs, ... }: {
   home-manager.sharedModules = [ ./home/niri.nix ];
 
   niri-flake.cache.enable = false;
@@ -18,7 +17,10 @@
       enable = true;
       useTextGreeter = true;
       settings = {
-        initial_session = { user = "dzervas"; command = "niri-session"; };
+        initial_session = {
+          user = "dzervas";
+          command = "niri-session";
+        };
         default_session.command = "${lib.getExe pkgs.tuigreet} --time --remember --cmd niri-session";
       };
     };
@@ -28,6 +30,15 @@
     gvfs.enable = true;
     # Thumbnail support
     tumbler.enable = true;
+  };
+
+  xdg.portal = {
+    enable = true;
+    xdgOpenUsePortal = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gnome
+      xdg-desktop-portal-gtk
+    ];
   };
 
   # greetd's PAM stack includes login. Autologin skips auth, so the keyring
