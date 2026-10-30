@@ -103,9 +103,9 @@
     };
 
     # The official v2 flake owns Desktop/CLI packaging and dependency hashes.
-    opencode.url = "github:anomalyco/opencode/v2.1.1"; # flake-update:^v2\.\d+\.\d+$
+    opencode.url = "github:anomalyco/opencode/v2.2.5"; # flake-update:^v2\.\d+\.\d+$
     opencode.inputs.nixpkgs.follows = "nixpkgs";
-    mattpocock-skills.url = "github:mattpocock/skills/v1.3.1"; # flake-update:^v\d+\.\d+\.\d+$
+    mattpocock-skills.url = "github:mattpocock/skills/v1.3.2"; # flake-update:^v\d+\.\d+\.\d+$
     mattpocock-skills.flake = false;
 
     # Home stuff
@@ -164,7 +164,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # zed.url = "github:zed-industries/zed/v0.223.5"; # flake-update:^v\d+.\d{1,3}.\d+$
+    # zed.url = "github:zed-industries/zed/v1.26.2"; # flake-update:^v\d+.\d{1,3}.\d+$
     # zed.inputs.nixpkgs.follows = "nixpkgs";
   };
 

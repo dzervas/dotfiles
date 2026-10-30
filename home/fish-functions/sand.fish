@@ -174,6 +174,7 @@ bwrap \
     --ro-bind $HOME/.config/jj $HOME/.config/jj \
     --ro-bind $HOME/.config/git $HOME/.config/git \
     --ro-bind-try $HOME/.config/gh-agent $HOME/.config/gh-agent \
+    --bind-try $HOME/.config/.wrangler/config/agents.toml $HOME/.config/.wrangler/config/agents.toml \
     --ro-bind $HOME/.config/fish $HOME/.config/fish \
     $bwrap_mounts \
     $bwrap_env \

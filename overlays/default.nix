@@ -10,6 +10,9 @@ final: prev: {
   buspirate5-firmware = prev.callPackage ./buspirate5-firmware.nix {};
   claude-chrome = prev.callPackage ./claude-chrome.nix {};
   compact-nix = prev.callPackage ./compact-nix.nix {};
+  # Bubblewrapped; the real binary is only reachable via eglantine.unwrapped
+  # nix-update:eglantine.unwrapped --version=branch=nx2
+  eglantine = prev.callPackage ./eglantine.nix {};
   # Version updates also require regenerating overlays/pi-dashboard/package-lock.json.
   pi-dashboard = prev.callPackage ./pi-dashboard.nix {};
   # nix-update:cursortab-nvim --subpackage server
@@ -28,7 +31,7 @@ final: prev: {
   # https://github.com/Mic92/nix-update/issues/639
   brave = prev.brave.overrideAttrs (
     finalAttrs: _oldAttrs: {
-      version = "1.100.24";
+      version = "1.101.10";
       src = final.fetchurl {
         url = "https://github.com/brave/brave-browser/releases/download/v${finalAttrs.version}/brave-browser_${finalAttrs.version}_amd64.deb";
         sha256 = "21d7ac36b64a408dc598bb6ec3db84b07b2cbca854d26b28055a2fb5b94a2e77";
