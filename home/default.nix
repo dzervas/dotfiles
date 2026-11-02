@@ -19,7 +19,6 @@
     ./options.nix
     ./pi.nix
     ./recording-sign.nix
-    ./sandboxes.nix
     ./starship.nix
     ./ssh.nix
     ./tools.nix

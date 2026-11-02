@@ -43,6 +43,8 @@
 !overlays/pi-dashboard/*.json
 !overlays/opencode-desktop
 !overlays/opencode-desktop/*.patch
+!overlays/nixpak
+!overlays/nixpak/*.patch
 !opencode
 !opencode/plugins
 !opencode/plugins/*

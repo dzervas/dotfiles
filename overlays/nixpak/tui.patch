@@ -1,0 +1,14 @@
+Run bwrap in the launcher's process group. In its own group it never gets the
+terminal foreground, so TUI apps hang stopped on SIGTTIN/SIGTTOU.
+https://github.com/nixpak/nixpak/issues/193
+
+--- a/launcher/bubblewrap.go
++++ b/launcher/bubblewrap.go
+@@ -41,7 +41,6 @@ func StartBwrap(conf Config, flatpakMetadata FlatpakMetadata, waylandProxy Wayla
+ 	bwrapArgs = append(bwrapArgs, conf.AppArgs...)
+ 
+ 	cmd := exec.Command(conf.Bwrap.Exe, bwrapArgs...)
+-	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+ 	cmd.Stdin = os.Stdin
+ 	cmd.Stdout = os.Stdout
+ 	cmd.Stderr = os.Stderr

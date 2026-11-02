@@ -14,6 +14,7 @@
       "io.keet.Keet"
       "dev.vencord.Vesktop"
       "io.anytype.anytype"
+      "org.prismlauncher.PrismLauncher"
       # rec {
       #   appId = "com.kagi.OrionGtk";
       #   sha256 = "0b3c7y4dlgxfyzid78l37k4wa4dj5wiv4siwkmlr7gwq5lyrdlyh";

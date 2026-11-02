@@ -76,7 +76,11 @@
     packages = eachDefaultSystemPassThrough (system: {
       ${system} = let
         pkgs = nixpkgs.legacyPackages.${system};
-        overlay = lib.composeExtensions (import ./overlays) (import ./overlays/opencode-desktop inputs.opencode);
+        overlay = lib.composeManyExtensions [
+          (import ./overlays/nixpak inputs.nixpak)
+          (import ./overlays)
+          (import ./overlays/opencode-desktop inputs.opencode)
+        ];
       in overlay (pkgs.extend overlay) pkgs;
     });
   };
@@ -94,6 +98,10 @@
     # 1Password secrets
     opnix.url = "github:dzervas/opnix";
     opnix.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Application sandboxing
+    nixpak.url = "github:nixpak/nixpak";
+    nixpak.inputs.nixpkgs.follows = "nixpkgs";
 
     # Secure boot
     lanzaboote.url = "github:nix-community/lanzaboote";

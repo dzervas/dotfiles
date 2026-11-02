@@ -78,8 +78,151 @@
     "memory_search"
   ];
 
+  # Same containment as sand (home/fish-functions/sand.fish), which still backs
+  # pifleet and the opencode server.
+  # Native MCP OAuth state stays writable in the persistent sandbox home. Host keyrings
+  # and Docker sockets stay outside, and the agent gets only its own atuin memory
+  # profile - never the shell-history store or its key.
+  piSandbox = pkgs.mkNixPak {
+    config = { sloth, ... }: {
+      app.package = piCodingAgent;
+      dbus.enable = false;
+      gpu.enable = true;
+
+      bubblewrap = {
+        network = true;
+        dieWithParent = true;
+        tmpfs = [ "/tmp" ];
+
+        # $PIS_* come from the pis wrapper below
+        bind.rw = [
+          [ "$PIS_HOME" "$HOME" ]
+          "$PIS_PROJECT"
+          "$HOME/.pi/agent/sessions"
+          "$HOME/.local/share/atuin-agent"
+          "$HOME/.pi/agent/auth.json"
+          "$HOME/.pi/agent/mcp.json"
+          "$HOME/.pi/agent/mcp-auth.json"
+          "$HOME/.pi/dashboard"
+          "$HOME/.pi/agent/run-history.jsonl"
+          "$HOME/.config/gcx"
+          "$HOME/.config/.wrangler/config/agents.toml"
+        ];
+        # After NixPak's own /etc/resolv.conf bind, so the copy wins
+        bind.ro = lib.mkAfter [
+          [ "$PIS_ETC/resolv.conf" "/etc/resolv.conf" ]
+          [ "$PIS_ETC/passwd" "/etc/passwd" ]
+          [ "$PIS_ETC/group" "/etc/group" ]
+          "/etc/static"
+          "/etc/nix"
+          "/etc/ssl"
+          "/etc/nsswitch.conf"
+          "/etc/protocols"
+          "/etc/services"
+          "/run/current-system/sw"
+          (sloth.concat' "/etc/profiles/per-user/" (sloth.env "USER"))
+          "/run/binfmt"
+          "/bin"
+          "/usr/bin"
+          "/lib"
+          "/lib64"
+
+          "$HOME/.pi/agent/settings.json"
+          "$HOME/.pi/agent/models.json"
+          "$HOME/.pi/agent/node_modules"
+          "$HOME/.pi/agent/npm"
+          "$HOME/.pi/agent/extensions"
+          "$HOME/.pi/agent/skills"
+          "$HOME/.pi/agent/themes"
+          "$HOME/.pi/agent/pi-cliproxyapi-provider"
+          "$HOME/.pi/agent/AGENTS.md"
+          "$HOME/.pi/agent/sandbox.ts"
+          "$HOME/.cache/pi-mcp-gateway/authorization"
+          "$HOME/.config/atuin-agent"
+          "$HOME/.config/jj"
+          "$HOME/.config/git"
+          "$HOME/.config/gh-agent"
+          "$HOME/.config/fish"
+        ];
+        # gpu.enable covers /dev/dri only
+        bind.dev = [
+          "/dev/nvidiactl"
+          "/dev/nvidia0"
+          "/dev/nvidia-uvm"
+          "/dev/nvidia-modeset"
+        ];
+
+        env = {
+          CI = "1";
+          GH_CONFIG_DIR = sloth.concat' sloth.homeDir "/.config/gh-agent";
+          ATUIN_CONFIG_DIR = sloth.concat' sloth.homeDir "/.config/atuin-agent";
+          ATUIN_DATA_DIR = sloth.concat' sloth.homeDir "/.local/share/atuin-agent";
+        };
+      };
+    };
+  };
+
+  # Computes what NixPak can't: one persistent home per project, the secrets to drop
+  # and copies of files that the sandbox must not see replaced.
+  pis = pkgs.writeShellApplication {
+    name = "pis";
+    text = ''
+      project_dir="$PWD"
+      PIS_PROJECT="$project_dir"
+      if [[ "$project_dir" == "$HOME"/Lab/work/* ]]; then
+        PIS_PROJECT="$HOME/Lab/work"
+      fi
+      sandbox_dir="$HOME/.cache/pi/sandboxes/$(printf '%s' "$project_dir" | ${pkgs.coreutils}/bin/sha256sum | ${pkgs.coreutils}/bin/cut -d' ' -f1)"
+      PIS_HOME="$sandbox_dir/home"
+      PIS_ETC="$sandbox_dir/etc"
+
+      if [[ "$project_dir" == "$HOME"/* ]]; then
+        project_parent="$(${pkgs.coreutils}/bin/dirname "$PIS_PROJECT")"
+        ${pkgs.coreutils}/bin/mkdir -p "$PIS_HOME/''${project_parent#"$HOME"/}"
+      fi
+      ${pkgs.coreutils}/bin/mkdir -p \
+        "$PIS_HOME/.pi/agent/extensions" \
+        "$PIS_HOME/.config/jj" \
+        "$PIS_HOME/.config/git" \
+        "$PIS_ETC" \
+        "$HOME/.local/share/atuin-agent"
+
+      # Copied: a nested sand can't bind them once the host has replaced them under
+      # its long-running parent
+      ${pkgs.coreutils}/bin/cp -f /etc/resolv.conf /etc/passwd /etc/group "$PIS_ETC/"
+
+      unset ${lib.concatStringsSep " " [
+        "VAULT_TOKEN"
+        "AWS_ACCESS_KEY_ID"
+        "AWS_SECRET_ACCESS_KEY"
+        "AWS_SESSION_TOKEN"
+        "AWS_PROFILE"
+        "AZURE_CLIENT_ID"
+        "AZURE_CLIENT_SECRET"
+        "AZURE_TENANT_ID"
+        "CLOUDFLARE_API_TOKEN"
+        "DIGITALOCEAN_TOKEN"
+        "DIGITALOCEAN_ACCESS_TOKEN"
+        "GITHUB_TOKEN"
+        "GH_TOKEN"
+        "GITLAB_TOKEN"
+        "GOOGLE_APPLICATION_CREDENTIALS"
+        "OPENAI_API_KEY"
+        "ANTHROPIC_API_KEY"
+        "GEMINI_API_KEY"
+        "SSH_AUTH_SOCK"
+        "GPG_AGENT_INFO"
+        "KRB5CCNAME"
+      ]}
+
+      export PIS_PROJECT PIS_HOME PIS_ETC
+      exec ${lib.getExe piSandbox.config.script} --extension "$HOME/.pi/agent/sandbox.ts" "$@"
+    '';
+  };
+
 in {
   home = {
+    packages = [ pis ];
     sessionVariables.PI_SKIP_VERSION_CHECK = 1;
 
     file = {
@@ -232,122 +375,4 @@ in {
     };
   };
 
-  # Same containment as sand (home/fish-functions/sand.fish), which still backs
-  # pifleet and the opencode server.
-  sandboxes.pi = {
-    package = piCodingAgent;
-    alias = "pis";
-    args = [ "--extension" "$HOME/.pi/agent/sandbox.ts" ];
-    net = true;
-    gpu = true;
-    # One persistent home per project directory
-    home = "$sandbox_home";
-
-    setup = ''
-      project_dir="$PWD"
-      project_mount_dir="$project_dir"
-      if [[ "$project_dir" == "$HOME"/Lab/work/* ]]; then
-        project_mount_dir="$HOME/Lab/work"
-      fi
-      sandbox_id="$(printf '%s' "$project_dir" | ${pkgs.coreutils}/bin/sha256sum | ${pkgs.coreutils}/bin/cut -d' ' -f1)"
-      sandbox_home="$HOME/.cache/pi/sandboxes/$sandbox_id/home"
-
-      if [[ "$project_dir" == "$HOME"/* ]]; then
-        project_parent="$(${pkgs.coreutils}/bin/dirname "$project_mount_dir")"
-        ${pkgs.coreutils}/bin/mkdir -p "$sandbox_home/''${project_parent#"$HOME"/}"
-      fi
-      ${pkgs.coreutils}/bin/mkdir -p \
-        "$sandbox_home/.pi/agent/extensions" \
-        "$sandbox_home/.config/jj" \
-        "$sandbox_home/.config/git" \
-        "$HOME/.local/share/atuin-agent"
-
-      # resolv.conf, passwd and group are copied: a nested sand can't bind them once
-      # the host has replaced them under its long-running parent.
-      exec 3</etc/resolv.conf 4</etc/passwd 5</etc/group
-    '';
-    extraArgs = [
-      "--ro-bind-data" "3" "/etc/resolv.conf"
-      "--ro-bind-data" "4" "/etc/passwd"
-      "--ro-bind-data" "5" "/etc/group"
-      "--chdir" "$project_dir"
-    ];
-
-    # Native MCP OAuth state stays writable in the persistent sandbox home.
-    # Host keyrings and Docker sockets stay outside, and the agent gets only its own
-    # atuin memory profile - never the shell-history store or its key.
-    ro = [
-      "/run/binfmt"
-      "/bin"
-      "/usr/bin"
-      "/lib"
-      "/lib64"
-      "/etc/nix"
-      "/etc/ssl"
-      "/etc/hosts"
-      "/etc/nsswitch.conf"
-      "/etc/protocols"
-      "/etc/services"
-
-      "$HOME/.pi/agent/settings.json"
-      "$HOME/.pi/agent/models.json"
-      "$HOME/.pi/agent/node_modules"
-      "$HOME/.pi/agent/npm"
-      "$HOME/.pi/agent/extensions"
-      "$HOME/.pi/agent/skills"
-      { path = "$HOME/.pi/agent/themes"; try = true; }
-      { path = "$HOME/.pi/agent/pi-cliproxyapi-provider"; try = true; }
-      "$HOME/.pi/agent/AGENTS.md"
-      { path = "$HOME/.pi/agent/sandbox.ts"; try = true; }
-      { path = "$HOME/.cache/pi-mcp-gateway/authorization"; try = true; }
-      "$HOME/.config/atuin-agent"
-      "$HOME/.config/jj"
-      "$HOME/.config/git"
-      { path = "$HOME/.config/gh-agent"; try = true; }
-      "$HOME/.config/fish"
-    ];
-    rw = [
-      "$HOME/.pi/agent/sessions"
-      "$HOME/.local/share/atuin-agent"
-      "$HOME/.pi/agent/auth.json"
-      "$HOME/.pi/agent/mcp.json"
-      { path = "$HOME/.pi/agent/mcp-auth.json"; try = true; }
-      { path = "$HOME/.pi/dashboard"; try = true; }
-      "$HOME/.pi/agent/run-history.jsonl"
-      "$project_mount_dir"
-      { path = "$HOME/.config/gcx"; try = true; }
-      { path = "$HOME/.config/.wrangler/config/agents.toml"; try = true; }
-    ];
-
-    env = {
-      HOME = "$HOME";
-      CI = "1";
-      GH_CONFIG_DIR = "$HOME/.config/gh-agent";
-      ATUIN_CONFIG_DIR = "$HOME/.config/atuin-agent";
-      ATUIN_DATA_DIR = "$HOME/.local/share/atuin-agent";
-    };
-    unsetEnv = [
-      "VAULT_TOKEN"
-      "AWS_ACCESS_KEY_ID"
-      "AWS_SECRET_ACCESS_KEY"
-      "AWS_SESSION_TOKEN"
-      "AWS_PROFILE"
-      "AZURE_CLIENT_ID"
-      "AZURE_CLIENT_SECRET"
-      "AZURE_TENANT_ID"
-      "CLOUDFLARE_API_TOKEN"
-      "DIGITALOCEAN_TOKEN"
-      "DIGITALOCEAN_ACCESS_TOKEN"
-      "GITHUB_TOKEN"
-      "GH_TOKEN"
-      "GITLAB_TOKEN"
-      "GOOGLE_APPLICATION_CREDENTIALS"
-      "OPENAI_API_KEY"
-      "ANTHROPIC_API_KEY"
-      "GEMINI_API_KEY"
-      "SSH_AUTH_SOCK"
-      "GPG_AGENT_INFO"
-      "KRB5CCNAME"
-    ];
-  };
 }

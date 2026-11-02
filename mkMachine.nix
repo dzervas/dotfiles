@@ -17,6 +17,7 @@
           # Inject the overlays
           # TODO: Define the overlays globally in flake.nix
           nixpkgs.overlays = [
+            (import ./overlays/nixpak inputs.nixpak)
             (import ./overlays)
             (import ./overlays/opencode-desktop inputs.opencode)
             inputs.niri.overlays.niri

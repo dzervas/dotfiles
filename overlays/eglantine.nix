@@ -1,5 +1,5 @@
 # Eglantine: Switch 2 emulator forked from Eden. Built on top of the nixpkgs eden derivation.
-# Only a bubblewrap wrapper ends up in bin/; the real binary stays in passthru.unwrapped.
+# Sandboxed with NixPak; the real binary stays in passthru.unwrapped.
 {
   lib,
   eden,
@@ -9,7 +9,10 @@
   httplib,
   sdl3,
   coreutils,
-  mkBwrap,
+  adwaita-icon-theme,
+  shared-mime-info,
+  gamemode,
+  mkNixPak,
 }: let
   # Upstream pins httplib 0.46 (cpmfile.json); nixpkgs' eden pins an older one and the latest is untested.
   httplib' = httplib.overrideAttrs (
@@ -32,10 +35,11 @@
     hash = "sha256-pHvxa1gkUvQo6mUgmLWtj1kcu01BLdGmttZyb8ZAj/o=";
   };
 
+  tag = "build-121";
   src = fetchFromGitHub {
+    inherit tag;
     owner = "Djihads80";
     repo = "Eglantine";
-    rev = "adae7635708e155d967e84d7ad84bf63c5203409";
     hash = "sha256-weEQTzN1+c1vmOcsh0dzVR5jqYCOBcqwmKR1Ob1+5LM=";
   };
 
@@ -54,7 +58,7 @@
   unwrapped = eden.overrideAttrs (
     _finalAttrs: oldAttrs: {
       pname = "eglantine";
-      version = "0-unstable-2026-11-01";
+      version = tag;
       inherit src;
 
       # Upstream moved to SDL3 and fmt 12
@@ -80,6 +84,8 @@
         (lib.cmakeBool "YUZU_CMD" false)
         (lib.cmakeBool "YUZU_ROOM" false)
         (lib.cmakeBool "YUZU_INSTALL_UDEV_RULES" true)
+        # Default "custom" preset adds no -march (baseline x86-64). Desktop is Zen 3, laptop Zen 4.
+        (lib.cmakeFeature "YUZU_BUILD_PRESET" "zen2")
 
         (lib.cmakeBool "zbic_FORCE_BUNDLED" true)
         (lib.cmakeFeature "zbic_CUSTOM_DIR" "${zbic}")
@@ -91,6 +97,11 @@
       postConfigure = "";
       postInstall = "";
 
+      # gamemode_client.h dlopens libgamemode.so by bare name; without this the request fails
+      preFixup = oldAttrs.preFixup + ''
+        qtWrapperArgs+=(--prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ gamemode ]})
+      '';
+
       meta = oldAttrs.meta // {
         description = "Switch 2 emulator derived from Eden, Yuzu and Sudachi";
         homepage = "https://github.com/Djihads80/Eglantine";
@@ -100,95 +111,99 @@
     }
   );
 
-in mkBwrap {
-  package = unwrapped;
-  gpu = true;
-  # Persistent sandbox home. Emulator data lands in <sandbox>/.local/share/eden
-  # (keys, firmware, NAND), config in <sandbox>/.config/eden.
-  home = "\${XDG_DATA_HOME:-$HOME/.local/share}/eglantine-sandbox";
+in (mkNixPak {
+  config = { config, sloth, ... }: {
+    app.package = unwrapped;
+    # Matches the installed .desktop file and icon
+    flatpak.appId = "dev.eden_emu.eden";
 
-  setup = ''
-    runtime_dir="''${XDG_RUNTIME_DIR:-/run/user/$(${coreutils}/bin/id -u)}"
-    wayland_display="''${WAYLAND_DISPLAY:-wayland-0}"
+    # Portals only. Not nixpakModules.gui-base: it also allows dconf, gvfs and the
+    # a11y bus, binds the unfiltered at-spi socket (lets the app read other apps'
+    # windows) and shares the host's font and shader caches read-write.
+    dbus.policies = {
+      "${config.flatpak.appId}" = "own";
+      "${config.flatpak.appId}.*" = "own";
+      "org.freedesktop.DBus" = "talk";
+      "org.freedesktop.portal.*" = "talk";
+    };
 
-    # hidraw for HIDAPI controllers
-    shopt -s nullglob
-    for node in /dev/hidraw*; do
-      bwrap_extra+=(--dev-bind-try "$node" "$node")
-    done
-    shopt -u nullglob
+    gpu.enable = true;
+    fonts.enable = true;
+    locale.enable = true;
+    timeZone.enable = true;
 
-    # Expose files passed on the command line (e.g. a ROM from the .desktop %f) read-only
-    app_args=()
-    for arg in "$@"; do
-      if [[ -f "$arg" ]]; then
-        arg="$(${coreutils}/bin/realpath "$arg")"
-        bwrap_extra+=(--ro-bind "$arg" "$arg")
-      fi
-      app_args+=("$arg")
-    done
-    set -- "''${app_args[@]}"
-  '';
+    bubblewrap = {
+      network = false;
+      newSession = true;
+      dieWithParent = true;
+      clearEnv = true;
+      tmpfs = [ "/tmp" ];
+      sockets = {
+        wayland = true;
+        pulse = true;
+      };
 
-  extraArgs = [
-    "--new-session"
-    "--chdir"
-    "$HOME"
-    "--perms"
-    "0700"
-    "--dir"
-    "$runtime_dir"
-  ];
+      bind = {
+        rw = [
+          # Persistent sandbox home. Emulator data lands in <sandbox>/.local/share/eden
+          # (keys, firmware, NAND), config in <sandbox>/.config/eden.
+          [
+            (sloth.mkdir (sloth.concat' sloth.xdgDataHome "/eglantine-sandbox"))
+            sloth.homeDir
+          ]
+          # ROMs. The .desktop file's %f only works for files in here: arguments aren't bound.
+          (sloth.concat' sloth.homeDir "/CryptVMs/Switch")
+          # Files picked through the portal file chooser
+          [
+            (sloth.concat' sloth.runtimeDir "/doc/by-app/${config.flatpak.appId}")
+            (sloth.concat' sloth.runtimeDir "/doc")
+          ]
+        ];
+        # Controllers: SDL enumerates through udev
+        ro = [
+          "/sys/class"
+          "/sys/bus"
+          "/run/udev"
+        ];
+        dev = [
+          # Also exposes keyboards
+          "/dev/input"
+          # gpu.enable covers /dev/dri only
+          "/dev/nvidiactl"
+          "/dev/nvidia0"
+          "/dev/nvidia-uvm"
+          "/dev/nvidia-modeset"
+        ];
+      };
 
-  ro = [
-    { path = "/etc/fonts"; try = true; }
-    { path = "/etc/localtime"; try = true; }
-    { path = "/etc/zoneinfo"; try = true; }
-
-    # Controllers: SDL enumerates through udev. /dev/input also exposes keyboards.
-    { path = "/sys/class"; try = true; }
-    { path = "/sys/bus"; try = true; }
-    { path = "/run/udev"; try = true; }
-
-    "$runtime_dir/$wayland_display"
-    { path = "$runtime_dir/pipewire-0"; try = true; }
-    { path = "$runtime_dir/pulse/native"; try = true; }
-  ];
-  rw = [ "$HOME/CryptVMs/Switch" ];
-  dev = [ { path = "/dev/input"; try = true; } ];
-
-  env = {
-    HOME = "$HOME";
-    PATH = lib.makeBinPath [ coreutils ];
-    XDG_RUNTIME_DIR = "$runtime_dir";
-    WAYLAND_DISPLAY = "$wayland_display";
-    QT_QPA_PLATFORM = "wayland";
-    # Chromium's own sandbox can't nest inside bwrap's user namespace
-    QTWEBENGINE_DISABLE_SANDBOX = "1";
+      env = {
+        HOME = sloth.homeDir;
+        XDG_RUNTIME_DIR = sloth.runtimeDir;
+        WAYLAND_DISPLAY = sloth.envOr "WAYLAND_DISPLAY" "wayland-0";
+        XDG_SESSION_TYPE = "wayland";
+        XDG_CURRENT_DESKTOP = sloth.envOr "XDG_CURRENT_DESKTOP" "";
+        LANG = sloth.envOr "LANG" "C.UTF-8";
+        XCURSOR_THEME = sloth.envOr "XCURSOR_THEME" "default";
+        XCURSOR_SIZE = sloth.envOr "XCURSOR_SIZE" "24";
+        PATH = lib.makeBinPath [ coreutils ];
+        XDG_DATA_DIRS = lib.makeSearchPath "share" [
+          adwaita-icon-theme
+          shared-mime-info
+        ];
+        XCURSOR_PATH = "${adwaita-icon-theme}/share/icons";
+        QT_QPA_PLATFORM = "wayland";
+        # Chromium's own sandbox can't nest inside bwrap's user namespace
+        QTWEBENGINE_DISABLE_SANDBOX = "1";
+        # Switch 2 titles size the texture cache to the driver's VRAM budget minus 1 GiB
+        # (texture_cache.h TickFrame, ignores vram_usage_mode). NVIDIA on Linux can't page VRAM
+        # out, so niri and the lock screen fail to allocate and the desktop freezes (froze at
+        # 14.07 GB total). The process runs ~1.1 GB over critical, so this leaves ~2.5 GB of the
+        # 16 GB card; 9/10 GiB thrashed the collector in MKW. Drop once upstream caps it
+        # (Eglantine #250, #279).
+        EDEN_NX2_TC_EXPECTED_MIB = "11264";
+        EDEN_NX2_TC_CRITICAL_MIB = "12288";
+      };
+    };
   };
-
-  # Session variables worth forwarding; everything else is dropped
-  keepEnv = [
-    "LANG"
-    "LANGUAGE"
-    "LC_ALL"
-    "LOCALE_ARCHIVE"
-    "TZ"
-    "USER"
-    "LOGNAME"
-    "XDG_CURRENT_DESKTOP"
-    "XDG_SESSION_TYPE"
-    "XDG_DATA_DIRS"
-    "XCURSOR_THEME"
-    "XCURSOR_SIZE"
-    "XCURSOR_PATH"
-    "QT_QPA_PLATFORMTHEME"
-    "QT_STYLE_OVERRIDE"
-    "QT_WAYLAND_DECORATION"
-    "__GLX_VENDOR_LIBRARY_NAME"
-    "__EGL_VENDOR_LIBRARY_FILENAMES"
-    "VK_ICD_FILENAMES"
-    "VK_DRIVER_FILES"
-    "GBM_BACKEND"
-  ];
-}
+}).config.env
+// { inherit unwrapped; }
