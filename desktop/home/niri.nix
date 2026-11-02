@@ -1,3 +1,8 @@
+# Recovery: session locked but only the cursor shows (noctalia's lock surface
+# failed to allocate, e.g. VRAM exhausted by inference). From a TTY:
+#   systemctl --user restart noctalia   # niri stays locked without a lock client
+#   sleep 3; WAYLAND_DISPLAY=wayland-1 noctalia msg session lock   # niri: "replacing existing dead lock"
+# Then switch back to tty1 and unlock. Last resort: niri msg action quit.
 { config, lib, pkgs, ... }: {
   setup.windowManager = "niri";
   imports = [

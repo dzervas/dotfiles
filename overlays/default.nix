@@ -11,7 +11,7 @@ final: prev: {
   claude-chrome = prev.callPackage ./claude-chrome.nix {};
   compact-nix = prev.callPackage ./compact-nix.nix {};
   # Bubblewrapped; the real binary is only reachable via eglantine.unwrapped
-  # nix-update:eglantine.unwrapped --version=branch=nx2
+  # nix-update:eglantine.unwrapped
   eglantine = final.callPackage ./eglantine.nix {};
   # Version updates also require regenerating overlays/pi-dashboard/package-lock.json.
   pi-dashboard = prev.callPackage ./pi-dashboard.nix {};

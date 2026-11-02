@@ -22,6 +22,12 @@ macros:
 
 models:
   flint: &flint
+    # Variants merge this entry with `<<: *flint` and override only this macro.
+    # The merge is shallow, so a variant's `macros:` replaces this whole map.
+    aliases:
+      - flint
+    macros:
+      model_path: /root/.cache/huggingface/hub/models--unsloth--flint-GGUF/snapshots/20468edfc38ab43d6914cc88b08cbecb05d0fc62/flint-UD-Q4_K_XL.gguf
     capabilities:
       context: ${flint_ctx}
       in: [text]
@@ -31,9 +37,10 @@ models:
       flint-server --host 127.0.0.1 --port ${PORT}
       --ctx-size ${flint_ctx}
       --fit-ctx ${flint_ctx}
-      --model /root/.cache/huggingface/hub/models--unsloth--flint-GGUF/snapshots/20468edfc38ab43d6914cc88b08cbecb05d0fc62/flint-UD-Q4_K_XL.gguf
+      --model ${model_path}
 
       --parallel 4
+      --kv-unified
 
       --fit on
       # --fit-target 4096
@@ -62,6 +69,13 @@ models:
       # --presence-penalty 0
       # --repeat-penalty 1.0
 
+  flint-abliterated:
+    <<: *flint
+    aliases:
+      - flint-abliterated
+    macros:
+      model_path: /root/.cache/huggingface/hub/models--lilcheaty--flint-abliterated-GGUF/snapshots/8866ae70d1726eee740c743bd6f94dbdee108e27/flint-abliterated-Q3_K_M.gguf
+
   zeta-2.1:
     aliases:
       - zeta
@@ -86,6 +100,7 @@ routing:
           members:
             - zeta
             - flint
+            - flint-abliterated
 
 store:
   path: /data/llama-swap.sqlite

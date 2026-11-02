@@ -35,31 +35,25 @@
     hash = "sha256-pHvxa1gkUvQo6mUgmLWtj1kcu01BLdGmttZyb8ZAj/o=";
   };
 
-  tag = "build-121";
-  src = fetchFromGitHub {
-    inherit tag;
-    owner = "Djihads80";
-    repo = "Eglantine";
-    hash = "sha256-weEQTzN1+c1vmOcsh0dzVR5jqYCOBcqwmKR1Ob1+5LM=";
-  };
-
-  # CPMUtil skips cpmfile patches for <name>_CUSTOM_DIR, so apply upstream's reshade patch here
-  reshade = applyPatches {
-    name = "reshade-6.8.0-patched";
-    src = fetchFromGitHub {
-      owner = "crosire";
-      repo = "reshade";
-      tag = "v6.8.0";
-      hash = "sha256-K6QC7CLqy8M318n9WbuqGvcRF9g9abvDD/xbr7T+nXo=";
-    };
-    patches = [ "${src}/.patch/reshade/0001-from-chars-fallback.patch" ];
+  # Upstream hardcodes zstd_FORCE_BUNDLED (byte-identical NUP archives), so the system zstd is never used
+  zstd = fetchFromGitHub {
+    owner = "facebook";
+    repo = "zstd";
+    rev = "33618c89e511637f8a6ef955b3501766d71feb53";
+    hash = "sha256-UP99PUq8N+fmU972Jxim4f9u//T+4hRW+wuTZzWg3uI=";
   };
 
   unwrapped = eden.overrideAttrs (
-    _finalAttrs: oldAttrs: {
+    _finalAttrs: oldAttrs: rec {
       pname = "eglantine";
-      version = tag;
-      inherit src;
+      version = src.tag;
+
+      src = fetchFromGitHub {
+        tag = "build-129";
+        owner = "Djihads80";
+        repo = "Eglantine";
+        hash = "sha256-qLuTRyLuMNM3q2mRwkX2sfFQhL5eKr8+QwylYsO5PHA=";
+      };
 
       # Upstream moved to SDL3 and fmt 12
       buildInputs = builtins.filter (
@@ -79,6 +73,18 @@
       # The NX2 dynarmic decoder changes are not covered by upstream's test expectations
       doCheck = false;
 
+      # CPMUtil skips cpmfile patches for <name>_CUSTOM_DIR, so apply upstream's reshade patch here
+      reshade = applyPatches {
+        name = "reshade-6.8.0-patched";
+        src = fetchFromGitHub {
+          owner = "crosire";
+          repo = "reshade";
+          tag = "v6.8.0";
+          hash = "sha256-K6QC7CLqy8M318n9WbuqGvcRF9g9abvDD/xbr7T+nXo=";
+        };
+        patches = [ "${src}/.patch/reshade/0001-from-chars-fallback.patch" ];
+      };
+
       cmakeFlags = oldAttrs.cmakeFlags ++ [
         (lib.cmakeBool "ENABLE_WERROR" false)
         (lib.cmakeBool "YUZU_CMD" false)
@@ -89,6 +95,7 @@
 
         (lib.cmakeBool "zbic_FORCE_BUNDLED" true)
         (lib.cmakeFeature "zbic_CUSTOM_DIR" "${zbic}")
+        (lib.cmakeFeature "zstd_CUSTOM_DIR" "${zstd}")
         (lib.cmakeBool "reshade_FORCE_BUNDLED" true)
         (lib.cmakeFeature "reshade_CUSTOM_DIR" "${reshade}")
       ];

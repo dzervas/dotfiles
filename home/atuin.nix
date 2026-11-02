@@ -127,6 +127,7 @@ in {
       llama-swap = {
         image = "ghcr.io/dzervas/dotfiles/llama-swap-vllm";
         description = "Local LLM model swapper";
+        autoStart = false; # Start manually: systemctl --user start podman-llama-swap
         network = [ "local-ai.network" ];
         networkAlias = [ "llama-swap" ];
         ports = [ "1337:1337" ];

@@ -260,6 +260,8 @@ avatar_path = "/home/dzervas/.face"
 clipboard_auto_paste = "off"
 clipboard_enabled = false
 font_family = "DejaVu Sans"
+# Noctalia runs as a systemd user unit; keep launched apps alive across its restarts.
+launch_apps_as_systemd_services = true
 panel_anchor_bar = "main"
 password_style = "random"
 polkit_agent = true

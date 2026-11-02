@@ -16,6 +16,9 @@
   programs.noctalia = {
     enable = true;
     package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    # Bound to graphical-session.target; recover a wedged shell with
+    # `systemctl --user restart noctalia` instead of respawning it by hand.
+    systemd.enable = true;
   };
 
   xdg.configFile = {
@@ -29,5 +32,4 @@
     };
   };
 
-  programs.niri.settings.spawn-at-startup = lib.mkIf (config.setup.windowManager == "niri") [{ sh = "noctalia"; }];
 }
