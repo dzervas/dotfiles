@@ -12,7 +12,8 @@ final: prev: {
   compact-nix = prev.callPackage ./compact-nix.nix {};
   # Bubblewrapped; the real binary is only reachable via eglantine.unwrapped
   # nix-update:eglantine.unwrapped --version=branch=nx2
-  eglantine = prev.callPackage ./eglantine.nix {};
+  eglantine = final.callPackage ./eglantine.nix {};
+  mkBwrap = final.callPackage ./mk-bwrap.nix {};
   # Version updates also require regenerating overlays/pi-dashboard/package-lock.json.
   pi-dashboard = prev.callPackage ./pi-dashboard.nix {};
   # nix-update:cursortab-nvim --subpackage server

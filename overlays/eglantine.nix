@@ -8,10 +8,8 @@
   fmt,
   httplib,
   sdl3,
-  bubblewrap,
   coreutils,
-  writeShellApplication,
-  runCommand,
+  mkBwrap,
 }: let
   # Upstream pins httplib 0.46 (cpmfile.json); nixpkgs' eden pins an older one and the latest is untested.
   httplib' = httplib.overrideAttrs (
@@ -102,8 +100,75 @@
     }
   );
 
-  # Session variables worth forwarding; everything else is dropped by --clearenv
-  passEnv = [
+in mkBwrap {
+  package = unwrapped;
+  gpu = true;
+  # Persistent sandbox home. Emulator data lands in <sandbox>/.local/share/eden
+  # (keys, firmware, NAND), config in <sandbox>/.config/eden.
+  home = "\${XDG_DATA_HOME:-$HOME/.local/share}/eglantine-sandbox";
+
+  setup = ''
+    runtime_dir="''${XDG_RUNTIME_DIR:-/run/user/$(${coreutils}/bin/id -u)}"
+    wayland_display="''${WAYLAND_DISPLAY:-wayland-0}"
+
+    # hidraw for HIDAPI controllers
+    shopt -s nullglob
+    for node in /dev/hidraw*; do
+      bwrap_extra+=(--dev-bind-try "$node" "$node")
+    done
+    shopt -u nullglob
+
+    # Expose files passed on the command line (e.g. a ROM from the .desktop %f) read-only
+    app_args=()
+    for arg in "$@"; do
+      if [[ -f "$arg" ]]; then
+        arg="$(${coreutils}/bin/realpath "$arg")"
+        bwrap_extra+=(--ro-bind "$arg" "$arg")
+      fi
+      app_args+=("$arg")
+    done
+    set -- "''${app_args[@]}"
+  '';
+
+  extraArgs = [
+    "--new-session"
+    "--chdir"
+    "$HOME"
+    "--perms"
+    "0700"
+    "--dir"
+    "$runtime_dir"
+  ];
+
+  ro = [
+    { path = "/etc/fonts"; try = true; }
+    { path = "/etc/localtime"; try = true; }
+    { path = "/etc/zoneinfo"; try = true; }
+
+    # Controllers: SDL enumerates through udev. /dev/input also exposes keyboards.
+    { path = "/sys/class"; try = true; }
+    { path = "/sys/bus"; try = true; }
+    { path = "/run/udev"; try = true; }
+
+    "$runtime_dir/$wayland_display"
+    { path = "$runtime_dir/pipewire-0"; try = true; }
+    { path = "$runtime_dir/pulse/native"; try = true; }
+  ];
+  rw = [ "$HOME/CryptVMs/Switch" ];
+  dev = [ { path = "/dev/input"; try = true; } ];
+
+  env = {
+    HOME = "$HOME";
+    PATH = lib.makeBinPath [ coreutils ];
+    XDG_RUNTIME_DIR = "$runtime_dir";
+    WAYLAND_DISPLAY = "$wayland_display";
+    QT_QPA_PLATFORM = "wayland";
+    # Chromium's own sandbox can't nest inside bwrap's user namespace
+    QTWEBENGINE_DISABLE_SANDBOX = "1";
+  };
+
+  # Session variables worth forwarding; everything else is dropped
+  keepEnv = [
     "LANG"
     "LANGUAGE"
     "LC_ALL"
@@ -126,108 +191,4 @@
     "VK_DRIVER_FILES"
     "GBM_BACKEND"
   ];
-
-  sandboxed = writeShellApplication {
-    name = "eglantine";
-    runtimeInputs = [
-      bubblewrap
-      coreutils
-    ];
-    text = ''
-      # Persistent sandbox home. Emulator data lands in <sandbox>/.local/share/eden
-      # (keys, firmware, NAND), config in <sandbox>/.config/eden.
-      sandbox_home="''${XDG_DATA_HOME:-$HOME/.local/share}/eglantine-sandbox"
-      runtime_dir="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-      mkdir -p "$sandbox_home"
-
-      bwrap_args=(
-        --unshare-all
-        --die-with-parent
-        --new-session
-        --clearenv
-        --proc /proc
-        --dev /dev
-        --tmpfs /tmp
-
-        --ro-bind /nix/store /nix/store
-        --ro-bind /etc/static /etc/static
-        --ro-bind-try /etc/fonts /etc/fonts
-        --ro-bind-try /etc/localtime /etc/localtime
-        --ro-bind-try /etc/zoneinfo /etc/zoneinfo
-        --ro-bind /etc/passwd /etc/passwd
-        --ro-bind /etc/group /etc/group
-        --ro-bind-try /run/current-system/sw /run/current-system/sw
-        --ro-bind-try "/etc/profiles/per-user/$USER" "/etc/profiles/per-user/$USER"
-
-        # GPU
-        --ro-bind-try /run/opengl-driver /run/opengl-driver
-        --ro-bind-try /sys/dev/char /sys/dev/char
-        --ro-bind-try /sys/devices /sys/devices
-
-        # Controllers: SDL enumerates through udev. /dev/input also exposes keyboards.
-        --ro-bind-try /sys/class /sys/class
-        --ro-bind-try /sys/bus /sys/bus
-        --ro-bind-try /run/udev /run/udev
-        --dev-bind-try /dev/input /dev/input
-
-        --bind "$sandbox_home" "$HOME"
-        --perms 0700 --dir "$runtime_dir"
-        --ro-bind "$runtime_dir/''${WAYLAND_DISPLAY:-wayland-0}" "$runtime_dir/''${WAYLAND_DISPLAY:-wayland-0}"
-        --ro-bind-try "$runtime_dir/pipewire-0" "$runtime_dir/pipewire-0"
-        --ro-bind-try "$runtime_dir/pulse/native" "$runtime_dir/pulse/native"
-        --bind "$HOME/CryptVMs/Switch" "$HOME/CryptVMs/Switch"
-
-        --chdir "$HOME"
-        --setenv HOME "$HOME"
-        --setenv PATH "${lib.makeBinPath [ coreutils ]}"
-        --setenv XDG_RUNTIME_DIR "$runtime_dir"
-        --setenv WAYLAND_DISPLAY "''${WAYLAND_DISPLAY:-wayland-0}"
-        --setenv QT_QPA_PLATFORM wayland
-        # Chromium's own sandbox can't nest inside bwrap's user namespace
-        --setenv QTWEBENGINE_DISABLE_SANDBOX 1
-      )
-
-      for name in ${lib.escapeShellArgs passEnv}; do
-        if [[ -n "''${!name:-}" ]]; then
-          bwrap_args+=(--setenv "$name" "''${!name}")
-        fi
-      done
-
-      # Render nodes only, plus NVIDIA's nodes and hidraw for HIDAPI controllers
-      shopt -s nullglob
-      for node in /dev/dri/renderD* /dev/nvidiactl /dev/nvidia[0-9]* /dev/nvidia-uvm /dev/nvidia-modeset /dev/hidraw*; do
-        bwrap_args+=(--dev-bind-try "$node" "$node")
-      done
-
-      # Expose files passed on the command line (e.g. a ROM from the .desktop %f) read-only
-      app_args=()
-      for arg in "$@"; do
-        if [[ -f "$arg" ]]; then
-          arg="$(realpath "$arg")"
-          bwrap_args+=(--ro-bind "$arg" "$arg")
-        fi
-        app_args+=("$arg")
-      done
-
-      exec bwrap "''${bwrap_args[@]}" -- ${lib.getExe unwrapped} "''${app_args[@]}"
-    '';
-  };
-in runCommand "eglantine-${unwrapped.version}"
-  {
-    passthru = { inherit unwrapped; };
-    meta = {
-      inherit (unwrapped.meta)
-        description
-        homepage
-        license
-        platforms
-        ;
-      mainProgram = "eglantine";
-    };
-  }
-  ''
-    mkdir -p $out/bin $out/lib
-    ln -s ${lib.getExe sandboxed} $out/bin/eglantine
-    ln -s ${unwrapped}/share $out/share
-    ln -s ${unwrapped}/lib/udev $out/lib/udev
-  ''
+}

@@ -37,16 +37,20 @@
   '';
   piCodingAgent = pkgs.symlinkJoin {
     name = "pi-coding-agent-with-extension-node-path";
+    inherit (pi-coding-agent-package) meta;
     paths = [ pi-coding-agent-package ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
     # Pi realpaths symlinked extensions before loading them, so bare imports
     # need to resolve from the extension dependency closure while pi runs.
     # Async subagent runners also need the Nix-installed Pi package exposed under
     # its package name for detached module resolution.
+    # The extra PATH entries live here rather than in programs.pi-coding-agent.extraPackages
+    # so the sandboxed pis gets them too.
     postBuild = ''
       wrapProgram $out/bin/pi \
         --prefix NODE_PATH : ${piExtensionNodeModules}/node_modules \
-        --prefix NODE_PATH : ${piCodingAgentNodeModules}/node_modules
+        --prefix NODE_PATH : ${piCodingAgentNodeModules}/node_modules \
+        --suffix PATH : ${lib.makeBinPath (with pkgs; [ nodejs typescript ])}
     '';
   };
 
@@ -100,10 +104,6 @@ in {
   programs.pi-coding-agent = {
     enable = true;
     package = piCodingAgent;
-    extraPackages = with pkgs; [
-      nodejs
-      typescript
-    ];
 
     settings = rec {
       quietStartup = true;
@@ -230,5 +230,124 @@ in {
         "flint"
       ];
     };
+  };
+
+  # Same containment as sand (home/fish-functions/sand.fish), which still backs
+  # pifleet and the opencode server.
+  sandboxes.pi = {
+    package = piCodingAgent;
+    alias = "pis";
+    args = [ "--extension" "$HOME/.pi/agent/sandbox.ts" ];
+    net = true;
+    gpu = true;
+    # One persistent home per project directory
+    home = "$sandbox_home";
+
+    setup = ''
+      project_dir="$PWD"
+      project_mount_dir="$project_dir"
+      if [[ "$project_dir" == "$HOME"/Lab/work/* ]]; then
+        project_mount_dir="$HOME/Lab/work"
+      fi
+      sandbox_id="$(printf '%s' "$project_dir" | ${pkgs.coreutils}/bin/sha256sum | ${pkgs.coreutils}/bin/cut -d' ' -f1)"
+      sandbox_home="$HOME/.cache/pi/sandboxes/$sandbox_id/home"
+
+      if [[ "$project_dir" == "$HOME"/* ]]; then
+        project_parent="$(${pkgs.coreutils}/bin/dirname "$project_mount_dir")"
+        ${pkgs.coreutils}/bin/mkdir -p "$sandbox_home/''${project_parent#"$HOME"/}"
+      fi
+      ${pkgs.coreutils}/bin/mkdir -p \
+        "$sandbox_home/.pi/agent/extensions" \
+        "$sandbox_home/.config/jj" \
+        "$sandbox_home/.config/git" \
+        "$HOME/.local/share/atuin-agent"
+
+      # resolv.conf, passwd and group are copied: a nested sand can't bind them once
+      # the host has replaced them under its long-running parent.
+      exec 3</etc/resolv.conf 4</etc/passwd 5</etc/group
+    '';
+    extraArgs = [
+      "--ro-bind-data" "3" "/etc/resolv.conf"
+      "--ro-bind-data" "4" "/etc/passwd"
+      "--ro-bind-data" "5" "/etc/group"
+      "--chdir" "$project_dir"
+    ];
+
+    # Native MCP OAuth state stays writable in the persistent sandbox home.
+    # Host keyrings and Docker sockets stay outside, and the agent gets only its own
+    # atuin memory profile - never the shell-history store or its key.
+    ro = [
+      "/run/binfmt"
+      "/bin"
+      "/usr/bin"
+      "/lib"
+      "/lib64"
+      "/etc/nix"
+      "/etc/ssl"
+      "/etc/hosts"
+      "/etc/nsswitch.conf"
+      "/etc/protocols"
+      "/etc/services"
+
+      "$HOME/.pi/agent/settings.json"
+      "$HOME/.pi/agent/models.json"
+      "$HOME/.pi/agent/node_modules"
+      "$HOME/.pi/agent/npm"
+      "$HOME/.pi/agent/extensions"
+      "$HOME/.pi/agent/skills"
+      { path = "$HOME/.pi/agent/themes"; try = true; }
+      { path = "$HOME/.pi/agent/pi-cliproxyapi-provider"; try = true; }
+      "$HOME/.pi/agent/AGENTS.md"
+      { path = "$HOME/.pi/agent/sandbox.ts"; try = true; }
+      { path = "$HOME/.cache/pi-mcp-gateway/authorization"; try = true; }
+      "$HOME/.config/atuin-agent"
+      "$HOME/.config/jj"
+      "$HOME/.config/git"
+      { path = "$HOME/.config/gh-agent"; try = true; }
+      "$HOME/.config/fish"
+    ];
+    rw = [
+      "$HOME/.pi/agent/sessions"
+      "$HOME/.local/share/atuin-agent"
+      "$HOME/.pi/agent/auth.json"
+      "$HOME/.pi/agent/mcp.json"
+      { path = "$HOME/.pi/agent/mcp-auth.json"; try = true; }
+      { path = "$HOME/.pi/dashboard"; try = true; }
+      "$HOME/.pi/agent/run-history.jsonl"
+      "$project_mount_dir"
+      { path = "$HOME/.config/gcx"; try = true; }
+      { path = "$HOME/.config/.wrangler/config/agents.toml"; try = true; }
+    ];
+
+    env = {
+      HOME = "$HOME";
+      CI = "1";
+      GH_CONFIG_DIR = "$HOME/.config/gh-agent";
+      ATUIN_CONFIG_DIR = "$HOME/.config/atuin-agent";
+      ATUIN_DATA_DIR = "$HOME/.local/share/atuin-agent";
+    };
+    unsetEnv = [
+      "VAULT_TOKEN"
+      "AWS_ACCESS_KEY_ID"
+      "AWS_SECRET_ACCESS_KEY"
+      "AWS_SESSION_TOKEN"
+      "AWS_PROFILE"
+      "AZURE_CLIENT_ID"
+      "AZURE_CLIENT_SECRET"
+      "AZURE_TENANT_ID"
+      "CLOUDFLARE_API_TOKEN"
+      "DIGITALOCEAN_TOKEN"
+      "DIGITALOCEAN_ACCESS_TOKEN"
+      "GITHUB_TOKEN"
+      "GH_TOKEN"
+      "GITLAB_TOKEN"
+      "GOOGLE_APPLICATION_CREDENTIALS"
+      "OPENAI_API_KEY"
+      "ANTHROPIC_API_KEY"
+      "GEMINI_API_KEY"
+      "SSH_AUTH_SOCK"
+      "GPG_AGENT_INFO"
+      "KRB5CCNAME"
+    ];
   };
 }

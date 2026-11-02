@@ -1,5 +1,4 @@
-{ config, pkgs, ... }:
-{
+{ config, pkgs, ... }: {
   # TODO: Handle local file urls with nvim
   home.packages = with pkgs; [
     viu # Render images in ghostty
@@ -26,7 +25,7 @@
       shell-integration-features = "no-cursor"; # Fish sets cursor as bar
 
       # bell
-      bell-features = "audio,attention,title,border";
+      bell-features = "audio,title,border";
       # Downloaded from pixabay, by DRAGON-STUDIO
       # https://pixabay.com/sound-effects/film-special-effects-bell-ring-390294/
       bell-audio-path = "~/Lab/dotfiles/home/bell.mp3";
