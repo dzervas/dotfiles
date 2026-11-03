@@ -2,10 +2,10 @@
   nodejs = pkgs.nodejs_22; # tree-sitter does not work with nodejs_24
   pi-coding-agent-package = pkgs.pi-coding-agent-latest;
   piPackages = [
-    "npm:pi-subagents@0.79.1"
-    "npm:pi-cliproxyapi-provider@0.15.58"
+    "npm:pi-subagents@0.84.0"
+    "npm:pi-cliproxyapi-provider@0.16.1"
     {
-      source = "git:github.com/mattpocock/skills@v1.3.1";
+      source = "git:github.com/mattpocock/skills@v1.3.2";
       extensions = [];
       skills = [
         "skills/engineering/*"
@@ -50,7 +50,15 @@
       wrapProgram $out/bin/pi \
         --prefix NODE_PATH : ${piExtensionNodeModules}/node_modules \
         --prefix NODE_PATH : ${piCodingAgentNodeModules}/node_modules \
-        --suffix PATH : ${lib.makeBinPath (with pkgs; [ nodejs typescript ])}
+        --suffix PATH : ${
+          lib.makeBinPath (
+            with pkgs;
+            [
+              nodejs
+              typescript
+            ]
+          )
+        }
     '';
   };
 
@@ -94,63 +102,77 @@
         dieWithParent = true;
         tmpfs = [ "/tmp" ];
 
-        # $PIS_* come from the pis wrapper below
-        bind.rw = [
-          [ "$PIS_HOME" "$HOME" ]
-          "$PIS_PROJECT"
-          "$HOME/.pi/agent/sessions"
-          "$HOME/.local/share/atuin-agent"
-          "$HOME/.pi/agent/auth.json"
-          "$HOME/.pi/agent/mcp.json"
-          "$HOME/.pi/agent/mcp-auth.json"
-          "$HOME/.pi/dashboard"
-          "$HOME/.pi/agent/run-history.jsonl"
-          "$HOME/.config/gcx"
-          "$HOME/.config/.wrangler/config/agents.toml"
-        ];
-        # After NixPak's own /etc/resolv.conf bind, so the copy wins
-        bind.ro = lib.mkAfter [
-          [ "$PIS_ETC/resolv.conf" "/etc/resolv.conf" ]
-          [ "$PIS_ETC/passwd" "/etc/passwd" ]
-          [ "$PIS_ETC/group" "/etc/group" ]
-          "/etc/static"
-          "/etc/nix"
-          "/etc/ssl"
-          "/etc/nsswitch.conf"
-          "/etc/protocols"
-          "/etc/services"
-          "/run/current-system/sw"
-          (sloth.concat' "/etc/profiles/per-user/" (sloth.env "USER"))
-          "/run/binfmt"
-          "/bin"
-          "/usr/bin"
-          "/lib"
-          "/lib64"
+        bind = {
+          # $PIS_* come from the pis wrapper below
+          rw = [
+            [
+              "$PIS_HOME"
+              "$HOME"
+            ]
+            "$PIS_PROJECT"
+            "$HOME/.pi/agent/sessions"
+            "$HOME/.local/share/atuin-agent"
+            "$HOME/.pi/agent/auth.json"
+            "$HOME/.pi/agent/mcp.json"
+            "$HOME/.pi/agent/mcp-auth.json"
+            "$HOME/.pi/dashboard"
+            "$HOME/.pi/agent/run-history.jsonl"
+            "$HOME/.config/gcx"
+            "$HOME/.config/.wrangler/config/agents.toml"
+          ];
+          # After NixPak's own /etc/resolv.conf bind, so the copy wins
+          ro = lib.mkAfter [
+            [
+              "$PIS_ETC/resolv.conf"
+              "/etc/resolv.conf"
+            ]
+            [
+              "$PIS_ETC/passwd"
+              "/etc/passwd"
+            ]
+            [
+              "$PIS_ETC/group"
+              "/etc/group"
+            ]
+            "/etc/static"
+            "/etc/nix"
+            "/etc/ssl"
+            "/etc/nsswitch.conf"
+            "/etc/protocols"
+            "/etc/services"
+            "/run/current-system/sw"
+            (sloth.concat' "/etc/profiles/per-user/" (sloth.env "USER"))
+            "/run/binfmt"
+            "/bin"
+            "/usr/bin"
+            "/lib"
+            "/lib64"
 
-          "$HOME/.pi/agent/settings.json"
-          "$HOME/.pi/agent/models.json"
-          "$HOME/.pi/agent/node_modules"
-          "$HOME/.pi/agent/npm"
-          "$HOME/.pi/agent/extensions"
-          "$HOME/.pi/agent/skills"
-          "$HOME/.pi/agent/themes"
-          "$HOME/.pi/agent/pi-cliproxyapi-provider"
-          "$HOME/.pi/agent/AGENTS.md"
-          "$HOME/.pi/agent/sandbox.ts"
-          "$HOME/.cache/pi-mcp-gateway/authorization"
-          "$HOME/.config/atuin-agent"
-          "$HOME/.config/jj"
-          "$HOME/.config/git"
-          "$HOME/.config/gh-agent"
-          "$HOME/.config/fish"
-        ];
-        # gpu.enable covers /dev/dri only
-        bind.dev = [
-          "/dev/nvidiactl"
-          "/dev/nvidia0"
-          "/dev/nvidia-uvm"
-          "/dev/nvidia-modeset"
-        ];
+            "$HOME/.pi/agent/settings.json"
+            "$HOME/.pi/agent/models.json"
+            "$HOME/.pi/agent/node_modules"
+            "$HOME/.pi/agent/npm"
+            "$HOME/.pi/agent/extensions"
+            "$HOME/.pi/agent/skills"
+            "$HOME/.pi/agent/themes"
+            "$HOME/.pi/agent/pi-cliproxyapi-provider"
+            "$HOME/.pi/agent/AGENTS.md"
+            "$HOME/.pi/agent/sandbox.ts"
+            "$HOME/.cache/pi-mcp-gateway/authorization"
+            "$HOME/.config/atuin-agent"
+            "$HOME/.config/jj"
+            "$HOME/.config/git"
+            "$HOME/.config/gh-agent"
+            "$HOME/.config/fish"
+          ];
+          # gpu.enable covers /dev/dri only
+          dev = [
+            "/dev/nvidiactl"
+            "/dev/nvidia0"
+            "/dev/nvidia-uvm"
+            "/dev/nvidia-modeset"
+          ];
+        };
 
         env = {
           CI = "1";
@@ -191,29 +213,31 @@
       # its long-running parent
       ${pkgs.coreutils}/bin/cp -f /etc/resolv.conf /etc/passwd /etc/group "$PIS_ETC/"
 
-      unset ${lib.concatStringsSep " " [
-        "VAULT_TOKEN"
-        "AWS_ACCESS_KEY_ID"
-        "AWS_SECRET_ACCESS_KEY"
-        "AWS_SESSION_TOKEN"
-        "AWS_PROFILE"
-        "AZURE_CLIENT_ID"
-        "AZURE_CLIENT_SECRET"
-        "AZURE_TENANT_ID"
-        "CLOUDFLARE_API_TOKEN"
-        "DIGITALOCEAN_TOKEN"
-        "DIGITALOCEAN_ACCESS_TOKEN"
-        "GITHUB_TOKEN"
-        "GH_TOKEN"
-        "GITLAB_TOKEN"
-        "GOOGLE_APPLICATION_CREDENTIALS"
-        "OPENAI_API_KEY"
-        "ANTHROPIC_API_KEY"
-        "GEMINI_API_KEY"
-        "SSH_AUTH_SOCK"
-        "GPG_AGENT_INFO"
-        "KRB5CCNAME"
-      ]}
+      unset ${
+        lib.concatStringsSep " " [
+          "VAULT_TOKEN"
+          "AWS_ACCESS_KEY_ID"
+          "AWS_SECRET_ACCESS_KEY"
+          "AWS_SESSION_TOKEN"
+          "AWS_PROFILE"
+          "AZURE_CLIENT_ID"
+          "AZURE_CLIENT_SECRET"
+          "AZURE_TENANT_ID"
+          "CLOUDFLARE_API_TOKEN"
+          "DIGITALOCEAN_TOKEN"
+          "DIGITALOCEAN_ACCESS_TOKEN"
+          "GITHUB_TOKEN"
+          "GH_TOKEN"
+          "GITLAB_TOKEN"
+          "GOOGLE_APPLICATION_CREDENTIALS"
+          "OPENAI_API_KEY"
+          "ANTHROPIC_API_KEY"
+          "GEMINI_API_KEY"
+          "SSH_AUTH_SOCK"
+          "GPG_AGENT_INFO"
+          "KRB5CCNAME"
+        ]
+      }
 
       export PIS_PROJECT PIS_HOME PIS_ETC
       exec ${lib.getExe piSandbox.config.script} --extension "$HOME/.pi/agent/sandbox.ts" "$@"

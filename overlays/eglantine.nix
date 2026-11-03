@@ -49,10 +49,10 @@
       version = src.tag;
 
       src = fetchFromGitHub {
-        tag = "build-129";
+        tag = "build-212";
         owner = "Djihads80";
         repo = "Eglantine";
-        hash = "sha256-qLuTRyLuMNM3q2mRwkX2sfFQhL5eKr8+QwylYsO5PHA=";
+        hash = "sha256-Ca6CmK56GrZfr+ipRRBaI5AWAqoVL0lUhquz5PQqQ0I=";
       };
 
       # Upstream moved to SDL3 and fmt 12
@@ -207,8 +207,10 @@ in (mkNixPak {
         # 14.07 GB total). The process runs ~1.1 GB over critical, so this leaves ~2.5 GB of the
         # 16 GB card; 9/10 GiB thrashed the collector in MKW. Drop once upstream caps it
         # (Eglantine #250, #279).
-        EDEN_NX2_TC_EXPECTED_MIB = "11264";
-        EDEN_NX2_TC_CRITICAL_MIB = "12288";
+        # EDEN_NX2_TC_EXPECTED_MIB = "11264";
+        # EDEN_NX2_TC_CRITICAL_MIB = "12288";
+        # build-212 fixes this
+        EDEN_NX2_SPLIT = "0"; # Fix issue #508 on build-212
       };
     };
   };

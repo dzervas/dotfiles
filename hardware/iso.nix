@@ -1,11 +1,16 @@
 # For more check https://blog.thomasheartman.com/posts/building-a-custom-nixos-installer
-{ config, inputs, lib, modulesPath, pkgs, ... }: let
-  keys_str = builtins.fetchurl {
+{
+  config,
+  inputs,
+  lib,
+  modulesPath,
+  pkgs,
+  ...
+}: let
+  keys = builtins.fetchurl {
     url = "https://github.com/dzervas.keys";
-    sha256 = "sha256:0rncd8f8z1lhji65ddh6r4jx62nk499vcda5c06gbrfa1s9f7275";
+    sha256 = "sha256:1wpgdqrvjqy9lldc6wns3i31sm1ic9yf7354q2c9j5hsfl2pbynh";
   };
-
-  keys_lines = lib.strings.splitString "\n" keys_str;
 in {
   # Use the minimal installation CD
   imports = [
@@ -22,19 +27,13 @@ in {
     prependToMenuLabel = "DZervas ";
     # includeSystemBuildDependencies = true;
     contents = [
-      {
-        source = inputs.self.sourceInfo.outPath;
-        target = "/dotfiles";
-      }
-      {
-        source = ./migrate-btrfs-raid.md;
-        target = "/migrate-btrfs-raid.md";
-      }
+      { source = inputs.self.sourceInfo.outPath; target = "/dotfiles"; }
+      { source = ./migrate-btrfs-raid.md; target = "/migrate-btrfs-raid.md"; }
     ];
   };
 
   users.users.dzervas.password = "nixos";
-  networking.wireless.enable = lib.mkForce false;
+  networking.wireless.enable = true;
 
   environment.systemPackages = with pkgs; [
     # For some reason it needs nix-shell -p xorg.xhost --run xhost si:localuser:root
@@ -65,7 +64,7 @@ in {
     };
   };
 
-  users.users.dzervas.openssh.authorizedKeys.keys = keys_lines;
+  users.users.dzervas.openssh.authorizedKeys.keyFiles = [ keys ];
 
   # Pin nixpkgs to the flake input, so that the packages installed
   # come from the flake inputs.nixpkgs.url.

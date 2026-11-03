@@ -8,6 +8,7 @@
     ./dev.nix
     ./direnv.nix
     ./docker-secrets-engine.nix
+    ./dsh.nix
     ./easyeffects
     # ./firefox.nix
     # ./firmware.nix # Broken
@@ -102,6 +103,7 @@
 
       cameractrls-gtk4
       zenity
+      eglantine
     ];
 
     sessionVariables.TERMINAL = config.setup.terminal;
