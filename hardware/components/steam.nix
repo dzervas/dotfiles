@@ -1,5 +1,5 @@
 { pkgs, ... }: {
-    # Steam udev rules
+  # Steam udev rules
   hardware.steam-hardware.enable = true;
 
   environment.systemPackages = with pkgs; [
@@ -57,7 +57,8 @@
         args = [
           "--fullscreen"
           "--steam"
-          "--prefer-output" "DP-3"
+          "--prefer-output"
+          "DP-3"
 
           # Realtime governor
           "--rt"

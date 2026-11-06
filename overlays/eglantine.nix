@@ -49,10 +49,13 @@
       version = src.tag;
 
       src = fetchFromGitHub {
-        tag = "build-212";
-        owner = "Djihads80";
-        repo = "Eglantine";
-        hash = "sha256-Ca6CmK56GrZfr+ipRRBaI5AWAqoVL0lUhquz5PQqQ0I=";
+        # tag = "build-93";
+        # owner = "Djihads80";
+        # repo = "Eglantine";
+        tag = "build-93";
+        owner = "zortos293";
+        repo = "Lichii";
+        hash = "sha256-2UnbfvLqlgHdQh3m8YKXpOnXxHomshXiLUeb34REMl0=";
       };
 
       # Upstream moved to SDL3 and fmt 12
@@ -112,7 +115,7 @@
       meta = oldAttrs.meta // {
         description = "Switch 2 emulator derived from Eden, Yuzu and Sudachi";
         homepage = "https://github.com/Djihads80/Eglantine";
-        mainProgram = "eglantine";
+        mainProgram = "lichii";
         maintainers = [];
       };
     }
