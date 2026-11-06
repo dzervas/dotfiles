@@ -49,10 +49,13 @@
       version = src.tag;
 
       src = fetchFromGitHub {
-        tag = "build-212";
-        owner = "Djihads80";
-        repo = "Eglantine";
-        hash = "sha256-Ca6CmK56GrZfr+ipRRBaI5AWAqoVL0lUhquz5PQqQ0I=";
+        # tag = "build-117";
+        # owner = "Djihads80";
+        # repo = "Eglantine";
+        tag = "build-117";
+        owner = "zortos293";
+        repo = "Lichii";
+        hash = "sha256-MDNB+JzXzGnzknOsviCIKooVYPZTb2cTcZtcqCfdDwA=";
       };
 
       # Upstream moved to SDL3 and fmt 12
@@ -112,7 +115,7 @@
       meta = oldAttrs.meta // {
         description = "Switch 2 emulator derived from Eden, Yuzu and Sudachi";
         homepage = "https://github.com/Djihads80/Eglantine";
-        mainProgram = "eglantine";
+        mainProgram = "lichii";
         maintainers = [];
       };
     }
@@ -201,16 +204,6 @@ in (mkNixPak {
         QT_QPA_PLATFORM = "wayland";
         # Chromium's own sandbox can't nest inside bwrap's user namespace
         QTWEBENGINE_DISABLE_SANDBOX = "1";
-        # Switch 2 titles size the texture cache to the driver's VRAM budget minus 1 GiB
-        # (texture_cache.h TickFrame, ignores vram_usage_mode). NVIDIA on Linux can't page VRAM
-        # out, so niri and the lock screen fail to allocate and the desktop freezes (froze at
-        # 14.07 GB total). The process runs ~1.1 GB over critical, so this leaves ~2.5 GB of the
-        # 16 GB card; 9/10 GiB thrashed the collector in MKW. Drop once upstream caps it
-        # (Eglantine #250, #279).
-        # EDEN_NX2_TC_EXPECTED_MIB = "11264";
-        # EDEN_NX2_TC_CRITICAL_MIB = "12288";
-        # build-212 fixes this
-        EDEN_NX2_SPLIT = "0"; # Fix issue #508 on build-212
       };
     };
   };
