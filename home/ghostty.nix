@@ -54,5 +54,11 @@
       margin-top: 0;
       margin-bottom: 0;
     }
+
+    /* 1.4 turned the bell border into a full-surface tint; restore border-only */
+    .surface .bell-overlay {
+      background-color: transparent;
+      border-color: color-mix(in srgb, var(--accent-color), transparent 50%);
+    }
   '';
 }
