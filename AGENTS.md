@@ -30,7 +30,7 @@ home/              # User config via home-manager
   zed/             # Symlinked to ~/Lab/dotfiles/home/zed/ (not copied)
 hardware/          # Per-machine: desktop.nix, laptop.nix, iso.nix
   components/      # Reusable: amd, secure-boot, fingerprint, steam, laptop, restic
-desktop/           # DE configs: hyprland (primary), kde, sway, cosmic
+desktop/           # DE configs: niri active, the rest are deprecated/feature alternatives
   home/components/ # waybar, rofi, hyprlock, hypridle, swaync
 overlays/          # Custom packages + pinned versions
 pi/extensions/     # TypeScript Pi agent extensions (NOT Nix; symlinked to ~/.pi/agent/extensions)

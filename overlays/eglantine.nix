@@ -1,5 +1,5 @@
 # Eglantine: Switch 2 emulator forked from Eden. Built on top of the nixpkgs eden derivation.
-# Sandboxed with NixPak; the real binary stays in passthru.unwrapped.
+# Sandboxed by eglantine-sandbox.nix; the real binary stays in passthru.unwrapped.
 {
   lib,
   eden,
@@ -8,11 +8,22 @@
   fmt,
   httplib,
   sdl3,
-  coreutils,
-  adwaita-icon-theme,
-  shared-mime-info,
   gamemode,
-  mkNixPak,
+  callPackage,
+
+  # Overridden by eglantine-dev (overlays/default.nix) to build a fork with the same recipe and sandbox.
+  # Not named src: callPackage would fill that from the pkgs.src alias.
+  eglantineSrc ? fetchFromGitHub {
+    # tag = "build-130";
+    # owner = "Djihads80";
+    # repo = "Eglantine";
+    tag = "build-130";
+    owner = "zortos293";
+    repo = "Lichii";
+    hash = "sha256-L9EzKtqzAgRy5Ci8iqbOjmHVZiheNgC/YKag+5srI2E=";
+  },
+  version ? eglantineSrc.tag,
+  mainProgram ? "lichii",
 }: let
   # Upstream pins httplib 0.46 (cpmfile.json); nixpkgs' eden pins an older one and the latest is untested.
   httplib' = httplib.overrideAttrs (
@@ -35,6 +46,14 @@
     hash = "sha256-pHvxa1gkUvQo6mUgmLWtj1kcu01BLdGmttZyb8ZAj/o=";
   };
 
+  # Header-only, DOWNLOAD_ONLY since Lichii build-130 (externals/CMakeLists.txt)
+  xxhash = fetchFromGitHub {
+    owner = "Cyan4973";
+    repo = "xxHash";
+    tag = "v0.8.3";
+    hash = "sha256-h6kohM+NxvQ89R9NEXZcYBG2wPOuB4mcyPfofKrx9wQ=";
+  };
+
   # Upstream hardcodes zstd_FORCE_BUNDLED (byte-identical NUP archives), so the system zstd is never used
   zstd = fetchFromGitHub {
     owner = "facebook";
@@ -46,17 +65,8 @@
   unwrapped = eden.overrideAttrs (
     _finalAttrs: oldAttrs: rec {
       pname = "eglantine";
-      version = src.tag;
-
-      src = fetchFromGitHub {
-        # tag = "build-117";
-        # owner = "Djihads80";
-        # repo = "Eglantine";
-        tag = "build-117";
-        owner = "zortos293";
-        repo = "Lichii";
-        hash = "sha256-MDNB+JzXzGnzknOsviCIKooVYPZTb2cTcZtcqCfdDwA=";
-      };
+      inherit version;
+      src = eglantineSrc;
 
       # Upstream moved to SDL3 and fmt 12
       buildInputs = builtins.filter (
@@ -98,6 +108,8 @@
 
         (lib.cmakeBool "zbic_FORCE_BUNDLED" true)
         (lib.cmakeFeature "zbic_CUSTOM_DIR" "${zbic}")
+        (lib.cmakeBool "xxhash_FORCE_BUNDLED" true)
+        (lib.cmakeFeature "xxhash_CUSTOM_DIR" "${xxhash}")
         (lib.cmakeFeature "zstd_CUSTOM_DIR" "${zstd}")
         (lib.cmakeBool "reshade_FORCE_BUNDLED" true)
         (lib.cmakeFeature "reshade_CUSTOM_DIR" "${reshade}")
@@ -115,97 +127,10 @@
       meta = oldAttrs.meta // {
         description = "Switch 2 emulator derived from Eden, Yuzu and Sudachi";
         homepage = "https://github.com/Djihads80/Eglantine";
-        mainProgram = "lichii";
+        inherit mainProgram;
         maintainers = [];
       };
     }
   );
 
-in (mkNixPak {
-  config = { config, sloth, ... }: {
-    app.package = unwrapped;
-    # Matches the installed .desktop file and icon
-    flatpak.appId = "dev.eden_emu.eden";
-
-    # Portals only. Not nixpakModules.gui-base: it also allows dconf, gvfs and the
-    # a11y bus, binds the unfiltered at-spi socket (lets the app read other apps'
-    # windows) and shares the host's font and shader caches read-write.
-    dbus.policies = {
-      "${config.flatpak.appId}" = "own";
-      "${config.flatpak.appId}.*" = "own";
-      "org.freedesktop.DBus" = "talk";
-      "org.freedesktop.portal.*" = "talk";
-    };
-
-    gpu.enable = true;
-    fonts.enable = true;
-    locale.enable = true;
-    timeZone.enable = true;
-
-    bubblewrap = {
-      network = false;
-      newSession = true;
-      dieWithParent = true;
-      clearEnv = true;
-      tmpfs = [ "/tmp" ];
-      sockets = {
-        wayland = true;
-        pulse = true;
-      };
-
-      bind = {
-        rw = [
-          # Persistent sandbox home. Emulator data lands in <sandbox>/.local/share/eden
-          # (keys, firmware, NAND), config in <sandbox>/.config/eden.
-          [
-            (sloth.mkdir (sloth.concat' sloth.xdgDataHome "/eglantine-sandbox"))
-            sloth.homeDir
-          ]
-          # ROMs. The .desktop file's %f only works for files in here: arguments aren't bound.
-          (sloth.concat' sloth.homeDir "/CryptVMs/Switch")
-          # Files picked through the portal file chooser
-          [
-            (sloth.concat' sloth.runtimeDir "/doc/by-app/${config.flatpak.appId}")
-            (sloth.concat' sloth.runtimeDir "/doc")
-          ]
-        ];
-        # Controllers: SDL enumerates through udev
-        ro = [
-          "/sys/class"
-          "/sys/bus"
-          "/run/udev"
-        ];
-        dev = [
-          # Also exposes keyboards
-          "/dev/input"
-          # gpu.enable covers /dev/dri only
-          "/dev/nvidiactl"
-          "/dev/nvidia0"
-          "/dev/nvidia-uvm"
-          "/dev/nvidia-modeset"
-        ];
-      };
-
-      env = {
-        HOME = sloth.homeDir;
-        XDG_RUNTIME_DIR = sloth.runtimeDir;
-        WAYLAND_DISPLAY = sloth.envOr "WAYLAND_DISPLAY" "wayland-0";
-        XDG_SESSION_TYPE = "wayland";
-        XDG_CURRENT_DESKTOP = sloth.envOr "XDG_CURRENT_DESKTOP" "";
-        LANG = sloth.envOr "LANG" "C.UTF-8";
-        XCURSOR_THEME = sloth.envOr "XCURSOR_THEME" "default";
-        XCURSOR_SIZE = sloth.envOr "XCURSOR_SIZE" "24";
-        PATH = lib.makeBinPath [ coreutils ];
-        XDG_DATA_DIRS = lib.makeSearchPath "share" [
-          adwaita-icon-theme
-          shared-mime-info
-        ];
-        XCURSOR_PATH = "${adwaita-icon-theme}/share/icons";
-        QT_QPA_PLATFORM = "wayland";
-        # Chromium's own sandbox can't nest inside bwrap's user namespace
-        QTWEBENGINE_DISABLE_SANDBOX = "1";
-      };
-    };
-  };
-}).config.env
-// { inherit unwrapped; }
+in callPackage ./eglantine-sandbox.nix { inherit unwrapped; }

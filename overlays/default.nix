@@ -13,6 +13,17 @@ final: prev: {
   # Bubblewrapped; the real binary is only reachable via eglantine.unwrapped
   # nix-update:eglantine.unwrapped
   eglantine = final.callPackage ./eglantine.nix {};
+  # Lichii's nvn-direct dev build in the same sandbox (`nix run .#eglantine-dev`). Its data dir is
+  # lichii, not eden: pick "Link Old Directory" in the first-launch migration prompt to share eglantine's data.
+  # Local-only source that the update app can't bump; update the rev by hand (update hint in eglantine-dev.nix).
+  # Without env it runs Lichii's normal renderer. The NVN2 direct renderer is opt-in and still in
+  # bring-up (may hang in-game); shaders come from Lichii's recompiler (EDEN_NX2_NVN_SHLIB, the lab's MKW
+  # library bound read-only by the sandbox, is only for comparisons):
+  #   EDEN_NX2_NVN_DIRECT=1 nix run .#eglantine-dev
+  eglantine-dev = final.callPackage ./eglantine-dev.nix {};
+  # Upstream's prebuilt PGO AppImage in the same sandbox and data dir, for comparing against eglantine.
+  # nix-update:eglantine-appimage.unwrapped
+  eglantine-appimage = final.callPackage ./eglantine-appimage.nix {};
   # Version updates also require regenerating overlays/pi-dashboard/package-lock.json.
   pi-dashboard = prev.callPackage ./pi-dashboard.nix {};
   # nix-update:cursortab-nvim --subpackage server
@@ -79,16 +90,16 @@ final: prev: {
   # nix-update:pi-coding-agent-latest --custom-dep modelData
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
     finalAttrs: _prevAttrs: {
-      version = "1.4.0";
+      version = "1.5.2";
 
       src = final.fetchFromGitHub {
         owner = "earendil-works";
         repo = "pi";
         tag = "v${finalAttrs.version}";
-        hash = "sha256-N9NOpiiZTbOMDMV+CxvJAgtLjJJ1/8NJBGS0cFHkhsc=";
+        hash = "sha256-0dKtABQqfvCLF0WOydu5rpycMqC+N8Pc9Ex4BWKElyw=";
       };
 
-      npmDepsHash = "sha256-aBzVz78IxZQlzPYC72Ufa2YFtkow6nZR24YBYZrv9W0=";
+      npmDepsHash = "sha256-uHehffbEB2uU9U9uSpfWojzxvQyqeicbh/esCwk4neQ=";
 
       npmDeps = final.fetchNpmDeps {
         inherit (finalAttrs) src;
@@ -98,7 +109,7 @@ final: prev: {
 
       modelData = final.fetchurl {
         url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${finalAttrs.version}.tgz";
-        hash = "sha256-tA4rqLtvwzKQj4uW6DfcLR/ftF65zTgvWu0RFGKYHjw=";
+        hash = "sha256-1XFe+oNMI7/fEKBCtJ307hacyZAAvxbXmY+rLVM7Rfg=";
       };
 
       # Use upstream's offline build order and TypeScript compiler.
@@ -136,6 +147,7 @@ final: prev: {
                   @earendil-works/pi-agent-core:packages/agent \
                   @earendil-works/pi-codemode:packages/codemode \
                   @earendil-works/pi-mcp:packages/mcp \
+                  @earendil-works/pi-schema:packages/schema \
                   @earendil-works/pi-telemetry:packages/telemetry \
                   @earendil-works/pi-tui:packages/tui; do
           IFS=: read -r pkg src <<< "$ws"
@@ -143,7 +155,8 @@ final: prev: {
           cp -r "$src" "$nm/$pkg"
         done
 
-        find "$nm" -type l -lname '*/packages/*' -delete
+        # 1.5.x added apps/* workspaces (e.g. the private apps/p2) that aren't installed
+        find "$nm" -type l \( -lname '*/packages/*' -o -lname '*/apps/*' \) -delete
         find "$nm/.bin" -xtype l -delete
       '';
     }

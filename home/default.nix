@@ -103,7 +103,7 @@
 
       cameractrls-gtk4
       zenity
-      eglantine
+      eglantine-appimage
     ];
 
     sessionVariables.TERMINAL = config.setup.terminal;

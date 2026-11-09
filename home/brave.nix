@@ -22,14 +22,15 @@ in {
     enable = true;
     package = brave;
     commandLineArgs = [
-      "--ozone-platform=wayland"
+      # "--ozone-platform=wayland" # Breaks with vulkan
+      "--ozone-platform=x11" # Breaks with vulkan
       "--enable-features=WebRTCPipeWireCapturer"
       "--enable-features=WaylandWindowDecorations" # Fixes native notifications
       "--enable-logging=stderr"
       "--ignore-gpu-blocklist"
 
       # not supported with ozone-platform wayland
-      # "--enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE"
+      "--enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE"
     ];
   };
 }

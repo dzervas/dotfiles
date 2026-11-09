@@ -3,7 +3,7 @@
   pi-coding-agent-package = pkgs.pi-coding-agent-latest;
   piPackages = [
     "npm:pi-subagents@0.84.0"
-    "npm:pi-cliproxyapi-provider@0.16.8"
+    "npm:pi-cliproxyapi-provider@0.16.9"
     {
       source = "git:github.com/mattpocock/skills@v1.3.2";
       extensions = [];
