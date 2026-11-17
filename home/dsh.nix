@@ -21,6 +21,8 @@
       bubblewrap = {
         network = true; # The web profile listens on 127.0.0.1 for the host browser
         dieWithParent = true;
+        # TUI: stay in the terminal's foreground process group (nixpak#193)
+        sharePgid = true;
         tmpfs = [ "/tmp" ];
 
         bind = {

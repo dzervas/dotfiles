@@ -30,11 +30,11 @@
 }: let
   unwrapped = stdenv.mkDerivation rec {
     pname = "eglantine-appimage";
-    version = "build-177";
+    version = "build-341";
 
     src = fetchurl {
       url = "https://github.com/zortos293/Lichii/releases/download/${version}/lichii-linux-x86_64-pgo.AppImage";
-      hash = "sha256-dZa6+ur8b8EqUATt2BBcxkNMIhYoh9dCGUfpJPBEj4A=";
+      hash = "sha256-kYcpeK4uNUWLEUCPllYg3KbTmknUUFdB2OpHeRcxYMY=";
     };
 
     appimageContents = appimageTools.extract { inherit pname version src; };
@@ -94,8 +94,6 @@
       mkdir -p $out/lib $out/bin $out/share
       cp -r ${appimageContents}/usr $out/lib/lichii
       chmod -R u+w $out/lib/lichii
-      # Ubuntu's loader only searches FHS paths for ICDs; nixpkgs' finds /run/opengl-driver
-      rm $out/lib/lichii/lib/libvulkan.so.1
       # Ubuntu's has /usr/share/X11/{xkb,locale} built in (Qt's Wayland plugin fails without a keymap);
       # nixpkgs' points at xkeyboard-config and libX11's compose tables in the store
       rm $out/lib/lichii/lib/libxkbcommon{,-x11}.so.0

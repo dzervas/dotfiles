@@ -21,6 +21,10 @@
     systemd.enable = true;
   };
 
+  # A switch-time restart while locked kills the lock surface and niri stays
+  # locked with no client. Updates apply on next login or a manual restart.
+  systemd.user.services.noctalia.Unit.X-SwitchMethod = "keep-old";
+
   xdg.configFile = {
     "noctalia/config.toml".source = lib.mkForce (config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Lab/dotfiles/home/noctalia.toml");
     # The editable config replaces Stylix's generated config.toml. Preserve its

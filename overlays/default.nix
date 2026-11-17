@@ -42,7 +42,7 @@ final: prev: {
   # https://github.com/Mic92/nix-update/issues/639
   brave = prev.brave.overrideAttrs (
     finalAttrs: _oldAttrs: {
-      version = "1.101.10";
+      version = "1.102.26";
       src = final.fetchurl {
         url = "https://github.com/brave/brave-browser/releases/download/v${finalAttrs.version}/brave-browser_${finalAttrs.version}_amd64.deb";
         sha256 = "21d7ac36b64a408dc598bb6ec3db84b07b2cbca854d26b28055a2fb5b94a2e77";
@@ -53,24 +53,35 @@ final: prev: {
   # nix-update:atuin
   atuin = prev.atuin.overrideAttrs (
     finalAttrs: oldAttrs: {
-      version = "18.24.2";
+      version = "18.25.0";
 
       src = final.fetchFromGitHub {
         owner = "atuinsh";
         repo = "atuin";
         tag = "v${finalAttrs.version}";
-        hash = "sha256-b6Uj3cPAu731lhrN8fOv4d0CpehT3bv7IOBmkbYrqfI=";
+        hash = "sha256-U1CadCLxwo1gquFj4+2qwdOKeE3gUbDqgMlTdTGZLhU=";
       };
 
-      cargoHash = "sha256-HkYI2+Yvjnw9pKeRsteyZeLhHHErTa1mvJL16NQVF3g=";
+      cargoHash = "sha256-UYOvI8Siz3LA8KNEDvL0CIr90CNBaHkaJbKK2RBn2H0=";
 
       cargoDeps = final.rustPlatform.fetchCargoVendor {
         inherit (finalAttrs) pname version src;
         hash = finalAttrs.cargoHash;
       };
 
-      # This integration test requires a running PostgreSQL server.
-      checkFlags = oldAttrs.checkFlags ++ [ "--skip=postgres_authenticates_with_the_password_file" ];
+      checkFlags = oldAttrs.checkFlags ++ [
+        # This integration test requires a running PostgreSQL server.
+        "--skip=postgres_authenticates_with_the_password_file"
+        # Hardcodes /bin/bash, which the build sandbox lacks (the /bin/sh cases still run)
+        "--skip=a_shell_without_a_terminal_runs_outside_the_proxy::shell_2____bin_bash__"
+        # Its shim runs `sleep` from /usr/bin:/bin, which the build sandbox lacks, then checks with `ps`
+        "--skip=a_shim_that_hangs_is_killed_with_its_children"
+      ];
+
+      # The stats tests use named time zones; the build sandbox has no /usr/share/zoneinfo for jiff
+      preCheck = (oldAttrs.preCheck or "") + ''
+        export TZDIR=${final.tzdata}/share/zoneinfo
+      '';
     }
   );
 
@@ -90,16 +101,16 @@ final: prev: {
   # nix-update:pi-coding-agent-latest --custom-dep modelData
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
     finalAttrs: _prevAttrs: {
-      version = "1.5.2";
+      version = "1.6.0";
 
       src = final.fetchFromGitHub {
         owner = "earendil-works";
         repo = "pi";
         tag = "v${finalAttrs.version}";
-        hash = "sha256-0dKtABQqfvCLF0WOydu5rpycMqC+N8Pc9Ex4BWKElyw=";
+        hash = "sha256-UVQnOMYikjxi7JREcxPZh/Uamy0l4rBvhawHR/MZZgo=";
       };
 
-      npmDepsHash = "sha256-uHehffbEB2uU9U9uSpfWojzxvQyqeicbh/esCwk4neQ=";
+      npmDepsHash = "sha256-V7fRy44X50tqfFewWQ/k5UjvUt+AoMOZkTw/v0bib6o=";
 
       npmDeps = final.fetchNpmDeps {
         inherit (finalAttrs) src;
@@ -109,7 +120,7 @@ final: prev: {
 
       modelData = final.fetchurl {
         url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${finalAttrs.version}.tgz";
-        hash = "sha256-1XFe+oNMI7/fEKBCtJ307hacyZAAvxbXmY+rLVM7Rfg=";
+        hash = "sha256-1oMS7FdLyVnLf+4m2k9IdtBnrtm7vnbodjWeYNIpR0c=";
       };
 
       # Use upstream's offline build order and TypeScript compiler.

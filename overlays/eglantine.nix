@@ -14,13 +14,13 @@
   # Overridden by eglantine-dev (overlays/default.nix) to build a fork with the same recipe and sandbox.
   # Not named src: callPackage would fill that from the pkgs.src alias.
   eglantineSrc ? fetchFromGitHub {
-    # tag = "build-130";
+    # tag = "build-341";
     # owner = "Djihads80";
     # repo = "Eglantine";
-    tag = "build-130";
+    tag = "build-341";
     owner = "zortos293";
     repo = "Lichii";
-    hash = "sha256-L9EzKtqzAgRy5Ci8iqbOjmHVZiheNgC/YKag+5srI2E=";
+    hash = "sha256-ZrphcBJ3W3gcsG1ZXkD6hSdiaophZ0g93mr8CKExZJg=";
   },
   version ? eglantineSrc.tag,
   mainProgram ? "lichii",

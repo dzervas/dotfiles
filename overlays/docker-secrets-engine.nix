@@ -5,7 +5,7 @@
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "docker-secrets-engine";
-  version = "0.11.2";
+  version = "store/v1.0.0";
 
   src = fetchurl {
     url = "https://github.com/docker/secrets-engine/releases/download/v${version}/secrets-engine-linux_amd64.tar.gz";
