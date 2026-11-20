@@ -4,10 +4,10 @@
 #   git -C ~/Lab/dotfiles/.pi/lichii log -1 --format='%H %cs' nvn-direct-ux  # (the branch named in ref)
 # then set rev and the version date below. Uncommitted worktree changes are never built.
 { callPackage }: callPackage ./eglantine.nix {
-  version = "0-unstable-2026-11-18";
+  version = "0-unstable-2026-11-20";
   eglantineSrc = builtins.fetchGit {
     url = "file:///home/dzervas/Lab/lichii";
-    ref = "nvn-direct-ux";
-    rev = "05bc2d2159256f1dbc91e91ddedde2aaf39661a2";
+    ref = "main";
+    rev = "e72013b140a8fd0bc3da458c0edee8266969dd2e";
   };
 }

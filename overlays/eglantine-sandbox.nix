@@ -29,7 +29,7 @@
     timeZone.enable = true;
 
     bubblewrap = {
-      network = false;
+      network = true;
       newSession = true;
       dieWithParent = true;
       clearEnv = true;
@@ -62,6 +62,9 @@
           "/sys/class"
           "/sys/bus"
           "/run/udev"
+
+          "/etc/static"
+          "/etc/ssl"
         ];
         dev = [
           # Also exposes keyboards
@@ -103,6 +106,8 @@
         # eglantine-dev's opt-in NVN2 direct renderer, passed through from the caller (empty reads as off)
         EDEN_NX2_NVN_DIRECT = sloth.envOr "EDEN_NX2_NVN_DIRECT" "";
         EDEN_NX2_NVN_SHLIB = sloth.envOr "EDEN_NX2_NVN_SHLIB" "";
+
+        EDEN_NX2_DEBUG_SERVER = sloth.envOr "EDEN_NX2_DEBUG_SERVER" "";
       };
     };
   };

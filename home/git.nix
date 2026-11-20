@@ -265,7 +265,7 @@
           find = command ''jj log -r "files($argv[1])" $argv[2..]'';
         };
 
-        git.sign-on-push = true;
+        revsets.git-sign-on-push = "~signed() & mine()";
         remotes.origin.auto-track-bookmarks = "glob:*";
         snapshot.max-new-file-size = 4096000;
 

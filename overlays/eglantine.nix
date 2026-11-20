@@ -100,11 +100,12 @@
 
       cmakeFlags = oldAttrs.cmakeFlags ++ [
         (lib.cmakeBool "ENABLE_WERROR" false)
-        (lib.cmakeBool "YUZU_CMD" false)
-        (lib.cmakeBool "YUZU_ROOM" false)
-        (lib.cmakeBool "YUZU_INSTALL_UDEV_RULES" true)
+        (lib.cmakeBool "ENABLE_LTO" false)
+        (lib.cmakeBool "LICHII_CMD" false)
+        (lib.cmakeBool "LICHII_ROOM" true)
+        (lib.cmakeBool "LICHII_INSTALL_UDEV_RULES" true)
         # Default "custom" preset adds no -march (baseline x86-64). Desktop is Zen 3, laptop Zen 4.
-        (lib.cmakeFeature "YUZU_BUILD_PRESET" "zen2")
+        (lib.cmakeFeature "LICHII_BUILD_PRESET" "zen2")
 
         (lib.cmakeBool "zbic_FORCE_BUNDLED" true)
         (lib.cmakeFeature "zbic_CUSTOM_DIR" "${zbic}")

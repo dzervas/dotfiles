@@ -8,7 +8,6 @@
   cachePath = "/etc/nix/cache/private-key.pem";
 in {
   imports = [
-    # ./components/amd.nix
     ./components/nvidia.nix
     ./components/boot.nix
     ./components/pch-fan.nix
