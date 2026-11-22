@@ -38,10 +38,14 @@
   systemd.user.settings.Manager.DefaultEnvironment = "PATH=/run/current-system/sw/bin";
 
   # Fix home-manager xdg desktop portal support
-  environment.pathsToLink = [ "/share/xdg-desktop-portal" "/share/applications" ];
+  environment.pathsToLink = [
+    "/share/xdg-desktop-portal"
+    "/share/applications"
+  ];
 
   # Serial comms rules (for Arduino n stuff)
   # services.udev.packages = with pkgs; [ platformio-core.udev ];
+  services.udev.packages = with pkgs; [ picotool ];
 
   security = {
     # Broken

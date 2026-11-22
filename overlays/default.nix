@@ -50,6 +50,31 @@ final: prev: {
     }
   );
 
+  # nix-update:xwin
+  # docs/testing.md of Leonida: xwin 0.10.0 lays out Windows SDK 10.0.26100, older ones may not
+  xwin = prev.xwin.overrideAttrs (
+    finalAttrs: oldAttrs: {
+      version = "0.10.0";
+
+      src = final.fetchFromGitHub {
+        owner = "Jake-Shadle";
+        repo = "xwin";
+        tag = finalAttrs.version;
+        hash = "sha256-kUbRHrM88x3ezy0+GIpbGQfEROn16dSwPtobjdYauRM=";
+      };
+
+      cargoHash = "sha256-34v/YDT0Juwjv8EbwsOsmbp/Q89Z4c+BYxcA60X7Q3A=";
+
+      cargoDeps = final.rustPlatform.fetchCargoVendor {
+        inherit (finalAttrs) pname version src;
+        hash = finalAttrs.cargoHash;
+      };
+
+      # New in 0.10.0, downloads the manifest like the ones nixpkgs already skips
+      checkFlags = oldAttrs.checkFlags ++ [ "--skip=verify_aarch64_compiles" ];
+    }
+  );
+
   # nix-update:atuin
   atuin = prev.atuin.overrideAttrs (
     finalAttrs: oldAttrs: {

@@ -150,6 +150,10 @@
             "/lib"
             "/lib64"
 
+            # Wine builds GetLogicalProcessorInformation from the CPU topology here; without it the call fails
+            # (0xc0000002) and the title asserts in its static initialisers
+            "/sys/devices/system/cpu"
+
             "$HOME/.pi/agent/settings.json"
             "$HOME/.pi/agent/models.json"
             "$HOME/.pi/agent/node_modules"
@@ -297,12 +301,12 @@ in {
 
       pi-cliproxyapi-provider = {
         gpt56ContextWindow = "full"; # 1M context for GPT 5.6/6
-        modelOverrides."gpt-6.1-sol".contextWindow = 1050000; # Not updated yet?
+        modelOverrides."gpt-6.2-sol".contextWindow = 1050000; # Not updated yet?
       };
 
       subagents = {
         defaultProvider = "cpa";
-        defaultModel = "cpa/gpt-6.1-sol";
+        defaultModel = "cpa/gpt-6.2-sol";
         defaultThinking = "medium";
         # Sol handles parallel execution; Opus is the independent planning/review
         # tier. These are workload defaults, not locks: per-run overrides still win.
@@ -314,13 +318,13 @@ in {
           )
           {
             scout = {
-              model = "cpa/gpt-6.1-sol";
+              model = "cpa/gpt-6.2-sol";
               thinking = "low";
               # Upstream scout writes context files; retain that alongside our tools.
               tools = piSubagentReadTools ++ [ "write" ];
             };
             delegate = {
-              model = "cpa/gpt-6.1-sol";
+              model = "cpa/gpt-6.2-sol";
               thinking = "medium";
               # Grant bounded nested delegation without copying the bundled prompt.
               allowNestedSubagents = true;
@@ -335,7 +339,7 @@ in {
               thinking = "medium";
             };
             reviewer = {
-              model = "cpa/gpt-6.1-sol";
+              model = "cpa/gpt-6.2-sol";
               thinking = "high";
             };
             oracle = {
@@ -346,7 +350,7 @@ in {
             # Bundled research prompts require pi-web-access. Use our existing
             # Vresto MCP instead, without installing a second search provider.
             researcher = {
-              model = "cpa/gpt-6.1-sol";
+              model = "cpa/gpt-6.2-sol";
               thinking = "medium";
               tools = [
                 "read"
@@ -393,10 +397,9 @@ in {
       defaultThinkingLevel = "medium";
       enabledModels = [
         "claude-opus-5-5"
-        "cpa/gpt-6.1-sol"
-        "cpa/gpt-6-astra"
-        "claude-fable-5-1"
-        "flint"
+        "cpa/gpt-6.2-sol"
+        "cpa/gpt-6.2-astra"
+        "claude-fable-5-2"
       ];
     };
   };
