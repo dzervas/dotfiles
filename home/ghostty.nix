@@ -53,6 +53,9 @@
     tabbar tabbox {
       margin-top: 0;
       margin-bottom: 0;
+      /* Ghostty only paints a window background when opaque, which leaves the
+         tab bar fully transparent at background-opacity < 1 (ghostty#3009) */
+      background-color: color-mix(in srgb, var(--headerbar-bg-color), transparent 10%);
     }
 
     /* 1.4 turned the bell border into a full-surface tint; restore border-only */

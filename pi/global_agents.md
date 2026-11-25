@@ -79,25 +79,7 @@ Use Jujutsu for version-control operations when the workspace contains `.jj`.
 * Do not create commits, bookmarks, squash, rebase, or otherwise alter history unless requested.
 * Read-only Git commands are acceptable when needed for compatibility or information unavailable through `jj`.
 
-## Tools and Delegation
-
-Prefer dedicated read/search/edit tools over shell equivalents when available. Prefer `rg` over `grep`.
-
-### CodeGraph
-
-On large codebases, use the CodeGraph cli (`codegraph node <symbol>`, `codegraph explore`, etc.) when relationships between code elements matter, such as:
-
-* callers and callees,
-* symbol relationships,
-* dependency chains,
-* impact analysis,
-* unfamiliar codebase exploration.
-
-Prefer normal text search and read tools for exact strings, configuration values, logs, documentation, and small or localized investigations.
-
-Treat CodeGraph as an index, not ground truth. Verify important conclusions against the source.
-
-### Delegation
+## Delegation
 
 Delegate when a task is independently parallelizable, benefits from isolated context,
 or a genuinely independent investigation or review would improve the result.
