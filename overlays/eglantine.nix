@@ -17,10 +17,10 @@
     # tag = "build-341";
     # owner = "Djihads80";
     # repo = "Eglantine";
-    tag = "build-341";
+    tag = "build-410";
     owner = "zortos293";
     repo = "Lichii";
-    hash = "sha256-ZrphcBJ3W3gcsG1ZXkD6hSdiaophZ0g93mr8CKExZJg=";
+    hash = "sha256-Ap4vDVq3MzRUoH/oayFJFRrqQZFvkz92bjebIihAF2U=";
   },
   version ? eglantineSrc.tag,
   mainProgram ? "lichii",

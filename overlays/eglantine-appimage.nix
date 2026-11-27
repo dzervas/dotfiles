@@ -30,11 +30,11 @@
 }: let
   unwrapped = stdenv.mkDerivation rec {
     pname = "eglantine-appimage";
-    version = "build-341";
+    version = "build-410";
 
     src = fetchurl {
       url = "https://github.com/zortos293/Lichii/releases/download/${version}/lichii-linux-x86_64-pgo.AppImage";
-      hash = "sha256-kYcpeK4uNUWLEUCPllYg3KbTmknUUFdB2OpHeRcxYMY=";
+      hash = "sha256-HQAUyFh1nccKu1XL0UCf0X0JwJFDA+YTjvHq65lJgYU=";
     };
 
     appimageContents = appimageTools.extract { inherit pname version src; };

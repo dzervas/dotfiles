@@ -42,7 +42,7 @@ final: prev: {
   # https://github.com/Mic92/nix-update/issues/639
   brave = prev.brave.overrideAttrs (
     finalAttrs: _oldAttrs: {
-      version = "1.102.26";
+      version = "1.102.45";
       src = final.fetchurl {
         url = "https://github.com/brave/brave-browser/releases/download/v${finalAttrs.version}/brave-browser_${finalAttrs.version}_amd64.deb";
         sha256 = "21d7ac36b64a408dc598bb6ec3db84b07b2cbca854d26b28055a2fb5b94a2e77";
@@ -78,16 +78,16 @@ final: prev: {
   # nix-update:atuin
   atuin = prev.atuin.overrideAttrs (
     finalAttrs: oldAttrs: {
-      version = "18.25.0";
+      version = "18.25.1";
 
       src = final.fetchFromGitHub {
         owner = "atuinsh";
         repo = "atuin";
         tag = "v${finalAttrs.version}";
-        hash = "sha256-U1CadCLxwo1gquFj4+2qwdOKeE3gUbDqgMlTdTGZLhU=";
+        hash = "sha256-fZpe677ju8n3X4Csj7HJDPqcWEFyPE7FL0zVNpiI72g=";
       };
 
-      cargoHash = "sha256-UYOvI8Siz3LA8KNEDvL0CIr90CNBaHkaJbKK2RBn2H0=";
+      cargoHash = "sha256-SZKFzRmrz+p2b74SoZgovBoAxPAtL4MjERcv8PTNh5s=";
 
       cargoDeps = final.rustPlatform.fetchCargoVendor {
         inherit (finalAttrs) pname version src;
@@ -126,16 +126,16 @@ final: prev: {
   # nix-update:pi-coding-agent-latest --custom-dep modelData
   pi-coding-agent-latest = prev.pi-coding-agent.overrideAttrs (
     finalAttrs: _prevAttrs: {
-      version = "1.6.0";
+      version = "1.6.1";
 
       src = final.fetchFromGitHub {
         owner = "earendil-works";
         repo = "pi";
         tag = "v${finalAttrs.version}";
-        hash = "sha256-UVQnOMYikjxi7JREcxPZh/Uamy0l4rBvhawHR/MZZgo=";
+        hash = "sha256-0sJNgCA6p1ZwsxI3tumtPu2LEqECt1Hqv1jQ+ASe2EY=";
       };
 
-      npmDepsHash = "sha256-V7fRy44X50tqfFewWQ/k5UjvUt+AoMOZkTw/v0bib6o=";
+      npmDepsHash = "sha256-WLez4/tAmJIQysd/0J6qHm64vo6zCgaaubrtcoVXBsk=";
 
       npmDeps = final.fetchNpmDeps {
         inherit (finalAttrs) src;
@@ -145,7 +145,7 @@ final: prev: {
 
       modelData = final.fetchurl {
         url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${finalAttrs.version}.tgz";
-        hash = "sha256-1oMS7FdLyVnLf+4m2k9IdtBnrtm7vnbodjWeYNIpR0c=";
+        hash = "sha256-GSxAe9acBjWMaFGapikK3INisTK+6RF0gMdgRFbVBzs=";
       };
 
       # Use upstream's offline build order and TypeScript compiler.

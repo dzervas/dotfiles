@@ -2,8 +2,8 @@
   nodejs = pkgs.nodejs_22; # tree-sitter does not work with nodejs_24
   pi-coding-agent-package = pkgs.pi-coding-agent-latest;
   piPackages = [
-    "npm:pi-subagents@0.89.1"
-    "npm:pi-cliproxyapi-provider@0.16.19"
+    "npm:pi-subagents@0.90.0"
+    "npm:pi-cliproxyapi-provider@0.16.25"
     {
       source = "git:github.com/mattpocock/skills@v1.3.2";
       extensions = [];
